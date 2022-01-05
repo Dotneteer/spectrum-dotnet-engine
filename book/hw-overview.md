@@ -26,11 +26,23 @@ The ZX Spectrum 48K has a total of 64KByte memory. 16K of it is ROM, occupying t
 
 ## The Z80 CPU
 
-Z80 is a RISC microprocessor with a few 8-bit and 16-bit registers (most of the latest can be used as a pair of 8-bit registers). It has a collection of flags (the bits of Register F) set and reset by arithmetic and logic statements. 
+Z80 is a RISC microprocessor with a few 8-bit and 16-bit registers (most of the latest can be used as a pair of 8-bit registers). It has a collection of flags (the bits of Register F) set and reset by arithmetic and logic statements. The following figure displays the pinout with the signals on the left, the address, and the data bus to the right. 
+
+![CPU pinout](./figures/Z80_pinout.svg)
+
+*Source*: https://en.wikipedia.org/wiki/Zilog_Z80
 
 Implementing the Z80 instruction set is not rocket science. However, there are a few quirks you should know. First, Z80 has more than 400 instructions not documented in the official specification. Second, two flags out of the eight contained in register F are not documented; however, the CPU instructions change them. The Z80 also contains an internal 16-bit register (the community mentions it as `MEMPTR`), which programmers cannot access directly. Unfortunately, the value of this register influences the undocumented bits of register F.
 
+![CPU architecture](./figures/Z80_arch.svg)
+
+*Source*: https://en.wikipedia.org/wiki/Zilog_Z80
+
+> *Note*: The figure shows `MEMPTR` as the pair of the internal `W` and `Z` registers.
+
 Fortunately, you can find reliable documentation about the officially undocumented instructions and the behavior of the two special flags and `MEMPTR`.
+
+> *Hint*: While developing the emulator, I used this document: http://www.z80.info/zip/z80-documented.pdf
 
 Many games leverage undocumented instructions because they provide real value for programmers. Though there is no reason to use the two special flags (and even less to access `MEMPTR`), you still cannot ignore implementing them in an emulator. You can push the flags to the stacks and pop them. Assume you make conditional branching according to the popped value (that may contain the flags). Your control flow in an emulator may take a different route than in the actual hardware if you do not implement handling the extra flags. As a developer of an emulator, you definitely want to avoid such a situation.
 
