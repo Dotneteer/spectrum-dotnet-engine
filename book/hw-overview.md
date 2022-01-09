@@ -1,4 +1,4 @@
-# ZX Spectrum Hardware Overview
+# The ZX Spectrum 48K Hardware with the Eye of an Emulator Developer
 
 The following figure is a high-level overview of the ZX Spectrum 48K and contains just enough details to understand how the computer works.
 
@@ -57,7 +57,7 @@ Understanding the core of this process is crucial to designing the emulator, so 
 When ZX Spectrum was designed, displaying a screen meant to control a cathode ray tube, the electron beam inside the tube moved from top to bottom and left to right. The ULA encapsulates a control logic that ensures accurately following the movement of the electron beam. Without going into the exact details (this is not an electrical engineering project), this is how the electron beam moves while rendering the screen:
 
 1. The beam moves to the top-left position of the cathode ray tube to the very first raster line (in the PAL system, the screen contains 625 lines). According to the current settings of the displaying equipment (a traditional TV set), the few first and last raster lines (such as the left and right edges) cannot be seen.
-2. The beam draws 312 raster lines (odd lines), moving from the top to the bottom and left to right in about 20ms. (This is called a half-screen, as this phase draws only every second raster line.
+2. The beam draws 312 raster lines (odd lines), moving from the top to the bottom and left to right in about 20ms. (This is called a half-screen, as this phase draws only every second raster line.)
 3. Then, the beam jumps to the leftmost position of the second raster line and now draws the second half-screen (every even raster line).
 4. In steps 2 and 3, when completing an entire raster line, the electron beam jumps back to the beginning of the subsequent raster line.
 
@@ -99,13 +99,66 @@ There's one more critical thing regarding screen generation. The floating bus fe
 
 ## Interrupts
 
+The Z80 CPU can handle two types of interrupts. Peripheral devices generally leverage the non-maskable interrupt (NMI), and this type, as its name suggests, cannot be suppressed. So, when a device raises a non-maskable interrupt, the CPU saves the current value of Program Counter to the stack and invokes the NMI handler method at address `$0066`.
+
+The ZX Spectrum 48 does not handle non-maskable interrupt (unless some extra peripheral device does it).
+
+The other type of interrupt is the maskable interrupt (INT). Developers can disable it with the `DI` instruction and enable it with `EI`. Z80 supports three interrupt modes:
+- Interrupt mode zero (activated by the `IM 0` instruction) reads an instruction opcode from the bus and executes that particular instruction.
+- Interrupt mode one (`IM 1`) executes an `RST $38` instruction (calls the handler routine at address `$0038`) and returns to the next instruction to continue the control flow.
+-Interrupt mode two (`IM 2`) is more complex. It reads the current value from the bus (so a peripheral device can put that value to the bus just before raising the interrupt signal) and combines it with the value of register I to create a 16-bit address. During this operation, the I register provides the upper 8 bits (MSB), the value from the bus gives the lower 8 bits (LSB). This address is a storage location of the interrupt handler routine. So, the CPU reads the 16-bit value stored at this calculated address and executes the pointed interrupt handler routine.
+
+The ZX Spectrum 48 (its operating system and BASIC interpreter) uses only IM 1, so by default, the interrupt handler is the routine at address `$0038`. This handler increments the real-time clock and queries the keyboard.
+
+If an app or a game wants to handle interrupt in a specific way, it must turn on Interrupt mode 2 (`IM 2`). 
+
+> *Note*. You can turn the CPU into Interrupt mode 0 with `IM 0`. Because ZX Spectrum does not have a particular device to put an operation code on the bus, the CPU would read an `$ff` byte. This value is the opcode for the `RST $38` instruction, so eventually, the CPU would execute the same handler (the routine starting at address `$0038`) as it would with Interrupt mode 1.
+
+You already learned that accurate timing is a crucial element of a computer, and so a high fidelity emulator must implement such precise timing. Regarding this topic, there are a few essential facts you should know about ZX Spectrum 48K:
+
+First, the Z80 CPU does not interrupt an instruction being executed. In the last phase of the current instruction, the CPU checks the `INT` signal. At that moment, the Program Counter register (PC) already points to the subsequent instruction. If the `INT` signal is active and the non-maskable interrupt is enabled, the CPU saves the value of PC to the stack, executes the interrupt handler method (according to the current mode, 0, 1, or 2). When the handler's execution completes, the control flow returns to the address saved to the stack at the beginning of the interrupt. As you just learned, it is the address of the subsequent information.
+
+Second, The ULA in ZX Spectrum 48K generates a 32 T-states long interrupt signal. Because of the way the interrupt handler works, the hardware needs to use an appropriate interrupt signal length. If the signal is too short, the CPU may not observe it (remember, Z80 tests the interrupt signal only at the last T-state of instruction execution). Should the signal be too long, the CPU would return from the interrupt handler, execute a single instruction, and then invoke the interrupt handler again while the `INT` signal is active.
+
+Because the longest Z80 instruction takes 23 T-states, a 32-T-state long signal is excellent enough to avoid missing an active `INT` and short enough to prevent multiple interrupt handler execution.
+
+> *Note*: A minimal execution handler generally contains at least an `EI` (enable interrupt) and a `RET` (return) instruction. Their length, plus the length of the handler invocation mechanism, is longer than 32 T-states.
+
+Third, the ULA activates the `INT` signal always at the same time within a screen rendering frame. The ULA has an internal clock to handle the 69888 T-states of screen rendering (from the ULA's point of view, it is actually 2x69888 = 139 776 clock cycles). The ULA activates the INT signal when the screen rendering process is exactly 64 raster lines before displaying the top-left pixel of the display. The following figure helps you understand how it goes:
+
 ![Screen and INT](./figures/screen-int.svg)
 
+Third, the ULA activates the `INT` signal always at the same time within a screen rendering frame. The ULA has an internal clock to handle the 69888 T-states of screen rendering (from the ULA's point of view, it is actually 2x69888 = 139 776 clock cycles). The ULA activates the INT signal when the screen rendering process is exactly 64 raster lines before displaying the top-left pixel of the display. The following figure helps you understand how it goes:
+
+Rendering one line takes exactly 224 T-states (or 448 ULA clock cycles). The ULA activates the interrupt signal at T-state 0. 64 lines later, when it is at T-state 14336 (64x224), it renders the top-left display pixel. At T-state 14463 (14336 + 127), the rendering reaches the last display pixel in the first line. (Recall, the ULA displays two pixels during a single CPU clock cycle).
+
+Following this pattern, you can calculate the T-state index of a particular screen pixel.
+
+> *Note*: Games leverage this knowledge when they provide special effects, like drawing on the border. When the ULA activates the interrupt signal, there might be a delay because the CPU completes the current instruction before starting the interrupt handler. So, the interrupt handler cannot precisely know at which T-state index of the rendering process it starts.
 
 ## The Keyboard
 
+ZX Spectrum 48K has 40 physical keys arranged in an 8x5 matrix:
+
+![Keyboard matrix](./figures/keyboard-matrix.png)
+
+*Source*: https://www.1000bit.it/support/manuali/sinclair/zxspectrum/sm/supp2.html
+
+Querying the state of a particular key is pretty simple. You can use the Z80 CPU's `IN` instruction to query a particular ULA port (remember, ULA support only event port numbers). When you read an input port, the CPU puts the port address to the address bus. The keyboard uses the top 8 address lines (A8-A15). Each key is a push button. If you press any of them, they connect the corresponding address line value to one of the data bus lines (from 0 to 4).
+
+You read a value bit 1 on its associated data line when a key is not pressed. To sense a pressed key, you issue an `IN` statement that puts a zero bit on the address line of the button, and the code checks the appropriate bit of the data read back.
+
+For example, if you want to check if key R is pressed, read the value of port `$fbfe`. The `$fb` part sets the A10 line to zero, while the other lines between A8 and A15 to one. The `$fe` part takes care that the port address is even to active the ULA handle it as functioning I/O port.
+If bit 3 of the value read back is 0, key R is pressed.
+
 ## The Beeper
+
+ZX spectrum has a built-in speaker bound to a single output port bit and alternating that bit value with a particular frequency will generate a sound through the speaker. You can set the beeper bit value through bit 4 of the data sent to any port with sm even address.
 
 ## The Tape
 
+*TBD*
+
 ## The Floating Bus
+
+*TBD*
