@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generator: Adobe Illustrator 12.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 51448)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
+	<!ENTITY ns_svg "http://www.w3.org/2000/svg">
+	<!ENTITY ns_xlink "http://www.w3.org/1999/xlink">
+]>
+<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="852" height="663" viewBox="0 0 852 663" overflow="visible" enable-background="new 0 0 852 663" xml:space="preserve">
+<g>
+	<rect x="88" y="38.5" fill="#FFFFFF" stroke="#000000" stroke-width="1" width="157.5" height="585.002"/>
+	<text transform="matrix(1, 0, 0, 1, 94.4858, 67.3354)"><tspan x="0" y="0" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">M1</tspan><tspan x="0" y="45" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">MREQ</tspan><tspan x="0" y="67.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">IORQ</tspan><tspan x="0" y="90" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">WR</tspan><tspan x="0" y="112.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">RD</tspan><tspan x="0" y="157.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">REFSH</tspan><tspan x="0" y="202.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">HALT</tspan><tspan x="0" y="247.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">WAIT</tspan><tspan x="0" y="292.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">INT</tspan><tspan x="0" y="315" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">NMI</tspan><tspan x="0" y="360" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">RESET</tspan><tspan x="0" y="405" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">BUSRQ</tspan><tspan x="0" y="427.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">BUSAK</tspan><tspan x="0" y="472.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21"> CLK</tspan><tspan x="0" y="517.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">Vcc</tspan><tspan x="0" y="540" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">GND</tspan></text>
+	<text transform="matrix(1, 0, 0, 1, 52.0361, 58.3345)"><tspan x="0" y="0" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">27</tspan><tspan x="0" y="45" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">19</tspan><tspan x="0" y="67.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">20</tspan><tspan x="0" y="90" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">22</tspan><tspan x="0" y="112.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">21</tspan><tspan x="0" y="157.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">28</tspan><tspan x="0" y="202.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">18</tspan><tspan x="0" y="247.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">24</tspan><tspan x="0" y="292.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">16</tspan><tspan x="0" y="315" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">17</tspan><tspan x="0" y="360" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">26</tspan><tspan x="0" y="405" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">25</tspan><tspan x="0" y="427.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">23</tspan><tspan x="12.6" y="472.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">6</tspan><tspan x="0" y="517.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">11</tspan><tspan x="0" y="540" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">29</tspan></text>
+	<text transform="matrix(1, 0, 0, 1, 257.236, 58.3345)"><tspan x="0" y="0" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">30</tspan><tspan x="0" y="22.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">31</tspan><tspan x="0" y="45" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">32</tspan><tspan x="0" y="67.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">33</tspan><tspan x="0" y="90" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">34</tspan><tspan x="0" y="112.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">35</tspan><tspan x="0" y="135" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">36</tspan><tspan x="0" y="157.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">37</tspan><tspan x="0" y="180" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">38</tspan><tspan x="0" y="202.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">39</tspan><tspan x="0" y="225" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">40</tspan><tspan x="0" y="247.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">1</tspan><tspan x="0" y="270" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">2</tspan><tspan x="0" y="292.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">3</tspan><tspan x="0" y="315" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">4</tspan><tspan x="0" y="337.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">5</tspan><tspan x="0" y="382.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">14</tspan><tspan x="0" y="405" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">15</tspan><tspan x="0" y="427.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">12</tspan><tspan x="0" y="450" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">8</tspan><tspan x="0" y="472.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">7</tspan><tspan x="0" y="495" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">9</tspan><tspan x="0" y="517.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">10</tspan><tspan x="0" y="540" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">13</tspan></text>
+	<text transform="matrix(1, 0, 0, 1, 214.786, 67.3354)"><tspan x="0" y="0" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A0</tspan><tspan x="0" y="22.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A1</tspan><tspan x="0" y="45" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A2</tspan><tspan x="0" y="67.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A3</tspan><tspan x="0" y="90" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A4</tspan><tspan x="0" y="112.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A5</tspan><tspan x="0" y="135" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A6</tspan><tspan x="0" y="157.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A7</tspan><tspan x="0" y="180" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A8</tspan><tspan x="0" y="202.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A9</tspan><tspan x="-12.6" y="225" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A10</tspan><tspan x="-12.6" y="247.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A11</tspan><tspan x="-12.6" y="270" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A12</tspan><tspan x="-12.6" y="292.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A13</tspan><tspan x="-12.6" y="315" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A14</tspan><tspan x="-12.6" y="337.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">A15</tspan><tspan x="0" y="382.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">D0</tspan><tspan x="0" y="405" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">D1</tspan><tspan x="0" y="427.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">D2</tspan><tspan x="0" y="450" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">D3</tspan><tspan x="0" y="472.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">D4</tspan><tspan x="0" y="495" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">D5</tspan><tspan x="0" y="517.5" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">D6</tspan><tspan x="0" y="540" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">D7</tspan></text>
+	<line id="M1"    stroke="#000000" stroke-width="1" x1="43" y1="61" x2="88" y2="61"/>
+	<circle fill="#FFFFFF" stroke="#000000" stroke-width="1" cx="84.736" cy="61" r="3.75"/>
+      <path stroke="#000000" stroke-width="1" d="M43 51 l-10 10 10 10"/>
+	<line id="MREQ"  stroke="#000000" stroke-width="1" x1="43" y1="106" x2="88" y2="106"/>
+	<circle fill="#FFFFFF" stroke="#000000" stroke-width="1" cx="84.736" cy="106" r="3.75"/>
+	<line id="IOREQ" stroke="#000000" stroke-width="1" x1="43" y1="128.5" x2="88" y2="128.5"/>
+	<circle fill="#FFFFFF" stroke="#000000" stroke-width="1" cx="84.736" cy="128.5" r="3.75"/>
+      <path stroke="#000000" stroke-width="1" d="M43 96 l-10 10 10 10"/>
+	<line id="WR"    stroke="#000000" stroke-width="1" x1="43" y1="151" x2="88" y2="151"/>
+	<circle fill="#FFFFFF" stroke="#000000" stroke-width="1" cx="84.736" cy="151" r="3.75"/>
+      <path stroke="#000000" stroke-width="1" d="M43 141 l-10 10 10 10"/>
+	<line id="RD"    stroke="#000000" stroke-width="1" x1="43" y1="173.5" x2="88" y2="173.5"/>
+	<circle fill="#FFFFFF" stroke="#000000" stroke-width="1" cx="84.736" cy="173.5" r="3.75"/>
+      <path stroke="#000000" stroke-width="1" d="M43 163.5 l-10 10 10 10"/>
+	<line id="REF"   stroke="#000000" stroke-width="1" x1="43" y1="218.5" x2="88" y2="218.5"/>
+	<circle fill="#FFFFFF" stroke="#000000" stroke-width="1" cx="84.736" cy="218.5" r="3.75"/>
+      <path stroke="#000000" stroke-width="1" d="M43 208.5 l-10 10 10 10"/>
+	<line id="HALT"  stroke="#000000" stroke-width="1" x1="43" y1="263.5" x2="88" y2="263.5"/>
+	<circle fill="#FFFFFF" stroke="#000000" stroke-width="1" cx="84.736" cy="263.5" r="3.75"/>
+      <path stroke="#000000" stroke-width="1" d="M43 253.5 l-10 10 10 10"/>
+	<line id="WAIT"  stroke="#000000" stroke-width="1" x1="43" y1="308.5" x2="88" y2="308.5"/>
+	<circle fill="#FFFFFF" stroke="#000000" stroke-width="1" cx="84.736" cy="308.5" r="3.75"/>
+      <path stroke="#000000" stroke-width="1" d="M33 298.5 l10 10 -10 10"/>
+	<line id="INT"   stroke="#000000" stroke-width="1" x1="43" y1="353.5" x2="88" y2="353.5"/>
+	<circle fill="#FFFFFF" stroke="#000000" stroke-width="1" cx="84.736" cy="353.5" r="3.75"/>
+      <path stroke="#000000" stroke-width="1" d="M33 343.5 l10 10 -10 10"/>
+	<line id="NMI"   stroke="#000000" stroke-width="1" x1="43" y1="376" x2="88" y2="376"/>
+	<circle fill="#FFFFFF" stroke="#000000" stroke-width="1" cx="84.736" cy="376" r="3.75"/>
+      <path stroke="#000000" stroke-width="1" d="M33 366 l10 10 -10 10"/>
+	<line id="RESET" stroke="#000000" stroke-width="1" x1="43" y1="421" x2="88" y2="421"/>
+	<circle fill="#FFFFFF" stroke="#000000" stroke-width="1" cx="84.736" cy="421" r="3.75"/>
+      <path stroke="#000000" stroke-width="1" d="M33 411 l10 10 -10 10"/>
+	<line id="BUSRQ" stroke="#000000" stroke-width="1" x1="43" y1="466" x2="88" y2="466"/>
+	<circle fill="#FFFFFF" stroke="#000000" stroke-width="1" cx="84.736" cy="466" r="3.75"/>
+      <path stroke="#000000" stroke-width="1" d="M33 456 l10 10 -10 10"/>
+	<line id="BUSAK" stroke="#000000" stroke-width="1" x1="43" y1="488.5" x2="88" y2="488.5"/>
+	<circle fill="#FFFFFF" stroke="#000000" stroke-width="1" cx="84.736" cy="488.5" r="3.75"/>
+      <path stroke="#000000" stroke-width="1" d="M43 478.5 l-10 10 10 10"/>
+	<line id="CLK"   stroke="#000000" stroke-width="1" x1="43" y1="533.5" x2="88" y2="533.5"/>
+	<polyline fill="none" stroke="#000000" stroke-width="1" points="88,525.213 98.606,533.5 88,542.455"/>
+      <path stroke="#000000" stroke-width="1" d="M33 523.5 l10 10 -10 10"/>
+	<line id="VCC"   stroke="#000000" stroke-width="1" x1="43" y1="578.5" x2="88" y2="578.5"/>
+	<line id="GND"   stroke="#000000" stroke-width="1" x1="43" y1="601" x2="88" y2="601"/>
+	<line id="A0"    stroke="#000000" stroke-width="1" x1="245.5" y1="61" x2="290.5" y2="61"/>
+      <path stroke="#000000" stroke-width="1" d="M290 51 l10 10 -10 10"/>
+	<line id="A1"    stroke="#000000" stroke-width="1" x1="245.5" y1="83.5" x2="290.5" y2="83.5"/>
+      <path stroke="#000000" stroke-width="1" d="M290 73.5 l10 10 -10 10"/>
+	<line id="A2"    stroke="#000000" stroke-width="1" x1="245.5" y1="106" x2="290.5" y2="106"/>
+      <path stroke="#000000" stroke-width="1" d="M290 96 l10 10 -10 10"/>
+	<line id="A3"    stroke="#000000" stroke-width="1" x1="245.5" y1="128.5" x2="290.5" y2="128.5"/>
+      <path stroke="#000000" stroke-width="1" d="M290 118.5 l10 10 -10 10"/>
+	<line id="A4"    stroke="#000000" stroke-width="1" x1="245.5" y1="151" x2="290.5" y2="151"/>
+      <path stroke="#000000" stroke-width="1" d="M290 141 l10 10 -10 10"/>
+	<line id="A5"    stroke="#000000" stroke-width="1" x1="245.5" y1="173.5" x2="290.5" y2="173.5"/>
+      <path stroke="#000000" stroke-width="1" d="M290 163.5 l10 10 -10 10"/>
+	<line id="A6"    stroke="#000000" stroke-width="1" x1="245.5" y1="196" x2="290.5" y2="196"/>
+      <path stroke="#000000" stroke-width="1" d="M290 186 l10 10 -10 10"/>
+	<line id="A7"    stroke="#000000" stroke-width="1" x1="245.5" y1="218.5" x2="290.5" y2="218.5"/>
+      <path stroke="#000000" stroke-width="1" d="M290 208.5 l10 10 -10 10"/>
+	<line id="A8"    stroke="#000000" stroke-width="1" x1="245.5" y1="241" x2="290.5" y2="241"/>
+      <path stroke="#000000" stroke-width="1" d="M290 231 l10 10 -10 10"/>
+	<line id="A9"    stroke="#000000" stroke-width="1" x1="245.5" y1="263.5" x2="290.5" y2="263.5"/>
+      <path stroke="#000000" stroke-width="1" d="M290 253.5 l10 10 -10 10"/>
+	<line id="A10"   stroke="#000000" stroke-width="1" x1="245.5" y1="286" x2="290.5" y2="286"/>
+      <path stroke="#000000" stroke-width="1" d="M290 276 l10 10 -10 10"/>
+	<line id="A11"   stroke="#000000" stroke-width="1" x1="245.5" y1="308.5" x2="290.5" y2="308.5"/>
+      <path stroke="#000000" stroke-width="1" d="M290 298.5 l10 10 -10 10"/>
+	<line id="A12"   stroke="#000000" stroke-width="1" x1="245.5" y1="331" x2="290.5" y2="331"/>
+      <path stroke="#000000" stroke-width="1" d="M290 321 l10 10 -10 10"/>
+	<line id="A13"   stroke="#000000" stroke-width="1" x1="245.5" y1="353.5" x2="290.5" y2="353.5"/>
+      <path stroke="#000000" stroke-width="1" d="M290 343.5 l10 10 -10 10"/>
+	<line id="A14"   stroke="#000000" stroke-width="1" x1="245.5" y1="376" x2="290.5" y2="376"/>
+      <path stroke="#000000" stroke-width="1" d="M290 366 l10 10 -10 10"/>
+	<line id="A15"   stroke="#000000" stroke-width="1" x1="245.5" y1="398.5" x2="290.5" y2="398.5"/>
+      <path stroke="#000000" stroke-width="1" d="M290 388.5 l10 10 -10 10"/>
+	<line id="D0"    stroke="#000000" stroke-width="1" x1="245.5" y1="443.5" x2="290.5" y2="443.5"/>
+	<line id="D1"    stroke="#000000" stroke-width="1" x1="245.5" y1="466" x2="290.5" y2="466"/>
+	<line id="D2"    stroke="#000000" stroke-width="1" x1="245.5" y1="488.5" x2="290.5" y2="488.5"/>
+	<line id="D3"    stroke="#000000" stroke-width="1" x1="245.5" y1="511" x2="290.5" y2="511"/>
+	<line id="D4"    stroke="#000000" stroke-width="1" x1="245.5" y1="533.5" x2="290.5" y2="533.5"/>
+	<line id="D5"    stroke="#000000" stroke-width="1" x1="245.5" y1="556" x2="290.5" y2="556"/>
+	<line id="D6"    stroke="#000000" stroke-width="1" x1="245.5" y1="578.5" x2="290.5" y2="578.5"/>
+	<line id="D7"    stroke="#000000" stroke-width="1" x1="245.5" y1="601.336" x2="290.5" y2="601.336"/>
+</g>
+<g>
+	<line fill="none" stroke="#000000" stroke-width="0.6971" x1="649.908" y1="113.41" x2="686.722" y2="82.52"/>
+	<linearGradient id="XMLID_72_" gradientUnits="userSpaceOnUse" x1="375.0933" y1="346.4512" x2="375.0933" y2="364.3278">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_72_)" stroke="#000000" stroke-width="0.375" points="378.744,339.482 378.744,354.155 376.312,359.577 376.312,375.989 373.876,378.034 373.876,361.618 371.442,360.28 371.442,345.607"/>
+	<linearGradient id="XMLID_73_" gradientUnits="userSpaceOnUse" x1="376.3164" y1="344.2686" x2="385.4938" y2="344.2686">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_73_)" stroke="#000000" stroke-width="0.375" points="371.442,345.607 382.761,349.055 390.062,342.93 378.742,339.482"/>
+	<linearGradient id="XMLID_74_" gradientUnits="userSpaceOnUse" x1="389.252" y1="333.4141" x2="398.4294" y2="333.4141">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_74_)" stroke="#000000" stroke-width="0.375" points="384.378,334.753 395.696,338.2 402.998,332.075 391.678,328.628"/>
+	<linearGradient id="XMLID_75_" gradientUnits="userSpaceOnUse" x1="402.1875" y1="322.5586" x2="411.3644" y2="322.5586">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_75_)" stroke="#000000" stroke-width="0.375" points="397.313,323.897 408.631,327.345 415.933,321.22 404.613,317.772"/>
+	<linearGradient id="XMLID_76_" gradientUnits="userSpaceOnUse" x1="415.1221" y1="311.7046" x2="424.2995" y2="311.7046">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_76_)" stroke="#000000" stroke-width="0.375" points="410.248,313.043 421.566,316.491 428.868,310.365 417.549,306.918"/>
+	<linearGradient id="XMLID_77_" gradientUnits="userSpaceOnUse" x1="428.0576" y1="300.8491" x2="437.235" y2="300.8491">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_77_)" stroke="#000000" stroke-width="0.375" points="423.184,302.188 434.501,305.636 441.804,299.511 430.484,296.062"/>
+	<linearGradient id="XMLID_78_" gradientUnits="userSpaceOnUse" x1="440.9927" y1="289.9946" x2="450.1691" y2="289.9946">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_78_)" stroke="#000000" stroke-width="0.375" points="436.119,291.333 447.438,294.781 454.737,288.655 443.419,285.208"/>
+	<linearGradient id="XMLID_79_" gradientUnits="userSpaceOnUse" x1="453.9282" y1="279.1396" x2="463.1047" y2="279.1396">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_79_)" stroke="#000000" stroke-width="0.375" points="449.055,280.479 460.373,283.927 467.673,277.801 456.355,274.353"/>
+	<linearGradient id="XMLID_80_" gradientUnits="userSpaceOnUse" x1="466.8633" y1="268.2852" x2="476.0392" y2="268.2852">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_80_)" stroke="#000000" stroke-width="0.375" points="461.99,269.624 473.309,273.071 480.607,266.946 469.291,263.499"/>
+	<linearGradient id="XMLID_81_" gradientUnits="userSpaceOnUse" x1="479.7998" y1="257.4297" x2="488.9763" y2="257.4297">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_81_)" stroke="#000000" stroke-width="0.375" points="474.926,258.77 486.243,262.216 493.544,256.091 482.225,252.644"/>
+	<linearGradient id="XMLID_82_" gradientUnits="userSpaceOnUse" x1="492.7344" y1="246.5752" x2="501.9108" y2="246.5752">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_82_)" stroke="#000000" stroke-width="0.375" points="487.86,247.914 499.18,251.361 506.479,245.236 495.161,241.789"/>
+	<linearGradient id="XMLID_83_" gradientUnits="userSpaceOnUse" x1="505.6699" y1="235.7202" x2="514.8459" y2="235.7202">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_83_)" stroke="#000000" stroke-width="0.375" points="500.797,237.06 512.113,240.507 519.414,234.381 508.096,230.934"/>
+	<linearGradient id="XMLID_84_" gradientUnits="userSpaceOnUse" x1="518.6045" y1="224.8652" x2="527.7814" y2="224.8652">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_84_)" stroke="#000000" stroke-width="0.375" points="513.73,226.204 525.049,229.651 532.35,223.526 521.031,220.079"/>
+	<linearGradient id="XMLID_85_" gradientUnits="userSpaceOnUse" x1="531.54" y1="214.0107" x2="540.7155" y2="214.0107">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_85_)" stroke="#000000" stroke-width="0.375" points="526.667,215.35 537.984,218.798 545.283,212.671 533.967,209.224"/>
+	<linearGradient id="XMLID_86_" gradientUnits="userSpaceOnUse" x1="544.4756" y1="203.1558" x2="553.652" y2="203.1558">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_86_)" stroke="#000000" stroke-width="0.375" points="539.602,204.495 550.919,207.942 558.22,201.817 546.902,198.369"/>
+	<linearGradient id="XMLID_87_" gradientUnits="userSpaceOnUse" x1="557.4102" y1="192.3013" x2="566.5866" y2="192.3013">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_87_)" stroke="#000000" stroke-width="0.375" points="552.536,193.64 563.855,197.088 571.154,190.962 559.837,187.515"/>
+	<linearGradient id="XMLID_88_" gradientUnits="userSpaceOnUse" x1="570.3457" y1="181.4458" x2="579.5217" y2="181.4458">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_88_)" stroke="#000000" stroke-width="0.375" points="565.473,182.785 576.789,186.232 584.09,180.107 572.771,176.659"/>
+	<linearGradient id="XMLID_89_" gradientUnits="userSpaceOnUse" x1="583.2803" y1="170.5913" x2="592.4572" y2="170.5913">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_89_)" stroke="#000000" stroke-width="0.375" points="578.406,171.931 589.726,175.378 597.025,169.253 585.707,165.805"/>
+	<linearGradient id="XMLID_90_" gradientUnits="userSpaceOnUse" x1="596.2168" y1="159.7363" x2="605.3932" y2="159.7363">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_90_)" stroke="#000000" stroke-width="0.375" points="591.343,161.075 602.66,164.522 609.961,158.397 598.643,154.95"/>
+	<linearGradient id="XMLID_91_" gradientUnits="userSpaceOnUse" x1="609.1514" y1="148.8818" x2="618.3278" y2="148.8818">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_91_)" stroke="#000000" stroke-width="0.375" points="604.277,150.221 615.596,153.668 622.896,147.542 611.578,144.096"/>
+	<linearGradient id="XMLID_92_" gradientUnits="userSpaceOnUse" x1="622.0869" y1="138.0269" x2="631.2639" y2="138.0269">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polygon fill="url(#XMLID_92_)" stroke="#000000" stroke-width="0.375" points="617.213,139.365 628.531,142.813 635.832,136.688 624.513,133.24"/>
+	<polyline fill="url(#XMLID_74_)" stroke="#000000" stroke-width="0.375" points="384.378,334.753 395.696,338.2 402.998,332.075 391.678,328.628"/>
+	<linearGradient id="XMLID_94_" gradientUnits="userSpaceOnUse" x1="402.1885" y1="322.5586" x2="411.3659" y2="322.5586">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_94_)" stroke="#000000" stroke-width="0.375" points="397.314,323.897 408.633,327.345 415.935,321.22 404.615,317.772"/>
+	<linearGradient id="XMLID_95_" gradientUnits="userSpaceOnUse" x1="415.124" y1="311.7051" x2="424.301" y2="311.7051">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_95_)" stroke="#000000" stroke-width="0.375" points="410.25,313.044 421.568,316.491 428.869,310.366 417.55,306.919"/>
+	<linearGradient id="XMLID_96_" gradientUnits="userSpaceOnUse" x1="428.0596" y1="300.8501" x2="437.2365" y2="300.8501">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_96_)" stroke="#000000" stroke-width="0.375" points="423.186,302.189 434.504,305.637 441.805,299.511 430.485,296.063"/>
+	<linearGradient id="XMLID_97_" gradientUnits="userSpaceOnUse" x1="417.125" y1="369.5537" x2="439.6367" y2="369.5537">
+		<stop offset="0.1011" style="stop-color: rgb(40, 48, 73);"/>
+		<stop offset="0.3876" style="stop-color: rgb(157, 177, 179);"/>
+		<stop offset="0.618" style="stop-color: rgb(40, 48, 73);"/>
+	</linearGradient>
+	<path fill="url(#XMLID_97_)" d="M436.173,379.288c1.655,0.934,3.424,2.525,3.417,4.594c0.015-6.812,0.047-21.982,0.047-21.982   c0.012-3.693-4.771-5.506-7.654-6.15c-4.723-1.035-10.899-0.707-14.811,2.516c0,0-0.018,8.045-0.021,10.273l-0.025,11.707   C421.948,376.206,430.906,376.313,436.173,379.288"/>
+	<linearGradient id="XMLID_98_" gradientUnits="userSpaceOnUse" x1="423.666" y1="355.5713" x2="423.666" y2="355.5713">
+		<stop offset="0.1011" style="stop-color: rgb(40, 48, 73);"/>
+		<stop offset="0.3876" style="stop-color: rgb(157, 177, 179);"/>
+		<stop offset="0.618" style="stop-color: rgb(40, 48, 73);"/>
+	</linearGradient>
+	<line fill="url(#XMLID_98_)" x1="423.666" y1="355.571" x2="423.666" y2="355.571"/>
+	<radialGradient id="XMLID_99_" cx="391.6782" cy="328.6265" r="128.828" gradientUnits="userSpaceOnUse">
+		<stop offset="0" style="stop-color: rgb(157, 177, 179);"/>
+		<stop offset="1" style="stop-color: rgb(40, 48, 73);"/>
+	</radialGradient>
+	<path fill="url(#XMLID_99_)" d="M375.508,343.659l41.664,14.605l-0.047,21.98l-41.663-14.604L375.508,343.659z M437.692,365.458   l-0.046,21.98l41.662,14.607l0.047-21.982L437.692,365.458z"/>
+	<radialGradient id="XMLID_100_" cx="735.5752" cy="202.585" r="205.6974" gradientUnits="userSpaceOnUse">
+		<stop offset="0" style="stop-color: rgb(129, 134, 144);"/>
+		<stop offset="1" style="stop-color: rgb(35, 50, 73);"/>
+	</radialGradient>
+	<polygon fill="url(#XMLID_100_)" points="747.035,155.454 746.988,177.435 479.309,402.046 479.355,380.063"/>
+	<radialGradient id="XMLID_101_" cx="525.5049" cy="253.1401" r="211.0661" gradientUnits="userSpaceOnUse">
+		<stop offset="0" style="stop-color: rgb(129, 134, 144);"/>
+		<stop offset="1" style="stop-color: rgb(35, 50, 73);"/>
+	</radialGradient>
+	<path fill="url(#XMLID_101_)" d="M643.187,119.05l103.849,36.404l-267.68,224.609l-41.663-14.605   c3.646-3.059,2.015-7.148-3.656-9.139c-5.657-1.982-13.219-1.115-16.864,1.945l-41.664-14.605L643.187,119.05z"/>
+	<linearGradient id="XMLID_102_" gradientUnits="userSpaceOnUse" x1="491.4834" y1="384.1201" x2="500.6603" y2="384.1201">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_102_)" stroke="#000000" stroke-width="0.375" points="486.609,385.458 497.927,388.905 505.229,382.78 493.91,379.335"/>
+	<linearGradient id="XMLID_103_" gradientUnits="userSpaceOnUse" x1="501.5781" y1="389.749" x2="501.5781" y2="407.6249">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_103_)" stroke="#000000" stroke-width="0.375" points="505.229,382.78 505.229,397.452 502.796,402.874 502.796,419.286 500.359,421.331 500.359,404.917 497.927,403.577 497.927,388.905"/>
+	<linearGradient id="XMLID_104_" gradientUnits="userSpaceOnUse" x1="504.418" y1="373.2656" x2="513.5954" y2="373.2656">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_104_)" stroke="#000000" stroke-width="0.375" points="499.544,374.604 510.863,378.052 518.164,371.927 506.845,368.479"/>
+	<linearGradient id="XMLID_105_" gradientUnits="userSpaceOnUse" x1="514.5137" y1="378.8955" x2="514.5137" y2="396.7714">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_105_)" stroke="#000000" stroke-width="0.375" points="518.164,371.927 518.164,386.597 515.732,392.021 515.732,408.435 513.296,410.478 513.296,394.062 510.863,392.724 510.863,378.052"/>
+	<linearGradient id="XMLID_106_" gradientUnits="userSpaceOnUse" x1="517.3555" y1="362.4102" x2="526.5329" y2="362.4102">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_106_)" stroke="#000000" stroke-width="0.375" points="512.481,363.749 523.799,367.196 531.102,361.071 519.782,357.624"/>
+	<linearGradient id="XMLID_107_" gradientUnits="userSpaceOnUse" x1="527.4502" y1="368.04" x2="527.4502" y2="385.916">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_107_)" stroke="#000000" stroke-width="0.375" points="531.102,361.071 531.102,375.743 528.668,381.165 528.668,397.581 526.232,399.622 526.232,383.208 523.799,381.868 523.799,367.196"/>
+	<linearGradient id="XMLID_108_" gradientUnits="userSpaceOnUse" x1="530.29" y1="351.5557" x2="539.468" y2="351.5557">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_108_)" stroke="#000000" stroke-width="0.375" points="525.416,352.896 536.734,356.343 544.037,350.218 532.717,346.77"/>
+	<linearGradient id="XMLID_109_" gradientUnits="userSpaceOnUse" x1="540.3857" y1="357.1865" x2="540.3857" y2="375.0624">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_109_)" stroke="#000000" stroke-width="0.375" points="544.037,350.218 544.037,364.888 541.604,370.312 541.604,386.726 539.168,388.769 539.168,372.353 536.734,371.015 536.734,356.343"/>
+	<linearGradient id="XMLID_110_" gradientUnits="userSpaceOnUse" x1="543.2256" y1="340.7017" x2="552.403" y2="340.7017">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_110_)" stroke="#000000" stroke-width="0.375" points="538.352,342.04 549.67,345.488 556.972,339.362 545.651,335.915"/>
+	<linearGradient id="XMLID_111_" gradientUnits="userSpaceOnUse" x1="553.3203" y1="346.3311" x2="553.3203" y2="364.2072">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_111_)" stroke="#000000" stroke-width="0.375" points="556.972,339.362 556.972,354.034 554.539,359.456 554.539,375.872 552.103,377.913 552.103,361.497 549.67,360.159 549.67,345.488"/>
+	<linearGradient id="XMLID_112_" gradientUnits="userSpaceOnUse" x1="556.1611" y1="329.8472" x2="565.3381" y2="329.8472">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_112_)" stroke="#000000" stroke-width="0.375" points="551.287,331.187 562.605,334.634 569.906,328.509 558.588,325.061"/>
+	<linearGradient id="XMLID_113_" gradientUnits="userSpaceOnUse" x1="566.2559" y1="335.4775" x2="566.2559" y2="353.3537">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_113_)" stroke="#000000" stroke-width="0.375" points="569.906,328.509 569.906,343.18 567.475,348.603 567.475,365.017 565.039,367.06 565.039,350.644 562.605,349.306 562.605,334.634"/>
+	<linearGradient id="XMLID_114_" gradientUnits="userSpaceOnUse" x1="569.0986" y1="318.9927" x2="578.2756" y2="318.9927">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_114_)" stroke="#000000" stroke-width="0.375" points="564.225,320.331 575.541,323.779 582.844,317.653 571.525,314.206"/>
+	<linearGradient id="XMLID_115_" gradientUnits="userSpaceOnUse" x1="579.1924" y1="324.6226" x2="579.1924" y2="342.4996">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_115_)" stroke="#000000" stroke-width="0.375" points="582.844,317.653 582.844,332.324 580.41,337.748 580.41,354.161 577.975,356.206 577.975,339.788 575.541,338.451 575.541,323.779"/>
+	<linearGradient id="XMLID_116_" gradientUnits="userSpaceOnUse" x1="582.0322" y1="308.1382" x2="591.2097" y2="308.1382">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_116_)" stroke="#000000" stroke-width="0.375" points="577.158,309.478 588.478,312.925 595.778,306.8 584.459,303.352"/>
+	<linearGradient id="XMLID_117_" gradientUnits="userSpaceOnUse" x1="592.1279" y1="313.7686" x2="592.1279" y2="331.6445">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_117_)" stroke="#000000" stroke-width="0.375" points="595.778,306.8 595.778,321.471 593.347,326.894 593.347,343.308 590.91,345.351 590.91,328.935 588.478,327.597 588.478,312.925"/>
+	<linearGradient id="XMLID_118_" gradientUnits="userSpaceOnUse" x1="594.9688" y1="297.2837" x2="604.1462" y2="297.2837">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_118_)" stroke="#000000" stroke-width="0.375" points="590.095,298.622 601.412,302.07 608.715,295.944 597.395,292.497"/>
+	<linearGradient id="XMLID_119_" gradientUnits="userSpaceOnUse" x1="605.0635" y1="302.9131" x2="605.0635" y2="320.7895">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_119_)" stroke="#000000" stroke-width="0.375" points="608.715,295.944 608.715,310.615 606.281,316.039 606.281,332.453 603.846,334.496 603.846,318.08 601.412,316.742 601.412,302.07"/>
+	<linearGradient id="XMLID_120_" gradientUnits="userSpaceOnUse" x1="607.9033" y1="286.4292" x2="617.0803" y2="286.4292">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_120_)" stroke="#000000" stroke-width="0.375" points="603.029,287.769 614.348,291.216 621.648,285.091 610.33,281.643"/>
+	<linearGradient id="XMLID_121_" gradientUnits="userSpaceOnUse" x1="617.998" y1="292.0596" x2="617.998" y2="309.9355">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_121_)" stroke="#000000" stroke-width="0.375" points="621.648,285.091 621.648,299.762 619.217,305.185 619.217,321.599 616.781,323.642 616.781,307.226 614.348,305.888 614.348,291.216"/>
+	<linearGradient id="XMLID_122_" gradientUnits="userSpaceOnUse" x1="620.8408" y1="275.5747" x2="630.0178" y2="275.5747">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_122_)" stroke="#000000" stroke-width="0.375" points="615.967,276.913 627.284,280.361 634.586,274.235 623.268,270.788"/>
+	<linearGradient id="XMLID_123_" gradientUnits="userSpaceOnUse" x1="630.9355" y1="281.2041" x2="630.9355" y2="299.0809">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_123_)" stroke="#000000" stroke-width="0.375" points="634.586,274.235 634.586,288.907 632.153,294.33 632.153,310.745 629.717,312.788 629.717,296.371 627.284,295.033 627.284,280.361"/>
+	<linearGradient id="XMLID_124_" gradientUnits="userSpaceOnUse" x1="633.7754" y1="264.7207" x2="642.9533" y2="264.7207">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_124_)" stroke="#000000" stroke-width="0.375" points="628.901,266.06 640.221,269.507 647.522,263.382 636.202,259.935"/>
+	<linearGradient id="XMLID_125_" gradientUnits="userSpaceOnUse" x1="643.8711" y1="270.3506" x2="643.8711" y2="288.2265">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_125_)" stroke="#000000" stroke-width="0.375" points="647.522,263.382 647.522,278.053 645.09,283.476 645.09,299.891 642.653,301.933 642.653,285.518 640.221,284.179 640.221,269.507"/>
+	<linearGradient id="XMLID_126_" gradientUnits="userSpaceOnUse" x1="646.7119" y1="253.8667" x2="655.8889" y2="253.8667">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_126_)" stroke="#000000" stroke-width="0.375" points="641.838,255.206 653.154,258.653 660.457,252.527 649.137,249.08"/>
+	<linearGradient id="XMLID_127_" gradientUnits="userSpaceOnUse" x1="656.8057" y1="259.4961" x2="656.8057" y2="277.372">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_127_)" stroke="#000000" stroke-width="0.375" points="660.457,252.527 660.457,267.198 658.023,272.622 658.023,289.035 655.588,291.078 655.588,274.663 653.154,273.325 653.154,258.653"/>
+	<linearGradient id="XMLID_128_" gradientUnits="userSpaceOnUse" x1="659.6455" y1="243.0117" x2="668.8229" y2="243.0117">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_128_)" stroke="#000000" stroke-width="0.375" points="654.771,244.351 666.091,247.798 673.392,241.673 662.072,238.226"/>
+	<linearGradient id="XMLID_129_" gradientUnits="userSpaceOnUse" x1="669.7412" y1="248.6416" x2="669.7412" y2="266.5175">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_129_)" stroke="#000000" stroke-width="0.375" points="673.392,241.673 673.392,256.344 670.96,261.767 670.96,278.182 668.522,280.224 668.522,263.809 666.091,262.47 666.091,247.798"/>
+	<linearGradient id="XMLID_130_" gradientUnits="userSpaceOnUse" x1="672.583" y1="232.1582" x2="681.7604" y2="232.1582">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_130_)" stroke="#000000" stroke-width="0.375" points="667.709,233.497 679.027,236.944 686.329,230.818 675.009,227.372"/>
+	<linearGradient id="XMLID_131_" gradientUnits="userSpaceOnUse" x1="682.6777" y1="237.7871" x2="682.6777" y2="255.6635">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_131_)" stroke="#000000" stroke-width="0.375" points="686.329,230.818 686.329,245.489 683.896,250.913 683.896,267.327 681.46,269.37 681.46,252.954 679.027,251.616 679.027,236.944"/>
+	<linearGradient id="XMLID_132_" gradientUnits="userSpaceOnUse" x1="685.5186" y1="221.3027" x2="694.6955" y2="221.3027">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_132_)" stroke="#000000" stroke-width="0.375" points="680.645,222.642 691.963,226.089 699.264,219.964 687.945,216.517"/>
+	<linearGradient id="XMLID_133_" gradientUnits="userSpaceOnUse" x1="695.6133" y1="226.9326" x2="695.6133" y2="244.8085">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_133_)" stroke="#000000" stroke-width="0.375" points="699.264,219.964 699.264,234.636 696.832,240.058 696.832,256.473 694.396,258.515 694.396,242.1 691.963,240.761 691.963,226.089"/>
+	<linearGradient id="XMLID_134_" gradientUnits="userSpaceOnUse" x1="698.4541" y1="210.4492" x2="707.631" y2="210.4492">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_134_)" stroke="#000000" stroke-width="0.375" points="693.58,211.788 704.897,215.235 712.199,209.11 700.879,205.663"/>
+	<linearGradient id="XMLID_135_" gradientUnits="userSpaceOnUse" x1="708.5488" y1="216.0791" x2="708.5488" y2="233.955">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_135_)" stroke="#000000" stroke-width="0.375" points="712.199,209.11 712.199,223.78 709.767,229.204 709.767,245.618 707.33,247.661 707.33,231.245 704.897,229.907 704.897,215.235"/>
+	<linearGradient id="XMLID_136_" gradientUnits="userSpaceOnUse" x1="711.3887" y1="199.5942" x2="720.5661" y2="199.5942">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_136_)" stroke="#000000" stroke-width="0.375" points="706.515,200.933 717.834,204.381 725.135,198.255 713.815,194.808"/>
+	<linearGradient id="XMLID_137_" gradientUnits="userSpaceOnUse" x1="721.4844" y1="205.2236" x2="721.4844" y2="223.1">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_137_)" stroke="#000000" stroke-width="0.375" points="725.135,198.255 725.135,212.927 722.703,218.349 722.703,234.764 720.266,236.807 720.266,220.391 717.834,219.052 717.834,204.381"/>
+	<linearGradient id="XMLID_138_" gradientUnits="userSpaceOnUse" x1="724.3262" y1="188.7402" x2="733.5036" y2="188.7402">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_138_)" stroke="#000000" stroke-width="0.375" points="719.452,190.079 730.77,193.526 738.072,187.401 726.753,183.954"/>
+	<linearGradient id="XMLID_139_" gradientUnits="userSpaceOnUse" x1="734.4209" y1="194.3701" x2="734.4209" y2="212.246">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_139_)" stroke="#000000" stroke-width="0.375" points="738.072,187.401 738.072,202.072 735.639,207.495 735.639,223.909 733.203,225.952 733.203,209.536 730.77,208.198 730.77,193.526"/>
+	<linearGradient id="XMLID_140_" gradientUnits="userSpaceOnUse" x1="737.2607" y1="177.8867" x2="746.4377" y2="177.8867">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_140_)" stroke="#000000" stroke-width="0.375" points="732.387,179.226 743.705,182.673 751.006,176.548 739.688,173.101"/>
+	<linearGradient id="XMLID_141_" gradientUnits="userSpaceOnUse" x1="747.3555" y1="183.5166" x2="747.3555" y2="201.3925">
+		<stop offset="0" style="stop-color: rgb(255, 191, 0);"/>
+		<stop offset="1" style="stop-color: rgb(255, 255, 0);"/>
+	</linearGradient>
+	<polyline fill="url(#XMLID_141_)" stroke="#000000" stroke-width="0.375" points="751.006,176.548 751.006,191.218 748.574,196.642 748.574,213.056 746.139,215.099 746.139,198.683 743.705,197.345 743.705,182.673"/>
+	
+		<radialGradient id="XMLID_142_" cx="476.9248" cy="366.4453" r="6.9962" gradientTransform="matrix(1, 0, 0, 1.0851, 0, -26.5834)" gradientUnits="userSpaceOnUse">
+		<stop offset="0.4045" style="stop-color: rgb(255, 255, 255);"/>
+		<stop offset="1" style="stop-color: rgb(159, 159, 169);"/>
+	</radialGradient>
+	<ellipse fill="url(#XMLID_142_)" stroke="#000000" stroke-width="0.375" cx="479.857" cy="368.21" rx="4.793" ry="2.457"/>
+	<text transform="matrix(1, 0, 0, 1, 462.477, 170.945)" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">2.0"</text>
+	<text transform="matrix(1, 0, 0, 1, 404.365, 456.847)" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">0.6"</text>
+	<text transform="matrix(1, 0, 0, 1, 571.722, 402.222)" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">0.1"</text>
+	<text transform="matrix(1, 0, 0, 1, 726.005, 104.117)" font-family="'Bitstream Vera Sans Mono','Luxi Mono','Letter Gothic',monospace" font-size="21">0.5"</text>
+	<g>
+		<g>
+			<line fill="none" stroke="#000000" stroke-width="0.75" x1="382.029" y1="284.118" x2="636.904" y2="70.254"/>
+			<path d="M636.318,70.746l-2.995-1.014l0.03-0.106l4.501-1.492c1.393-0.728,2.786-1.456,4.18-2.184     c-0.959,1.246-1.919,2.491-2.877,3.737l-2.251,4.173l-0.1,0.024L636.318,70.746z"/>
+			<path d="M382.615,283.626l2.996,1.014l-0.031,0.106l-4.5,1.491c-1.393,0.729-2.786,1.457-4.179,2.185     c0.959-1.246,1.918-2.491,2.877-3.737l2.25-4.173l0.1-0.024L382.615,283.626z"/>
+		</g>
+	</g>
+	<line fill="none" stroke="#000000" stroke-width="0.75" x1="753.756" y1="149.813" x2="790.57" y2="118.923"/>
+	<line fill="none" stroke="#000000" stroke-width="0.75" x1="375.508" y1="326.226" x2="375.508" y2="272.156"/>
+	<line fill="none" stroke="#000000" stroke-width="0.75" x1="643.187" y1="101.616" x2="643.187" y2="47.548"/>
+	<line fill="none" stroke="#000000" stroke-width="0.75" x1="527.377" y1="437.999" x2="527.377" y2="401.362"/>
+	<line fill="none" stroke="#000000" stroke-width="0.75" x1="502.104" y1="463.194" x2="502.104" y2="426.562"/>
+	<line fill="none" stroke="#000000" stroke-width="0.75" x1="375.619" y1="419.896" x2="375.619" y2="383.263"/>
+	<line fill="none" stroke="#000000" stroke-width="0.75" x1="540.324" y1="427.616" x2="540.324" y2="390.979"/>
+	<g>
+		<g>
+			<line fill="none" stroke="#000000" stroke-width="0.75" x1="546.788" y1="402.991" x2="557.758" y2="393.784"/>
+			<path d="M547.374,402.499l2.996,1.014l-0.031,0.106l-4.5,1.492c-1.394,0.729-2.786,1.457-4.18,2.185     c0.959-1.245,1.918-2.491,2.876-3.737l2.25-4.173l0.101-0.023L547.374,402.499z"/>
+		</g>
+	</g>
+	<g>
+		<g>
+			<line fill="none" stroke="#000000" stroke-width="0.75" x1="509.943" y1="433.905" x2="520.973" y2="424.651"/>
+			<path d="M520.387,425.144l-2.995-1.015l0.03-0.106l4.501-1.491c1.393-0.728,2.786-1.456,4.18-2.184     c-0.959,1.245-1.919,2.491-2.877,3.736l-2.251,4.173l-0.1,0.023L520.387,425.144z"/>
+		</g>
+	</g>
+	<g>
+		<g>
+			<line fill="none" stroke="#000000" stroke-width="0.75" x1="682.727" y1="95.024" x2="771.173" y2="126.028"/>
+			<path d="M770.451,125.775l-0.656-3.094l0.106-0.027l3.579,3.109c1.337,0.826,2.675,1.653,4.012,2.479     c-1.561-0.189-3.121-0.378-4.682-0.567l-4.737,0.194l-0.071-0.074L770.451,125.775z"/>
+			<path d="M683.448,95.277l0.656,3.094l-0.106,0.027l-3.579-3.109c-1.337-0.826-2.675-1.653-4.012-2.48     c1.561,0.189,3.121,0.379,4.682,0.567l4.737-0.194l0.071,0.074L683.448,95.277z"/>
+		</g>
+	</g>
+	<g>
+		<g>
+			<line fill="none" stroke="#000000" stroke-width="0.75" x1="383.248" y1="406.897" x2="494.635" y2="445.944"/>
+			<path d="M493.913,445.691l-0.656-3.094l0.106-0.027l3.579,3.109c1.337,0.826,2.675,1.653,4.012,2.479     c-1.561-0.188-3.121-0.378-4.682-0.567l-4.737,0.194l-0.071-0.074L493.913,445.691z"/>
+			<path d="M383.97,407.15l0.657,3.094l-0.107,0.027l-3.579-3.109c-1.337-0.826-2.675-1.653-4.012-2.479     c1.561,0.188,3.122,0.378,4.682,0.567l4.737-0.194l0.072,0.074L383.97,407.15z"/>
+		</g>
+	</g>
+</g>
+<rect fill="none" width="852" height="663"/>
+</svg>
