@@ -279,11 +279,11 @@ public partial class Z80Cpu
 
         /// <summary>High 8-bit of WZ</summary>
         [FieldOffset(27)]
-        public byte WZh;
+        public byte WH;
 
         /// <summary>Low 8-bit of WZ</summary>
         [FieldOffset(26)]
-        public byte WZl;
+        public byte WL;
 
         /// <summary>
         /// Sign Flag

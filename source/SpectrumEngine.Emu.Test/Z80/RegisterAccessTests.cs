@@ -1,13 +1,11 @@
-using Xunit;
+namespace SpectrumEngine.Emu.Test;
 
-namespace SpectrumEngine.Emu.Test
+public class RegisterAccessTests
 {
-    public class RegisterAccessTests
+    [Fact]
+    public void WriteA()
     {
-        [Fact]
-        public void WriteA()
-        {
 
-        }
     }
 }
+

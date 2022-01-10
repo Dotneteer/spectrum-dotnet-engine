@@ -2525,6 +2525,16 @@
         "build": {
           "build/netcoreapp2.1/xunit.runner.visualstudio.props": {}
         }
+      },
+      "SpectrumEngine.Emu/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/SpectrumEngine.Emu.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SpectrumEngine.Emu.dll": {}
+        }
       }
     }
   },
@@ -8757,12 +8767,18 @@
         "xunit.runner.visualstudio.2.4.3.nupkg.sha512",
         "xunit.runner.visualstudio.nuspec"
       ]
+    },
+    "SpectrumEngine.Emu/1.0.0": {
+      "type": "project",
+      "path": "../SpectrumEngine.Emu/SpectrumEngine.Emu.csproj",
+      "msbuildProject": "../SpectrumEngine.Emu/SpectrumEngine.Emu.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
       "Microsoft.NET.Test.Sdk >= 16.11.0",
       "Shouldly >= 4.0.3",
+      "SpectrumEngine.Emu >= 1.0.0",
       "coverlet.collector >= 3.1.0",
       "xunit >= 2.4.1",
       "xunit.runner.visualstudio >= 2.4.3"
@@ -8798,7 +8814,11 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\dotne\\source\\repos\\spectrum-dotnet-engine\\source\\SpectrumEngine.Emu\\SpectrumEngine.Emu.csproj": {
+              "projectPath": "C:\\Users\\dotne\\source\\repos\\spectrum-dotnet-engine\\source\\SpectrumEngine.Emu\\SpectrumEngine.Emu.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

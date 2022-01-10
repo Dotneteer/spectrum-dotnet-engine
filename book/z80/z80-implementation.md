@@ -40,3 +40,47 @@ public class Registers
 }
 ```
 
+From an emulation point of view, we need to keep track of these signals:
+- **NMI** (Non-Maskable Interrupt): Though ZX Spectrum 48K does not use this interrupt, other Z80-based machine types and additional ZX Spectrum peripheral devices may utilize it.
+- **INT** (Maskable Interrupt)
+- **HALT**: This signal signs that the CPU must be halted.
+- **RESET**: This signal signs that we need to reset the CPU.
+
+When we process these signals, the most important test is detecting any active signal. To make this test quick and straightforward, we use an enumeration, `Z80Signals`:
+
+```csharp
+[Flags]
+public enum Z80Signals
+{
+    None = 0,
+    Int = 0x01,
+    Nmi = 0x02,
+    Reset = 0x04,
+    Halted = 0x08,
+}
+```
+
+Besides the registers and signals, we keep other CPU state information:
+
+- **`Tacts`**: The number of T-states (clock cycles) elapsed since the last reset. You know that accurate timing is at the heart of the CPU's implementation. We use a 64-bit counter, representing a long enough period.
+- **`F53Updated`**, **`PrevF53Updated`**: These flags keep track of modifications of the bit 3 and 5 flags of Register F. We need to keep this value, as we utilize it within the `SCF` and `CCF` instructions to calculate the new values of F.
+- **`OpCode`**: The last fetched opcode. If an instruction is prefixed, it contains the prefix or the opcode following the prefix, depending on which was fetched last.
+- **`Prefix`**: The current prefix to consider when processing the subsequent opcode.
+- **`EiBacklog`**: We use this variable to handle the EI instruction properly. When an EI instruction is executed, any pending interrupt request is not accepted until after the instruction following EI is executed. This single instruction delay is necessary when the next instruction is a return instruction. Interrupts are not allowed until a return is completed.
+- **`RetExecuted`**: We need this flag to implement the step-over debugger function that continues the execution and stops when the current subroutine returns to its caller. The debugger will observe the change of this flag and manage its internal tracking of the call stack accordingly.
+
+## Hard Reset and Soft Reset
+
+When the CPU is powered up, it executes a hard reset that sets the registers to these values:
+
+- **`AF`**, **`AF'`**, **`SP`**: `0xffff`
+- **`BC`**, **`BC'`**, **`DE`**, **`DE'`**, **`HL`**, **`HL'`**, **`IX`**, **`IY`**, **`IR`**, **`PC`**, **`WZ`**: `0x0000`
+
+The hard reset disables the interrupt by resetting the `IFF1` and `IFF2` interrupt flip-flops. The CPU enters into interrupt mode 0.
+
+When the RESET signal gets active, the CPU executes a soft reset. Is sets the values of these registers:
+
+- **`AF`**, **`AF'`**, **`SP`**: `0xffff`
+- **`PC`**, **`WZ`**: `0x0000`
+
+All other registers keep their value before the reset. Like the hard reset, the soft reset disables the interrupt by resetting the `IFF1` and `IFF2` interrupt flip-flops. The CPU enters into interrupt mode 0.
