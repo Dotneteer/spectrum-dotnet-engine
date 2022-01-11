@@ -11,6 +11,27 @@ namespace SpectrumEngine.Emu;
 public partial class Z80Cpu
 {
     /// <summary>
+    /// Initializes the Z80 CPU instance.
+    /// </summary>
+    /// <remarks>
+    /// The constructor sets the default values of dependency methods. The CPU raises an exception for memory and I/O
+    /// port operations if any methods have not been provided by the time they are invoked. The tact handler method is
+    /// empty by default.
+    /// </remarks>
+    public Z80Cpu()
+    {
+        ReadMemoryFunction = (ushort address) 
+            => throw new InvalidOperationException("ReadMemoryFunction has not been set.");
+        WriteMemoryFunction = (ushort address, byte data)
+            => throw new InvalidOperationException("WriteMemoryFunction has not been set.");
+        ReadPortFunction = (ushort address)
+            => throw new InvalidOperationException("ReadPortFunction has not been set.");
+        WritePortFunction = (ushort address, byte data)
+            => throw new InvalidOperationException("WritePortFunction has not been set.");
+        TactIncrementedHandler = () => { };
+    }
+
+    /// <summary>
     /// Represents integer constants that mask out particular flags of the Z80 CPU's F register.
     /// </summary>
     public sealed class FlagsSetMask
