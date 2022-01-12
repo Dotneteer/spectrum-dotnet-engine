@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 
 namespace SpectrumEngine.Emu;
+
 /// <summary>
 /// This class implements the emulation of the Z80 CPU.
 /// </summary>
@@ -29,6 +30,8 @@ public partial class Z80Cpu
         WritePortFunction = (ushort address, byte data)
             => throw new InvalidOperationException("WritePortFunction has not been set.");
         TactIncrementedHandler = () => { };
+
+        InitializeStandardInstructionsTable();
     }
 
     /// <summary>

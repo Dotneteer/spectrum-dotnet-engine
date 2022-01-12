@@ -1,4 +1,6 @@
-﻿namespace SpectrumEngine.Emu;
+﻿using System.Runtime.CompilerServices;
+
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class implements the emulation of the Z80 CPU.
@@ -11,6 +13,7 @@ public partial class Z80Cpu
     /// <summary>
     /// This method increments the current CPU tacts by one.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus1()
     {
         Tacts++;
@@ -20,6 +23,7 @@ public partial class Z80Cpu
     /// <summary>
     /// This method increments the current CPU tacts by two.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus2()
     {
         Tacts++;
@@ -31,6 +35,7 @@ public partial class Z80Cpu
     /// <summary>
     /// This method increments the current CPU tacts by three.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus3()
     {
         Tacts++;
@@ -44,6 +49,7 @@ public partial class Z80Cpu
     /// <summary>
     /// This method increments the current CPU tacts by four.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus4()
     {
         Tacts++;
@@ -59,6 +65,7 @@ public partial class Z80Cpu
     /// <summary>
     /// This method increments the current CPU tacts by five.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus5()
     {
         Tacts++;
@@ -76,6 +83,7 @@ public partial class Z80Cpu
     /// <summary>
     /// This method increments the current CPU tacts by seven.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus7()
     {
         Tacts++;

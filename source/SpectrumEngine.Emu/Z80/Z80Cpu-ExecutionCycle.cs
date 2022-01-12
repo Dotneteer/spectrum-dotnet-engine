@@ -1,4 +1,6 @@
-﻿namespace SpectrumEngine.Emu;
+﻿using System.Runtime.CompilerServices;
+
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class implements the emulation of the Z80 CPU.
@@ -95,18 +97,21 @@ public partial class Z80Cpu
         // --- Test CPU signals
         if (SignalFlags != Z80Signals.None)
         {
+            // --- The CPU senses the RESET signal in any phase of the instruction execution
             if ((SignalFlags & Z80Signals.Reset) != 0)
             {
                 // --- RESET is active. Process it and then inactivate the signal
                 Reset();
                 SignalFlags &= ~Z80Signals.Reset;
             }
-            else if ((SignalFlags & Z80Signals.Nmi) != 0)
+            // --- The CPU does not test the NMI signal while an instruction is being executed
+            else if ((SignalFlags & Z80Signals.Nmi) != 0 && Prefix == OpCodePrefix.None)
             {
                 // --- NMI is active. Process the non-maskable interrupt
                 ProcessNmi();
             }
-            else if ((SignalFlags & Z80Signals.Int) != 0)
+            // --- The CPU does not test the INT signal while an instruction is being executed
+            else if ((SignalFlags & Z80Signals.Int) != 0 && Prefix == OpCodePrefix.None)
             {
                 // --- NMI is active. Check, if the interrupt is enabled
                 if (Iff1 && EiBacklog == 0)
@@ -138,7 +143,56 @@ public partial class Z80Cpu
         RefreshMemory();
 
         // --- It's time to execute the fetched instruction
+        switch (Prefix)
+        {
+            // --- Standard Z80 instructions
+            case OpCodePrefix.None:
+                _standardInstrs![OpCode]?.Invoke();
+                Prefix = OpCodePrefix.None;
+                break;
 
+            // --- Bit instructions
+            case OpCodePrefix.CB:
+                // TODO: Process bit instructions
+                Prefix = OpCodePrefix.None;
+                break;
+
+            // --- Extended instructions
+            case OpCodePrefix.ED:
+                // TODO: Process bit instructions
+                Prefix = OpCodePrefix.None;
+                break;
+
+            // --- IX- or IY-indexed instructions
+            case OpCodePrefix.DD:
+            case OpCodePrefix.FD:
+                if (OpCode == 0xdd)
+                {
+                    Prefix = OpCodePrefix.DD;
+                } 
+                else if (OpCode == 0xfd)
+                {
+                    Prefix = OpCodePrefix.FD;
+                }
+                else if (OpCode == 0xcb)
+                {
+                    Prefix = Prefix == OpCodePrefix.DD 
+                        ? OpCodePrefix.DDCB 
+                        : OpCodePrefix.FDCB;
+                }
+                else
+                {
+                    // TODO: Process indexed instructions
+                }
+                break;
+
+            // --- IX- or IY-indexed bit instructions
+            case OpCodePrefix.DDCB:
+            case OpCodePrefix.FDCB:
+                // TODO: Process indexed bit instructions
+                Prefix = OpCodePrefix.None;
+                break;
+        }
     }
 
     /// <summary>
@@ -149,10 +203,18 @@ public partial class Z80Cpu
     /// <remarks>
     /// If the emulated hardware uses any delay when reading the memory, increment the CPU tacts accordingly.
     /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private byte ReadMemory(ushort address)
     {
         TactPlus3();
         return ReadMemoryFunction(address);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private byte ReadCodeMemory()
+    {
+        TactPlus3();
+        return ReadMemoryFunction(Regs.PC++);
     }
 
     /// <summary>
@@ -163,6 +225,7 @@ public partial class Z80Cpu
     /// <remarks>
     /// If the emulated hardware uses any delay when writing the memory, increment the CPU tacts accordingly.
     /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteMemory(ushort address, byte data)
     {
         TactPlus3();
@@ -179,6 +242,7 @@ public partial class Z80Cpu
     /// peripheral device does not delay the execution, invoke the TactP4 method to apply the default 4 T-state
     /// I/O delays.
     /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private byte ReadPort(ushort address)
     {
         TactPlus3();
@@ -195,6 +259,7 @@ public partial class Z80Cpu
     /// peripheral device does not delay the execution, invoke the TactP4 method to apply the default 4 T-state
     /// I/O delays.
     /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WritePort(ushort address, byte data)
     {
         WriteMemoryFunction(address, data);
