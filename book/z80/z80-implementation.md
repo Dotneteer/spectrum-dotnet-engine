@@ -68,8 +68,17 @@ Besides the registers and signals, we keep other CPU state information:
 - **`Prefix`**: The current prefix to consider when processing the subsequent opcode.
 - **`EiBacklog`**: We use this variable to handle the EI instruction properly. When an EI instruction is executed, any pending interrupt request is not accepted until after the instruction following EI is executed. This single instruction delay is necessary when the next instruction is a return instruction. Interrupts are not allowed until a return is completed.
 - **`RetExecuted`**: We need this flag to implement the step-over debugger function that continues the execution and stops when the current subroutine returns to its caller. The debugger will observe the change of this flag and manage its internal tracking of the call stack accordingly.
+- **`AllowExtendedInstructions`**: The ZX Spectrum Next computer uses additional Z80 instructions. This flag indicates if those are allowed.
 
-## Hard Reset and Soft Reset
+## The Execution Cycle of the CPU
+
+*TBD*
+
+## Handling Z80 Signals
+
+*TBD*
+
+### Hard Reset and Soft Reset
 
 When the CPU is powered up, it executes a hard reset that sets the registers to these values:
 
@@ -84,3 +93,47 @@ When the RESET signal gets active, the CPU executes a soft reset. Is sets the va
 - **`PC`**, **`WZ`**: `0x0000`
 
 All other registers keep their value before the reset. Like the hard reset, the soft reset disables the interrupt by resetting the `IFF1` and `IFF2` interrupt flip-flops. The CPU enters into interrupt mode 0.
+
+### Handling the Non-Maskable Interrupt (NMI)
+
+*TBD*
+
+### Handling the Maskable Interrupt (INT)
+
+*TBD*
+
+### Handling the HALT Signal
+
+*TBD*
+
+## Memory and I/O Operations
+
+*TBD*
+
+## Executing Instructions
+
+*TBD*
+
+### Standard Instructions
+
+*TBD*
+
+### Bit Instructions
+
+*TBD*
+
+### Extended Instructions
+
+*TBD*
+
+### Indexed Instructions
+
+*TBD*
+
+### Indexed Bit Instructions
+
+*TBD*
+
+## Testing the Z80 CPU
+
+*TBD*
