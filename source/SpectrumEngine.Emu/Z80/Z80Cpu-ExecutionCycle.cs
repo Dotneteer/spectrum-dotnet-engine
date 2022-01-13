@@ -125,8 +125,10 @@ public partial class Z80Cpu
             // --- passive. We could reach this point only if none were handled, including an active but disabled INT.
             if ((SignalFlags & Z80Signals.Halted) != 0)
             {
-                ProcessHalted();
-                // --- While in HALTED state, the CPU does not execute any instructions.
+                // --- While in HALTED state, the CPU does not execute any instructions. It just refreshes the memory
+                // --- page pointed by R and waits for four T-states.
+                RefreshMemory();
+                TactPlus4();
                 return;
             }
         }
@@ -141,6 +143,7 @@ public partial class Z80Cpu
 
         // --- Third, let's refresh the memory by updating the value of Register R. It takes one T-state.
         RefreshMemory();
+        TactPlus1();
 
         // --- It's time to execute the fetched instruction
         switch (Prefix)
@@ -266,11 +269,53 @@ public partial class Z80Cpu
     }
 
     /// <summary>
+    /// Remove the CPU from its HALTED state.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void RemoveFromHaltedState()
+    {
+        // --- Remove the CPU from its HALTED state.
+        if ((SignalFlags & Z80Signals.Halted) != 0)
+        {
+            Regs.PC++;
+            SignalFlags &= ~Z80Signals.Halted;
+        }
+    }
+
+    /// <summary>
+    /// Push the current value of PC to the stack.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void PushPC()
+    {
+        Regs.SP--;
+        TactPlus1();
+        WriteMemory(Regs.SP, (byte)(Regs.PC >> 8));
+        Regs.SP--;
+        WriteMemory(Regs.SP, (byte)(Regs.PC & 0xff));
+    }
+
+    /// <summary>
     /// This method processes the active non-maskable interrupt.
     /// </summary>
     private void ProcessNmi()
     {
+        RemoveFromHaltedState();
 
+        // --- Update the interrupt flip-flops: The purpose of IFF2 is to save the status of IFF1 when a non-maskable
+        // --- interrupt occurs. When a non-maskable interrupt is accepted, IFF1 resets to prevent further interrupts
+        // --- until reenabled by the programmer. Therefore, after a non-maskable interrupt is accepted, maskable
+        // --- interrupts are disabled, but the previous state of IFF1 is saved so that the complete state of the CPU
+        // --- just prior to the non-maskable interrupt can be restored at any time. 
+        Iff2 = Iff1;
+        Iff1 = false;
+
+        // --- Push the return address to the stack
+        PushPC();
+        RefreshMemory();
+
+        // --- Carry on the execution at the NMI handler routine address, $0066.
+        Regs.PC = 0x0066;
     }
 
     /// <summary>
@@ -278,16 +323,61 @@ public partial class Z80Cpu
     /// </summary>
     private void ProcessInt()
     {
+        RemoveFromHaltedState();
 
+        // --- Disable the maskable interrupt unless it is enabled again with the EI instruction.
+        Iff2 = false;
+        Iff2 = false;
+
+        // --- It takes six T-states to acknowledge the interrupt
+        TactPlus6();
+
+        // --- Push the return address to the stack
+        PushPC();
+        RefreshMemory();
+
+        if (InterruptMode == 2)
+        {
+            // --- The official Zilog documentation states this:
+            // --- "The programmer maintains a table of 16-bit starting addresses for every interrupt service routine.
+            // --- This table can be located anywhere in memory. When an interrupt is accepted, a 16-bit pointer must
+            // --- be formed to obtain the required interrupt service routine starting address from the table. The
+            // --- upper eight bits of this pointer is formed from the contents of the I register. The I register must
+            // --- be loaded with the applicable value by the programmer. A CPU reset clears the I register so that it
+            // --- is initialized to 0. 
+            // --- The lower eight bits of the pointer must be supplied by the interrupting device. Only seven bits are
+            // --- required from the interrupting device because the least-significant bit must be a 0.This process is
+            // --- required because the pointer must receive two adjacent bytes to form a complete 16 - bit service
+            // --- routine starting address; addresses must always start in even locations."
+            // --- However, this article shows that we need to reset the least significant bit of:
+            // --- http://www.z80.info/interrup2.htm
+            var addr = (Regs.I << 8) + 0xff;
+            Regs.WL = ReadMemory((ushort)addr++);
+            Regs.WH = ReadMemory((ushort)addr);
+        }
+        else
+        {
+            // --- On ZX Spectrum, Interrupt Mode 0 and 1 result in the same behavior, as no peripheral device would put
+            // --- an instruction on the data bus. In Interrupt Mode 0, the CPU would read a $FF value from the bus, the
+            // --- opcode for the RST $38 instruction. In Interrupt Mode 1, the CPU responds to an interrupt by executing
+            // --- an RST $38 instruction.
+            Regs.WZ = 0x0038;
+            TactPlus5();
+        }
+
+        // --- Observe that the interrupt handler routine address is first assembled in WZ and moved to PC.
+        Regs.PC = Regs.WZ;
     }
 
-    private void ProcessHalted()
-    {
-
-    }
-
+    /// <summary>
+    /// Calculate the new value of Register F.
+    /// </summary>
+    /// <remarks>
+    /// Seven bits of this 8-bit register are automatically incremented after each instruction fetch. The eighth bit
+    /// remains as programmed, resulting from an LD R, A instruction.
+    /// </remarks>
     private void RefreshMemory()
     {
-        TactPlus1();
+        Regs.R = (byte)((Regs.R + 1) & 0x7f | (Regs.R & 0x80));
     }
 }

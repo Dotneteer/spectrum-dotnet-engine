@@ -87,4 +87,10 @@ public partial class Z80Cpu
     /// internal tracking of the call stack accordingly.
     /// </summary>
     public bool RetExecuted;
+
+    /// <summary>
+    /// This flag is reserved for future extension. The ZX Spectrum Next computer uses additional Z80 instructions.
+    /// This flag indicates if those are allowed.
+    /// </summary>
+    public bool AllowExtendedInstructions;
 }

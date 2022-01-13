@@ -81,6 +81,26 @@ public partial class Z80Cpu
     }
 
     /// <summary>
+    /// This method increments the current CPU tacts by six.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void TactPlus6()
+    {
+        Tacts++;
+        TactIncrementedHandler();
+        Tacts++;
+        TactIncrementedHandler();
+        Tacts++;
+        TactIncrementedHandler();
+        Tacts++;
+        TactIncrementedHandler();
+        Tacts++;
+        TactIncrementedHandler();
+        Tacts++;
+        TactIncrementedHandler();
+    }
+
+    /// <summary>
     /// This method increments the current CPU tacts by seven.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
