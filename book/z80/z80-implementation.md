@@ -1,4 +1,4 @@
-# Implemeting the Z80 CPU
+# Implementing the Z80 CPU
 
 ## Registers and CPU state
 
@@ -70,9 +70,62 @@ Besides the registers and signals, we keep other CPU state information:
 - **`RetExecuted`**: We need this flag to implement the step-over debugger function that continues the execution and stops when the current subroutine returns to its caller. The debugger will observe the change of this flag and manage its internal tracking of the call stack accordingly.
 - **`AllowExtendedInstructions`**: The ZX Spectrum Next computer uses additional Z80 instructions. This flag indicates if those are allowed.
 
+## Timing
+
+The CPU administers the time elapsed since the last hard or soft reset in the `Tacts` variable. Whenever the clock steps (moves to the next T-state), the code increments this variable. In a computer, other hardware components work parallel with the CPU. For example, in ZX Spectrum, the ULA is such a component; in ZX Spectrum 128/2/2+/3/3+ the AY-3-8912 Programmable Sound Generator chip is another example.
+
+We do not use multiple threads in the emulator to handle such a scenario.
+
+Instead, we let other hardware components perform their duties within that clock cycle whenever `Tacts` increments.
+
+> *Note*: Here, we use the assumption that the CPU's clock-signal resolution is enough to emulate other hardware components. This presumption is valid for the ZX Spectrum family of retro-computers. However, we may need to use a different approach in other cases.
+
+The code contains predefined increment methods named `TactPlus1`, `TactPlus2`, `TactPlus3`, and others to increment `Tacts` by one, two, three, and other values. These methods have this form:
+
+```csharp
+[MethodImpl(MethodImplOptions.AggressiveInlining)]
+public void TactPlus1()
+{
+    Tacts++;
+    TactIncrementedHandler();
+}
+
+// ...
+
+[MethodImpl(MethodImplOptions.AggressiveInlining)]
+public void TactPlus3()
+{
+    Tacts++;
+    TactIncrementedHandler();
+    Tacts++;
+    TactIncrementedHandler();
+    Tacts++;
+    TactIncrementedHandler();
+}
+```
+
+Here, the `TactIncrementedHandler` refers to a method in which we can emulate the behavior of other hardware components. By default, this is set to an empty method. However, when integrating the `Z80Cpu` component with other elements in the emulated hardware (such as the ULA), you can create a method that correctly emulates the simultaneous execution.
+
+You can also observe (see the `[MethodImpl(MethodImplOptions.AggressiveInlining)]` attribute) that we ask the compiler for inlining these timing methods.
+
 ## The Execution Cycle of the CPU
 
-*TBD*
+We emulate the behavior of the CPU by invoking its execution cycle in a loop. This cycle focuses on processing the subsequent instruction byte (pointed by the Program Counter register). Standard instructions use a single-byte opcode, so the execution cycle processes the entire instruction. If the opcode uses some operation data (like the `LD BC,nnnn` instruction, which has two data bytes defining the 16-bit lata to load to BC), the CPU reads those bytes in a single cycle.
+
+However, if an instruction has one or more prefix bytes (such as `$CB`, `$ED`, `$DD`, `$FD`, `$DDCB` , or `$FDCB`), the instruction gets processed in multiple cycles: one cycle for each prefix byte plus another cycle for the instruction.
+
+The execution loop contains these steps:
+1. The CPU tests if any signal is active. If so, it processes them in this order (priority):
+    - RESET
+    - Non-Maskable Interrupt (NMI)
+    - Maskable Interrupt (INT)
+    - HALT. When this signal is active, the CPU waits for 4 T-states and immediately completes the execution loop.
+2. The CPU reads the next opcode byte from the address pointed by the PC register. This activity takes 3 T-states
+3. The CPU increments the last seven bits of the R register and puts the value of the IR register-pair to the address bus. Then, it triggers a memory refresh operation on physical hardware. In the emulator, we do not need this step.
+4. The CPU completes the processing of the opcode byte (this phase takes one T-state). For the simplest instructions, it means completing the instruction. For instructions with data bytes, this step prepares for processing the rest of the instruction. For prefixed operations, the CPU prepares to carry on further processing. 
+
+> *Note*: Of course, in step 4, executing instructions may take additional time, including memory and I/O port access and 16-bit arithmetic.
+
 
 ## Handling Z80 Signals
 
