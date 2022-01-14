@@ -44,6 +44,11 @@ public partial class Z80Cpu
     public bool Iff2 = false;
 
     /// <summary>
+    /// This flag indicates if the CPU is in a halted state.
+    /// </summary>
+    public bool Halted;
+
+    /// <summary>
     /// The number of T-states (clock cycles) elapsed since the last reset
     /// </summary>
     public ulong Tacts = 0;

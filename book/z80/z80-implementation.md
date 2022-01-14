@@ -1,5 +1,9 @@
 # Implementing the Z80 CPU
 
+## Z80 CPU Implementation Source Code Files
+
+*TBD*
+
 ## Registers and CPU state
 
 The implementation uses a flat .NET structure (`Registers`) with the `[StructLayout(LayoutKind.Explicit)]` attribute to store and access Z80 register values. Each register and register pair defines an explicit field offset. With this technique, the LSB and MSB parts of a register pair share the same location as the 16-bit register pair. Because of this location sharing, we do not need separate operations for 8-bit and 16-bit register value updates.
@@ -43,7 +47,6 @@ public class Registers
 From an emulation point of view, we need to keep track of these signals:
 - **NMI** (Non-Maskable Interrupt): Though ZX Spectrum 48K does not use this interrupt, other Z80-based machine types and additional ZX Spectrum peripheral devices may utilize it.
 - **INT** (Maskable Interrupt)
-- **HALT**: This signal signs that the CPU must be halted.
 - **RESET**: This signal signs that we need to reset the CPU.
 
 When we process these signals, the most important test is detecting any active signal. To make this test quick and straightforward, we use an enumeration, `Z80Signals`:
@@ -56,7 +59,6 @@ public enum Z80Signals
     Int = 0x01,
     Nmi = 0x02,
     Reset = 0x04,
-    Halted = 0x08,
 }
 ```
 
@@ -119,17 +121,16 @@ The execution loop contains these steps:
     - RESET
     - Non-Maskable Interrupt (NMI)
     - Maskable Interrupt (INT)
-    - HALT. When this signal is active, the CPU waits for 4 T-states and immediately completes the execution loop.
-2. The CPU reads the next opcode byte from the address pointed by the PC register. This activity takes 3 T-states
-3. The CPU increments the last seven bits of the R register and puts the value of the IR register-pair to the address bus. Then, it triggers a memory refresh operation on physical hardware. In the emulator, we do not need this step.
-4. The CPU completes the processing of the opcode byte (this phase takes one T-state). For the simplest instructions, it means completing the instruction. For instructions with data bytes, this step prepares for processing the rest of the instruction. For prefixed operations, the CPU prepares to carry on further processing. 
+2. If the CPU is halted, it waits for 4 T-states and immediately completes the execution loop.
+3. The CPU reads the next opcode byte from the address pointed by the PC register. This activity takes 3 T-states
+4. The CPU increments the last seven bits of the R register and puts the value of the IR register-pair to the address bus. Then, it triggers a memory refresh operation on physical hardware. In the emulator, we do not need this step.
+5. The CPU completes the processing of the opcode byte (this phase takes one T-state). For the simplest instructions, it means completing the instruction. For instructions with data bytes, this step prepares for processing the rest of the instruction. For prefixed operations, the CPU prepares to carry on further processing. 
 
-> *Note*: Of course, in step 4, executing instructions may take additional time, including memory and I/O port access and 16-bit arithmetic.
-
+> *Note*: Of course, in step 5, executing instructions may take additional time, including memory and I/O port access and 16-bit arithmetic.
 
 ## Handling Z80 Signals
 
-*TBD*
+The execution cycle first tests if there are any active signals to handle. Those are processed separately, following the priority order (RESET, NMI, INT). The Z80 CPU has other input signals, such as WAIT and BUSRQ. We do not need them for the ZX Spectrum 48K emulation. Nonetheless, we may need them later for emulating the communication with a peripheral device. Actually, the ULA uses the WAIT signal to delay the CPU while reading the screen memory. Nonetheless, we have a relatively simple way to emulate the delay without the need to watch the WAIT signal.
 
 ### Hard Reset and Soft Reset
 
@@ -149,15 +150,31 @@ All other registers keep their value before the reset. Like the hard reset, the 
 
 ### Handling the Non-Maskable Interrupt (NMI)
 
-*TBD*
+Both the NMI and INT signals can be active at the same time. In such a case, NMI gets priority.
+
+Handling the NMI contains these steps (11 T-states):
+1. It takes 4 T-states while the CPU acknowledges the NMI signal.
+2. If the CPU is in a halted state, it gets out of it.
+3. The IIF2 flip-flop stores the value of IFF1. The purpose of IFF2 is to save the status of IFF1 when a non-maskable interrupt occurs. When a non-maskable interrupt is accepted, IFF1 resets to prevent further interrupts until reenabled by the programmer. Therefore, after a non-maskable interrupt is accepted, maskable interrupts are disabled, but the previous state of IFF1 is saved so that the complete state of the CPU just prior to the non-maskable interrupt can be restored at any time.
+4. The IFF1 flip-flop gets reset, disabling further maskable interrupts.
+5. The CPU pushes the current value of the Program Counter to the stack. This operation takes 7 T-states.
+6. The CPU sets the Program Counter to `$0066`, the start of the NMI handler routine. Due to the Z80's internal architecture, this operation overlaps with storing the PC to the stack and does not require any additional clock cycles.
 
 ### Handling the Maskable Interrupt (INT)
 
-*TBD*
+The presence of an active INT signal is not enough to invoke the interrupt handler. The CPU scans the INT signal only at the very end of the completion of the instruction, and the emulator checks for an active INT signal before processing a new instruction. Provided the IFF1 flip-flop is enabled, the CPU invokes the interrupt handler with these steps:
+1. It takes 4 T-states while the CPU acknowledges the INT signal.
+2. If the CPU is in a halted state, it gets out of it.
+3. The IFF1 and IFF2 flip-flops get reset, disabling further maskable interrupts.
+4. The CPU pushes the current value of the Program Counter to the stack. This operation takes 7 T-states.
 
-### Handling the HALT Signal
+According to the current Interrupt Mode, the CPU invokes the interrupt handler method:
 
-*TBD*
+- On ZX Spectrum, Interrupt Mode 0 and 1 result in the same behavior, as no peripheral device would put an instruction on the data bus. In Interrupt Mode 0, the CPU would read a `$FF` value from the bus, the opcode for the `RST $38` instruction. In Interrupt Mode 1, the CPU responds to an interrupt by executing an `RST $38` instruction. Due to the Z80's internal architecture, setting the WZ register to `$0038` overlaps with storing the PC to the stack and does not require additional clock cycles.
+- In Interrupt Mode 2, the CPU creates a 16-bit address to read the interrupt handler routine's address. The upper 8 bits of the address are the I register contents; the lower 8 bits are the value read from the data bus. As no device puts data to the bus, the CPU always reads `$FF`. Having the vector address, the CPU reads the first byte into WL (the LSB of the WZ register), the second byte into WH (the MSB of the WZ register). These read operations take 6 T-states.
+- The CPU puts the contents of the WZ register into the PC register and starts the interrupt handler's execution.
+
+> *Note*: In Interrupt Mode 0 and 1, calling the handler routine takes 13 T-states, while in Interrupt Mode 2, it is 19 T-states.
 
 ## Memory and I/O Operations
 

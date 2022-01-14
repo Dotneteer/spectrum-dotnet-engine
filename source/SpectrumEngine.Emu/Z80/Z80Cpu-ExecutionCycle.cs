@@ -120,17 +120,16 @@ public partial class Z80Cpu
                     ProcessInt();
                 }
             }
+        }
 
-            // --- Let's check for the HALTED signal. If any of RESET, NMI, or INT was active and handled, HALTED is
-            // --- passive. We could reach this point only if none were handled, including an active but disabled INT.
-            if ((SignalFlags & Z80Signals.Halted) != 0)
-            {
-                // --- While in HALTED state, the CPU does not execute any instructions. It just refreshes the memory
-                // --- page pointed by R and waits for four T-states.
-                RefreshMemory();
-                TactPlus4();
-                return;
-            }
+        // --- Let's handle the halted state.
+        if (Halted)
+        {
+            // --- While in halted state, the CPU does not execute any instructions. It just refreshes the memory
+            // --- page pointed by R and waits for four T-states.
+            RefreshMemory();
+            TactPlus4();
+            return;
         }
 
         // --- The CPU is about to execute the subsequent instruction. First, let's store the previous value of
@@ -275,10 +274,10 @@ public partial class Z80Cpu
     private void RemoveFromHaltedState()
     {
         // --- Remove the CPU from its HALTED state.
-        if ((SignalFlags & Z80Signals.Halted) != 0)
+        if (Halted)
         {
             Regs.PC++;
-            SignalFlags &= ~Z80Signals.Halted;
+            Halted = false;
         }
     }
 
@@ -300,6 +299,9 @@ public partial class Z80Cpu
     /// </summary>
     private void ProcessNmi()
     {
+        // --- Acknowledge the NMI
+        TactPlus4();
+
         RemoveFromHaltedState();
 
         // --- Update the interrupt flip-flops: The purpose of IFF2 is to save the status of IFF1 when a non-maskable
@@ -323,14 +325,14 @@ public partial class Z80Cpu
     /// </summary>
     private void ProcessInt()
     {
+        // --- It takes six T-states to acknowledge the interrupt
+        TactPlus6();
+
         RemoveFromHaltedState();
 
         // --- Disable the maskable interrupt unless it is enabled again with the EI instruction.
         Iff2 = false;
         Iff2 = false;
-
-        // --- It takes six T-states to acknowledge the interrupt
-        TactPlus6();
 
         // --- Push the return address to the stack
         PushPC();
@@ -362,7 +364,6 @@ public partial class Z80Cpu
             // --- opcode for the RST $38 instruction. In Interrupt Mode 1, the CPU responds to an interrupt by executing
             // --- an RST $38 instruction.
             Regs.WZ = 0x0038;
-            TactPlus5();
         }
 
         // --- Observe that the interrupt handler routine address is first assembled in WZ and moved to PC.

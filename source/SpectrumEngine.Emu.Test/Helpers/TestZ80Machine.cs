@@ -158,7 +158,7 @@ public class Z80TestMachine
             {
                 RunMode.OneCycle => true,
                 RunMode.OneInstruction => Cpu.Prefix == Z80Cpu.OpCodePrefix.None,
-                RunMode.UntilHalt => (Cpu.SignalFlags & Z80Cpu.Z80Signals.Halted) != 0,
+                RunMode.UntilHalt => Cpu.Halted,
                 RunMode.UntilEnd => Cpu.Regs.PC >= CodeEndsAt,
                 _ => throw new ArgumentOutOfRangeException(),
             };

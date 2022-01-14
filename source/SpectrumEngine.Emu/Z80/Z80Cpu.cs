@@ -408,15 +408,6 @@ public partial class Z80Cpu
         /// Indicates an active RESET signal
         /// </summary>
         Reset = 0x04,
-
-        /// <summary>
-        /// This flag indicates that the CPU is halted.
-        /// </summary>
-        /// <remarks>
-        /// When a software `HALT` instruction is executed, the CPU executes `NOP` instructions until an interrupt is
-        /// received (either a non-maskable or a maskable interrupt while the interrupt flip-flop is enabled).
-        /// </remarks>
-        Halted = 0x08,
     }
 
     /// <summary>
