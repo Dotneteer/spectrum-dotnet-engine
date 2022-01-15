@@ -24,8 +24,8 @@ public partial class Z80Cpu
             ExAF,       AddHLBC,    LdABCi,     DecBC,      IncC,       DecC,       LdCN,       Rrca,       // 08-0f
             Djnz,       LdDENN,     LdDEiA,     IncDE,      IncD,       DecD,       LdDN,       Rla,        // 10-17
             JrE,        AddHLDE,    LdADEi,     DecDE,      IncE,       DecE,       LdEN,       Rra,        // 18-1f
-            JrNZ,       LdHLNN,     LdNNiHL,    Nop,        Nop,        Nop,        Nop,        Nop,        // 20-27
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 28-2f
+            JrNZ,       LdHLNN,     LdNNiHL,    IncHL,      IncH,       DecH,       LdHN,       Daa,        // 20-27
+            JrZ,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 28-2f
             Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Scf,        // 30-37
             Nop,        Nop,        Nop,        Nop,        Nop,        DecA,       LdAN,       Nop,        // 38-3f
 
@@ -698,6 +698,172 @@ public partial class Z80Cpu
     {
         Store16(Regs.L, Regs.H);
     }
+
+    /// <summary>
+    /// "inc hl" operation (0x23)
+    /// </summary>
+    /// <remarks>
+    /// The contents of register pair HL are incremented.
+    ///
+    /// T-States: 6 (4, 2)
+    /// Contention breakdown: pc:6
+    /// </remarks>
+    private void IncHL()
+    {
+        Regs.HL++;
+        TactPlus2(Regs.IR);
+    }
+
+    /// <summary>
+    /// "inc h" operation (0x24)
+    /// </summary>
+    /// <remarks>
+    /// Register H is incremented.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if r was 7Fh before operation; otherwise, it is reset.
+    /// N is reset.
+    /// C is not affected.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void IncH()
+    {
+        Regs.F = (byte)(s_8BitIncFlags[Regs.H++] | (Regs.F & FlagsSetMask.C));
+    }
+
+    /// <summary>
+    /// "dec h" operation (0x25)
+    /// </summary>
+    /// <remarks>
+    /// Register H is decremented.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4, otherwise, it is reset.
+    /// P/V is set if m was 80h before operation; otherwise, it is reset.
+    /// N is set.
+    /// C is not affected.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void DecH()
+    {
+        Regs.F = (byte)(s_8BitDecFlags[Regs.H--] | (Regs.F & FlagsSetMask.C));
+    }
+
+    /// <summary>
+    /// "ld h,N" operation (0x26)
+    /// </summary>
+    /// <remarks>
+    /// The 8-bit integer N is loaded to H.
+    /// 
+    /// T-States: 7, (4, 3)
+    /// Contention breakdown: pc:4,pc+1:3
+    /// </remarks>
+    private void LdHN()
+    {
+        Regs.H = ReadCodeMemory();
+    }
+
+    /// <summary>
+    /// "daa" operation (0x27)
+    /// </summary>
+    /// <remarks>
+    /// This instruction conditionally adjusts A for BCD addition and subtraction operations. For addition(ADD, ADC,
+    /// INC) or subtraction(SUB, SBC, DEC, NEG), the following table indicates the operation being performed:
+    /// 
+    /// ====================================================
+    /// |Oper.|C before|Upper|H before|Lower|Number|C after|
+    /// |     |DAA     |Digit|Daa     |Digit|Added |Daa    |
+    /// ====================================================
+    /// | ADD |   0    | 9-0 |   0    | 0-9 |  00  |   0   |
+    /// |     |   0    | 0-8 |   0    | A-F |  06  |   0   |
+    /// |     |   0    | 0-9 |   1    | 0-3 |  06  |   0   |
+    /// |     |   0    | A-F |   0    | 0-9 |  60  |   1   |
+    /// ----------------------------------------------------
+    /// | ADC |   0    | 9-F |   0    | A-F |  66  |   1   |
+    /// ----------------------------------------------------
+    /// | INC |   0    | A-F |   1    | 0-3 |  66  |   1   |
+    /// |     |   1    | 0-2 |   0    | 0-9 |  60  |   1   |
+    /// |     |   1    | 0-2 |   0    | A-F |  66  |   1   |
+    /// |     |   1    | 0-3 |   1    | 0-3 |  66  |   1   |
+    /// ----------------------------------------------------
+    /// | SUB |   0    | 0-9 |   0    | 0-9 |  00  |   0   |
+    /// ----------------------------------------------------
+    /// | SBC |   0    | 0-8 |   1    | 6-F |  FA  |   0   |
+    /// ----------------------------------------------------
+    /// | DEC |   1    | 7-F |   0    | 0-9 |  A0  |   1   |
+    /// ----------------------------------------------------
+    /// | NEG |   1    | 6-7 |   1    | 6-F |  9A  |   1   |
+    /// ====================================================
+    /// 
+    /// S is set if most-significant bit of the A is 1 after an operation; otherwise, it is reset.
+    /// Z is set if A is 0 after an operation; otherwise, it is reset.
+    /// H: see the DAA instruction table.
+    /// P/V is set if A is at even parity after an operation; otherwise, it is reset.
+    /// N is not affected.
+    /// C: see the DAA instruction table.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void Daa()
+    {
+        var add = 0;
+        var carry = Regs.F & FlagsSetMask.C;
+        if (((Regs.F & FlagsSetMask.H) != 0) || (Regs.A & 0x0f) > 9)
+        {
+            add = 6;
+        }
+        if (carry != 0 || (Regs.A > 0x99))
+        {
+            add |= 0x60;
+        }
+        if (Regs.A > 0x99)
+        {
+            carry = FlagsSetMask.C;
+        }
+        if ((Regs.F & FlagsSetMask.N) != 0)
+        {
+            Sub8((byte)add);
+        }
+        else
+        {
+            Add8((byte)add);
+        }
+        Regs.F = (byte)((Regs.F & ~(FlagsSetMask.C | FlagsSetMask.PV)) | carry | s_ParityTable![Regs.A]);
+        F53Updated = true;
+    }
+
+
+    /// <summary>
+    /// "JR Z,E" operation (0x28)
+    /// </summary>
+    /// <remarks>
+    /// This instruction provides for conditional branching to other segments of a program depending on the results of
+    /// a test (Z flag is set). If the test evaluates to *true*, the value of displacement E is added to PC and the
+    /// next instruction is fetched from the location designated by the new contents of the PC. The jump is measured
+    /// from the address of the instruction op code and contains a range of –126 to +129 bytes. The assembler
+    /// automatically adjusts for the twice incremented PC.
+    ///
+    /// T-States: 
+    ///   Condition is met: 12 (4, 3, 5)
+    ///   Condition is not met: 7 (4, 3)
+    /// Contention breakdown: pc:4,pc+1:3,[pc+1:1 ×5]
+    /// Gate array contention breakdown: pc:4,pc+1:3,[5]
+    /// </remarks>
+    private void JrZ()
+    {
+        var e = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.Z) != 0)
+        {
+            RelativeJump(e);
+        }
+    }
+
 
     /// <summary>
     /// "scf" operation (0x37)

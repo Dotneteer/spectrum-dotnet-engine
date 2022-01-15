@@ -131,6 +131,13 @@ public partial class Z80Cpu
         /// Combination of R3, and R5
         /// </summary>
         public const byte R3R5 = R3 | R5;
+
+        /// <summary>
+        /// Combination of S, Z, R5, and R3
+        /// </summary>
+        public const byte SZ53 = S | Z | R5 | R3;
+
+
     }
 
     /// <summary>

@@ -16,17 +16,46 @@ public partial class Z80Cpu
     /// <summary>
     /// Provide a table that contains the value of the F register after an 8-bit INC operation.
     /// </summary>
+    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private static byte[] s_8BitIncFlags;
+    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     /// <summary>
     /// Provide a table that contains the value of the F register after an 8-bit DEC operation.
     /// </summary>
+    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private static byte[] s_8BitDecFlags;
+    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     /// <summary>
-    /// Provide a table that contains half-carry flags for add operations
+    /// Provide a table that contains half-carry flags for add operations.
     /// </summary>
-    private static byte[] s_HalfCarryAddFlags = new byte[] { 0x00, 0x10, 0x10, 0x10, 0x00, 0x00, 0x00, 0x10 };
+    private static readonly byte[] s_HalfCarryAddFlags = new byte[] { 0x00, 0x10, 0x10, 0x10, 0x00, 0x00, 0x00, 0x10 };
+
+    /// <summary>
+    /// Provide a table that contains overflow flags for add operations.
+    /// </summary>
+    private static readonly byte[] s_OverflowAddFlags = new byte[] { 0x00, 0x00, 0x00, 0x04, 0x04, 0x00, 0x00, 0x00 };
+
+    /// <summary>
+    /// Provide a table that contains half-carry flags for subtract operations.
+    /// </summary>
+    private static readonly byte[] s_HalfCarrySubFlags = new byte[] { 0x00, 0x00, 0x10, 0x00, 0x10, 0x00, 0x10, 0x10 };
+
+    /// <summary>
+    /// Provide a table that contains overflow flags for subtract operations.
+    /// </summary>
+    private static readonly byte[] s_OverflowSubFlags = new byte[] { 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00 };
+
+    /// <summary>
+    /// Provide a table that contains P/V flag values for each byte in the 0x00-0xff range.
+    /// </summary>
+    private static byte[]? s_ParityTable;
+
+    /// <summary>
+    /// Provide a table that masks out the S, Z, 5, and 3 flags from a byte.
+    /// </summary>
+    private static byte[]? s_SZ53Table;
 
 
     /// <summary>
@@ -37,7 +66,7 @@ public partial class Z80Cpu
         // --- Initialize instance tables
         // TODO
 
-        // --- Initializr static tables
+        // --- Initialize static tables
         if (s_TablesInitialized)
         {
             return;
@@ -79,6 +108,28 @@ public partial class Z80Cpu
                 FlagsSetMask.N;
             s_8BitDecFlags[b] = (byte)flags;
         }
+
+        // --- Prepare the parity table
+        s_ParityTable = new byte[0x100];
+        for (var i = 0; i < 0x100; i++)
+        {
+            var parity = 0;
+            var b = i;
+            for (var j = 0; j < 8; j++)
+            {
+                parity ^= (b & 0x01);
+                b >>= 1;
+            }
+            s_ParityTable[i] = (byte)(parity == 0 ? FlagsSetMask.PV : 0);
+        }
+
+        // --- Prepare the SZ53 table
+        s_SZ53Table = new byte[0x100];
+        for (var i = 0; i < 0x100; i++)
+        {
+            s_SZ53Table[i] = (byte)(i & (FlagsSetMask.S | FlagsSetMask.R5 | FlagsSetMask.R3));
+        }
+        s_SZ53Table[0] |= FlagsSetMask.Z;
     }
 
     /// <summary>
@@ -102,5 +153,47 @@ public partial class Z80Cpu
           s_HalfCarryAddFlags[lookup]);
         F53Updated = true;
         return (ushort)tmpVal;
+    }
+
+    /// <summary>
+    /// The core of the 8-bit ADD operation 
+    /// </summary>
+    /// <param name="value">Value to add to A</param>
+    private void Add8(byte value)
+    {
+        var tmp = Regs.A + value;
+        var lookup =
+            ((Regs.A & 0x88) >> 3) |
+            ((value & 0x88) >> 2) |
+            ((tmp & 0x88) >> 1);
+        Regs.A = (byte)tmp;
+        Regs.F = (byte)
+          (((tmp & 0x100) != 0 ? FlagsSetMask.C : 0) |
+          s_HalfCarryAddFlags[lookup & 0x07] |
+          s_OverflowAddFlags[lookup >> 4] |
+          s_SZ53Table![Regs.A]);
+        F53Updated = true;
+    }
+
+    // 
+    /// <summary>
+    /// The core of the 8-bit SUB operation
+    /// </summary>
+    /// <param name="value">Value to subtract to A</param>
+    private void Sub8(byte value)
+    {
+        var tmp = Regs.A - value;
+        var lookup =
+          ((Regs.A & 0x88) >> 3) |
+          ((value & 0x88) >> 2) |
+          ((tmp & 0x88) >> 1);
+        Regs.A = (byte)tmp;
+        Regs.F =(byte)
+          (((tmp & 0x100) != 0 ? FlagsSetMask.C : 0) |
+          FlagsSetMask.N |
+          s_HalfCarrySubFlags[lookup & 0x07] |
+          s_OverflowSubFlags[lookup >> 4] |
+          s_SZ53Table![Regs.A]);
+        F53Updated = true;
     }
 }
