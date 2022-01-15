@@ -64,6 +64,10 @@ public enum Z80Signals
 
 Besides the registers and signals, we keep other CPU state information:
 
+- **`InterruptMode`**: >>>
+- **`Iff1`**: >>>
+- **`Iff2`**: >>>
+- **`Halted`**: >>>
 - **`Tacts`**: The number of T-states (clock cycles) elapsed since the last reset. You know that accurate timing is at the heart of the CPU's implementation. We use a 64-bit counter, representing a long enough period.
 - **`F53Updated`**, **`PrevF53Updated`**: These flags keep track of modifications of the bit 3 and 5 flags of Register F. We need to keep this value, as we utilize it within the `SCF` and `CCF` instructions to calculate the new values of F.
 - **`OpCode`**: The last fetched opcode. If an instruction is prefixed, it contains the prefix or the opcode following the prefix, depending on which was fetched last.

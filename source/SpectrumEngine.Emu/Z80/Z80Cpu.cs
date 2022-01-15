@@ -15,12 +15,19 @@ public partial class Z80Cpu
     /// Initializes the Z80 CPU instance.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// The constructor sets the default values of dependency methods. The CPU raises an exception for memory and I/O
     /// port operations if any methods have not been provided by the time they are invoked. The tact handler method is
     /// empty by default.
+    /// </para>
+    /// <para>
+    /// The constructor also sets up methods for optional memory contention and prepares the helper tables used for
+    /// instruction execution.
+    /// </para>
     /// </remarks>
     public Z80Cpu()
     {
+        // --- Memory and I/O handlers
         ReadMemoryFunction = (ushort address) 
             => throw new InvalidOperationException("ReadMemoryFunction has not been set.");
         WriteMemoryFunction = (ushort address, byte data)
@@ -29,8 +36,16 @@ public partial class Z80Cpu
             => throw new InvalidOperationException("ReadPortFunction has not been set.");
         WritePortFunction = (ushort address, byte data)
             => throw new InvalidOperationException("WritePortFunction has not been set.");
+
+        // --- Concurrency with other hardware components
         TactIncrementedHandler = () => { };
 
+        // --- Memory contention
+        ContendReadFunction = (ushort address) => { };
+        ContendWriteFunction = (ushort address) => { };
+
+        // --- Initialize worker tables
+        InitializeAluTables();
         InitializeStandardInstructionsTable();
     }
 

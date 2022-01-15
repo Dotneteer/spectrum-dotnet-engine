@@ -53,4 +53,14 @@ public partial class Z80Cpu
     /// rendering the screen or sound,  handling peripheral devices, and so on.
     /// </remarks>
     public Action TactIncrementedHandler;
+
+    /// <summary>
+    /// This function handles address-based memory read contention.
+    /// </summary>
+    public Action<ushort> ContendReadFunction;
+
+    /// <summary>
+    /// This function handles address-based memory write contention.
+    /// </summary>
+    public Action<ushort> ContendWriteFunction;
 }
