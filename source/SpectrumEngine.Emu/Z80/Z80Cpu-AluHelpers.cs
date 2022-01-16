@@ -130,6 +130,8 @@ public partial class Z80Cpu
             s_SZ53Table[i] = (byte)(i & (FlagsSetMask.S | FlagsSetMask.R5 | FlagsSetMask.R3));
         }
         s_SZ53Table[0] |= FlagsSetMask.Z;
+
+        s_TablesInitialized = true;
     }
 
     /// <summary>

@@ -25,9 +25,9 @@ public partial class Z80Cpu
             Djnz,       LdDENN,     LdDEiA,     IncDE,      IncD,       DecD,       LdDN,       Rla,        // 10-17
             JrE,        AddHLDE,    LdADEi,     DecDE,      IncE,       DecE,       LdEN,       Rra,        // 18-1f
             JrNZ,       LdHLNN,     LdNNiHL,    IncHL,      IncH,       DecH,       LdHN,       Daa,        // 20-27
-            JrZ,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 28-2f
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Scf,        // 30-37
-            Nop,        Nop,        Nop,        Nop,        Nop,        DecA,       LdAN,       Nop,        // 38-3f
+            JrZ,        AddHLHL,    LdHLNNi,    DecHL,      IncL,       DecL,       LdLN,       Cpl,        // 28-2f
+            JrNC,       LdSPNN,     LdNNiA,     IncSP,      IncHLi,     DecHLi,     LdHLiN,     Scf,        // 30-37
+            JrC,        AddHLSP,    LdANNi,     DecSP,      IncA,       DecA,       LdAN,       Ccf,        // 38-3f
 
             Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 40-47
             Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 48-4f
@@ -134,6 +134,7 @@ public partial class Z80Cpu
     private void IncB()
     {
         Regs.F = (byte)(s_8BitIncFlags[Regs.B++] | (Regs.F & FlagsSetMask.C));
+        F53Updated = true;
     }
 
     /// <summary>
@@ -154,6 +155,7 @@ public partial class Z80Cpu
     private void DecB()
     {
         Regs.F = (byte)(s_8BitDecFlags[Regs.B--] | (Regs.F & FlagsSetMask.C));
+        F53Updated = true;
     }
 
     /// <summary>
@@ -279,6 +281,7 @@ public partial class Z80Cpu
     private void IncC()
     {
         Regs.F = (byte)(s_8BitIncFlags[Regs.C++] | (Regs.F & FlagsSetMask.C));
+        F53Updated = true;
     }
 
     /// <summary>
@@ -298,6 +301,7 @@ public partial class Z80Cpu
     private void DecC()
     {
         Regs.F = (byte)(s_8BitDecFlags[Regs.C--] | (Regs.F & FlagsSetMask.C));
+        F53Updated = true;
     }
 
     /// <summary>
@@ -434,6 +438,7 @@ public partial class Z80Cpu
     private void IncD()
     {
         Regs.F = (byte)(s_8BitIncFlags[Regs.D++] | (Regs.F & FlagsSetMask.C));
+        F53Updated = true;
     }
 
     /// <summary>
@@ -454,6 +459,7 @@ public partial class Z80Cpu
     private void DecD()
     {
         Regs.F = (byte)(s_8BitDecFlags[Regs.D--] | (Regs.F & FlagsSetMask.C));
+        F53Updated = true;
     }
 
     /// <summary>
@@ -582,6 +588,7 @@ public partial class Z80Cpu
     private void IncE()
     {
         Regs.F = (byte)(s_8BitIncFlags[Regs.E++] | (Regs.F & FlagsSetMask.C));
+        F53Updated = true;
     }
 
     /// <summary>
@@ -601,6 +608,7 @@ public partial class Z80Cpu
     private void DecE()
     {
         Regs.F = (byte)(s_8BitDecFlags[Regs.E--] | (Regs.F & FlagsSetMask.C));
+        F53Updated = true;
     }
 
     /// <summary>
@@ -645,7 +653,7 @@ public partial class Z80Cpu
     }
 
     /// <summary>
-    /// "JR NZ,E" operation (0x20)
+    /// "jr nz,E" operation (0x20)
     /// </summary>
     /// <remarks>
     /// This instruction provides for conditional branching to other segments of a program depending on the results of
@@ -732,6 +740,7 @@ public partial class Z80Cpu
     private void IncH()
     {
         Regs.F = (byte)(s_8BitIncFlags[Regs.H++] | (Regs.F & FlagsSetMask.C));
+        F53Updated = true;
     }
 
     /// <summary>
@@ -752,6 +761,7 @@ public partial class Z80Cpu
     private void DecH()
     {
         Regs.F = (byte)(s_8BitDecFlags[Regs.H--] | (Regs.F & FlagsSetMask.C));
+        F53Updated = true;
     }
 
     /// <summary>
@@ -834,13 +844,14 @@ public partial class Z80Cpu
         {
             Add8((byte)add);
         }
+
         Regs.F = (byte)((Regs.F & ~(FlagsSetMask.C | FlagsSetMask.PV)) | carry | s_ParityTable![Regs.A]);
         F53Updated = true;
     }
 
 
     /// <summary>
-    /// "JR Z,E" operation (0x28)
+    /// "jr z,E" operation (0x28)
     /// </summary>
     /// <remarks>
     /// This instruction provides for conditional branching to other segments of a program depending on the results of
@@ -864,6 +875,272 @@ public partial class Z80Cpu
         }
     }
 
+    /// <summary>
+    /// "add hl,hl" operation (0x29)
+    /// </summary>
+    /// <remarks>
+    /// The contents of HL are added to the contents of HL and the result is stored in HL.
+    /// S, Z, P/V are not affected.
+    /// H is set if carry from bit 11; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 15; otherwise, it is reset.
+    /// 
+    /// T-States: 11 (4, 4, 3)
+    /// Contention breakdown: pc:11
+    /// </remarks>
+    private void AddHLHL()
+    {
+        Regs.WZ = (ushort)(Regs.HL + 1);
+        Regs.HL = AluAddHL(Regs.HL, Regs.HL);
+        TactPlus7(Regs.IR);
+    }
+
+    /// <summary>
+    /// "ld hl,(NN)" operation (0x2A)
+    /// </summary>
+    /// <remarks>
+    /// The contents of memory address (NN) are loaded to the low-order portion of HL (L), and the contents of the next
+    /// highest memory address (NN + 1) are loaded to the high-order portion of HL (H).
+    ///
+    /// T-States: 16 (4, 3, 3, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3,nn:3,nn+1:3
+    /// </remarks>
+    private void LdHLNNi()
+    {
+        ushort adr = ReadCodeMemory();
+        adr += (ushort)(ReadCodeMemory() << 8);
+        Regs.WZ = (ushort)(adr + 1);
+        ushort val = ReadMemory(adr);
+        val += (ushort)(ReadMemory(Regs.WZ) << 8);
+        Regs.HL = val;
+    }
+
+    /// <summary>
+    /// "dec hl" operation (0x2B)
+    /// </summary>
+    /// <remarks>
+    /// The contents of register pair HL are decremented.
+    /// 
+    /// T-States: 6 (4, 2)
+    /// Contention breakdown: pc:6
+    /// </remarks>
+    private void DecHL()
+    {
+        Regs.HL--;
+        TactPlus2(Regs.IR);
+    }
+
+    /// <summary>
+    /// "inc l" operation (0x2C)
+    /// </summary>
+    /// <remarks>
+    /// Register L is incremented.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if r was 7Fh before operation; otherwise, it is reset.
+    /// N is reset.
+    /// C is not affected.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void IncL()
+    {
+        Regs.F = (byte)(s_8BitIncFlags[Regs.L++] | (Regs.F & FlagsSetMask.C));
+        F53Updated = true;
+    }
+
+    /// <summary>
+    /// "dec l" operation (0x2D)
+    /// </summary>
+    /// <remarks>
+    /// Register E is decremented.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4, otherwise, it is reset.
+    /// P/V is set if m was 80h before operation; otherwise, it is reset.
+    /// N is set.
+    /// C is not affected.
+    /// 
+    /// T-States: 4
+    /// </remarks>
+    private void DecL()
+    {
+        Regs.F = (byte)(s_8BitDecFlags[Regs.L--] | (Regs.F & FlagsSetMask.C));
+        F53Updated = true;
+    }
+
+    /// <summary>
+    /// "ld l,N" operation (0x2E)
+    /// </summary>
+    /// <remarks>
+    /// The 8-bit integer N is loaded to E.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void LdLN()
+    {
+        Regs.L = ReadCodeMemory();
+    }
+
+    /// <summary>
+    /// "cpl" operation (0x2F)
+    /// </summary>
+    /// <remarks>
+    /// The contents of A are inverted (one's complement).
+    /// S, Z, P/V, C are not affected.
+    /// H and N are set.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void Cpl()
+    {
+        Regs.A ^= 0xFF;
+        Regs.F = (byte)((Regs.F & (FlagsSetMask.C | FlagsSetMask.PV | FlagsSetMask.Z | FlagsSetMask.S)) |
+            (Regs.A & FlagsSetMask.R3R5) | FlagsSetMask.N | FlagsSetMask.H);
+        F53Updated = true;
+    }
+
+    /// <summary>
+    /// "jr nc,E" operation (0x30)
+    /// </summary>
+    /// <remarks>
+    /// This instruction provides for conditional branching to other segments of a program depending on the results of
+    /// a test (C flag is not set). If the test evaluates to *true*, the value of displacement E is added to PC and
+    /// the next instruction is fetched from the location designated by the new contents of the PC. The jump is
+    /// measured from the address of the instruction op code and contains a range of –126 to +129 bytes. The assembler
+    /// automatically adjusts for the twice incremented PC.
+    /// 
+    /// T-States: 
+    ///   Condition is met: 12 (4, 3, 5)
+    ///   Condition is not met: 7, (4, 3)
+    /// Contention breakdown: pc:4,pc+1:3,[pc+1:1 ×5]
+    /// Gate array contention breakdown: pc:4,pc+1:3,[5]
+    /// </remarks>
+    private void JrNC()
+    {
+        var e = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.C) == 0)
+        {
+            RelativeJump(e);
+        }
+    }
+
+    /// <summary>
+    /// "ld sp,NN" instruction (0x31, N-LSB, N-MSB)
+    /// </summary>
+    /// <remarks>
+    /// The 16-bit integer value is loaded to the SP register pair.
+    /// This instruction does not affect any flag.
+    /// 
+    /// T-states: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3
+    /// </remarks>
+    private void LdSPNN()
+    {
+        Regs.SP = (ushort)(ReadCodeMemory() + (ReadCodeMemory() << 8));
+    }
+
+    /// <summary>
+    /// "ld (NN),a" operation (0x32)
+    /// </summary>
+    /// <remarks>
+    /// The contents of A are loaded to the memory address specified by the operand NN
+    /// 
+    /// T-States: 13 (4, 3, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3,nn:3
+    /// </remarks>
+    private void LdNNiA()
+    {
+        var l = ReadCodeMemory();
+        var addr = (ushort)((ReadCodeMemory() << 8) | l);
+        Regs.WL = (byte)((addr + 1) & 0xFF);
+        Regs.WH = Regs.A;
+        WriteMemory(addr, Regs.A);
+    }
+
+    /// <summary>
+    /// "inc sp" operation (0x33)
+    /// </summary>
+    /// <remarks>
+    /// The contents of register pair SP are incremented.
+    ///
+    /// T-States: 6 (4, 2)
+    /// Contention breakdown: pc:6
+    /// </remarks>
+    private void IncSP()
+    {
+        Regs.SP++;
+        TactPlus2(Regs.IR);
+    }
+
+    /// <summary>
+    /// "inc (hl)" operation (0x34)
+    /// </summary>
+    /// <remarks>
+    /// The byte contained in the address specified by the contents HL is incremented.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if (HL) was 0x7F before operation; otherwise, it is reset.
+    /// N is reset.
+    /// C is not affected.
+    /// 
+    /// T-States: 11 (4, 4, 3)
+    /// Contention breakdown: pc:4,hl:3,hl:1,hl(write):3
+    /// Gate array contention breakdown: pc:4,hl:4,hl(write):3
+    /// </remarks>
+    private void IncHLi()
+    {
+        var memValue = ReadMemory(Regs.HL);
+        TactPlus1(Regs.HL);
+        Regs.F = (byte)(s_8BitIncFlags[memValue++] | Regs.F & FlagsSetMask.C);
+        F53Updated = true;
+        WriteMemory(Regs.HL, memValue);
+    }
+
+    /// <summary>
+    /// "dec (hl)" operation (0x35)
+    /// </summary>
+    /// <remarks>
+    /// The byte contained in the address specified by the contents HL is decremented.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if (HL) was 0x80 before operation; otherwise, it is reset.
+    /// N is set.
+    /// C is not affected.
+    /// 
+    /// T-States: 11 (4, 4, 3)
+    /// Contention breakdown: pc:4,hl:3,hl:1,hl(write):3
+    /// Gate array contention breakdown: pc:4,hl:4,hl(write):3
+    /// </remarks>
+    private void DecHLi()
+    {
+        var memValue = ReadMemory(Regs.HL);
+        TactPlus1(Regs.HL);
+        Regs.F = (byte)(s_8BitDecFlags[memValue--] | Regs.F & FlagsSetMask.C);
+        F53Updated = true;
+        WriteMemory(Regs.HL, memValue);
+    }
+
+    /// <summary>
+    /// "ld (hl),N" operation (0x36)
+    /// </summary>
+    /// <remarks>
+    /// The N 8-bit value is loaded to the memory address specified by HL.
+    ///
+    /// T-States: 10, (4, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,hl:3
+    /// </remarks>
+    private void LdHLiN()
+    {
+        var val = ReadCodeMemory();
+        WriteMemory(Regs.HL, val);
+    }
 
     /// <summary>
     /// "scf" operation (0x37)
@@ -879,6 +1156,104 @@ public partial class Z80Cpu
     {
         Regs.F = (byte)((Regs.F & FlagsSetMask.SZPV) | FlagsSetMask.C);
         SetR5R3ForScfAndCcf();
+    }
+
+    /// <summary>
+    /// "jr c,E" operation (0x38)
+    /// </summary>
+    /// <remarks>
+    /// This instruction provides for conditional branching to other segments of a program depending on the results of
+    /// a test (C flag is set). If the test evaluates to *true*, the value of displacement E is added to PC and the 
+    /// next instruction is fetched from the location designated by the new contents of the PC. The jump is measured
+    /// from the address of the instruction op code and contains a range of –126 to +129 bytes. The assembler
+    /// automatically adjusts for the twice incremented PC.
+    /// 
+    /// T-States: 
+    ///   Condition is met: 12, (4, 3, 5)
+    ///   Condition is not met: 7 (4, 3)
+    /// Contention breakdown: pc:4,pc+1:3,[pc+1:1 ×5]
+    /// Gate array contention breakdown: pc:4,pc+1:3,[5]
+    /// </remarks>
+    private void JrC()
+    {
+        var e = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.C) != 0)
+        {
+            RelativeJump(e);
+        }
+    }
+
+    /// <summary>
+    /// "add hl,sp" operation (0x39)
+    /// </summary>
+    /// <remarks>
+    /// The contents of SP are added to the contents of HL and the result is stored in HL.
+    /// S, Z, P/V are not affected.
+    /// H is set if carry from bit 11; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 15; otherwise, it is reset.
+    /// 
+    /// T-States: 11 (4, 4, 3)
+    /// Contention breakdown: pc:11
+    /// </remarks>
+    private void AddHLSP()
+    {
+        Regs.WZ = (ushort)(Regs.HL + 1);
+        Regs.HL = AluAddHL(Regs.HL, Regs.SP);
+        TactPlus7(Regs.IR);
+    }
+
+    /// <summary>
+    /// "ld a,(NN)" operation (0x3A)
+    /// </summary>
+    /// <remarks>
+    /// The contents of the memory location specified by the operands NN are loaded to A.
+    /// 
+    /// T-States: 13 (4, 3, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3,nn:3
+    /// </remarks>
+    private void LdANNi()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        Regs.A = ReadMemory(Regs.WZ);
+        Regs.WZ++;
+    }
+
+    /// <summary>
+    /// "dec sp" operation (0x3B)
+    /// </summary>
+    /// <remarks>
+    /// The contents of register pair HL are decremented.
+    /// 
+    /// T-States: 6 (4, 2)
+    /// Contention breakdown: pc:6
+    /// </remarks>
+    private void DecSP()
+    {
+        Regs.SP--;
+        TactPlus2(Regs.IR);
+    }
+
+    /// <summary>
+    /// "inc a" operation (0x3C)
+    /// </summary>
+    /// <remarks>
+    /// Register A is incremented.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if r was 7Fh before operation; otherwise, it is reset.
+    /// N is reset.
+    /// C is not affected.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void IncA()
+    {
+        Regs.F = (byte)(s_8BitIncFlags[Regs.A++] | (Regs.F & FlagsSetMask.C));
+        F53Updated = true;
     }
 
     /// <summary>
@@ -898,6 +1273,7 @@ public partial class Z80Cpu
     private void DecA()
     {
         Regs.F = (byte)(s_8BitDecFlags[Regs.A--] | (Regs.F & FlagsSetMask.C));
+        F53Updated = true;
     }
 
     /// <summary>
@@ -912,5 +1288,21 @@ public partial class Z80Cpu
     private void LdAN()
     {
         Regs.A = ReadCodeMemory();
+    }
+
+    /// <summary>
+    /// "ccf" operation
+    /// </summary>
+    /// <remarks>
+    /// The Carry flag in F is inverted.
+    /// Other flags are not affected, excep R3 and R5
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void Ccf()
+    {
+        Regs.F = (byte)((Regs.F & FlagsSetMask.SZPV) | ((Regs.F & FlagsSetMask.C) != 0 ? FlagsSetMask.H : FlagsSetMask.C));
+        SetR5R3ForScfAndCcf();
     }
 }
