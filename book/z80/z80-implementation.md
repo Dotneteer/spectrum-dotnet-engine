@@ -2,7 +2,20 @@
 
 ## Z80 CPU Implementation Source Code Files
 
-*TBD*
+All the Z80 CPU-related source files are within the `Z80` folder of the emulator project. The implementation of the CPU is encapsulated in a single class, `Z80Cpu`; however, it is split into several partitions:
+- `Z80Cpu.cs`: Defines a couple of nested types the CPU emulation utilizes in its implementation.
+- `Z80Cpu-AluHelper.cs`: Contains several helper fields and methods to support the CPU's ALU operations.
+- `Z80Cpu-BitInstructions.cs`: This file contains the code for processing bit manipulation instructions (with `$CB` prefix).
+- `Z80Cpu-Clock.cs`: Declares methods that handle the clock and CPU timing.
+- `Z80Cpu-Contention.cs`: This partition defines members that handle memory contention.
+- `Z80Cpu-Dependencies.cs`: This contains the definition of dependencies that you need to define to allow the Z80 to work in an emulated hardware environment.
+- `Z80Cpu-ExecutionCycle.cs`: This partition lists the methods that contribute to the CPU's execution cycle.
+- `Z80Cpu-ExtendedInstructions.cs`: This file contains the code for processing extended Z80 instructions (with `$ED` prefix).
+- `Z80Cpu-Helpers.cs`: Contains miscellaneous helpers for instruction execution.
+- `Z80Cpu-IndexedInstructions.cs`: This partition contains the code for processing IX- or IY-indexed bit manipulation instructions (with `$DDCB` or `$FDCB` prefix).
+- `Z80Cpu-IndexedInstructions.cs`: This partition contains the code for processing IX- or IY-indexed Z80 instructions (with `$DD` or `$FD` prefix).
+- `Z80Cpu-StandardInstructions.cs`: This file contains the code for processing standard Z80 instructions (with no prefix).
+- `Z80Cpu-State.cs`: This partition defines the state information we use while emulating the behavior of the CPU.
 
 ## Registers and CPU state
 
@@ -64,10 +77,10 @@ public enum Z80Signals
 
 Besides the registers and signals, we keep other CPU state information:
 
-- **`InterruptMode`**: >>>
-- **`Iff1`**: >>>
-- **`Iff2`**: >>>
-- **`Halted`**: >>>
+- **`InterruptMode`**: Stores the current interrupt mode of the CPU (0, 1, or 2).
+- **`Iff1`**: This flip-flop indicates if the maskable interrupt is enabled (`true`) or disabled (`false`).
+- **`Iff2`**: The purpose of this flop-flop is to save the status of `Iff1` when a non-maskable interrupt occurs.
+- **`Halted`**: This flag indicates if the CPU is in a halted state.
 - **`Tacts`**: The number of T-states (clock cycles) elapsed since the last reset. You know that accurate timing is at the heart of the CPU's implementation. We use a 64-bit counter, representing a long enough period.
 - **`F53Updated`**, **`PrevF53Updated`**: These flags keep track of modifications of the bit 3 and 5 flags of Register F. We need to keep this value, as we utilize it within the `SCF` and `CCF` instructions to calculate the new values of F.
 - **`OpCode`**: The last fetched opcode. If an instruction is prefixed, it contains the prefix or the opcode following the prefix, depending on which was fetched last.
@@ -182,11 +195,162 @@ According to the current Interrupt Mode, the CPU invokes the interrupt handler m
 
 ## Memory and I/O Operations
 
-*TBD*
+The operation of the CPU is not complete without physical memory that stores the program to execute and the data to operate—also, most hardware use some I/O ports to communicate with the environment.
+The `Z80Cpu` class provides four functions that ensure the connection to the physical memory and I/O ports:
+
+```csharp
+public class Z80Cpu
+{
+    // ...
+    public Func<ushort, byte> ReadMemoryFunction;
+    public Action<ushort, byte> WriteMemoryFunction;
+    public Func<ushort, byte> ReadPortFunction;
+    public Action<ushort, byte> WritePortFunction;
+    // ...
+}
+```
+
+- `ReadMemoryFunction`: This function reads a byte (8-bit) from the memory using the provided 16-bit address.
+- `WriteMemoryFunction`: It writes a byte (8-bit) to the 16-bit memory address provided in the first argument.
+- `ReadPortFunction`: This function reads a byte (8-bit) from an I/O port using the provided 16-bit address.
+- `WritePortFunction`: It writes a byte (8-bit) to the 16-bit I/O port address provided in the first argument.
+
+The `Z80Cpu` constructor sets up these function references to their default to throw an exception. The default implementation of each raises an exception:
+
+```csharp
+public Z80Cpu()
+{
+    ReadMemoryFunction = (ushort address) 
+        => throw new InvalidOperationException("ReadMemoryFunction has not been set.");
+    WriteMemoryFunction = (ushort address, byte data)
+        => throw new InvalidOperationException("WriteMemoryFunction has not been set.");
+    ReadPortFunction = (ushort address)
+        => throw new InvalidOperationException("ReadPortFunction has not been set.");
+    WritePortFunction = (ushort address, byte data)
+        => throw new InvalidOperationException("WritePortFunction has not been set.");
+    // ...
+}
+```
+You must set up these function references when you use a `Z80Cpu` instance. This extract shows how the `TestZ80Machine` class (used in the automatic unit tests of `Z80Cpu`) does it:
+
+```csharp
+public class Z80TestMachine
+{
+    // ...
+    public Z80Cpu Cpu { get; }
+    // ...
+    public Z80TestMachine(/* ... */)
+    {
+        // ...
+        Memory = new byte[ushort.MaxValue + 1];
+        Cpu = new Z80Cpu
+        {
+            // ...
+            ReadMemoryFunction = ReadMemory,
+            WriteMemoryFunction = WriteMemory,
+            ReadPortFunction = ReadPort,
+            WritePortFunction = WritePort
+        };
+        // ...
+    }
+
+    protected virtual byte ReadMemory(ushort addr)
+    {
+        var value = Memory[addr];
+        MemoryAccessLog.Add(new MemoryOp(addr, value, false));
+        return value;
+    }
+
+    protected virtual void WriteMemory(ushort addr, byte value)
+    {
+        Memory[addr] = value;
+        MemoryAccessLog.Add(new MemoryOp(addr, value, true));
+    }
+
+    protected virtual byte ReadPort(ushort addr)
+    {
+        var value = IoReadCount >= IoInputSequence.Count
+            ? (byte)0x00
+            : IoInputSequence[IoReadCount++];
+        IoAccessLog.Add(new IoOp(addr, value, false));
+        return value;
+    }
+
+    protected virtual void WritePort(ushort addr, byte value)
+    {
+        IoAccessLog.Add(new IoOp(addr, value, true));
+    }
+
+    // ...
+}
+```
 
 ## Executing Instructions
 
-*TBD*
+One of the essential methods of the `Z80Cpu` is the `ExecuteCpuCyle`, which implements the CPU's execution loop, as its name suggests. It carries out the step you have learned earlier in the [The Execution Cycle of the CPU](#the-execution-cycle-of-the-cpu) section. This method follows the signal an instruction processing state through the following members:
+- **`OpCode`**: The last fetched opcode. If an instruction is prefixed, it contains the prefix or the opcode following the prefix, depending on which was fetched last.
+- **`Prefix`**: The current prefix to consider when processing the subsequent opcode.
+- **`EiBacklog`**: We use this variable to handle the EI instruction properly. When an EI instruction is executed, any pending interrupt request is not accepted until after the instruction following EI is executed. This single instruction delay is necessary when the next instruction is a return instruction. Interrupts are not allowed until a return instruction is completed.
+
+`ExecuteCpuCycle` keeps track of the current operation prefix (obviously in the `Prefix` field). When `Prefix` has a `None` value after the `ExecuteCpyCycle` returns, it signs that a complete Z80 instruction has been executed. Any other values mean that the execution is somewhere in the middle of a multi-byte instruction.
+
+To enhance instruction execution performance, the `Z80Cpu` class uses jump tables. It has separate jump tables for these instruction classes:
+- Standard instructions
+- Bit manipulation
+- Extended instructions
+- Indexed instructions (IX- and IY-indexed instructions use the same table)
+- Indexed bit manipulations (IX- and IY-indexed instructions use the same table)
+
+Here is an extract from the `Z80Cpu-StandardInstrcutions.cs` file; it demonstrates the use of the `_standardInstrs` table, which is a jump table for standard intructions:
+
+```csharp
+public partial class Z80Cpu
+{
+    // ...
+    private Action[]? _standardInstrs;
+
+    private void InitializeStandardInstructionsTable()
+    {
+        _standardInstrs = new Action[]
+        {
+            Nop,        LdBCNN,     LdBCiA,     IncBC,      IncB,       DecB,       LdBN,       Rlca,       // 00-07
+            // ...
+            LdA_B,      LdA_C,      LdA_D,      LdA_E,      LdA_H,      LdA_L,      LdA_HLi,    Nop,        // 78-7f
+            // ...
+        }
+    }
+
+    // ...
+    private void Nop() { }
+
+    // ...
+    private void LdBCNN()
+    {
+        Regs.C = ReadCodeMemory();
+        Regs.B = ReadCodeMemory();
+    }
+
+    // ...
+}
+```
+
+The execution cycle uses the current opcode byte to address the jump table and call the corresponding instruction method:
+
+```csharp
+public void ExecuteCpuCycle()
+{
+    // ...
+    switch (Prefix)
+    {
+        case OpCodePrefix.None:
+            _standardInstrs![OpCode]?.Invoke();
+            Prefix = OpCodePrefix.None;
+            break;
+        // ...
+    }
+    // ...
+}
+```
 
 ### Standard Instructions
 

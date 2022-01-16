@@ -35,8 +35,8 @@ public partial class Z80Cpu
             LdE_B,      LdE_C,      LdE_D,      Nop,        LdE_H,      LdE_L,      LdE_HLi,    LdE_A,      // 58-5f
             LdH_B,      LdH_C,      LdH_D,      LdH_E,      Nop,        LdH_L,      LdH_HLi,    LdH_A,      // 60-67
             LdL_B,      LdL_C,      LdL_D,      LdL_E,      LdL_H,      Nop,        LdL_HLi,    LdL_A,      // 68-6f
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 70-77
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 78-7f
+            LdHLi_B,    LdHLi_C,    LdHLi_D,    LdHLi_E,    LdHLi_H,    LdHLi_L,    Halt,       LdHLi_A,    // 70-77
+            LdA_B,      LdA_C,      LdA_D,      LdA_E,      LdA_H,      LdA_L,      LdA_HLi,    Nop,        // 78-7f
 
             Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 80-87
             Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 88-8f
@@ -1893,4 +1893,218 @@ public partial class Z80Cpu
     {
         Regs.L = Regs.A;
     }
+
+    /// <summary>
+    /// "ld (hl),b" operation (0x70)
+    /// </summary>
+    /// <remarks>
+    /// The contents of B are loaded to the memory location specified by the contents of HL.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void LdHLi_B()
+    {
+        WriteMemory(Regs.HL, Regs.B);
+    }
+
+    /// <summary>
+    /// "ld (hl),c" operation (0x71)
+    /// </summary>
+    /// <remarks>
+    /// The contents of C are loaded to the memory location specified by the contents of HL.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void LdHLi_C()
+    {
+        WriteMemory(Regs.HL, Regs.C);
+    }
+
+    /// <summary>
+    /// "ld (hl),d" operation (0x72)
+    /// </summary>
+    /// <remarks>
+    /// The contents of D are loaded to the memory location specified by the contents of HL.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void LdHLi_D()
+    {
+        WriteMemory(Regs.HL, Regs.D);
+    }
+
+    /// <summary>
+    /// "ld (hl),e" operation (0x73)
+    /// </summary>
+    /// <remarks>
+    /// The contents of E are loaded to the memory location specified by the contents of HL.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void LdHLi_E()
+    {
+        WriteMemory(Regs.HL, Regs.E);
+    }
+
+    /// <summary>
+    /// "ld (hl),h" operation (0x74)
+    /// </summary>
+    /// <remarks>
+    /// The contents of H are loaded to the memory location specified by the contents of HL.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void LdHLi_H()
+    {
+        WriteMemory(Regs.HL, Regs.H);
+    }
+
+    /// <summary>
+    /// "ld (hl),l" operation (0x75)
+    /// </summary>
+    /// <remarks>
+    /// The contents of L are loaded to the memory location specified by the contents of HL.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void LdHLi_L()
+    {
+        WriteMemory(Regs.HL, Regs.L);
+    }
+
+    /// <summary>
+    /// "halt" operation (0x76)
+    /// </summary>
+    /// <remarks>
+    /// The HALT instruction suspends CPU operation until a subsequent interrupt or reset is received.While in the HALT
+    /// state, the processor executes NOPs to maintain memory refresh logic.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void Halt()
+    {
+        Halted = true;
+        Regs.PC--;
+    }
+
+    /// <summary>
+    /// "ld (hl),a" operation (0x77)
+    /// </summary>
+    /// <remarks>
+    /// The contents of A are loaded to the memory location specified by the contents of HL.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void LdHLi_A()
+    {
+        WriteMemory(Regs.HL, Regs.A);
+    }
+
+    /// <summary>
+    /// "ld a,b" operation (0x78)
+    /// </summary>
+    /// <remarks>
+    /// The contents of B are loaded to A.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void LdA_B()
+    {
+        Regs.A = Regs.B;
+    }
+
+    /// <summary>
+    /// "ld a,c" operation (0x79)
+    /// </summary>
+    /// <remarks>
+    /// The contents of C are loaded to A.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void LdA_C()
+    {
+        Regs.A = Regs.C;
+    }
+
+    /// <summary>
+    /// "ld a,d" operation (0x7A)
+    /// </summary>
+    /// <remarks>
+    /// The contents of D are loaded to A.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void LdA_D()
+    {
+        Regs.A = Regs.D;
+    }
+
+    /// <summary>
+    /// "ld a,e" operation (0x7B)
+    /// </summary>
+    /// <remarks>
+    /// The contents of E are loaded to A.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void LdA_E()
+    {
+        Regs.A = Regs.E;
+    }
+
+    /// <summary>
+    /// "ld a,h" operation (0x7C)
+    /// </summary>
+    /// <remarks>
+    /// The contents of H are loaded to A.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void LdA_H()
+    {
+        Regs.A = Regs.H;
+    }
+
+    /// <summary>
+    /// "ld a,l" operation (0x7D)
+    /// </summary>
+    /// <remarks>
+    /// The contents of L are loaded to A.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void LdA_L()
+    {
+        Regs.A = Regs.L;
+    }
+
+    /// <summary>
+    /// "ld a,(hl)" operation (0x7E)
+    /// </summary>
+    /// <remarks>
+    /// The 8-bit contents of memory location (HL) are loaded to A.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void LdA_HLi()
+    {
+        Regs.A = ReadMemory(Regs.HL);
+    }
+
+
 }

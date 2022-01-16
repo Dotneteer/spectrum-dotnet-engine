@@ -6,7 +6,7 @@ namespace SpectrumEngine.Emu;
 /// This class implements the emulation of the Z80 CPU.
 /// </summary>
 /// <remarks>
-/// This partition defines the state information we use while emulating the behavior of the CPU.
+/// This partition lists the methods that contribute to the CPU's execution cycle.
 /// </remarks>
 public partial class Z80Cpu
 {
@@ -75,7 +75,7 @@ public partial class Z80Cpu
     /// </summary>
     /// <remarks>
     /// <para>
-    /// First, it tests if any of the CPU signals is active, using this order: RESET, NMI, INT, HLT.
+    /// First, it tests if any of the CPU signals is active, using this order: RESET, NMI, INT.
     /// </para>
     /// <param>
     /// Then, after processing the signal, the CPU executes the next instruction. When the instruction is completed,
