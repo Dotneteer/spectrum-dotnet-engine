@@ -352,7 +352,19 @@ public void ExecuteCpuCycle()
 }
 ```
 
-### Standard Instructions
+### The `$DD` and `$FD` prefixes
+
+The Z80 CPU has two prefixes, `$DD` and `$FD`, which signify that the next operation will be indexed. These prefixes work differently than the `$CB` and `$ED` prefixes.
+
+When an opcode follows a `$CB` prefix, that opcode signifies a bit manipulation instruction, and the CPU executes it accordingly. All the possible 256 opcodes after `$CB` are meaningful operations. When the CPU executes an instruction after the `$ED` prefix, only a small set of the potential 256 instructions are used; the others result in a `NOP` instruction. So, the `$CB` and `$ED` prefixes imply a two-byte opcode.
+
+However, the `$DD` and `$FD` prefixes work differently. These are like pseudo instructions, and they tell the CPU to use the IX or IY register in the subsequent instructions interpreted as standard instructions, provided those are related to the HL register. Also, if those use either the H or L registers, the CPU will use the upper or lower 8-bit halves of IX or IY. If the subsequent instruction is not HL-related, the CPU ignores the `$DD` or `$FD` prefixes. (Of course, in this case, the instruction execution takes 4 T-states longer, with the duration of the prefix processing.)
+
+So, you can add as many `$DD` and `$FD` prefixes after each other as you want. The `$DD`, `$FD`, `$DD` prefix sequence is the same as a single `$DD`. Similarly, the `$DD`, `$DD`, `$FD` sequence is the same as a single `$FD`. Of course, each prefix adds 4 T-states to the instruction processing time.
+
+There is an essential consequence of this architecture: you can create very long instructions by means of the T-states they need to run. Because the CPU samples interrupt signals (both NMI and INT) only when instruction execution is about to complete, such (intentionally or accidentally) long prefix sequences may cause the program to miss the active interrupt signal.
+
+### Instruction Helpers
 
 *TBD*
 
