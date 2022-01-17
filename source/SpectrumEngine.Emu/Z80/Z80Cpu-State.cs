@@ -44,6 +44,11 @@ public partial class Z80Cpu
     public bool Iff2 = false;
 
     /// <summary>
+    /// This flag indicates if the CPU is in a halted state.
+    /// </summary>
+    public bool Halted;
+
+    /// <summary>
     /// The number of T-states (clock cycles) elapsed since the last reset
     /// </summary>
     public ulong Tacts = 0;
@@ -87,4 +92,10 @@ public partial class Z80Cpu
     /// internal tracking of the call stack accordingly.
     /// </summary>
     public bool RetExecuted;
+
+    /// <summary>
+    /// This flag is reserved for future extension. The ZX Spectrum Next computer uses additional Z80 instructions.
+    /// This flag indicates if those are allowed.
+    /// </summary>
+    public bool AllowExtendedInstructions;
 }

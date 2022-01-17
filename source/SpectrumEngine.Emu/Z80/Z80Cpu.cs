@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 
 namespace SpectrumEngine.Emu;
+
 /// <summary>
 /// This class implements the emulation of the Z80 CPU.
 /// </summary>
@@ -10,6 +11,44 @@ namespace SpectrumEngine.Emu;
 /// </remarks>
 public partial class Z80Cpu
 {
+    /// <summary>
+    /// Initializes the Z80 CPU instance.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The constructor sets the default values of dependency methods. The CPU raises an exception for memory and I/O
+    /// port operations if any methods have not been provided by the time they are invoked. The tact handler method is
+    /// empty by default.
+    /// </para>
+    /// <para>
+    /// The constructor also sets up methods for optional memory contention and prepares the helper tables used for
+    /// instruction execution.
+    /// </para>
+    /// </remarks>
+    public Z80Cpu()
+    {
+        // --- Memory and I/O handlers
+        ReadMemoryFunction = (ushort address) 
+            => throw new InvalidOperationException("ReadMemoryFunction has not been set.");
+        WriteMemoryFunction = (ushort address, byte data)
+            => throw new InvalidOperationException("WriteMemoryFunction has not been set.");
+        ReadPortFunction = (ushort address)
+            => throw new InvalidOperationException("ReadPortFunction has not been set.");
+        WritePortFunction = (ushort address, byte data)
+            => throw new InvalidOperationException("WritePortFunction has not been set.");
+
+        // --- Concurrency with other hardware components
+        TactIncrementedHandler = () => { };
+
+        // --- Memory contention
+        ContendReadFunction = (ushort address) => { };
+        ContendWriteFunction = (ushort address) => { };
+
+        // --- Initialize worker tables
+        InitializeAluTables();
+        InitializeStandardInstructionsTable();
+    }
+
     /// <summary>
     /// Represents integer constants that mask out particular flags of the Z80 CPU's F register.
     /// </summary>
@@ -92,6 +131,13 @@ public partial class Z80Cpu
         /// Combination of R3, and R5
         /// </summary>
         public const byte R3R5 = R3 | R5;
+
+        /// <summary>
+        /// Combination of S, Z, R5, and R3
+        /// </summary>
+        public const byte SZ53 = S | Z | R5 | R3;
+
+
     }
 
     /// <summary>
@@ -384,15 +430,6 @@ public partial class Z80Cpu
         /// Indicates an active RESET signal
         /// </summary>
         Reset = 0x04,
-
-        /// <summary>
-        /// This flag indicates that the CPU is halted.
-        /// </summary>
-        /// <remarks>
-        /// When a software `HALT` instruction is executed, the CPU executes `NOP` instructions until an interrupt is
-        /// received (either a non-maskable or a maskable interrupt while the interrupt flip-flop is enabled).
-        /// </remarks>
-        Halted = 0x08,
     }
 
     /// <summary>
