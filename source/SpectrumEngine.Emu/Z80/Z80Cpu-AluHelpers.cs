@@ -57,6 +57,10 @@ public partial class Z80Cpu
     /// </summary>
     private static byte[]? s_SZ53Table;
 
+    /// <summary>
+    /// Provide a table that masks out the S, Z, 5, 3, and PV flags from a byte.
+    /// </summary>
+    private static byte[]? s_SZ53PVTable;
 
     /// <summary>
     /// Initialize the helper tables used for ALU operations.
@@ -125,11 +129,14 @@ public partial class Z80Cpu
 
         // --- Prepare the SZ53 table
         s_SZ53Table = new byte[0x100];
+        s_SZ53PVTable = new byte[0x100];
         for (var i = 0; i < 0x100; i++)
         {
             s_SZ53Table[i] = (byte)(i & (FlagsSetMask.S | FlagsSetMask.R5 | FlagsSetMask.R3));
+            s_SZ53PVTable[i] = (byte)(s_SZ53Table[i] | s_ParityTable[i]);
         }
         s_SZ53Table[0] |= FlagsSetMask.Z;
+        s_SZ53PVTable[0] |= FlagsSetMask.Z;
 
         s_TablesInitialized = true;
     }
@@ -177,7 +184,26 @@ public partial class Z80Cpu
         F53Updated = true;
     }
 
-    // 
+    /// <summary>
+    /// The core of the 8-bit ADC operation 
+    /// </summary>
+    /// <param name="value">Value to add to A</param>
+    private void Adc8(byte value)
+    {
+        var tmp = Regs.A + value + (Regs.F & FlagsSetMask.C);
+        var lookup =
+            ((Regs.A & 0x88) >> 3) |
+            ((value & 0x88) >> 2) |
+            ((tmp & 0x88) >> 1);
+        Regs.A = (byte)tmp;
+        Regs.F = (byte)
+          (((tmp & 0x100) != 0 ? FlagsSetMask.C : 0) |
+          s_HalfCarryAddFlags[lookup & 0x07] |
+          s_OverflowAddFlags[lookup >> 4] |
+          s_SZ53Table![Regs.A]);
+        F53Updated = true;
+    }
+
     /// <summary>
     /// The core of the 8-bit SUB operation
     /// </summary>
@@ -196,6 +222,82 @@ public partial class Z80Cpu
           s_HalfCarrySubFlags[lookup & 0x07] |
           s_OverflowSubFlags[lookup >> 4] |
           s_SZ53Table![Regs.A]);
+        F53Updated = true;
+    }
+
+    /// <summary>
+    /// The core of the 8-bit SBC operation
+    /// </summary>
+    /// <param name="value">Value to subtract to A</param>
+    private void Sbc8(byte value)
+    {
+        var tmp = Regs.A - value - (Regs.F & FlagsSetMask.C);
+        var lookup =
+          ((Regs.A & 0x88) >> 3) |
+          ((value & 0x88) >> 2) |
+          ((tmp & 0x88) >> 1);
+        Regs.A = (byte)tmp;
+        Regs.F = (byte)
+          (((tmp & 0x100) != 0 ? FlagsSetMask.C : 0) |
+          FlagsSetMask.N |
+          s_HalfCarrySubFlags[lookup & 0x07] |
+          s_OverflowSubFlags[lookup >> 4] |
+          s_SZ53Table![Regs.A]);
+        F53Updated = true;
+    }
+
+    /// <summary>
+    /// The core of the 8-bit AND operation 
+    /// </summary>
+    /// <param name="value">Value to AND with A</param>
+    private void And8(byte value)
+    {
+        Regs.A &= value;
+        Regs.F = (byte)(FlagsSetMask.H | s_SZ53PVTable![Regs.A]);
+        F53Updated = true;
+    }
+
+    /// <summary>
+    /// The core of the 8-bit XOR operation 
+    /// </summary>
+    /// <param name="value">Value to XOR with A</param>
+    private void Xor8(byte value)
+    {
+        Regs.A ^= value;
+        Regs.F = s_SZ53PVTable![Regs.A];
+        F53Updated = true;
+    }
+
+    /// <summary>
+    /// The core of the 8-bit OR operation 
+    /// </summary>
+    /// <param name="value">Value to OR with A</param>
+    private void Or8(byte value)
+    {
+        Regs.A |= value;
+        Regs.F = s_SZ53PVTable![Regs.A];
+        F53Updated = true;
+    }
+
+    /// <summary>
+    /// The core of the 8-bit CP operation 
+    /// </summary>
+    /// <param name="value">Value to compare with A</param>
+    private void Cp8(byte value)
+    {
+        var tmp = Regs.A - value;
+        var lookup =
+          ((Regs.A & 0x88) >> 3) |
+          ((value & 0x88) >> 2) |
+          ((tmp & 0x88) >> 1);
+        Regs.F = (byte)
+          (((tmp & 0x100) != 0 ? FlagsSetMask.C : 0) |
+          (tmp != 0 ? 0 : FlagsSetMask.Z) |
+          FlagsSetMask.N |
+          s_HalfCarrySubFlags[lookup & 0x07] |
+          s_OverflowSubFlags[lookup >> 4] |
+          (value & FlagsSetMask.R3R5) |
+          (tmp & FlagsSetMask.S));
         F53Updated = true;
     }
 }

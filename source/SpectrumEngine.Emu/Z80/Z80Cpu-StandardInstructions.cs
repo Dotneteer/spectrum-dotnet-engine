@@ -38,14 +38,14 @@ public partial class Z80Cpu
             LdHLi_B,    LdHLi_C,    LdHLi_D,    LdHLi_E,    LdHLi_H,    LdHLi_L,    Halt,       LdHLi_A,    // 70-77
             LdA_B,      LdA_C,      LdA_D,      LdA_E,      LdA_H,      LdA_L,      LdA_HLi,    Nop,        // 78-7f
 
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 80-87
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 88-8f
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 90-97
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 98-9f
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // a0-a7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // a8-af
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // b0-b7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // b8-bf
+            AddA_B,     AddA_C,     AddA_D,     AddA_E,     AddA_H,     AddA_L,     AddA_HLi,   AddA_A,     // 80-87
+            AdcA_B,     AdcA_C,     AdcA_D,     AdcA_E,     AdcA_H,     AdcA_L,     AdcA_HLi,   AdcA_A,     // 88-8f
+            SubB,       SubC,       SubD,       SubE,       SubH,       SubL,       SubHLi,     SubA,       // 90-97
+            SbcB,       SbcC,       SbcD,       SbcE,       SbcH,       SbcL,       SbcHLi,     SbcA,       // 98-9f
+            AndB,       AndC,       AndD,       AndE,       AndH,       AndL,       AndHLi,     AndA,       // a0-a7
+            XorB,       XorC,       XorD,       XorE,       XorH,       XorL,       XorHLi,     XorA,       // a8-af
+            OrB,        OrC,        OrD,        OrE,        OrH,        OrL,        OrHLi,      OrA,        // b0-b7
+            CpB,        CpC,        CpD,        CpE,        CpH,        CpL,        CpHLi,      CpA,        // b8-bf
 
             Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // c0-c7
             Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // c8-cf
@@ -2106,5 +2106,1321 @@ public partial class Z80Cpu
         Regs.A = ReadMemory(Regs.HL);
     }
 
+    /// <summary>
+    /// "add a,b" operation (0x80)
+    /// </summary>
+    /// <remarks>
+    /// The contents of B are added to the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AddA_B()
+    {
+        Add8(Regs.B);
+    }
 
+    /// <summary>
+    /// "add a,c" operation (0x81)
+    /// </summary>
+    /// <remarks>
+    /// The contents of C are added to the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AddA_C()
+    {
+        Add8(Regs.C);
+    }
+
+    /// <summary>
+    /// "add a,d" operation (0x82)
+    /// </summary>
+    /// <remarks>
+    /// The contents of D are added to the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AddA_D()
+    {
+        Add8(Regs.D);
+    }
+
+    /// <summary>
+    /// "add a,e" operation (0x83)
+    /// </summary>
+    /// <remarks>
+    /// The contents of E are added to the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AddA_E()
+    {
+        Add8(Regs.E);
+    }
+
+    /// <summary>
+    /// "add a,h" operation (0x84)
+    /// </summary>
+    /// <remarks>
+    /// The contents of H are added to the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AddA_H()
+    {
+        Add8(Regs.H);
+    }
+
+    /// <summary>
+    /// "add a,l" operation (0x85)
+    /// </summary>
+    /// <remarks>
+    /// The contents of L are added to the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AddA_L()
+    {
+        Add8(Regs.L);
+    }
+
+    /// <summary>
+    /// "add a,(hl)" operation (0x86)
+    /// </summary>
+    /// <remarks>
+    /// The byte at the memory address specified by the contents of HL is added to the contents of A, and the result
+    /// is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void AddA_HLi()
+    {
+        Add8(ReadMemory(Regs.HL));
+    }
+
+    /// <summary>
+    /// "add a,a" operation (0x87)
+    /// </summary>
+    /// <remarks>
+    /// The contents of A are added to the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AddA_A()
+    {
+        Add8(Regs.A);
+    }
+
+    /// <summary>
+    /// "adc a,b" operation (0x88)
+    /// </summary>
+    /// <remarks>
+    /// The contents of B and the C flag are added to the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AdcA_B()
+    {
+        Adc8(Regs.B);
+    }
+
+    /// <summary>
+    /// "adc a,c" operation (0x89)
+    /// </summary>
+    /// <remarks>
+    /// The contents of C and the C flag are added to the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AdcA_C()
+    {
+        Adc8(Regs.C);
+    }
+
+    /// <summary>
+    /// "adc a,d" operation (0x8A)
+    /// </summary>
+    /// <remarks>
+    /// The contents of D and the C flag are added to the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AdcA_D()
+    {
+        Adc8(Regs.D);
+    }
+
+    /// <summary>
+    /// "adc a,e" operation (0x8B)
+    /// </summary>
+    /// <remarks>
+    /// The contents of E and the C flag are added to the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AdcA_E()
+    {
+        Adc8(Regs.E);
+    }
+
+    /// <summary>
+    /// "adc a,h" operation (0x8C)
+    /// </summary>
+    /// <remarks>
+    /// The contents of H and the C flag are added to the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AdcA_H()
+    {
+        Adc8(Regs.H);
+    }
+
+    /// <summary>
+    /// "adc a,b" operation (0x8D)
+    /// </summary>
+    /// <remarks>
+    /// The contents of L and the C flag are added to the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AdcA_L()
+    {
+        Adc8(Regs.L);
+    }
+
+    /// <summary>
+    /// "adc a,(hl)" operation (0x8E)
+    /// </summary>
+    /// <remarks>
+    /// The byte at the memory address specified by the contents of HL and the C flag is added to the contents of A,
+    /// and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void AdcA_HLi()
+    {
+        Adc8(ReadMemory(Regs.HL));
+    }
+
+
+    /// <summary>
+    /// "adc a,a" operation (0x8F)
+    /// </summary>
+    /// <remarks>
+    /// The contents of A and the C flag are added to the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AdcA_A()
+    {
+        Adc8(Regs.A);
+    }
+
+    /// <summary>
+    /// "sub b" operation (0x90)
+    /// </summary>
+    /// <remarks>
+    /// The contents of B are subtracted from the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void SubB()
+    {
+        Sub8(Regs.B);
+    }
+
+    /// <summary>
+    /// "sub c" operation (0x91)
+    /// </summary>
+    /// <remarks>
+    /// The contents of C are subtracted from the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void SubC()
+    {
+        Sub8(Regs.C);
+    }
+
+    /// <summary>
+    /// "sub d" operation (0x92)
+    /// </summary>
+    /// <remarks>
+    /// The contents of D are subtracted from the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void SubD()
+    {
+        Sub8(Regs.D);
+    }
+
+    /// <summary>
+    /// "sub e" operation (0x93)
+    /// </summary>
+    /// <remarks>
+    /// The contents of E are subtracted from the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void SubE()
+    {
+        Sub8(Regs.E);
+    }
+
+    /// <summary>
+    /// "sub h" operation (0x94)
+    /// </summary>
+    /// <remarks>
+    /// The contents of H are subtracted from the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void SubH()
+    {
+        Sub8(Regs.H);
+    }
+
+    /// <summary>
+    /// "sub l" operation (0x95)
+    /// </summary>
+    /// <remarks>
+    /// The contents of L are subtracted from the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void SubL()
+    {
+        Sub8(Regs.L);
+    }
+
+    /// <summary>
+    /// "sub (hl)" operation (0x96)
+    /// </summary>
+    /// <remarks>
+    /// The byte at the memory address specified by the contents of HL is subtracted from the contents of A, and the
+    /// result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void SubHLi()
+    {
+        Sub8(ReadMemory(Regs.HL));
+    }
+
+    /// <summary>
+    /// "sub a" operation (0x97)
+    /// </summary>
+    /// <remarks>
+    /// The contents of A are subtracted from the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void SubA()
+    {
+        Sub8(Regs.A);
+    }
+
+    /// <summary>
+    /// "sbc b" operation (0x98)
+    /// </summary>
+    /// <remarks>
+    /// The contents of B and the C flag are subtracted from the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void SbcB()
+    {
+        Sbc8(Regs.B);
+    }
+
+    /// <summary>
+    /// "sbc c" operation (0x99)
+    /// </summary>
+    /// <remarks>
+    /// The contents of C and the C flag are subtracted from the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void SbcC()
+    {
+        Sbc8(Regs.C);
+    }
+
+    /// <summary>
+    /// "sbc d" operation (0x9A)
+    /// </summary>
+    /// <remarks>
+    /// The contents of D and the C flag are subtracted from the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void SbcD()
+    {
+        Sbc8(Regs.D);
+    }
+
+    /// <summary>
+    /// "sbc e" operation (0x9B)
+    /// </summary>
+    /// <remarks>
+    /// The contents of E and the C flag are subtracted from the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void SbcE()
+    {
+        Sbc8(Regs.E);
+    }
+
+    /// <summary>
+    /// "sbc h" operation (0x9C)
+    /// </summary>
+    /// <remarks>
+    /// The contents of B and the C flag are subtracted from the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void SbcH()
+    {
+        Sbc8(Regs.H);
+    }
+
+    /// <summary>
+    /// "sbc l" operation (0x9D)
+    /// </summary>
+    /// <remarks>
+    /// The contents of B and the C flag are subtracted from the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void SbcL()
+    {
+        Sbc8(Regs.L);
+    }
+
+    /// <summary>
+    /// "sbc (hl)" operation (0x9E)
+    /// </summary>
+    /// <remarks>
+    /// The byte at the memory address specified by the contents of HL and the C flag is subtracted from the contents
+    /// of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void SbcHLi()
+    {
+        Sbc8(ReadMemory(Regs.HL));
+    }
+
+    /// <summary>
+    /// "sbc a" operation (0x9F)
+    /// </summary>
+    /// <remarks>
+    /// The contents of A and the C flag are subtracted from the contents of A, and the result is stored in A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void SbcA()
+    {
+        Sbc8(Regs.A);
+    }
+
+    /// <summary>
+    /// "and b" operation (0xA0)
+    /// </summary>
+    /// <remarks>
+    /// A logical AND operation is performed between B and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AndB()
+    {
+        And8(Regs.B);
+    }
+
+    /// <summary>
+    /// "and c" operation (0xA1)
+    /// </summary>
+    /// <remarks>
+    /// A logical AND operation is performed between C and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AndC()
+    {
+        And8(Regs.C);
+    }
+
+    /// <summary>
+    /// "and d" operation (0xA2)
+    /// </summary>
+    /// <remarks>
+    /// A logical AND operation is performed between D and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AndD()
+    {
+        And8(Regs.D);
+    }
+
+    /// <summary>
+    /// "and e" operation (0xA3)
+    /// </summary>
+    /// <remarks>
+    /// A logical AND operation is performed between E and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AndE()
+    {
+        And8(Regs.E);
+    }
+
+    /// <summary>
+    /// "and h" operation (0xA4)
+    /// </summary>
+    /// <remarks>
+    /// A logical AND operation is performed between H and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AndH()
+    {
+        And8(Regs.H);
+    }
+
+    /// <summary>
+    /// "and l" operation (0xA5)
+    /// </summary>
+    /// <remarks>
+    /// A logical AND operation is performed between L and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AndL()
+    {
+        And8(Regs.L);
+    }
+
+    /// <summary>
+    /// "and (hl)" operation (0xA6)
+    /// </summary>
+    /// <remarks>
+    /// A logical AND operation is performed between the byte at the memory address specified by the contents of HL
+    /// and the byte contained in A; the result is stored in the Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void AndHLi()
+    {
+        And8(ReadMemory(Regs.HL));
+    }
+
+
+    /// <summary>
+    /// "and a" operation (0xA7)
+    /// </summary>
+    /// <remarks>
+    /// A logical AND operation is performed between A and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void AndA()
+    {
+        And8(Regs.A);
+    }
+
+    /// <summary>
+    /// "xor b" operation (0xA8)
+    /// </summary>
+    /// <remarks>
+    /// A logical XOR operation is performed between B and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void XorB()
+    {
+        Xor8(Regs.B);
+    }
+
+    /// <summary>
+    /// "xor c" operation (0xA9)
+    /// </summary>
+    /// <remarks>
+    /// A logical XOR operation is performed between C and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void XorC()
+    {
+        Xor8(Regs.C);
+    }
+
+    /// <summary>
+    /// "xor d" operation (0xAA)
+    /// </summary>
+    /// <remarks>
+    /// A logical XOR operation is performed between D and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void XorD()
+    {
+        Xor8(Regs.D);
+    }
+
+    /// <summary>
+    /// "xor e" operation (0xAB)
+    /// </summary>
+    /// <remarks>
+    /// A logical XOR operation is performed between E and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void XorE()
+    {
+        Xor8(Regs.E);
+    }
+
+    /// <summary>
+    /// "xor h" operation (0xAC)
+    /// </summary>
+    /// <remarks>
+    /// A logical XOR operation is performed between H and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void XorH()
+    {
+        Xor8(Regs.H);
+    }
+
+    /// <summary>
+    /// "xor l" operation (0xAD)
+    /// </summary>
+    /// <remarks>
+    /// A logical XOR operation is performed between L and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void XorL()
+    {
+        Xor8(Regs.L);
+    }
+
+    /// <summary>
+    /// "xor (hl)" operation (0xAE)
+    /// </summary>
+    /// <remarks>
+    /// A logical XOR operation is performed between the byte at the memory address specified by the contents of HL and
+    /// the byte contained in A; the result is stored in the Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void XorHLi()
+    {
+        Xor8(ReadMemory(Regs.HL));
+    }
+
+    /// <summary>
+    /// "xor a" operation (0xAF)
+    /// </summary>
+    /// <remarks>
+    /// A logical XOR operation is performed between A and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void XorA()
+    {
+        Xor8(Regs.A);
+    }
+
+    /// <summary>
+    /// "or b" operation (0xB0)
+    /// </summary>
+    /// <remarks>
+    /// A logical OR operation is performed between B and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void OrB()
+    {
+        Or8(Regs.B);
+    }
+
+    /// <summary>
+    /// "or c" operation (0xB1)
+    /// </summary>
+    /// <remarks>
+    /// A logical OR operation is performed between C and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void OrC()
+    {
+        Or8(Regs.C);
+    }
+
+    /// <summary>
+    /// "or d" operation (0xB2)
+    /// </summary>
+    /// <remarks>
+    /// A logical OR operation is performed between D and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void OrD()
+    {
+        Or8(Regs.D);
+    }
+
+    /// <summary>
+    /// "or e" operation (0xB3)
+    /// </summary>
+    /// <remarks>
+    /// A logical OR operation is performed between E and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void OrE()
+    {
+        Or8(Regs.E);
+    }
+
+    /// <summary>
+    /// "or h" operation (0xB4)
+    /// </summary>
+    /// <remarks>
+    /// A logical OR operation is performed between H and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void OrH()
+    {
+        Or8(Regs.H);
+    }
+
+    /// <summary>
+    /// "or l" operation (0xB5)
+    /// </summary>
+    /// <remarks>
+    /// A logical OR operation is performed between L and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void OrL()
+    {
+        Or8(Regs.L);
+    }
+
+    /// <summary>
+    /// "or (hl)" operation (0xB6)
+    /// </summary>
+    /// <remarks>
+    /// A logical OR operation is performed between the byte at the memory address specified by the contents of HL and
+    /// the byte contained in A; the result is stored in the Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void OrHLi()
+    {
+        Or8(ReadMemory(Regs.HL));
+    }
+
+    /// <summary>
+    /// "or a" operation (0xB7)
+    /// </summary>
+    /// <remarks>
+    /// A logical OR operation is performed between A and the byte contained in A; the result is stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void OrA()
+    {
+        Or8(Regs.A);
+    }
+
+    /// <summary>
+    /// "cp b" operation (0xB8)
+    /// </summary>
+    /// <remarks>
+    /// The contents of B are compared with the contents of A. If there is a true compare, the Z flag is set. The
+    /// execution of this instruction does not affect A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void CpB()
+    {
+        Cp8(Regs.B);
+    }
+
+    /// <summary>
+    /// "cp c" operation (0xB9)
+    /// </summary>
+    /// <remarks>
+    /// The contents of C are compared with the contents of A. If there is a true compare, the Z flag is set. The
+    /// execution of this instruction does not affect A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void CpC()
+    {
+        Cp8(Regs.C);
+    }
+
+    /// <summary>
+    /// "cp d" operation (0xBA)
+    /// </summary>
+    /// <remarks>
+    /// The contents of D are compared with the contents of A. If there is a true compare, the Z flag is set. The
+    /// execution of this instruction does not affect A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void CpD()
+    {
+        Cp8(Regs.D);
+    }
+
+    /// <summary>
+    /// "cp e" operation (0xBB)
+    /// </summary>
+    /// <remarks>
+    /// The contents of E are compared with the contents of A. If there is a true compare, the Z flag is set. The
+    /// execution of this instruction does not affect A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void CpE()
+    {
+        Cp8(Regs.E);
+    }
+
+    /// <summary>
+    /// "cp h" operation (0xBC)
+    /// </summary>
+    /// <remarks>
+    /// The contents of H are compared with the contents of A. If there is a true compare, the Z flag is set. The
+    /// execution of this instruction does not affect A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void CpH()
+    {
+        Cp8(Regs.H);
+    }
+
+    /// <summary>
+    /// "cp l" operation (0xBD)
+    /// </summary>
+    /// <remarks>
+    /// The contents of L are compared with the contents of A. If there is a true compare, the Z flag is set. The
+    /// execution of this instruction does not affect A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void CpL()
+    {
+        Cp8(Regs.L);
+    }
+
+    /// <summary>
+    /// "cp (hl)" operation (0xBE)
+    /// </summary>
+    /// <remarks>
+    /// The contents of the byte at the memory address specified by the contents of HL are compared with the contents
+    /// of A. If there is a true compare, the Z flag is set. The execution of this instruction does not affect A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// Contention breakdown: pc:4,hl:3
+    /// </remarks>
+    private void CpHLi()
+    {
+        Cp8(ReadMemory(Regs.HL));
+    }
+
+    /// <summary>
+    /// "cp a" operation (0xBF)
+    /// </summary>
+    /// <remarks>
+    /// The contents of A are compared with the contents of A. If there is a true compare, the Z flag is set. The
+    /// execution of this instruction does not affect A.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void CpA()
+    {
+        Cp8(Regs.A);
+    }
 }
