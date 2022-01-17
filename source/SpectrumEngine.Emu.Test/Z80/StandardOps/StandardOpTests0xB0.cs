@@ -327,7 +327,7 @@ public class StandardOpTests0xB0
     }
 
     /// <summary>
-    /// OR (HL): 0xB6
+    /// OR (HUL): 0xB6
     /// </summary>
     [Fact]
     public void OR_HLi_WorksAsExpected()
@@ -338,7 +338,7 @@ public class StandardOpTests0xB0
         {
             0x3E, 0x52,       // LD A,52H
             0x21, 0x00, 0x10, // LD HL,1000H
-            0xB6              // OR (HL)
+            0xB6              // OR (HUL)
         });
         m.Memory[0x1000] = 0x23;
 
@@ -924,742 +924,742 @@ public class StandardOpTests0xB0
         m.Cpu.Tacts.ShouldBe(11UL);
     }
 
-    ///// <summary>
-    ///// CP E: 0xBB
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_E_WorksAsExpected()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x1E, 0x24, // LD E,24H
-    //            0xBB        // CP E
-    //    });
-    //    m.Cpu.Registers.A = 0x36;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeFalse();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeFalse();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, E");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP E: 0xBB
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_E_HandlesCarryFlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x1E, 0x60, // LD E,60H
-    //            0xBB        // CP E
-    //    });
-    //    m.Cpu.Registers.A = 0x40;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeTrue();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeTrue();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, E");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP E: 0xBB
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_E_HandlesZeroFlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x1E, 0x40, // LD E,40H
-    //            0xBB        // CP E
-    //    });
-    //    m.Cpu.Registers.A = 0x40;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeFalse();
-    //    regs.ZFlag.ShouldBeTrue();
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeFalse();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, E");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP E: 0xBB
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_E_HandlesHFlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x1E, 0x43, // LD E,43H
-    //            0xBB        // CP E
-    //    });
-    //    m.Cpu.Registers.A = 0x41;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeTrue();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeTrue();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeTrue();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, E");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP E: 0xBB
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_E_HandlesHPlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x1E, 0xB3, // LD E,B3H
-    //            0xBB        // CP E
-    //    });
-    //    m.Cpu.Registers.A = 0x61;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeTrue();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeTrue();
-    //    regs.PFlag.ShouldBeTrue();
-    //    regs.CFlag.ShouldBeTrue();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, E");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP H: 0xBC
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_H_WorksAsExpected()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x26, 0x24, // LD H,24H
-    //            0xBC        // CP H
-    //    });
-    //    m.Cpu.Registers.A = 0x36;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeFalse();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeFalse();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, H");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP H: 0xBC
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_H_HandlesCarryFlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x26, 0x60, // LD H,60H
-    //            0xBC        // CP H
-    //    });
-    //    m.Cpu.Registers.A = 0x40;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeTrue();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeTrue();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, H");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP H: 0xBC
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_H_HandlesZeroFlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x26, 0x40, // LD H,40H
-    //            0xBC        // CP H
-    //    });
-    //    m.Cpu.Registers.A = 0x40;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeFalse();
-    //    regs.ZFlag.ShouldBeTrue();
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeFalse();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, H");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP H: 0xBC
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_H_HandlesHFlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x26, 0x43, // LD H,43H
-    //            0xBC        // CP H
-    //    });
-    //    m.Cpu.Registers.A = 0x41;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeTrue();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeTrue();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeTrue();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, H");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP H: 0xBC
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_H_HandlesHPlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x26, 0xB3, // LD H,B3H
-    //            0xBC        // CP H
-    //    });
-    //    m.Cpu.Registers.A = 0x61;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeTrue();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeTrue();
-    //    regs.PFlag.ShouldBeTrue();
-    //    regs.CFlag.ShouldBeTrue();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, H");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP L: 0xBD
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_L_WorksAsExpected()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x2E, 0x24, // LD L,24H
-    //            0xBD        // CP L
-    //    });
-    //    m.Cpu.Registers.A = 0x36;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeFalse();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeFalse();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, L");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP L: 0xBD
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_L_HandlesCarryFlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x2E, 0x60, // LD L,60H
-    //            0xBD        // CP L
-    //    });
-    //    m.Cpu.Registers.A = 0x40;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeTrue();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeTrue();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, L");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP L: 0xBD
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_L_HandlesZeroFlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x2E, 0x40, // LD L,40H
-    //            0xBD        // CP L
-    //    });
-    //    m.Cpu.Registers.A = 0x40;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeFalse();
-    //    regs.ZFlag.ShouldBeTrue();
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeFalse();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, L");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP L: 0xBD
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_L_HandlesHFlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x2E, 0x43, // LD L,43H
-    //            0xBD        // CP L
-    //    });
-    //    m.Cpu.Registers.A = 0x41;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeTrue();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeTrue();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeTrue();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, L");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP L: 0xBD
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_L_HandlesHPlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x2E, 0xB3, // LD L,B3H
-    //            0xBD        // CP L
-    //    });
-    //    m.Cpu.Registers.A = 0x61;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeTrue();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeTrue();
-    //    regs.PFlag.ShouldBeTrue();
-    //    regs.CFlag.ShouldBeTrue();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, L");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0003);
-    //    m.Cpu.Tacts.ShouldBe(11L);
-    //}
-
-    ///// <summary>
-    ///// CP (HL): 0xBE
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_HLi_WorksAsExpected()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x21, 0x00, 0x10, // LD HL,1000H
-    //            0xBE              // CP (HL)
-    //    });
-    //    m.Cpu.Registers.A = 0x36;
-    //    m.Memory[0x1000] = 0x24;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeFalse();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeFalse();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, HL");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0004);
-    //    m.Cpu.Tacts.ShouldBe(17L);
-    //}
-
-    ///// <summary>
-    ///// CP (HL): 0xBE
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_HLi_HandlesCarryFlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x21, 0x00, 0x10, // LD HL,1000H
-    //            0xBE              // CP (HL)
-    //    });
-    //    m.Cpu.Registers.A = 0x40;
-    //    m.Memory[0x1000] = 0x60;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeTrue();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeTrue();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, HL");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0004);
-    //    m.Cpu.Tacts.ShouldBe(17L);
-    //}
-
-    ///// <summary>
-    ///// CP (HL): 0xBE
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_HLi_HandlesZeroFlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x21, 0x00, 0x10, // LD HL,1000H
-    //            0xBE              // CP (HL)
-    //    });
-    //    m.Cpu.Registers.A = 0x40;
-    //    m.Memory[0x1000] = 0x40;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeFalse();
-    //    regs.ZFlag.ShouldBeTrue();
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeFalse();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, HL");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0004);
-    //    m.Cpu.Tacts.ShouldBe(17L);
-    //}
-
-    ///// <summary>
-    ///// CP (HL): 0xBE
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_HLi_HandlesHFlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x21, 0x00, 0x10, // LD HL,1000H
-    //            0xBE              // CP (HL)
-    //    });
-    //    m.Cpu.Registers.A = 0x41;
-    //    m.Memory[0x1000] = 0x43;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeTrue();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeTrue();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeTrue();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, HL");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0004);
-    //    m.Cpu.Tacts.ShouldBe(17L);
-    //}
-
-    ///// <summary>
-    ///// CP (HL): 0xBE
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_HLi_HandlesHPlag()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x21, 0x00, 0x10, // LD HL,1000H
-    //            0xBE              // CP (HL)
-    //    });
-    //    m.Cpu.Registers.A = 0x61;
-    //    m.Memory[0x1000] = 0xB3;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeTrue();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeTrue();
-    //    regs.PFlag.ShouldBeTrue();
-    //    regs.CFlag.ShouldBeTrue();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, HL");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0004);
-    //    m.Cpu.Tacts.ShouldBe(17L);
-    //}
-
-    ///// <summary>
-    ///// CP A: 0xBF
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_A_WorksAsExpected()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0xBF        // CP A
-    //    });
-    //    m.Cpu.Registers.A = 0x36;
-
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.SFlag.ShouldBeFalse();
-    //    regs.ZFlag.ShouldBeTrue();
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeFalse();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F, L");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0001);
-    //    m.Cpu.Tacts.ShouldBe(4L);
-    //}
+    /// <summary>
+    /// CP E: 0xBB
+    /// </summary>
+    [Fact]
+    public void CP_E_WorksAsExpected()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x1E, 0x24, // LD E,24H
+            0xBB        // CP E
+        });
+        m.Cpu.Regs.A = 0x36;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeFalse();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeFalse();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, E");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP E: 0xBB
+    /// </summary>
+    [Fact]
+    public void CP_E_HandlesCarryFlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x1E, 0x60, // LD E,60H
+            0xBB        // CP E
+        });
+        m.Cpu.Regs.A = 0x40;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeTrue();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeTrue();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, E");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP E: 0xBB
+    /// </summary>
+    [Fact]
+    public void CP_E_HandlesZeroFlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x1E, 0x40, // LD E,40H
+            0xBB        // CP E
+        });
+        m.Cpu.Regs.A = 0x40;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeFalse();
+        regs.ZFlag.ShouldBeTrue();
+        regs.HFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeFalse();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, E");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP E: 0xBB
+    /// </summary>
+    [Fact]
+    public void CP_E_HandlesHFlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x1E, 0x43, // LD E,43H
+            0xBB        // CP E
+        });
+        m.Cpu.Regs.A = 0x41;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeTrue();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeTrue();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeTrue();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, E");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP E: 0xBB
+    /// </summary>
+    [Fact]
+    public void CP_E_HandlesHPlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x1E, 0xB3, // LD E,B3H
+            0xBB        // CP E
+        });
+        m.Cpu.Regs.A = 0x61;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeTrue();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeTrue();
+        regs.PFlag.ShouldBeTrue();
+        regs.CFlag.ShouldBeTrue();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, E");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP H: 0xBC
+    /// </summary>
+    [Fact]
+    public void CP_H_WorksAsExpected()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x26, 0x24, // LD H,24H
+            0xBC        // CP H
+        });
+        m.Cpu.Regs.A = 0x36;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeFalse();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeFalse();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, H");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP H: 0xBC
+    /// </summary>
+    [Fact]
+    public void CP_H_HandlesCarryFlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x26, 0x60, // LD H,60H
+            0xBC        // CP H
+        });
+        m.Cpu.Regs.A = 0x40;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeTrue();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeTrue();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, H");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP H: 0xBC
+    /// </summary>
+    [Fact]
+    public void CP_H_HandlesZeroFlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x26, 0x40, // LD H,40H
+            0xBC        // CP H
+        });
+        m.Cpu.Regs.A = 0x40;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeFalse();
+        regs.ZFlag.ShouldBeTrue();
+        regs.HFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeFalse();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, H");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP H: 0xBC
+    /// </summary>
+    [Fact]
+    public void CP_H_HandlesHFlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x26, 0x43, // LD H,43H
+            0xBC        // CP H
+        });
+        m.Cpu.Regs.A = 0x41;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeTrue();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeTrue();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeTrue();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, H");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP H: 0xBC
+    /// </summary>
+    [Fact]
+    public void CP_H_HandlesHPlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x26, 0xB3, // LD H,B3H
+            0xBC        // CP H
+        });
+        m.Cpu.Regs.A = 0x61;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeTrue();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeTrue();
+        regs.PFlag.ShouldBeTrue();
+        regs.CFlag.ShouldBeTrue();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, H");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP L: 0xBD
+    /// </summary>
+    [Fact]
+    public void CP_L_WorksAsExpected()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x2E, 0x24, // LD L,24H
+            0xBD        // CP L
+        });
+        m.Cpu.Regs.A = 0x36;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeFalse();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeFalse();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, L");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP L: 0xBD
+    /// </summary>
+    [Fact]
+    public void CP_L_HandlesCarryFlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x2E, 0x60, // LD L,60H
+            0xBD        // CP L
+        });
+        m.Cpu.Regs.A = 0x40;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeTrue();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeTrue();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, L");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP L: 0xBD
+    /// </summary>
+    [Fact]
+    public void CP_L_HandlesZeroFlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x2E, 0x40, // LD L,40H
+            0xBD        // CP L
+        });
+        m.Cpu.Regs.A = 0x40;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeFalse();
+        regs.ZFlag.ShouldBeTrue();
+        regs.HFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeFalse();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, L");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP L: 0xBD
+    /// </summary>
+    [Fact]
+    public void CP_L_HandlesHFlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x2E, 0x43, // LD L,43H
+            0xBD        // CP L
+        });
+        m.Cpu.Regs.A = 0x41;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeTrue();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeTrue();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeTrue();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, L");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP L: 0xBD
+    /// </summary>
+    [Fact]
+    public void CP_L_HandlesHPlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x2E, 0xB3, // LD L,B3H
+            0xBD        // CP L
+        });
+        m.Cpu.Regs.A = 0x61;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeTrue();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeTrue();
+        regs.PFlag.ShouldBeTrue();
+        regs.CFlag.ShouldBeTrue();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, L");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0003);
+        m.Cpu.Tacts.ShouldBe(11UL);
+    }
+
+    /// <summary>
+    /// CP (HUL): 0xBE
+    /// </summary>
+    [Fact]
+    public void CP_HLi_WorksAsExpected()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x21, 0x00, 0x10, // LD HL,1000H
+            0xBE              // CP (HUL)
+        });
+        m.Cpu.Regs.A = 0x36;
+        m.Memory[0x1000] = 0x24;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeFalse();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeFalse();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, HL");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0004);
+        m.Cpu.Tacts.ShouldBe(17UL);
+    }
+
+    /// <summary>
+    /// CP (HUL): 0xBE
+    /// </summary>
+    [Fact]
+    public void CP_HLi_HandlesCarryFlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x21, 0x00, 0x10, // LD HL,1000H
+            0xBE              // CP (HUL)
+        });
+        m.Cpu.Regs.A = 0x40;
+        m.Memory[0x1000] = 0x60;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeTrue();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeTrue();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, HL");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0004);
+        m.Cpu.Tacts.ShouldBe(17UL);
+    }
+
+    /// <summary>
+    /// CP (HUL): 0xBE
+    /// </summary>
+    [Fact]
+    public void CP_HLi_HandlesZeroFlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x21, 0x00, 0x10, // LD HL,1000H
+            0xBE              // CP (HUL)
+        });
+        m.Cpu.Regs.A = 0x40;
+        m.Memory[0x1000] = 0x40;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeFalse();
+        regs.ZFlag.ShouldBeTrue();
+        regs.HFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeFalse();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, HL");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0004);
+        m.Cpu.Tacts.ShouldBe(17UL);
+    }
+
+    /// <summary>
+    /// CP (HUL): 0xBE
+    /// </summary>
+    [Fact]
+    public void CP_HLi_HandlesHFlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x21, 0x00, 0x10, // LD HL,1000H
+            0xBE              // CP (HUL)
+        });
+        m.Cpu.Regs.A = 0x41;
+        m.Memory[0x1000] = 0x43;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeTrue();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeTrue();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeTrue();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, HL");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0004);
+        m.Cpu.Tacts.ShouldBe(17UL);
+    }
+
+    /// <summary>
+    /// CP (HUL): 0xBE
+    /// </summary>
+    [Fact]
+    public void CP_HLi_HandlesHPlag()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x21, 0x00, 0x10, // LD HL,1000H
+            0xBE              // CP (HUL)
+        });
+        m.Cpu.Regs.A = 0x61;
+        m.Memory[0x1000] = 0xB3;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeTrue();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeTrue();
+        regs.PFlag.ShouldBeTrue();
+        regs.CFlag.ShouldBeTrue();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, HL");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0004);
+        m.Cpu.Tacts.ShouldBe(17UL);
+    }
+
+    /// <summary>
+    /// CP A: 0xBF
+    /// </summary>
+    [Fact]
+    public void CP_A_WorksAsExpected()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0xBF        // CP A
+        });
+        m.Cpu.Regs.A = 0x36;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        var regs = m.Cpu.Regs;
+
+        regs.SFlag.ShouldBeFalse();
+        regs.ZFlag.ShouldBeTrue();
+        regs.HFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeFalse();
+
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F, L");
+        m.ShouldKeepMemory();
+
+        regs.PC.ShouldBe((ushort)0x0001);
+        m.Cpu.Tacts.ShouldBe(4UL);
+    }
 }
