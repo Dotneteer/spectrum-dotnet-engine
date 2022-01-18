@@ -60,8 +60,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private byte ReadPort(ushort address)
     {
-        TactPlus3();
-        return ReadMemoryFunction(address);
+        TactPlus4();
+        return ReadPortFunction(address);
     }
 
     /// <summary>
@@ -77,7 +77,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WritePort(ushort address, byte data)
     {
-        WriteMemoryFunction(address, data);
+        TactPlus4();
+        WritePortFunction(address, data);
     }
 
     /// <summary>
@@ -132,5 +133,34 @@ public partial class Z80Cpu
         tmp += 1;
         Regs.WZ = tmp;
         WriteMemory(tmp, high);
+    }
+
+    /// <summary>
+    /// The core of the CALL instruction 
+    /// </summary>
+    private void CallCore()
+    {
+        TactPlus1(Regs.IR);
+        Regs.SP--;
+        WriteMemory(Regs.SP, (byte)(Regs.PC >> 8));
+        Regs.SP--;
+        WriteMemory(Regs.SP, (byte)Regs.PC);
+        Regs.PC = Regs.WZ;
+    }
+
+    // 
+    /// <summary>
+    /// The core of the RST instruction 
+    /// </summary>
+    /// <param name="addr">Restart address to call</param>
+    private void RstCore(ushort addr)
+    {
+        TactPlus1(Regs.IR);
+        Regs.SP--;
+        WriteMemory(Regs.SP, (byte)(Regs.PC >> 8));
+        Regs.SP--;
+        WriteMemory(Regs.SP, (byte)Regs.PC);
+        Regs.PC = Regs.WZ;
+        Regs.PC = Regs.WZ = addr;
     }
 }
