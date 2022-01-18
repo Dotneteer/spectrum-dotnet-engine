@@ -48,13 +48,13 @@ public partial class Z80Cpu
             CpB,        CpC,        CpD,        CpE,        CpH,        CpL,        CpHLi,      CpA,        // b8-bf
 
             RetNZ,      PopBC,      JpNZ_NN,    JpNN,       CallNZ,     PushBC,     AddAN,      Rst00,      // c0-c7
-            RetZ,       Ret,        Nop,        Nop,        Nop,        CallNN,     Nop,        Rst08,      // c8-cf
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Rst10,      // d0-d7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Rst18,      // d8-df
-            Nop,        PopHL,      Nop,        Nop,        Nop,        PushHL,     Nop,        Rst20,      // e0-e7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Rst28,      // e8-ef
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Rst30,      // f0-f7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Rst38,      // f8-ff
+            RetZ,       Ret,        JpZ_NN,     Nop,        CallZ,      CallNN,     AdcAN,      Rst08,      // c8-cf
+            RetNC,      PopDE,      JpNC_NN,    Nop,        Nop,        Nop,        Nop,        Rst10,      // d0-d7
+            RetC,       Nop,        JpC_NN,     Nop,        Nop,        Nop,        Nop,        Rst18,      // d8-df
+            RetPO,      PopHL,      JpPO_NN,    Nop,        Nop,        PushHL,     Nop,        Rst20,      // e0-e7
+            RetPE,      Nop,        JpPE_NN,    Nop,        Nop,        Nop,        Nop,        Rst28,      // e8-ef
+            RetP,       PopAF,      JpP_NN,     Nop,        Nop,        Nop,        Nop,        Rst30,      // f0-f7
+            RetM,       Nop,        JpM_NN,     Nop,        Nop,        Nop,        Nop,        Rst38,      // f8-ff
         };
     }
 
@@ -3641,6 +3641,54 @@ public partial class Z80Cpu
     }
 
     /// <summary>
+    /// "jp z,NN" operation (0xCA)
+    /// </summary>
+    /// <remarks>
+    /// If Z flag is set, the instruction loads operand NN to PC, and the program continues with the instruction
+    /// beginning at address NN. If condition X is false, PC is incremented as usual, and the program continues with
+    /// the next sequential instruction.
+    /// 
+    /// T-States: 4, 3, 3 (10)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3
+    /// </remarks>
+    private void JpZ_NN()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.Z) != 0)
+        {
+            Regs.PC = Regs.WZ;
+        }
+    }
+
+    /// <summary>
+    /// "call z,NN" operation (0xCC)
+    /// </summary>
+    /// <remarks>
+    /// If flag Z is set, this instruction pushes the current contents of PC onto the top of the external memory
+    /// stack, then loads the operands NN to PC to point to the address in memory at which the first op code of a
+    /// subroutine is to be fetched. At the end of the subroutine, a RET instruction can be used to return to the
+    /// original program flow by popping the top of the stack back to PC. If condition X is false, PC is incremented as
+    /// usual, and the program continues with the next sequential instruction. The stack push is accomplished by first
+    /// decrementing the current contents of SP, loading the high-order byte of the PC contents to the memory address
+    /// now pointed to by SP; then decrementing SP again, and loading the low-order byte of the PC contents to the top
+    /// of the stack.
+    /// 
+    /// T-States: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3,[pc+2:1,sp-1:3,sp-2:3]
+    /// Gate array contention breakdown: pc:4,pc+1:3,pc+2:3,[1,sp-1:3,sp-2:3]
+    /// </remarks>
+    private void CallZ()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.Z) != 0)
+        {
+            CallCore();
+        }
+    }
+
+    /// <summary>
     /// "call NN" operation (0xCD)
     /// </summary>
     /// <remarks>
@@ -3663,6 +3711,26 @@ public partial class Z80Cpu
     }
 
     /// <summary>
+    /// "adc a,N" operation (0xCE)
+    /// </summary>
+    /// <remarks>
+    /// The N integer, along with the Carry Flag is added to the contents of the Accumulator, and the results are stored
+    /// in the Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// </remarks>
+    private void AdcAN()
+    {
+        Adc8(ReadCodeMemory());
+    }
+
+    /// <summary>
     /// "rst 08h" operation (0xCF)
     /// </summary>
     /// <remarks>
@@ -3679,6 +3747,73 @@ public partial class Z80Cpu
     private void Rst08()
     {
         RstCore(0x0008);
+    }
+
+    /// <summary>
+    /// "ret nc" operation (0xD0)
+    /// </summary>
+    /// <remarks>
+    /// If C flag is not set, the byte at the memory location specified by the contents of SP is moved to the low-order
+    /// 8 bits of PC. SP is incremented and the byte at the memory location specified by the new contents of the SP are
+    /// moved to the high-order eight bits of PC.The SP is incremented again. The next op code following this
+    /// instruction is fetched from the memory location specified by the PC. This instruction is normally used to
+    /// return to the main line program at the completion of a routine entered by a CALL instruction. If condition X is
+    /// false, PC is simply incremented as usual, and the program continues with the next sequential instruction.
+    /// 
+    /// T-States:
+    ///   If condition met: 11 (5, 3, 3)
+    ///   Otherwise: 5
+    /// Contention breakdown: pc:5,[sp:3,sp+1:3]
+    /// </remarks>
+    private void RetNC()
+    {
+        TactPlus1(Regs.IR);
+        if ((Regs.F & FlagsSetMask.C) == 0)
+        {
+            Ret();
+        }
+    }
+
+    /// <summary>
+    /// "pop de" operation (0xD1)
+    /// </summary>
+    /// <remarks>
+    /// The top two bytes of the external memory last-in, first-out (LIFO) stack are popped to register pair DE. SP
+    /// holds the 16-bit address of the current top of the stack. This instruction first loads to the low-order 
+    /// portion of RR, the byte at the memory location corresponding to the contents of SP; then SP is incremented and
+    /// the contents of the corresponding adjacent memory location are loaded to the high-order portion of RR and the
+    /// SP is now incremented again.
+    /// 
+    /// T-States: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,sp:3,sp+1:3
+    /// </remarks>
+    private void PopDE()
+    {
+        Regs.E = ReadMemory(Regs.SP);
+        Regs.SP++;
+        Regs.D = ReadMemory(Regs.SP);
+        Regs.SP++;
+    }
+
+    /// <summary>
+    /// "jp nc,NN" operation (0xD2)
+    /// </summary>
+    /// <remarks>
+    /// If C flag is not set, the instruction loads operand NN to PC, and the program continues with the instruction
+    /// beginning at address NN. If condition X is false, PC is incremented as usual, and the program continues with
+    /// the next sequential instruction.
+    /// 
+    /// T-States: 4, 3, 3 (10)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3
+    /// </remarks>
+    private void JpNC_NN()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.C) == 0)
+        {
+            Regs.PC = Regs.WZ;
+        }
     }
 
     /// <summary>
@@ -3701,6 +3836,52 @@ public partial class Z80Cpu
     }
 
     /// <summary>
+    /// "jp c,NN" operation (0xDA)
+    /// </summary>
+    /// <remarks>
+    /// If C flag is set, the instruction loads operand NN to PC, and the program continues with the instruction
+    /// beginning at address NN. If condition X is false, PC is incremented as usual, and the program continues with
+    /// the next sequential instruction.
+    /// 
+    /// T-States: 4, 3, 3 (10)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3
+    /// </remarks>
+    private void JpC_NN()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.C) != 0)
+        {
+            Regs.PC = Regs.WZ;
+        }
+    }
+
+    /// <summary>
+    /// "ret c" operation (0xD8)
+    /// </summary>
+    /// <remarks>
+    /// If C flag is set, the byte at the memory location specified by the contents of SP is moved to the low-order
+    /// 8 bits of PC. SP is incremented and the byte at the memory location specified by the new contents of the SP are
+    /// moved to the high-order eight bits of PC.The SP is incremented again. The next op code following this
+    /// instruction is fetched from the memory location specified by the PC. This instruction is normally used to
+    /// return to the main line program at the completion of a routine entered by a CALL instruction. If condition X is
+    /// false, PC is simply incremented as usual, and the program continues with the next sequential instruction.
+    /// 
+    /// T-States:
+    ///   If condition met: 11 (5, 3, 3)
+    ///   Otherwise: 5
+    /// Contention breakdown: pc:5,[sp:3,sp+1:3]
+    /// </remarks>
+    private void RetC()
+    {
+        TactPlus1(Regs.IR);
+        if ((Regs.F & FlagsSetMask.C) != 0)
+        {
+            Ret();
+        }
+    }
+
+    /// <summary>
     /// "rst 18h" operation (0xDF)
     /// </summary>
     /// <remarks>
@@ -3717,6 +3898,31 @@ public partial class Z80Cpu
     private void Rst18()
     {
         RstCore(0x0018);
+    }
+
+    /// <summary>
+    /// "ret po" operation (0xE0)
+    /// </summary>
+    /// <remarks>
+    /// If P/V flag is not set, the byte at the memory location specified by the contents of SP is moved to the low-order
+    /// 8 bits of PC. SP is incremented and the byte at the memory location specified by the new contents of the SP are
+    /// moved to the high-order eight bits of PC.The SP is incremented again. The next op code following this
+    /// instruction is fetched from the memory location specified by the PC. This instruction is normally used to
+    /// return to the main line program at the completion of a routine entered by a CALL instruction. If condition X is
+    /// false, PC is simply incremented as usual, and the program continues with the next sequential instruction.
+    /// 
+    /// T-States:
+    ///   If condition met: 11 (5, 3, 3)
+    ///   Otherwise: 5
+    /// Contention breakdown: pc:5,[sp:3,sp+1:3]
+    /// </remarks>
+    private void RetPO()
+    {
+        TactPlus1(Regs.IR);
+        if ((Regs.F & FlagsSetMask.PV) == 0)
+        {
+            Ret();
+        }
     }
 
     /// <summary>
@@ -3738,6 +3944,27 @@ public partial class Z80Cpu
         Regs.SP++;
         Regs.H = ReadMemory(Regs.SP);
         Regs.SP++;
+    }
+
+    /// <summary>
+    /// "jp po,NN" operation (0xE2)
+    /// </summary>
+    /// <remarks>
+    /// If P/V flag is not set, the instruction loads operand NN to PC, and the program continues with the instruction
+    /// beginning at address NN. If condition X is false, PC is incremented as usual, and the program continues with
+    /// the next sequential instruction.
+    /// 
+    /// T-States: 4, 3, 3 (10)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3
+    /// </remarks>
+    private void JpPO_NN()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.PV) == 0)
+        {
+            Regs.PC = Regs.WZ;
+        }
     }
 
     /// <summary>
@@ -3781,6 +4008,52 @@ public partial class Z80Cpu
     }
 
     /// <summary>
+    /// "ret pe" operation (0xE8)
+    /// </summary>
+    /// <remarks>
+    /// If P/V flag is set, the byte at the memory location specified by the contents of SP is moved to the low-order
+    /// 8 bits of PC. SP is incremented and the byte at the memory location specified by the new contents of the SP are
+    /// moved to the high-order eight bits of PC.The SP is incremented again. The next op code following this
+    /// instruction is fetched from the memory location specified by the PC. This instruction is normally used to
+    /// return to the main line program at the completion of a routine entered by a CALL instruction. If condition X is
+    /// false, PC is simply incremented as usual, and the program continues with the next sequential instruction.
+    /// 
+    /// T-States:
+    ///   If condition met: 11 (5, 3, 3)
+    ///   Otherwise: 5
+    /// Contention breakdown: pc:5,[sp:3,sp+1:3]
+    /// </remarks>
+    private void RetPE()
+    {
+        TactPlus1(Regs.IR);
+        if ((Regs.F & FlagsSetMask.PV) != 0)
+        {
+            Ret();
+        }
+    }
+
+    /// <summary>
+    /// "jp pe,NN" operation (0xEA)
+    /// </summary>
+    /// <remarks>
+    /// If P/V flag is set, the instruction loads operand NN to PC, and the program continues with the instruction
+    /// beginning at address NN. If condition X is false, PC is incremented as usual, and the program continues with
+    /// the next sequential instruction.
+    /// 
+    /// T-States: 4, 3, 3 (10)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3
+    /// </remarks>
+    private void JpPE_NN()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.PV) != 0)
+        {
+            Regs.PC = Regs.WZ;
+        }
+    }
+
+    /// <summary>
     /// "rst 28h" operation (0xEF)
     /// </summary>
     /// <remarks>
@@ -3800,6 +4073,73 @@ public partial class Z80Cpu
     }
 
     /// <summary>
+    /// "ret p" operation (0xF0)
+    /// </summary>
+    /// <remarks>
+    /// If S flag is not set, the byte at the memory location specified by the contents of SP is moved to the low-order
+    /// 8 bits of PC. SP is incremented and the byte at the memory location specified by the new contents of the SP are
+    /// moved to the high-order eight bits of PC.The SP is incremented again. The next op code following this
+    /// instruction is fetched from the memory location specified by the PC. This instruction is normally used to
+    /// return to the main line program at the completion of a routine entered by a CALL instruction. If condition X is
+    /// false, PC is simply incremented as usual, and the program continues with the next sequential instruction.
+    /// 
+    /// T-States:
+    ///   If condition met: 11 (5, 3, 3)
+    ///   Otherwise: 5
+    /// Contention breakdown: pc:5,[sp:3,sp+1:3]
+    /// </remarks>
+    private void RetP()
+    {
+        TactPlus1(Regs.IR);
+        if ((Regs.F & FlagsSetMask.S) == 0)
+        {
+            Ret();
+        }
+    }
+
+    /// <summary>
+    /// "pop af" operation (0xF1)
+    /// </summary>
+    /// <remarks>
+    /// The top two bytes of the external memory last-in, first-out (LIFO) stack are popped to register pair AF. SP
+    /// holds the 16-bit address of the current top of the stack. This instruction first loads to the low-order 
+    /// portion of RR, the byte at the memory location corresponding to the contents of SP; then SP is incremented and
+    /// the contents of the corresponding adjacent memory location are loaded to the high-order portion of RR and the
+    /// SP is now incremented again.
+    /// 
+    /// T-States: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,sp:3,sp+1:3
+    /// </remarks>
+    private void PopAF()
+    {
+        Regs.F = ReadMemory(Regs.SP);
+        Regs.SP++;
+        Regs.A = ReadMemory(Regs.SP);
+        Regs.SP++;
+    }
+
+    /// <summary>
+    /// "jp p,NN" operation (0xF2)
+    /// </summary>
+    /// <remarks>
+    /// If S flag is not set, the instruction loads operand NN to PC, and the program continues with the instruction
+    /// beginning at address NN. If condition X is false, PC is incremented as usual, and the program continues with
+    /// the next sequential instruction.
+    /// 
+    /// T-States: 4, 3, 3 (10)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3
+    /// </remarks>
+    private void JpP_NN()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.S) == 0)
+        {
+            Regs.PC = Regs.WZ;
+        }
+    }
+
+    /// <summary>
     /// "rst 30h" operation (0xF7)
     /// </summary>
     /// <remarks>
@@ -3816,6 +4156,52 @@ public partial class Z80Cpu
     private void Rst30()
     {
         RstCore(0x0030);
+    }
+
+    /// <summary>
+    /// "ret m" operation (0xF8)
+    /// </summary>
+    /// <remarks>
+    /// If S flag is set, the byte at the memory location specified by the contents of SP is moved to the low-order
+    /// 8 bits of PC. SP is incremented and the byte at the memory location specified by the new contents of the SP are
+    /// moved to the high-order eight bits of PC.The SP is incremented again. The next op code following this
+    /// instruction is fetched from the memory location specified by the PC. This instruction is normally used to
+    /// return to the main line program at the completion of a routine entered by a CALL instruction. If condition X is
+    /// false, PC is simply incremented as usual, and the program continues with the next sequential instruction.
+    /// 
+    /// T-States:
+    ///   If condition met: 11 (5, 3, 3)
+    ///   Otherwise: 5
+    /// Contention breakdown: pc:5,[sp:3,sp+1:3]
+    /// </remarks>
+    private void RetM()
+    {
+        TactPlus1(Regs.IR);
+        if ((Regs.F & FlagsSetMask.S) != 0)
+        {
+            Ret();
+        }
+    }
+
+    /// <summary>
+    /// "jp m,NN" operation (0xFA)
+    /// </summary>
+    /// <remarks>
+    /// If S flag is set, the instruction loads operand NN to PC, and the program continues with the instruction
+    /// beginning at address NN. If condition X is false, PC is incremented as usual, and the program continues with
+    /// the next sequential instruction.
+    /// 
+    /// T-States: 4, 3, 3 (10)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3
+    /// </remarks>
+    private void JpM_NN()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.S) != 0)
+        {
+            Regs.PC = Regs.WZ;
+        }
     }
 
     /// <summary>
