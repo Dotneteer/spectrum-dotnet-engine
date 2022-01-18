@@ -47,14 +47,14 @@ public partial class Z80Cpu
             OrB,        OrC,        OrD,        OrE,        OrH,        OrL,        OrHLi,      OrA,        // b0-b7
             CpB,        CpC,        CpD,        CpE,        CpH,        CpL,        CpHLi,      CpA,        // b8-bf
 
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // c0-c7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // c8-cf
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // d0-d7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // d8-df
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // e0-e7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // e8-ef
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // f0-f7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // f8-ff
+            RetNZ,      PopBC,      JpNZ_NN,    JpNN,       CallNZ,     PushBC,     AddAN,      Rst00,      // c0-c7
+            RetZ,       Ret,        Nop,        Nop,        Nop,        CallNN,     Nop,        Rst08,      // c8-cf
+            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Rst10,      // d0-d7
+            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Rst18,      // d8-df
+            Nop,        PopHL,      Nop,        Nop,        Nop,        PushHL,     Nop,        Rst20,      // e0-e7
+            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Rst28,      // e8-ef
+            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Rst30,      // f0-f7
+            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Rst38,      // f8-ff
         };
     }
 
@@ -3423,4 +3423,418 @@ public partial class Z80Cpu
     {
         Cp8(Regs.A);
     }
+
+    /// <summary>
+    /// "ret nz" operation (0xC0)
+    /// </summary>
+    /// <remarks>
+    /// If Z flag is not set, the byte at the memory location specified by the contents of SP is moved to the low-order
+    /// 8 bits of PC. SP is incremented and the byte at the memory location specified by the new contents of the SP are
+    /// moved to the high-order eight bits of PC.The SP is incremented again. The next op code following this
+    /// instruction is fetched from the memory location specified by the PC. This instruction is normally used to
+    /// return to the main line program at the completion of a routine entered by a CALL instruction. If condition X is
+    /// false, PC is simply incremented as usual, and the program continues with the next sequential instruction.
+    /// 
+    /// T-States:
+    ///   If condition met: 11 (5, 3, 3)
+    ///   Otherwise: 5
+    /// Contention breakdown: pc:5,[sp:3,sp+1:3]
+    /// </remarks>
+    private void RetNZ()
+    {
+        TactPlus1(Regs.IR);
+        if ((Regs.F & FlagsSetMask.Z) == 0)
+        {
+            Ret();
+        }
+    }
+
+    /// <summary>
+    /// "pop bc" operation (0xC1)
+    /// </summary>
+    /// <remarks>
+    /// The top two bytes of the external memory last-in, first-out (LIFO) stack are popped to register pair BC. SP
+    /// holds the 16-bit address of the current top of the stack. This instruction first loads to the low-order 
+    /// portion of RR, the byte at the memory location corresponding to the contents of SP; then SP is incremented and
+    /// the contents of the corresponding adjacent memory location are loaded to the high-order portion of RR and the
+    /// SP is now incremented again.
+    /// 
+    /// T-States: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,sp:3,sp+1:3
+    /// </remarks>
+    private void PopBC()
+    {
+        Regs.C = ReadMemory(Regs.SP);
+        Regs.SP++;
+        Regs.B = ReadMemory(Regs.SP);
+        Regs.SP++;
+    }
+
+    /// <summary>
+    /// "jp nz,NN" operation (0xC2)
+    /// </summary>
+    /// <remarks>
+    /// If Z flag is not set, the instruction loads operand NN to PC, and the program continues with the instruction
+    /// beginning at address NN. If condition X is false, PC is incremented as usual, and the program continues with
+    /// the next sequential instruction.
+    /// 
+    /// T-States: 4, 3, 3 (10)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3
+    /// </remarks>
+    private void JpNZ_NN()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.Z) == 0)
+        {
+            Regs.PC = Regs.WZ;
+        }
+    }
+
+    /// <summary>
+    /// "jp NN" operation (0xC3)
+    /// </summary>
+    /// <remarks>
+    /// Operand NN is loaded to PC. The next instruction is fetched from the location designated by the new contents
+    /// of the PC.
+    /// 
+    /// T-States: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3
+    /// </remarks>
+    private void JpNN()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        Regs.PC = Regs.WZ;
+    }
+
+    /// <summary>
+    /// "call nz,NN" operation (0xC4)
+    /// </summary>
+    /// <remarks>
+    /// If flag Z is not set, this instruction pushes the current contents of PC onto the top of the external memory
+    /// stack, then loads the operands NN to PC to point to the address in memory at which the first op code of a
+    /// subroutine is to be fetched. At the end of the subroutine, a RET instruction can be used to return to the
+    /// original program flow by popping the top of the stack back to PC. If condition X is false, PC is incremented as
+    /// usual, and the program continues with the next sequential instruction. The stack push is accomplished by first
+    /// decrementing the current contents of SP, loading the high-order byte of the PC contents to the memory address
+    /// now pointed to by SP; then decrementing SP again, and loading the low-order byte of the PC contents to the top
+    /// of the stack.
+    /// 
+    /// T-States: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3,[pc+2:1,sp-1:3,sp-2:3]
+    /// Gate array contention breakdown: pc:4,pc+1:3,pc+2:3,[1,sp-1:3,sp-2:3]
+    /// </remarks>
+    private void CallNZ()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.Z) == 0)
+        {
+            CallCore();
+        }
+    }
+
+    /// <summary>
+    /// "push bc" operation (0xC5)
+    /// </summary>
+    /// <remarks>
+    /// The contents of the register pair BC are pushed to the external  memory last-in, first-out (LIFO) stack. SP
+    /// holds the 16-bit address of the current top of the Stack. This instruction first decrements SP and loads the
+    /// high-order byte of register pair BC to the memory address specified by SP. Then SP is decremented again and
+    /// loads the low-order byte of BC to the memory location corresponding to this new address in SP.
+    /// 
+    /// T-States: 11 (5, 3, 3)
+    /// Contention breakdown: pc:5,sp-1:3,sp-2:3
+    /// </remarks>
+    private void PushBC()
+    {
+        TactPlus1(Regs.IR);
+        Regs.SP--;
+        WriteMemory(Regs.SP, Regs.B);
+        Regs.SP--;
+        WriteMemory(Regs.SP, Regs.C);
+    }
+
+    /// <summary>
+    /// "add a,N" operation (0xC6)
+    /// </summary>
+    /// <remarks>
+    /// The N integer is added to the contents of the Accumulator, and the results are stored in the Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if carry from bit 3; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is set if carry from bit 7; otherwise, it is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// </remarks>
+    private void AddAN()
+    {
+        Add8(ReadCodeMemory());
+    }
+
+    /// <summary>
+    /// "rst 00h" operation (0xC7)
+    /// </summary>
+    /// <remarks>
+    /// The current PC contents are pushed onto the external memory stack, and 0 is loaded to PC. Program execution
+    /// then begins with the op code in the address now pointed to by PC. The push is performed by first decrementing
+    /// the contents of SP, loading the high-order byte of PC to the memory address now pointed to by SP, decrementing
+    /// SP again, and loading the low-order byte of PC to the address now pointed to by SP. The Restart instruction
+    /// allows for a jump to address 0000H. Because all addresses are stored in Page 0 of memory, the high-order byte
+    /// of PC is loaded with 0x00.
+    /// 
+    /// T-States: 11 (5, 3, 3)
+    /// Contention breakdown: pc:5,sp-1:3,sp-2:3
+    /// </remarks>
+    private void Rst00()
+    {
+        RstCore(0x0000);
+    }
+
+    /// <summary>
+    /// "ret z" operation (0xC8)
+    /// </summary>
+    /// <remarks>
+    /// If Z flag is set, the byte at the memory location specified by the contents of SP is moved to the low-order
+    /// 8 bits of PC. SP is incremented and the byte at the memory location specified by the new contents of the SP are
+    /// moved to the high-order eight bits of PC.The SP is incremented again. The next op code following this
+    /// instruction is fetched from the memory location specified by the PC. This instruction is normally used to
+    /// return to the main line program at the completion of a routine entered by a CALL instruction. If condition X is
+    /// false, PC is simply incremented as usual, and the program continues with the next sequential instruction.
+    /// 
+    /// T-States:
+    ///   If condition met: 11 (5, 3, 3)
+    ///   Otherwise: 5
+    /// Contention breakdown: pc:5,[sp:3,sp+1:3]
+    /// </remarks>
+    private void RetZ()
+    {
+        TactPlus1(Regs.IR);
+        if ((Regs.F & FlagsSetMask.Z) != 0)
+        {
+            Ret();
+        }
+    }
+
+    /// <summary>
+    /// "ret" operation (0xC9)
+    /// </summary>
+    /// <remarks>
+    /// The byte at the memory location specified by the contents of SP is moved to the low-order eight bits of PC. SP
+    /// is now incremented and the byte at the memory location specified by the new contents of this instruction is
+    /// fetched from the memory location specified by PC. This instruction is normally used to return to the main line
+    /// program at the completion of a routine entered by a CALL instruction.
+    /// 
+    /// T-States: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,sp:3,sp+1:3
+    /// </remarks>
+    private void Ret()
+    {
+        Regs.WL = ReadMemory(Regs.SP);
+        Regs.SP++;
+        Regs.WH = ReadMemory(Regs.SP);
+        Regs.SP++;
+        Regs.PC = Regs.WZ;
+    }
+
+    /// <summary>
+    /// "call NN" operation (0xCD)
+    /// </summary>
+    /// <remarks>
+    /// The current contents of PC are pushed onto the top of the external memory stack. The operands NN are then
+    /// loaded to PC to point to the address in memory at which the first op code of a subroutine is to be fetched.
+    /// At the end of the subroutine, a RET instruction can be used to return to the original program flow by  popping
+    /// the top of the stack back to PC. The push is accomplished by first decrementing the current contents of SP,
+    /// loading the high-order byte of the PC contents to the memory address now pointed to by SP; then decrementing
+    /// SP again, and loading the low-order byte of the PC contents to the top of stack.
+    /// 
+    /// T-States: 17, (4, 3, 4, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3,pc+2:1,sp-1:3,sp-2:3
+    /// Gate array contention breakdown: pc:4,pc+1:3,pc+2:3,1,sp-1:3,sp-2:3
+    /// </remarks>
+    private void CallNN()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        CallCore();
+    }
+
+    /// <summary>
+    /// "rst 08h" operation (0xCF)
+    /// </summary>
+    /// <remarks>
+    /// The current PC contents are pushed onto the external memory stack, and $08 is loaded to PC. Program execution
+    /// then begins with the op code in the address now pointed to by PC. The push is performed by first decrementing
+    /// the contents of SP, loading the high-order byte of PC to the memory address now pointed to by SP, decrementing
+    /// SP again, and loading the low-order byte of PC to the address now pointed to by SP. The Restart instruction
+    /// allows for a jump to address 0008H. Because all addresses are stored in Page 0 of memory, the high-order byte
+    /// of PC is loaded with 0x0008.
+    /// 
+    /// T-States: 11 (5, 3, 3)
+    /// Contention breakdown: pc:5,sp-1:3,sp-2:3
+    /// </remarks>
+    private void Rst08()
+    {
+        RstCore(0x0008);
+    }
+
+    /// <summary>
+    /// "rst 10h" operation (0xD7)
+    /// </summary>
+    /// <remarks>
+    /// The current PC contents are pushed onto the external memory stack, and $10 is loaded to PC. Program execution
+    /// then begins with the op code in the address now pointed to by PC. The push is performed by first decrementing
+    /// the contents of SP, loading the high-order byte of PC to the memory address now pointed to by SP, decrementing
+    /// SP again, and loading the low-order byte of PC to the address now pointed to by SP. The Restart instruction
+    /// allows for a jump to address 0010H. Because all addresses are stored in Page 0 of memory, the high-order byte
+    /// of PC is loaded with 0x0010.
+    /// 
+    /// T-States: 11 (5, 3, 3)
+    /// Contention breakdown: pc:5,sp-1:3,sp-2:3
+    /// </remarks>
+    private void Rst10()
+    {
+        RstCore(0x0010);
+    }
+
+    /// <summary>
+    /// "rst 18h" operation (0xDF)
+    /// </summary>
+    /// <remarks>
+    /// The current PC contents are pushed onto the external memory stack, and $18 is loaded to PC. Program execution
+    /// then begins with the op code in the address now pointed to by PC. The push is performed by first decrementing
+    /// the contents of SP, loading the high-order byte of PC to the memory address now pointed to by SP, decrementing
+    /// SP again, and loading the low-order byte of PC to the address now pointed to by SP. The Restart instruction
+    /// allows for a jump to address 0018H. Because all addresses are stored in Page 0 of memory, the high-order byte
+    /// of PC is loaded with 0x0018.
+    /// 
+    /// T-States: 11 (5, 3, 3)
+    /// Contention breakdown: pc:5,sp-1:3,sp-2:3
+    /// </remarks>
+    private void Rst18()
+    {
+        RstCore(0x0018);
+    }
+
+    /// <summary>
+    /// "pop hl" operation (0xE1)
+    /// </summary>
+    /// <remarks>
+    /// The top two bytes of the external memory last-in, first-out (LIFO) stack are popped to register pair HL. SP
+    /// holds the 16-bit address of the current top of the stack. This instruction first loads to the low-order 
+    /// portion of RR, the byte at the memory location corresponding to the contents of SP; then SP is incremented and
+    /// the contents of the corresponding adjacent memory location are loaded to the high-order portion of RR and the
+    /// SP is now incremented again.
+    /// 
+    /// T-States: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,sp:3,sp+1:3
+    /// </remarks>
+    private void PopHL()
+    {
+        Regs.L = ReadMemory(Regs.SP);
+        Regs.SP++;
+        Regs.H = ReadMemory(Regs.SP);
+        Regs.SP++;
+    }
+
+    /// <summary>
+    /// "push hl" operation (0xE5)
+    /// </summary>
+    /// <remarks>
+    /// The contents of the register pair HL are pushed to the external  memory last-in, first-out (LIFO) stack. SP
+    /// holds the 16-bit address of the current top of the Stack. This instruction first decrements SP and loads the
+    /// high-order byte of register pair HL to the memory address specified by SP. Then SP is decremented again and
+    /// loads the low-order byte of HL to the memory location corresponding to this new address in SP.
+    /// 
+    /// T-States: 11 (5, 3, 3)
+    /// Contention breakdown: pc:5,sp-1:3,sp-2:3
+    /// </remarks>
+    private void PushHL()
+    {
+        TactPlus1(Regs.IR);
+        Regs.SP--;
+        WriteMemory(Regs.SP, Regs.H);
+        Regs.SP--;
+        WriteMemory(Regs.SP, Regs.L);
+    }
+
+    /// <summary>
+    /// "rst 20h" operation (0xE7)
+    /// </summary>
+    /// <remarks>
+    /// The current PC contents are pushed onto the external memory stack, and $20 is loaded to PC. Program execution
+    /// then begins with the op code in the address now pointed to by PC. The push is performed by first decrementing
+    /// the contents of SP, loading the high-order byte of PC to the memory address now pointed to by SP, decrementing
+    /// SP again, and loading the low-order byte of PC to the address now pointed to by SP. The Restart instruction
+    /// allows for a jump to address 0020H. Because all addresses are stored in Page 0 of memory, the high-order byte
+    /// of PC is loaded with 0x0020.
+    /// 
+    /// T-States: 11 (5, 3, 3)
+    /// Contention breakdown: pc:5,sp-1:3,sp-2:3
+    /// </remarks>
+    private void Rst20()
+    {
+        RstCore(0x0020);
+    }
+
+    /// <summary>
+    /// "rst 28h" operation (0xEF)
+    /// </summary>
+    /// <remarks>
+    /// The current PC contents are pushed onto the external memory stack, and $28 is loaded to PC. Program execution
+    /// then begins with the op code in the address now pointed to by PC. The push is performed by first decrementing
+    /// the contents of SP, loading the high-order byte of PC to the memory address now pointed to by SP, decrementing
+    /// SP again, and loading the low-order byte of PC to the address now pointed to by SP. The Restart instruction
+    /// allows for a jump to address 0028H. Because all addresses are stored in Page 0 of memory, the high-order byte
+    /// of PC is loaded with 0x0028.
+    /// 
+    /// T-States: 11 (5, 3, 3)
+    /// Contention breakdown: pc:5,sp-1:3,sp-2:3
+    /// </remarks>
+    private void Rst28()
+    {
+        RstCore(0x0028);
+    }
+
+    /// <summary>
+    /// "rst 30h" operation (0xF7)
+    /// </summary>
+    /// <remarks>
+    /// The current PC contents are pushed onto the external memory stack, and $30 is loaded to PC. Program execution
+    /// then begins with the op code in the address now pointed to by PC. The push is performed by first decrementing
+    /// the contents of SP, loading the high-order byte of PC to the memory address now pointed to by SP, decrementing
+    /// SP again, and loading the low-order byte of PC to the address now pointed to by SP. The Restart instruction
+    /// allows for a jump to address 0030H. Because all addresses are stored in Page 0 of memory, the high-order byte
+    /// of PC is loaded with 0x0030.
+    /// 
+    /// T-States: 11 (5, 3, 3)
+    /// Contention breakdown: pc:5,sp-1:3,sp-2:3
+    /// </remarks>
+    private void Rst30()
+    {
+        RstCore(0x0030);
+    }
+
+    /// <summary>
+    /// "rst 38h" operation (0xFF)
+    /// </summary>
+    /// <remarks>
+    /// The current PC contents are pushed onto the external memory stack, and $38 is loaded to PC. Program execution
+    /// then begins with the op code in the address now pointed to by PC. The push is performed by first decrementing
+    /// the contents of SP, loading the high-order byte of PC to the memory address now pointed to by SP, decrementing
+    /// SP again, and loading the low-order byte of PC to the address now pointed to by SP. The Restart instruction
+    /// allows for a jump to address 0038H. Because all addresses are stored in Page 0 of memory, the high-order byte
+    /// of PC is loaded with 0x0038.
+    /// 
+    /// T-States: 11 (5, 3, 3)
+    /// Contention breakdown: pc:5,sp-1:3,sp-2:3
+    /// </remarks>
+    private void Rst38()
+    {
+        RstCore(0x0038);
+    }
+
 }

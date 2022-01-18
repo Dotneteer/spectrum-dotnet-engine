@@ -133,4 +133,33 @@ public partial class Z80Cpu
         Regs.WZ = tmp;
         WriteMemory(tmp, high);
     }
+
+    /// <summary>
+    /// The core of the CALL instruction 
+    /// </summary>
+    private void CallCore()
+    {
+        TactPlus1(Regs.IR);
+        Regs.SP--;
+        WriteMemory(Regs.SP, (byte)(Regs.PC >> 8));
+        Regs.SP--;
+        WriteMemory(Regs.SP, (byte)Regs.PC);
+        Regs.PC = Regs.WZ;
+    }
+
+    // 
+    /// <summary>
+    /// The core of the RST instruction 
+    /// </summary>
+    /// <param name="addr">Restart address to call</param>
+    private void RstCore(ushort addr)
+    {
+        TactPlus1(Regs.IR);
+        Regs.SP--;
+        WriteMemory(Regs.SP, (byte)(Regs.PC >> 8));
+        Regs.SP--;
+        WriteMemory(Regs.SP, (byte)Regs.PC);
+        Regs.PC = Regs.WZ;
+        Regs.PC = Regs.WZ = addr;
+    }
 }
