@@ -161,162 +161,163 @@ public class StandardOpTests0xF0
         m.Cpu.Tacts.ShouldBe(25UL);
     }
 
-    ///// <summary>
-    ///// DI: 0xF3
-    ///// </summary>
-    //[TestMethod]
-    //public void DI_WorksAsExpected()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.OneInstruction);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0xF3 // DI
-    //    });
+    /// <summary>
+    /// DI: 0xF3
+    /// </summary>
+    [Fact]
+    public void DI_WorksAsExpected()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.OneInstruction);
+        m.InitCode(new byte[]
+        {
+            0xF3 // DI
+        });
+        var regs = m.Cpu.Regs;
+        m.Cpu.Iff1 = true;
+        m.Cpu.Iff2 = true;
 
-    //    // --- Act
-    //    m.Run();
+        // --- Act
+        m.Run();
 
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
+        // --- Assert
+        m.Cpu.Iff1.ShouldBeFalse();
+        m.Cpu.Iff2.ShouldBeFalse();
 
-    //    m.Cpu.IFF1.ShouldBeFalse();
-    //    m.Cpu.IFF2.ShouldBeFalse();
+        m.ShouldKeepRegisters();
+        m.ShouldKeepMemory();
 
-    //    m.ShouldKeepRegisters();
-    //    m.ShouldKeepMemory();
+        regs.PC.ShouldBe((ushort)0x0001);
+        m.Cpu.Tacts.ShouldBe(4UL);
+    }
 
-    //    regs.PC.ShouldBe((ushort)0x0001);
-    //    m.Cpu.Tacts.ShouldBe(4L);
-    //}
+    /// <summary>
+    /// CALL P: 0xF4
+    /// </summary>
+    [Fact]
+    public void CALL_P_WorksAsExpected()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilHalt);
+        m.InitCode(new byte[]
+        {
+            0x3E, 0x32,       // LD A,32H
+            0x87,             // ADD A
+            0xF4, 0x07, 0x00, // CALL P,0007H
+            0x76,             // HALT
+            0x3E, 0x24,       // LD A,24H
+            0xC9              // RET
+        });
+        var regs = m.Cpu.Regs;
+        m.Cpu.Regs.SP = 0;
 
-    ///// <summary>
-    ///// CALL P: 0xF4
-    ///// </summary>
-    //[TestMethod]
-    //public void CALL_P_WorksAsExpected()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilHalt);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x3E, 0x32,       // LD A,32H
-    //            0x87,             // ADD A
-    //            0xF4, 0x07, 0x00, // CALL P,0007H
-    //            0x76,             // HALT
-    //            0x3E, 0x24,       // LD A,24H
-    //            0xC9              // RET
-    //    });
+        // --- Act
+        m.Run();
 
-    //    // --- Act
-    //    m.Run();
+        // --- Assert
+        regs.A.ShouldBe((byte)0x24);
+        m.ShouldKeepRegisters(except: "AF");
+        m.ShouldKeepMemory(except: "FFFE-FFFF");
 
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
+        regs.PC.ShouldBe((ushort)0x0006);
+        m.Cpu.Tacts.ShouldBe(49UL);
+    }
 
-    //    regs.A.ShouldBe((byte)0x24);
-    //    m.ShouldKeepRegisters(except: "AF");
-    //    m.ShouldKeepMemory(except: "FFFE-FFFF");
+    /// <summary>
+    /// CALL P: 0xF4
+    /// </summary>
+    [Fact]
+    public void CALL_P_DoesNotCallWhenM()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilHalt);
+        m.InitCode(new byte[]
+        {
+            0x3E, 0xC0,       // LD A,C0H
+            0x87,             // ADD A
+            0xF4, 0x07, 0x00, // CALL P,0007H
+            0x76,             // HALT
+            0x3E, 0x24,       // LD A,24H
+            0xC9              // RET
+        });
+        var regs = m.Cpu.Regs;
+        m.Cpu.Regs.SP = 0;
 
-    //    regs.PC.ShouldBe((ushort)0x0006);
-    //    m.Cpu.Tacts.ShouldBe(49L);
-    //}
+        // --- Act
+        m.Run();
 
-    ///// <summary>
-    ///// CALL P: 0xF4
-    ///// </summary>
-    //[TestMethod]
-    //public void CALL_P_DoesNotCallWhenM()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilHalt);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x3E, 0xC0,       // LD A,C0H
-    //            0x87,             // ADD A
-    //            0xF4, 0x07, 0x00, // CALL P,0007H
-    //            0x76,             // HALT
-    //            0x3E, 0x24,       // LD A,24H
-    //            0xC9              // RET
-    //    });
+        // --- Assert
+        regs.A.ShouldBe((byte)0x80);
+        m.ShouldKeepRegisters(except: "AF");
+        m.ShouldKeepMemory(except: "FFFE-FFFF");
 
-    //    // --- Act
-    //    m.Run();
+        regs.PC.ShouldBe((ushort)0x0006);
+        m.Cpu.Tacts.ShouldBe(25UL);
+    }
 
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
+    /// <summary>
+    /// PUSH AF: 0xF5
+    /// </summary>
+    [Fact]
+    public void PUSH_AF_WorksAsExpected()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+                0xF5,             // PUSH AF
+                0xC1              // POP BC
+        });
+        var regs = m.Cpu.Regs;
+        regs.SP = 0;
+        regs.AF = 0x3456;
 
-    //    regs.A.ShouldBe((byte)0x80);
-    //    m.ShouldKeepRegisters(except: "AF");
-    //    m.ShouldKeepMemory(except: "FFFE-FFFF");
+        // --- Act
+        m.Run();
 
-    //    regs.PC.ShouldBe((ushort)0x0006);
-    //    m.Cpu.Tacts.ShouldBe(25);
-    //}
+        // --- Assert
+        regs.BC.ShouldBe((ushort)0x3456);
+        m.ShouldKeepRegisters(except: "BC");
+        m.ShouldKeepMemory(except: "FFFE-FFFF");
 
-    ///// <summary>
-    ///// PUSH AF: 0xF5
-    ///// </summary>
-    //[TestMethod]
-    //public void PUSH_AF_WorksAsExpected()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0xF5,             // PUSH AF
-    //            0xC1              // POP BC
-    //    });
-    //    m.Cpu.Registers.AF = 0x3456;
+        regs.PC.ShouldBe((ushort)0x0002);
+        m.Cpu.Tacts.ShouldBe(21UL);
+    }
 
-    //    // --- Act
-    //    m.Run();
+    /// <summary>
+    /// OR N: 0xF6
+    /// </summary>
+    [Fact]
+    public void OR_N_WorksAsExpected()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x3E, 0x12, // LD A,12H
+            0xF6, 0x23  // OR 23H
+        });
 
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
+        // --- Act
+        m.Run();
 
-    //    regs.BC.ShouldBe((ushort)0x3456);
-    //    m.ShouldKeepRegisters(except: "BC");
-    //    m.ShouldKeepMemory(except: "FFFE-FFFF");
+        // --- Assert
+        var regs = m.Cpu.Regs;
 
-    //    regs.PC.ShouldBe((ushort)0x0002);
-    //    m.Cpu.Tacts.ShouldBe(21L);
-    //}
+        regs.A.ShouldBe((byte)0x33);
+        regs.SFlag.ShouldBeFalse();
+        regs.ZFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeTrue();
 
-    ///// <summary>
-    ///// OR N: 0xF6
-    ///// </summary>
-    //[TestMethod]
-    //public void OR_N_WorksAsExpected()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x3E, 0x12, // LD A,12H
-    //            0xF6, 0x23  // OR 23H
-    //    });
+        regs.HFlag.ShouldBeFalse();
+        regs.NFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeFalse();
+        m.ShouldKeepRegisters(except: "AF");
+        m.ShouldKeepMemory();
 
-    //    // --- Act
-    //    m.Run();
-
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
-
-    //    regs.A.ShouldBe((byte)0x33);
-    //    regs.SFlag.ShouldBeFalse();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeTrue();
-
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.NFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeFalse();
-    //    m.ShouldKeepRegisters(except: "AF");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0004);
-    //    m.Cpu.Tacts.ShouldBe(14L);
-    //}
+        regs.PC.ShouldBe((ushort)0x0004);
+        m.Cpu.Tacts.ShouldBe(14UL);
+    }
 
     /// <summary>
     /// RST 30H: 0xF7
@@ -418,33 +419,33 @@ public class StandardOpTests0xF0
         m.Cpu.Tacts.ShouldBe(54UL);
     }
 
-    ///// <summary>
-    ///// LD SP,HL: 0xF9
-    ///// </summary>
-    //[TestMethod]
-    //public void LD_SP_HL_WorksAsExpected()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x21, 0x00, 0x10, // LD HL,1000H
-    //            0xF9              // LD SP,HL
-    //    });
+    /// <summary>
+    /// LD SP,HL: 0xF9
+    /// </summary>
+    [Fact]
+    public void LD_SP_HL_WorksAsExpected()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+            0x21, 0x00, 0x10, // LD HL,1000H
+            0xF9              // LD SP,HL
+        });
 
-    //    // --- Act
-    //    m.Run();
+        // --- Act
+        m.Run();
 
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
+        // --- Assert
+        var regs = m.Cpu.Regs;
 
-    //    regs.SP.ShouldBe((ushort)0x1000);
-    //    m.ShouldKeepRegisters(except: "HL, SP");
-    //    m.ShouldKeepMemory();
+        regs.SP.ShouldBe((ushort)0x1000);
+        m.ShouldKeepRegisters(except: "HL, SP");
+        m.ShouldKeepMemory();
 
-    //    regs.PC.ShouldBe((ushort)0x0004);
-    //    m.Cpu.Tacts.ShouldBe(16L);
-    //}
+        regs.PC.ShouldBe((ushort)0x0004);
+        m.Cpu.Tacts.ShouldBe(16UL);
+    }
 
     /// <summary>
     /// JP M,NN: 0xFA
@@ -510,132 +511,132 @@ public class StandardOpTests0xF0
         m.Cpu.Tacts.ShouldBe(25UL);
     }
 
-    ///// <summary>
-    ///// EI: 0xFB
-    ///// </summary>
-    //[TestMethod]
-    //public void EI_WorksAsExpected()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.OneInstruction);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0xFB // EI
-    //    });
+    /// <summary>
+    /// EI: 0xFB
+    /// </summary>
+    [Fact]
+    public void EI_WorksAsExpected()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.OneInstruction);
+        m.InitCode(new byte[]
+        {
+            0xFB // EI
+        });
 
-    //    // --- Act
-    //    m.Run();
+        // --- Act
+        m.Run();
 
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
+        // --- Assert
+        var regs = m.Cpu.Regs;
 
-    //    m.Cpu.IFF1.ShouldBeTrue();
-    //    m.Cpu.IFF2.ShouldBeTrue();
+        m.Cpu.Iff1.ShouldBeTrue();
+        m.Cpu.Iff2.ShouldBeTrue();
 
-    //    m.ShouldKeepRegisters();
-    //    m.ShouldKeepMemory();
+        m.ShouldKeepRegisters();
+        m.ShouldKeepMemory();
 
-    //    regs.PC.ShouldBe((ushort)0x0001);
-    //    m.Cpu.Tacts.ShouldBe(4L);
-    //}
+        regs.PC.ShouldBe((ushort)0x0001);
+        m.Cpu.Tacts.ShouldBe(4UL);
+    }
 
-    ///// <summary>
-    ///// CALL M: 0xFC
-    ///// </summary>
-    //[TestMethod]
-    //public void CALL_M_WorksAsExpected()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilHalt);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x3E, 0xC0,       // LD A,C0H
-    //            0x87,             // ADD A
-    //            0xFC, 0x07, 0x00, // CALL M,0007H
-    //            0x76,             // HALT
-    //            0x3E, 0x24,       // LD A,24H
-    //            0xC9              // RET
-    //    });
+    /// <summary>
+    /// CALL M: 0xFC
+    /// </summary>
+    [Fact]
+    public void CALL_M_WorksAsExpected()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilHalt);
+        m.InitCode(new byte[]
+        {
+            0x3E, 0xC0,       // LD A,C0H
+            0x87,             // ADD A
+            0xFC, 0x07, 0x00, // CALL M,0007H
+            0x76,             // HALT
+            0x3E, 0x24,       // LD A,24H
+            0xC9              // RET
+        });
+        var regs = m.Cpu.Regs;
+        m.Cpu.Regs.SP = 0;
 
-    //    // --- Act
-    //    m.Run();
+        // --- Act
+        m.Run();
 
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
+        // --- Assert
+        regs.A.ShouldBe((byte)0x24);
+        m.ShouldKeepRegisters(except: "AF");
+        m.ShouldKeepMemory(except: "FFFE-FFFF");
 
-    //    regs.A.ShouldBe((byte)0x24);
-    //    m.ShouldKeepRegisters(except: "AF");
-    //    m.ShouldKeepMemory(except: "FFFE-FFFF");
+        regs.PC.ShouldBe((ushort)0x0006);
+        m.Cpu.Tacts.ShouldBe(49UL);
+    }
 
-    //    regs.PC.ShouldBe((ushort)0x0006);
-    //    m.Cpu.Tacts.ShouldBe(49L);
-    //}
+    /// <summary>
+    /// CALL M: 0xFC
+    /// </summary>
+    [Fact]
+    public void CALL_M_DoesNotCallWhenP()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilHalt);
+        m.InitCode(new byte[]
+        {
+            0x3E, 0x32,       // LD A,32H
+            0x87,             // ADD A
+            0xFC, 0x07, 0x00, // CALL M,0007H
+            0x76,             // HALT
+            0x3E, 0x24,       // LD A,24H
+            0xC9              // RET
+        });
+        var regs = m.Cpu.Regs;
+        m.Cpu.Regs.SP = 0;
 
-    ///// <summary>
-    ///// CALL M: 0xFC
-    ///// </summary>
-    //[TestMethod]
-    //public void CALL_M_DoesNotCallWhenP()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilHalt);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0x3E, 0x32,       // LD A,32H
-    //            0x87,             // ADD A
-    //            0xFC, 0x07, 0x00, // CALL M,0007H
-    //            0x76,             // HALT
-    //            0x3E, 0x24,       // LD A,24H
-    //            0xC9              // RET
-    //    });
+        // --- Act
+        m.Run();
 
-    //    // --- Act
-    //    m.Run();
+        // --- Assert
+        regs.A.ShouldBe((byte)0x64);
+        m.ShouldKeepRegisters(except: "AF");
+        m.ShouldKeepMemory(except: "FFFE-FFFF");
 
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
+        regs.PC.ShouldBe((ushort)0x0006);
+        m.Cpu.Tacts.ShouldBe(25UL);
+    }
 
-    //    regs.A.ShouldBe((byte)0x64);
-    //    m.ShouldKeepRegisters(except: "AF");
-    //    m.ShouldKeepMemory(except: "FFFE-FFFF");
+    /// <summary>
+    /// CP N: 0xFE
+    /// </summary>
+    [Fact]
+    public void CP_N_WorksAsExpected()
+    {
+        // --- Arrange
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+                0xFE, 0x24 // CP 24H
+        });
+        m.Cpu.Regs.A = 0x36;
 
-    //    regs.PC.ShouldBe((ushort)0x0006);
-    //    m.Cpu.Tacts.ShouldBe(25);
-    //}
+        // --- Act
+        m.Run();
 
-    ///// <summary>
-    ///// CP N: 0xFE
-    ///// </summary>
-    //[TestMethod]
-    //public void CP_N_WorksAsExpected()
-    //{
-    //    // --- Arrange
-    //    var m = new Z80TestMachine(RunMode.UntilEnd);
-    //    m.InitCode(new byte[]
-    //    {
-    //            0xFE, 0x24 // CP 24H
-    //    });
-    //    m.Cpu.Registers.A = 0x36;
+        // --- Assert
+        var regs = m.Cpu.Regs;
 
-    //    // --- Act
-    //    m.Run();
+        regs.SFlag.ShouldBeFalse();
+        regs.ZFlag.ShouldBeFalse();
+        regs.HFlag.ShouldBeFalse();
+        regs.PFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeFalse();
 
-    //    // --- Assert
-    //    var regs = m.Cpu.Registers;
+        regs.NFlag.ShouldBeTrue();
+        m.ShouldKeepRegisters(except: "F");
+        m.ShouldKeepMemory();
 
-    //    regs.SFlag.ShouldBeFalse();
-    //    regs.ZFlag.ShouldBeFalse();
-    //    regs.HFlag.ShouldBeFalse();
-    //    regs.PFlag.ShouldBeFalse();
-    //    regs.CFlag.ShouldBeFalse();
-
-    //    regs.NFlag.ShouldBeTrue();
-    //    m.ShouldKeepRegisters(except: "F");
-    //    m.ShouldKeepMemory();
-
-    //    regs.PC.ShouldBe((ushort)0x0002);
-    //    m.Cpu.Tacts.ShouldBe(7L);
-    //}
+        regs.PC.ShouldBe((ushort)0x0002);
+        m.Cpu.Tacts.ShouldBe(7UL);
+    }
 
     /// <summary>
     /// RST 38H: 0xFF

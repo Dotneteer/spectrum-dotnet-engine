@@ -60,8 +60,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private byte ReadPort(ushort address)
     {
-        TactPlus3();
-        return ReadMemoryFunction(address);
+        TactPlus4();
+        return ReadPortFunction(address);
     }
 
     /// <summary>
@@ -77,7 +77,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WritePort(ushort address, byte data)
     {
-        WriteMemoryFunction(address, data);
+        TactPlus4();
+        WritePortFunction(address, data);
     }
 
     /// <summary>

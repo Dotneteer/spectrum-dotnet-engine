@@ -49,12 +49,12 @@ public partial class Z80Cpu
 
             RetNZ,      PopBC,      JpNZ_NN,    JpNN,       CallNZ,     PushBC,     AddAN,      Rst00,      // c0-c7
             RetZ,       Ret,        JpZ_NN,     Nop,        CallZ,      CallNN,     AdcAN,      Rst08,      // c8-cf
-            RetNC,      PopDE,      JpNC_NN,    Nop,        Nop,        Nop,        Nop,        Rst10,      // d0-d7
-            RetC,       Nop,        JpC_NN,     Nop,        Nop,        Nop,        Nop,        Rst18,      // d8-df
-            RetPO,      PopHL,      JpPO_NN,    Nop,        Nop,        PushHL,     Nop,        Rst20,      // e0-e7
-            RetPE,      Nop,        JpPE_NN,    Nop,        Nop,        Nop,        Nop,        Rst28,      // e8-ef
-            RetP,       PopAF,      JpP_NN,     Nop,        Nop,        Nop,        Nop,        Rst30,      // f0-f7
-            RetM,       Nop,        JpM_NN,     Nop,        Nop,        Nop,        Nop,        Rst38,      // f8-ff
+            RetNC,      PopDE,      JpNC_NN,    OutNA,      CallNC,     PushDE,     SubAN,      Rst10,      // d0-d7
+            RetC,       Exx,        JpC_NN,     InAN,       CallC,      Nop,        SbcAN,      Rst18,      // d8-df
+            RetPO,      PopHL,      JpPO_NN,    ExSPiHL,    CallPO,     PushHL,     AndAN,      Rst20,      // e0-e7
+            RetPE,      JpHL,       JpPE_NN,    ExDEHL,     CallPE,     Nop,        XorAN,      Rst28,      // e8-ef
+            RetP,       PopAF,      JpP_NN,     Di,         CallP,      PushAF,     OrAN,       Rst30,      // f0-f7
+            RetM,       LdSPHL,     JpM_NN,     Ei,         CallM,      Nop,        CpAN,       Rst38,      // f8-ff
         };
     }
 
@@ -3817,6 +3817,94 @@ public partial class Z80Cpu
     }
 
     /// <summary>
+    /// "out (N),a" operation (0xD3)
+    /// </summary>
+    /// <remarks>
+    /// The operand N is placed on the bottom half (A0 through A7) of the address bus to select the I/O device at one
+    /// of 256 possible ports. The contents of A also appear on the top half(A8 through A15) of the address bus at this
+    /// time. Then the byte contained in A is placed on the data bus and written to the selected peripheral device.
+    /// 
+    /// T-States: 11 (4, 3, 4)
+    /// Contention breakdown: pc:4,pc+1:3,I/O
+    /// </remarks>
+    private void OutNA()
+    {
+        var nn = ReadCodeMemory();
+        var port = (ushort)(nn | (Regs.A << 8));
+        Regs.WH = Regs.A;
+        Regs.WL = (byte)(nn + 1);
+        WritePort(port, Regs.A);
+    }
+
+    /// <summary>
+    /// "call nc,NN" operation (0xD4)
+    /// </summary>
+    /// <remarks>
+    /// If flag C is not set, this instruction pushes the current contents of PC onto the top of the external memory
+    /// stack, then loads the operands NN to PC to point to the address in memory at which the first op code of a
+    /// subroutine is to be fetched. At the end of the subroutine, a RET instruction can be used to return to the
+    /// original program flow by popping the top of the stack back to PC. If condition X is false, PC is incremented as
+    /// usual, and the program continues with the next sequential instruction. The stack push is accomplished by first
+    /// decrementing the current contents of SP, loading the high-order byte of the PC contents to the memory address
+    /// now pointed to by SP; then decrementing SP again, and loading the low-order byte of the PC contents to the top
+    /// of the stack.
+    /// 
+    /// T-States: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3,[pc+2:1,sp-1:3,sp-2:3]
+    /// Gate array contention breakdown: pc:4,pc+1:3,pc+2:3,[1,sp-1:3,sp-2:3]
+    /// </remarks>
+    private void CallNC()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.C) == 0)
+        {
+            CallCore();
+        }
+    }
+
+    /// <summary>
+    /// "push de" operation (0xD5)
+    /// </summary>
+    /// <remarks>
+    /// The contents of the register pair DE are pushed to the external  memory last-in, first-out (LIFO) stack. SP
+    /// holds the 16-bit address of the current top of the Stack. This instruction first decrements SP and loads the
+    /// high-order byte of register pair BC to the memory address specified by SP. Then SP is decremented again and
+    /// loads the low-order byte of BC to the memory location corresponding to this new address in SP.
+    /// 
+    /// T-States: 11 (5, 3, 3)
+    /// Contention breakdown: pc:5,sp-1:3,sp-2:3
+    /// </remarks>
+    private void PushDE()
+    {
+        TactPlus1(Regs.IR);
+        Regs.SP--;
+        WriteMemory(Regs.SP, Regs.D);
+        Regs.SP--;
+        WriteMemory(Regs.SP, Regs.E);
+    }
+
+    /// <summary>
+    /// "sub N" operation (0xD6)
+    /// </summary>
+    /// <remarks>
+    /// The N integer is subtracted from the contents of the Accumulator, and the results are stored in the
+    /// Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// </remarks>
+    private void SubAN()
+    {
+        Sub8(ReadCodeMemory());
+    }
+
+    /// <summary>
     /// "rst 10h" operation (0xD7)
     /// </summary>
     /// <remarks>
@@ -3833,27 +3921,6 @@ public partial class Z80Cpu
     private void Rst10()
     {
         RstCore(0x0010);
-    }
-
-    /// <summary>
-    /// "jp c,NN" operation (0xDA)
-    /// </summary>
-    /// <remarks>
-    /// If C flag is set, the instruction loads operand NN to PC, and the program continues with the instruction
-    /// beginning at address NN. If condition X is false, PC is incremented as usual, and the program continues with
-    /// the next sequential instruction.
-    /// 
-    /// T-States: 4, 3, 3 (10)
-    /// Contention breakdown: pc:4,pc+1:3,pc+2:3
-    /// </remarks>
-    private void JpC_NN()
-    {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
-        if ((Regs.F & FlagsSetMask.C) != 0)
-        {
-            Regs.PC = Regs.WZ;
-        }
     }
 
     /// <summary>
@@ -3879,6 +3946,107 @@ public partial class Z80Cpu
         {
             Ret();
         }
+    }
+
+    /// <summary>
+    /// "exx" operation (0xD9)
+    /// </summary>
+    /// <remarks>
+    /// Each 2-byte value in register pairs BC, DE, and HL is exchanged with the 2-byte value in BC', DE', and HL', 
+    /// respectively.
+    /// 
+    /// T-States: 4, (4)
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void Exx()
+    {
+        Regs.ExchangeRegisterSet();
+    }
+
+    /// <summary>
+    /// "jp c,NN" operation (0xDA)
+    /// </summary>
+    /// <remarks>
+    /// If C flag is set, the instruction loads operand NN to PC, and the program continues with the instruction
+    /// beginning at address NN. If condition X is false, PC is incremented as usual, and the program continues with
+    /// the next sequential instruction.
+    /// 
+    /// T-States: 4, 3, 3 (10)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3
+    /// </remarks>
+    private void JpC_NN()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.C) != 0)
+        {
+            Regs.PC = Regs.WZ;
+        }
+    }
+
+    /// <summary>
+    /// "in a,(N)" operation (0xDB)
+    /// </summary>
+    /// <remarks>
+    /// The operand N is placed on the bottom half (A0 through A7) of the address bus to select the I/O device at one
+    /// of 256 possible ports. The contents of A also appear on the top half (A8 through A15) of the address bus at
+    /// this time. Then one byte from the selected port is placed on the data bus and written to A in the CPU.
+    /// 
+    /// T-States: 11 (4, 3, 4)
+    /// Contention breakdown: pc:4,pc+1:3,I/O
+    /// </remarks>
+    private void InAN()
+    {
+        var inTemp = (ushort)(ReadCodeMemory() | (Regs.A << 8));
+        Regs.A = ReadPort(inTemp);
+        Regs.WZ = (ushort)(inTemp + 1);
+    }
+
+    /// <summary>
+    /// "call c,NN" operation (0xDC)
+    /// </summary>
+    /// <remarks>
+    /// If flag C is set, this instruction pushes the current contents of PC onto the top of the external memory
+    /// stack, then loads the operands NN to PC to point to the address in memory at which the first op code of a
+    /// subroutine is to be fetched. At the end of the subroutine, a RET instruction can be used to return to the
+    /// original program flow by popping the top of the stack back to PC. If condition X is false, PC is incremented as
+    /// usual, and the program continues with the next sequential instruction. The stack push is accomplished by first
+    /// decrementing the current contents of SP, loading the high-order byte of the PC contents to the memory address
+    /// now pointed to by SP; then decrementing SP again, and loading the low-order byte of the PC contents to the top
+    /// of the stack.
+    /// 
+    /// T-States: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3,[pc+2:1,sp-1:3,sp-2:3]
+    /// Gate array contention breakdown: pc:4,pc+1:3,pc+2:3,[1,sp-1:3,sp-2:3]
+    /// </remarks>
+    private void CallC()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.C) != 0)
+        {
+            CallCore();
+        }
+    }
+
+    /// <summary>
+    /// "sbc a,N" operation (0xDE)
+    /// </summary>
+    /// <remarks>
+    /// The N integer, along with the Carry flag is subtracted from the contents of the Accumulator, and the results
+    /// are stored in the Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// </remarks>
+    private void SbcAN()
+    {
+        Sbc8(ReadCodeMemory());
     }
 
     /// <summary>
@@ -3968,6 +4136,58 @@ public partial class Z80Cpu
     }
 
     /// <summary>
+    /// "ex (sp),hl" operation (0xE3)
+    /// </summary>
+    /// <remarks>
+    /// The low-order byte contained in HL is exchanged with the contents of the memory address specified by the
+    /// contents of SP, and the high-order byte of HL is exchanged with the next highest memory address (SP+1).
+    /// 
+    /// T-States: 19 (4, 3, 4, 3, 5)
+    /// Contention breakdown: pc:4,sp:3,sp+1:3,sp+1:1,sp+1(write):3,sp(write):3,sp(write):1 ×2
+    /// Gate array contention breakdown: pc:4,sp:3,sp+1:4,sp+1(write):3,sp(write):5
+    /// </remarks>
+    private void ExSPiHL()
+    {
+        var sp1 = (ushort)(Regs.SP + 1);
+        var tempL = ReadMemory(Regs.SP);
+        var tempH = ReadMemory(sp1);
+        TactPlus1(Regs.SP);
+        WriteMemory(sp1, Regs.H);
+        WriteMemory(Regs.SP, Regs.L);
+        TactPlus2Write(Regs.SP);
+        Regs.WL = tempL;
+        Regs.WH = tempH;
+        Regs.HL = Regs.WZ;
+    }
+
+    /// <summary>
+    /// "call po,NN" operation (0xE4)
+    /// </summary>
+    /// <remarks>
+    /// If flag P/V is not set, this instruction pushes the current contents of PC onto the top of the external memory
+    /// stack, then loads the operands NN to PC to point to the address in memory at which the first op code of a
+    /// subroutine is to be fetched. At the end of the subroutine, a RET instruction can be used to return to the
+    /// original program flow by popping the top of the stack back to PC. If condition X is false, PC is incremented as
+    /// usual, and the program continues with the next sequential instruction. The stack push is accomplished by first
+    /// decrementing the current contents of SP, loading the high-order byte of the PC contents to the memory address
+    /// now pointed to by SP; then decrementing SP again, and loading the low-order byte of the PC contents to the top
+    /// of the stack.
+    /// 
+    /// T-States: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3,[pc+2:1,sp-1:3,sp-2:3]
+    /// Gate array contention breakdown: pc:4,pc+1:3,pc+2:3,[1,sp-1:3,sp-2:3]
+    /// </remarks>
+    private void CallPO()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.PV) == 0)
+        {
+            CallCore();
+        }
+    }
+
+    /// <summary>
     /// "push hl" operation (0xE5)
     /// </summary>
     /// <remarks>
@@ -3986,6 +4206,26 @@ public partial class Z80Cpu
         WriteMemory(Regs.SP, Regs.H);
         Regs.SP--;
         WriteMemory(Regs.SP, Regs.L);
+    }
+
+    /// <summary>
+    /// "and N" operation (0xE6)
+    /// </summary>
+    /// <remarks>
+    /// A logical AND operation is performed between 8-bit integer N and the byte contained in the Accumulator; the
+    /// result is stored in the Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set.
+    /// P/V is reset if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// </remarks>
+    private void AndAN()
+    {
+        And8(ReadCodeMemory());
     }
 
     /// <summary>
@@ -4033,6 +4273,21 @@ public partial class Z80Cpu
     }
 
     /// <summary>
+    /// "jp (hl)" operation (0xE9)
+    /// </summary>
+    /// <remarks>
+    /// PC is loaded with the contents of HL. The next instruction is fetched from the location designated by the new
+    /// contents of PC.
+    /// 
+    /// T-States: 4 (4)
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void JpHL()
+    {
+        Regs.PC = Regs.HL;
+    }
+
+    /// <summary>
     /// "jp pe,NN" operation (0xEA)
     /// </summary>
     /// <remarks>
@@ -4051,6 +4306,67 @@ public partial class Z80Cpu
         {
             Regs.PC = Regs.WZ;
         }
+    }
+
+    /// <summary>
+    /// "ex de,hl" operation (0xEB)
+    /// </summary>
+    /// <remarks>
+    /// The 2-byte contents of register pairs DE and HL are exchanged.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void ExDEHL()
+    {
+        Registers.Swap(ref Regs.DE, ref Regs.HL);
+    }
+
+    /// <summary>
+    /// "call pe,NN" operation (0xEC)
+    /// </summary>
+    /// <remarks>
+    /// If flag P/V is set, this instruction pushes the current contents of PC onto the top of the external memory
+    /// stack, then loads the operands NN to PC to point to the address in memory at which the first op code of a
+    /// subroutine is to be fetched. At the end of the subroutine, a RET instruction can be used to return to the
+    /// original program flow by popping the top of the stack back to PC. If condition X is false, PC is incremented as
+    /// usual, and the program continues with the next sequential instruction. The stack push is accomplished by first
+    /// decrementing the current contents of SP, loading the high-order byte of the PC contents to the memory address
+    /// now pointed to by SP; then decrementing SP again, and loading the low-order byte of the PC contents to the top
+    /// of the stack.
+    /// 
+    /// T-States: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3,[pc+2:1,sp-1:3,sp-2:3]
+    /// Gate array contention breakdown: pc:4,pc+1:3,pc+2:3,[1,sp-1:3,sp-2:3]
+    /// </remarks>
+    private void CallPE()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.PV) != 0)
+        {
+            CallCore();
+        }
+    }
+
+    /// <summary>
+    /// "xor N" operation (0xEE)
+    /// </summary>
+    /// <remarks>
+    /// A logical XOR operation is performed between 8-bit integer N and the byte contained in the Accumulator; the
+    /// result is stored in the Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is set if parity even; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// </remarks>
+    private void XorAN()
+    {
+        Xor8(ReadCodeMemory());
     }
 
     /// <summary>
@@ -4140,6 +4456,88 @@ public partial class Z80Cpu
     }
 
     /// <summary>
+    /// "di" operation (0xF3)
+    /// </summary>
+    /// <remarks>
+    /// Disables the maskable interrupt by resetting the interrupt enable flip-flops (IFF1 and IFF2).
+    ///
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void Di()
+    {
+        Iff2 = Iff1 = false;
+    }
+
+    /// <summary>
+    /// "call p,NN" operation (0xF4)
+    /// </summary>
+    /// <remarks>
+    /// If flag S is not set, this instruction pushes the current contents of PC onto the top of the external memory
+    /// stack, then loads the operands NN to PC to point to the address in memory at which the first op code of a
+    /// subroutine is to be fetched. At the end of the subroutine, a RET instruction can be used to return to the
+    /// original program flow by popping the top of the stack back to PC. If condition X is false, PC is incremented as
+    /// usual, and the program continues with the next sequential instruction. The stack push is accomplished by first
+    /// decrementing the current contents of SP, loading the high-order byte of the PC contents to the memory address
+    /// now pointed to by SP; then decrementing SP again, and loading the low-order byte of the PC contents to the top
+    /// of the stack.
+    /// 
+    /// T-States: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3,[pc+2:1,sp-1:3,sp-2:3]
+    /// Gate array contention breakdown: pc:4,pc+1:3,pc+2:3,[1,sp-1:3,sp-2:3]
+    /// </remarks>
+    private void CallP()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.S) == 0)
+        {
+            CallCore();
+        }
+    }
+
+    /// <summary>
+    /// "push af" operation (0xF5)
+    /// </summary>
+    /// <remarks>
+    /// The contents of the register pair AF are pushed to the external  memory last-in, first-out (LIFO) stack. SP
+    /// holds the 16-bit address of the current top of the Stack. This instruction first decrements SP and loads the
+    /// high-order byte of register pair BC to the memory address specified by SP. Then SP is decremented again and
+    /// loads the low-order byte of BC to the memory location corresponding to this new address in SP.
+    /// 
+    /// T-States: 11 (5, 3, 3)
+    /// Contention breakdown: pc:5,sp-1:3,sp-2:3
+    /// </remarks>
+    private void PushAF()
+    {
+        TactPlus1(Regs.IR);
+        Regs.SP--;
+        WriteMemory(Regs.SP, Regs.A);
+        Regs.SP--;
+        WriteMemory(Regs.SP, Regs.F);
+    }
+
+    /// <summary>
+    /// "or N" operation (0xF6)
+    /// </summary>
+    /// <remarks>
+    /// A logical OR operation is performed between 8-bit integer N and the byte contained in the Accumulator; the
+    /// result is stored in the Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is reset.
+    /// C is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// </remarks>
+    private void OrAN()
+    {
+        Or8(ReadCodeMemory());
+    }
+
+    /// <summary>
     /// "rst 30h" operation (0xF7)
     /// </summary>
     /// <remarks>
@@ -4184,6 +4582,21 @@ public partial class Z80Cpu
     }
 
     /// <summary>
+    /// "ld sp,hl" operation (0xF9)
+    /// </summary>
+    /// <remarks>
+    /// The contents of HL are loaded to SP.
+    /// 
+    /// T-States: 4 (6)
+    /// Contention breakdown: pc:6
+    /// </remarks>
+    private void LdSPHL()
+    {
+        TactPlus2(Regs.IR);
+        Regs.SP = Regs.HL;
+    }
+
+    /// <summary>
     /// "jp m,NN" operation (0xFA)
     /// </summary>
     /// <remarks>
@@ -4202,6 +4615,70 @@ public partial class Z80Cpu
         {
             Regs.PC = Regs.WZ;
         }
+    }
+
+
+    /// <summary>
+    /// "ei" operation (0xFB)
+    /// </summary>
+    /// <remarks>
+    /// Sets both interrupt enable flip flops (IFFI and IFF2) to a logic 1 value, allowing recognition of any maskable
+    /// interrupt.
+    /// 
+    /// T-States: 4
+    /// Contention breakdown: pc:4
+    /// </remarks>
+    private void Ei()
+    {
+        Iff2 = Iff1 = true;
+        EiBacklog = 2;
+    }
+
+    /// <summary>
+    /// "call m,NN" operation (0xFC)
+    /// </summary>
+    /// <remarks>
+    /// If flag S is set, this instruction pushes the current contents of PC onto the top of the external memory
+    /// stack, then loads the operands NN to PC to point to the address in memory at which the first op code of a
+    /// subroutine is to be fetched. At the end of the subroutine, a RET instruction can be used to return to the
+    /// original program flow by popping the top of the stack back to PC. If condition X is false, PC is incremented as
+    /// usual, and the program continues with the next sequential instruction. The stack push is accomplished by first
+    /// decrementing the current contents of SP, loading the high-order byte of the PC contents to the memory address
+    /// now pointed to by SP; then decrementing SP again, and loading the low-order byte of the PC contents to the top
+    /// of the stack.
+    /// 
+    /// T-States: 10 (4, 3, 3)
+    /// Contention breakdown: pc:4,pc+1:3,pc+2:3,[pc+2:1,sp-1:3,sp-2:3]
+    /// Gate array contention breakdown: pc:4,pc+1:3,pc+2:3,[1,sp-1:3,sp-2:3]
+    /// </remarks>
+    private void CallM()
+    {
+        Regs.WL = ReadCodeMemory();
+        Regs.WH = ReadCodeMemory();
+        if ((Regs.F & FlagsSetMask.S) != 0)
+        {
+            CallCore();
+        }
+    }
+
+    /// <summary>
+    /// "cp N" operation (0xFE)
+    /// </summary>
+    /// <remarks>
+    /// The contents of the byte N are compared with the contents of the Accumulator. If there is a true compare, the Z
+    /// flag is set.The execution of this instruction does not affect the contents of the Accumulator.
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if result is 0; otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if overflow; otherwise, it is reset.
+    /// N is set.
+    /// C is set if borrow; otherwise, it is reset.
+    /// 
+    /// T-States: 7 (4, 3)
+    /// </remarks>
+    private void CpAN()
+    {
+        Cp8(ReadCodeMemory());
     }
 
     /// <summary>
