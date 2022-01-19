@@ -300,4 +300,57 @@ public partial class Z80Cpu
           (tmp & FlagsSetMask.S));
         F53Updated = true;
     }
+
+    /// <summary>
+    /// The core of the 8-bit RLC operation.
+    /// </summary>
+    /// <param name="oper">Operand</param>
+    /// <returns>Operation result</returns>
+    private byte Rlc8(byte oper)
+    {
+        byte tmp = (byte)((oper << 1) | (oper >> 7));
+        Regs.F = (byte)((tmp & FlagsSetMask.C) | s_SZ53PVTable![tmp]);
+        F53Updated = true;
+        return tmp;
+    }
+
+    /// <summary>
+    /// The core of the 8-bit RRC operation.
+    /// </summary>
+    /// <param name="oper">Operand</param>
+    /// <returns>Operation result</returns>
+    private byte Rrc8(byte oper)
+    {
+        Regs.F = (byte)(oper & FlagsSetMask.C);
+        byte tmp = (byte)((oper >> 1) | (oper << 7));
+        Regs.F |= s_SZ53PVTable![tmp];
+        F53Updated = true;
+        return tmp;
+    }
+
+    /// <summary>
+    /// The core of the 8-bit RL operation.
+    /// </summary>
+    /// <param name="oper">Operand</param>
+    /// <returns>Operation result</returns>
+    private byte Rl8(byte oper)
+    {
+        byte tmp = (byte)((oper << 1) | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)((oper >> 7) | s_SZ53PVTable![tmp]);
+        F53Updated = true;
+        return tmp;
+    }
+
+    /// <summary>
+    /// The core of the 8-bit RR operation.
+    /// </summary>
+    /// <param name="oper">Operand</param>
+    /// <returns>Operation result</returns>
+    private byte Rr8(byte oper)
+    {
+        byte tmp = (byte)((oper >> 1) | (Regs.F << 7));
+        Regs.F = (byte)((oper & FlagsSetMask.C) | s_SZ53PVTable![tmp]);
+        F53Updated = true;
+        return tmp;
+    }
 }
