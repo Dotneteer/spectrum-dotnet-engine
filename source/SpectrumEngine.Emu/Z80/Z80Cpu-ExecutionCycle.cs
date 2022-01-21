@@ -149,13 +149,30 @@ public partial class Z80Cpu
         {
             // --- Standard Z80 instructions
             case OpCodePrefix.None:
-                _standardInstrs![OpCode]?.Invoke();
-                Prefix = OpCodePrefix.None;
+                switch (OpCode)
+                {
+                    case 0xcb:
+                        Prefix = OpCodePrefix.CB;
+                        break;
+                    case 0xed:
+                        Prefix = OpCodePrefix.ED;
+                        break;
+                    case 0xdd:
+                        Prefix = OpCodePrefix.DD;
+                        break;
+                    case 0xfd:
+                        Prefix = OpCodePrefix.FD;
+                        break;
+                    default:
+                        _standardInstrs![OpCode]?.Invoke();
+                        Prefix = OpCodePrefix.None;
+                        break;
+                }
                 break;
 
             // --- Bit instructions
             case OpCodePrefix.CB:
-                // TODO: Process bit instructions
+                _bitInstrs![OpCode]?.Invoke();
                 Prefix = OpCodePrefix.None;
                 break;
 
@@ -171,15 +188,15 @@ public partial class Z80Cpu
                 if (OpCode == 0xdd)
                 {
                     Prefix = OpCodePrefix.DD;
-                } 
+                }
                 else if (OpCode == 0xfd)
                 {
                     Prefix = OpCodePrefix.FD;
                 }
                 else if (OpCode == 0xcb)
                 {
-                    Prefix = Prefix == OpCodePrefix.DD 
-                        ? OpCodePrefix.DDCB 
+                    Prefix = Prefix == OpCodePrefix.DD
+                        ? OpCodePrefix.DDCB
                         : OpCodePrefix.FDCB;
                 }
                 else
