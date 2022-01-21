@@ -38,23 +38,23 @@ public partial class Z80Cpu
             Bit6_B,     Bit6_C,     Bit6_D,     Bit6_E,     Bit6_H,     Bit6_L,     Bit6_HLi,   Bit6_A,     // 70-77
             Bit7_B,     Bit7_C,     Bit7_D,     Bit7_E,     Bit7_H,     Bit7_L,     Bit7_HLi,   Bit7_A,     // 78-7f
 
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 80-87
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 88-8f
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 90-97
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 98-9f
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // a0-a7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // a8-af
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // b0-b7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // b8-bf
+            Res0B,      Res0C,      Res0D,      Res0E,      Res0H,      Res0L,      Res0HLi,    Res0A,      // 80-87
+            Res1B,      Res1C,      Res1D,      Res1E,      Res1H,      Res1L,      Res1HLi,    Res1A,      // 88-8f
+            Res2B,      Res2C,      Res2D,      Res2E,      Res2H,      Res2L,      Res2HLi,    Res2A,      // 90-97
+            Res3B,      Res3C,      Res3D,      Res3E,      Res3H,      Res3L,      Res3HLi,    Res3A,      // 98-9f
+            Res4B,      Res4C,      Res4D,      Res4E,      Res4H,      Res4L,      Res4HLi,    Res4A,      // a0-a7
+            Res5B,      Res5C,      Res5D,      Res5E,      Res5H,      Res5L,      Res5HLi,    Res5A,      // a8-af
+            Res6B,      Res6C,      Res6D,      Res6E,      Res6H,      Res6L,      Res6HLi,    Res6A,      // b0-b7
+            Res7B,      Res7C,      Res7D,      Res7E,      Res7H,      Res7L,      Res7HLi,    Res7A,      // b8-bf
 
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // c0-c7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // c8-cf
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // d0-d7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // d8-df
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // e0-e7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // e8-ef
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // f0-f7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // f8-ff
+            Set0B,      Set0C,      Set0D,      Set0E,      Set0H,      Set0L,      Set0HLi,    Set0A,      // c0-c7
+            Set1B,      Set1C,      Set1D,      Set1E,      Set1H,      Set1L,      Set1HLi,    Set1A,      // c8-cf
+            Set2B,      Set2C,      Set2D,      Set2E,      Set2H,      Set2L,      Set2HLi,    Set2A,      // d0-d7
+            Set3B,      Set3C,      Set3D,      Set3E,      Set3H,      Set3L,      Set3HLi,    Set3A,      // d8-df
+            Set4B,      Set4C,      Set4D,      Set4E,      Set4H,      Set4L,      Set4HLi,    Set4A,      // e0-e7
+            Set5B,      Set5C,      Set5D,      Set5E,      Set5H,      Set5L,      Set5HLi,    Set5A,      // e8-ef
+            Set6B,      Set6C,      Set6D,      Set6E,      Set6H,      Set6L,      Set6HLi,    Set6A,      // f0-f7
+            Set7B,      Set7C,      Set7D,      Set7E,      Set7H,      Set7L,      Set7HLi,    Set7A,      // f8-ff
         };
     }
 
@@ -1361,284 +1361,41 @@ public partial class Z80Cpu
     /// T-States: 8 (4, 4)
     /// Contention breakdown: pc:4,pc+1:4
     /// </remarks>
+    
+    // 0x40
     private void Bit0_B()
     {
         Bit8(0, Regs.B);
     }
 
+    // 0x41
     private void Bit0_C()
     {
         Bit8(0, Regs.C);
     }
 
+    // 0x42
     private void Bit0_D()
     {
         Bit8(0, Regs.D);
     }
 
+    // 0x43
     private void Bit0_E()
     {
         Bit8(0, Regs.E);
     }
 
+    // 0x44
     private void Bit0_H()
     {
         Bit8(0, Regs.H);
     }
 
+    // 0x45
     private void Bit0_L()
     {
         Bit8(0, Regs.L);
-    }
-
-    private void Bit0_A()
-    {
-        Bit8(0, Regs.A);
-    }
-
-    private void Bit1_B()
-    {
-        Bit8(1, Regs.B);
-    }
-
-    private void Bit1_C()
-    {
-        Bit8(1, Regs.C);
-    }
-
-    private void Bit1_D()
-    {
-        Bit8(1, Regs.D);
-    }
-
-    private void Bit1_E()
-    {
-        Bit8(1, Regs.E);
-    }
-
-    private void Bit1_H()
-    {
-        Bit8(1, Regs.H);
-    }
-
-    private void Bit1_L()
-    {
-        Bit8(1, Regs.L);
-    }
-
-    private void Bit1_A()
-    {
-        Bit8(1, Regs.A);
-    }
-
-    private void Bit2_B()
-    {
-        Bit8(2, Regs.B);
-    }
-
-    private void Bit2_C()
-    {
-        Bit8(2, Regs.C);
-    }
-
-    private void Bit2_D()
-    {
-        Bit8(2, Regs.D);
-    }
-
-    private void Bit2_E()
-    {
-        Bit8(2, Regs.E);
-    }
-
-    private void Bit2_H()
-    {
-        Bit8(2, Regs.H);
-    }
-
-    private void Bit2_L()
-    {
-        Bit8(2, Regs.L);
-    }
-
-    private void Bit2_A()
-    {
-        Bit8(2, Regs.A);
-    }
-
-    private void Bit3_B()
-    {
-        Bit8(3, Regs.B);
-    }
-
-    private void Bit3_C()
-    {
-        Bit8(3, Regs.C);
-    }
-
-    private void Bit3_D()
-    {
-        Bit8(3, Regs.D);
-    }
-
-    private void Bit3_E()
-    {
-        Bit8(3, Regs.E);
-    }
-
-    private void Bit3_H()
-    {
-        Bit8(3, Regs.H);
-    }
-
-    private void Bit3_L()
-    {
-        Bit8(3, Regs.L);
-    }
-
-    private void Bit3_A()
-    {
-        Bit8(3, Regs.A);
-    }
-
-    private void Bit4_B()
-    {
-        Bit8(4, Regs.B);
-    }
-
-    private void Bit4_C()
-    {
-        Bit8(4, Regs.C);
-    }
-
-    private void Bit4_D()
-    {
-        Bit8(4, Regs.D);
-    }
-
-    private void Bit4_E()
-    {
-        Bit8(4, Regs.E);
-    }
-
-    private void Bit4_H()
-    {
-        Bit8(4, Regs.H);
-    }
-
-    private void Bit4_L()
-    {
-        Bit8(4, Regs.L);
-    }
-
-    private void Bit4_A()
-    {
-        Bit8(4, Regs.A);
-    }
-
-    private void Bit5_B()
-    {
-        Bit8(5, Regs.B);
-    }
-
-    private void Bit5_C()
-    {
-        Bit8(5, Regs.C);
-    }
-
-    private void Bit5_D()
-    {
-        Bit8(5, Regs.D);
-    }
-
-    private void Bit5_E()
-    {
-        Bit8(5, Regs.E);
-    }
-
-    private void Bit5_H()
-    {
-        Bit8(5, Regs.H);
-    }
-
-    private void Bit5_L()
-    {
-        Bit8(5, Regs.L);
-    }
-
-    private void Bit5_A()
-    {
-        Bit8(5, Regs.A);
-    }
-
-    private void Bit6_B()
-    {
-        Bit8(6, Regs.B);
-    }
-
-    private void Bit6_C()
-    {
-        Bit8(6, Regs.C);
-    }
-
-    private void Bit6_D()
-    {
-        Bit8(6, Regs.D);
-    }
-
-    private void Bit6_E()
-    {
-        Bit8(6, Regs.E);
-    }
-
-    private void Bit6_H()
-    {
-        Bit8(6, Regs.H);
-    }
-
-    private void Bit6_L()
-    {
-        Bit8(6, Regs.L);
-    }
-
-    private void Bit6_A()
-    {
-        Bit8(6, Regs.A);
-    }
-
-    private void Bit7_B()
-    {
-        Bit8(7, Regs.B);
-    }
-
-    private void Bit7_C()
-    {
-        Bit8(7, Regs.C);
-    }
-
-    private void Bit7_D()
-    {
-        Bit8(7, Regs.D);
-    }
-
-    private void Bit7_E()
-    {
-        Bit8(7, Regs.E);
-    }
-
-    private void Bit7_H()
-    {
-        Bit8(7, Regs.H);
-    }
-
-    private void Bit7_L()
-    {
-        Bit8(7, Regs.L);
-    }
-
-    private void Bit7_A()
-    {
-        Bit8(7, Regs.A);
     }
 
     /// <summary>
@@ -1662,6 +1419,8 @@ public partial class Z80Cpu
     /// Contention breakdown: pc:4,pc+1:4,hl:3,hl:1
     /// Gate array contention breakdown: pc:4,pc+1:4,hl:4
     /// </remarks>
+
+    // 0x46
     private void Bit0_HLi()
     {
         byte tmp = ReadMemory(Regs.HL);
@@ -1669,6 +1428,49 @@ public partial class Z80Cpu
         Bit8W(0, tmp);
     }
 
+    // 0x47
+    private void Bit0_A()
+    {
+        Bit8(0, Regs.A);
+    }
+
+    // 0x48
+    private void Bit1_B()
+    {
+        Bit8(1, Regs.B);
+    }
+
+    // 0x49
+    private void Bit1_C()
+    {
+        Bit8(1, Regs.C);
+    }
+
+    // 0x4A
+    private void Bit1_D()
+    {
+        Bit8(1, Regs.D);
+    }
+
+    // 0x4B
+    private void Bit1_E()
+    {
+        Bit8(1, Regs.E);
+    }
+
+    // 0x4C
+    private void Bit1_H()
+    {
+        Bit8(1, Regs.H);
+    }
+
+    // 0x4D
+    private void Bit1_L()
+    {
+        Bit8(1, Regs.L);
+    }
+
+    // 0x4E
     private void Bit1_HLi()
     {
         byte tmp = ReadMemory(Regs.HL);
@@ -1676,6 +1478,49 @@ public partial class Z80Cpu
         Bit8W(1, tmp);
     }
 
+    // 0x4F
+    private void Bit1_A()
+    {
+        Bit8(1, Regs.A);
+    }
+
+    // 0x50
+    private void Bit2_B()
+    {
+        Bit8(2, Regs.B);
+    }
+
+    // 0x51
+    private void Bit2_C()
+    {
+        Bit8(2, Regs.C);
+    }
+
+    // 0x52
+    private void Bit2_D()
+    {
+        Bit8(2, Regs.D);
+    }
+
+    // 0x53
+    private void Bit2_E()
+    {
+        Bit8(2, Regs.E);
+    }
+
+    // 0x54
+    private void Bit2_H()
+    {
+        Bit8(2, Regs.H);
+    }
+
+    // 0x55
+    private void Bit2_L()
+    {
+        Bit8(2, Regs.L);
+    }
+
+    // 0x56
     private void Bit2_HLi()
     {
         byte tmp = ReadMemory(Regs.HL);
@@ -1683,6 +1528,49 @@ public partial class Z80Cpu
         Bit8W(2, tmp);
     }
 
+    // 0x57
+    private void Bit2_A()
+    {
+        Bit8(2, Regs.A);
+    }
+
+    // 0x58
+    private void Bit3_B()
+    {
+        Bit8(3, Regs.B);
+    }
+
+    // 0x59
+    private void Bit3_C()
+    {
+        Bit8(3, Regs.C);
+    }
+
+    // 0x5A
+    private void Bit3_D()
+    {
+        Bit8(3, Regs.D);
+    }
+
+    // 0x5B
+    private void Bit3_E()
+    {
+        Bit8(3, Regs.E);
+    }
+
+    // 0x5C
+    private void Bit3_H()
+    {
+        Bit8(3, Regs.H);
+    }
+
+    // 0x5D
+    private void Bit3_L()
+    {
+        Bit8(3, Regs.L);
+    }
+
+    // 0x5E
     private void Bit3_HLi()
     {
         byte tmp = ReadMemory(Regs.HL);
@@ -1690,6 +1578,49 @@ public partial class Z80Cpu
         Bit8W(3, tmp);
     }
 
+    // 0x5F
+    private void Bit3_A()
+    {
+        Bit8(3, Regs.A);
+    }
+
+    // 0x60
+    private void Bit4_B()
+    {
+        Bit8(4, Regs.B);
+    }
+
+    // 0x61
+    private void Bit4_C()
+    {
+        Bit8(4, Regs.C);
+    }
+
+    // 0x62
+    private void Bit4_D()
+    {
+        Bit8(4, Regs.D);
+    }
+
+    // 0x63
+    private void Bit4_E()
+    {
+        Bit8(4, Regs.E);
+    }
+
+    // 0x64
+    private void Bit4_H()
+    {
+        Bit8(4, Regs.H);
+    }
+
+    // 0x65
+    private void Bit4_L()
+    {
+        Bit8(4, Regs.L);
+    }
+
+    // 0x66
     private void Bit4_HLi()
     {
         byte tmp = ReadMemory(Regs.HL);
@@ -1697,6 +1628,49 @@ public partial class Z80Cpu
         Bit8W(4, tmp);
     }
 
+    // 0x67
+    private void Bit4_A()
+    {
+        Bit8(4, Regs.A);
+    }
+
+    // 0x68
+    private void Bit5_B()
+    {
+        Bit8(5, Regs.B);
+    }
+
+    // 0x69
+    private void Bit5_C()
+    {
+        Bit8(5, Regs.C);
+    }
+
+    // 0x6A
+    private void Bit5_D()
+    {
+        Bit8(5, Regs.D);
+    }
+
+    // 0x6B
+    private void Bit5_E()
+    {
+        Bit8(5, Regs.E);
+    }
+
+    // 0x6C
+    private void Bit5_H()
+    {
+        Bit8(5, Regs.H);
+    }
+
+    // 0x6D
+    private void Bit5_L()
+    {
+        Bit8(5, Regs.L);
+    }
+
+    // 0x6E
     private void Bit5_HLi()
     {
         byte tmp = ReadMemory(Regs.HL);
@@ -1704,6 +1678,49 @@ public partial class Z80Cpu
         Bit8W(5, tmp);
     }
 
+    // 0x6F
+    private void Bit5_A()
+    {
+        Bit8(5, Regs.A);
+    }
+
+    // 0x70
+    private void Bit6_B()
+    {
+        Bit8(6, Regs.B);
+    }
+
+    // 0x71
+    private void Bit6_C()
+    {
+        Bit8(6, Regs.C);
+    }
+
+    // 0x72
+    private void Bit6_D()
+    {
+        Bit8(6, Regs.D);
+    }
+
+    // 0x73
+    private void Bit6_E()
+    {
+        Bit8(6, Regs.E);
+    }
+
+    // 0x74
+    private void Bit6_H()
+    {
+        Bit8(6, Regs.H);
+    }
+
+    // 0x75
+    private void Bit6_L()
+    {
+        Bit8(6, Regs.L);
+    }
+
+    // 0x76
     private void Bit6_HLi()
     {
         byte tmp = ReadMemory(Regs.HL);
@@ -1711,11 +1728,60 @@ public partial class Z80Cpu
         Bit8W(6, tmp);
     }
 
+    // 0x77
+    private void Bit6_A()
+    {
+        Bit8(6, Regs.A);
+    }
+
+    // 0x78
+    private void Bit7_B()
+    {
+        Bit8(7, Regs.B);
+    }
+
+    // 0x79
+    private void Bit7_C()
+    {
+        Bit8(7, Regs.C);
+    }
+
+    // 0x7A
+    private void Bit7_D()
+    {
+        Bit8(7, Regs.D);
+    }
+
+    // 0x7B
+    private void Bit7_E()
+    {
+        Bit8(7, Regs.E);
+    }
+
+    // 0x7C
+    private void Bit7_H()
+    {
+        Bit8(7, Regs.H);
+    }
+
+    // 0x7D
+    private void Bit7_L()
+    {
+        Bit8(7, Regs.L);
+    }
+
+    // 0x7E
     private void Bit7_HLi()
     {
         byte tmp = ReadMemory(Regs.HL);
         TactPlus1(Regs.HL);
         Bit8W(7, tmp);
+    }
+
+    // 0x7F
+    private void Bit7_A()
+    {
+        Bit8(7, Regs.A);
     }
 
     /// <summary>
@@ -1729,284 +1795,838 @@ public partial class Z80Cpu
     /// T-States: 8 (4, 4)
     /// Contention breakdown: pc:4,pc+1:4
     /// </remarks>
+    
+    // 0x80
     private void Res0B()
     {
         Regs.B &= 0xfe;
     }
 
+    // 0x81
     private void Res0C()
     {
         Regs.C &= 0xfe;
     }
 
+    // 0x82
     private void Res0D()
     {
         Regs.D &= 0xfe;
     }
 
+    // 0x83
     private void Res0E()
     {
         Regs.E &= 0xfe;
     }
 
+    // 0x84
     private void Res0H()
     {
         Regs.H &= 0xfe;
     }
 
+    // 0x85
     private void Res0L()
     {
         Regs.L &= 0xfe;
     }
 
+    /// <summary>
+    /// "res N,(hl)" operation
+    /// </summary>
+    /// <remarks>
+    /// Bit N in the memory location addressed by the contents of HL is reset.
+    /// 
+    /// T-States: 15 (4, 4, 4, 3)
+    /// Contention breakdown: pc:4,pc+1:4,hl:3,hl:1,hl(write):3
+    /// Gate array contention breakdown: pc:4,pc+1:4,hl:4,hl(write):3
+    /// </remarks>
+    
+    // 0x86
+    private void Res0HLi()
+    {
+        var tmp = (byte)(ReadMemory(Regs.HL) & 0xfe);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
+    }
+
+    // 0x87
     private void Res0A()
     {
         Regs.A &= 0xfe;
     }
 
+    // 0x88
     private void Res1B()
     {
         Regs.B &= 0xfd;
     }
 
+    // 0x89
     private void Res1C()
     {
         Regs.C &= 0xfd;
     }
 
+    // 0x8A
     private void Res1D()
     {
         Regs.D &= 0xfd;
     }
 
+    // 0x8B
     private void Res1E()
     {
         Regs.E &= 0xfd;
     }
 
+    // 0x8C
     private void Res1H()
     {
         Regs.H &= 0xfd;
     }
 
+    // 0x8D
     private void Res1L()
     {
         Regs.L &= 0xfd;
     }
 
-    private void Res1A()
+    // 0x8E
+    private void Res1HLi()
     {
-        Regs.B &= 0xfd;
+        var tmp = (byte)(ReadMemory(Regs.HL) & 0xfd);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
     }
 
+    // 0x8F
+    private void Res1A()
+    {
+        Regs.A &= 0xfd;
+    }
+
+    // 0x90
     private void Res2B()
     {
         Regs.B &= 0xfb;
     }
 
+    // 0x91
     private void Res2C()
     {
         Regs.C &= 0xfb;
     }
 
+    // 0x92
     private void Res2D()
     {
         Regs.D &= 0xfb;
     }
 
+    // 0x93
     private void Res2E()
     {
         Regs.E &= 0xfb;
     }
 
+    // 0x94
     private void Res2H()
     {
         Regs.H &= 0xfb;
     }
 
+    // 0x95
     private void Res2L()
     {
         Regs.L &= 0xfb;
     }
 
+    // 0x96
+    private void Res2HLi()
+    {
+        var tmp = (byte)(ReadMemory(Regs.HL) & 0xfb);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
+    }
+
+    // 0x97
     private void Res2A()
     {
         Regs.A &= 0xfb;
     }
 
+    // 0x98
     private void Res3B()
     {
         Regs.B &= 0xf7;
     }
 
+    // 0x99
     private void Res3C()
     {
         Regs.C &= 0xf7;
     }
 
+    // 0x9A
     private void Res3D()
     {
         Regs.D &= 0xf7;
     }
 
+    // 0x9B
     private void Res3E()
     {
         Regs.E &= 0xf7;
     }
 
+    // 0x9C
     private void Res3H()
     {
         Regs.H &= 0xf7;
     }
 
+    // 0x9D
     private void Res3L()
     {
         Regs.L &= 0xf7;
     }
 
-    private void Res3A()
+    // 0x9E
+    private void Res3HLi()
     {
-        Regs.B &= 0xf7;
+        var tmp = (byte)(ReadMemory(Regs.HL) & 0xf7);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
     }
 
+    // 0x9F
+    private void Res3A()
+    {
+        Regs.A &= 0xf7;
+    }
+
+    // 0xA0
     private void Res4B()
     {
         Regs.B &= 0xef;
     }
 
+    // 0xA1
     private void Res4C()
     {
         Regs.C &= 0xef;
     }
 
+    // 0xA2
     private void Res4D()
     {
         Regs.D &= 0xef;
     }
 
+    // 0xA3
     private void Res4E()
     {
         Regs.E &= 0xef;
     }
 
+    // 0xA4
     private void Res4H()
     {
         Regs.H &= 0xef;
     }
 
+    // 0xA5
     private void Res4L()
     {
         Regs.L &= 0xef;
     }
 
+    // 0xA6
+    private void Res4HLi()
+    {
+        var tmp = (byte)(ReadMemory(Regs.HL) & 0xef);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
+    }
+
+    // 0xA7
     private void Res4A()
     {
         Regs.A &= 0xef;
     }
 
+    // 0xA8
     private void Res5B()
     {
         Regs.B &= 0xdf;
     }
 
+    // 0xA9
     private void Res5C()
     {
         Regs.C &= 0xdf;
     }
 
+    // 0xAA
     private void Res5D()
     {
         Regs.D &= 0xdf;
     }
 
+    // 0xAB
     private void Res5E()
     {
         Regs.E &= 0xdf;
     }
 
+    // 0xAC
     private void Res5H()
     {
         Regs.H &= 0xdf;
     }
 
+    // 0xAD
     private void Res5L()
     {
         Regs.L &= 0xdf;
     }
 
+    // 0xAE
+    private void Res5HLi()
+    {
+        var tmp = (byte)(ReadMemory(Regs.HL) & 0xdf);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
+    }
+
+    // 0xAF
     private void Res5A()
     {
         Regs.A &= 0xdf;
     }
 
+    // 0xB0
     private void Res6B()
     {
         Regs.B &= 0xbf;
     }
 
+    // 0xB1
     private void Res6C()
     {
         Regs.C &= 0xbf;
     }
 
+    // 0xB2
     private void Res6D()
     {
         Regs.D &= 0xbf;
     }
 
+    // 0xB3
     private void Res6E()
     {
         Regs.E &= 0xbf;
     }
 
+    // 0xB4
     private void Res6H()
     {
         Regs.H &= 0xbf;
     }
 
+    // 0xB5
     private void Res6L()
     {
         Regs.L &= 0xbf;
     }
 
+    // 0xB6
+    private void Res6HLi()
+    {
+        var tmp = (byte)(ReadMemory(Regs.HL) & 0xbf);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
+    }
+
+    // 0xB7
     private void Res6A()
     {
         Regs.A &= 0xbf;
     }
 
+    // 0xB8
     private void Res7B()
     {
         Regs.B &= 0x7f;
     }
 
+    // 0xB9
     private void Res7C()
     {
         Regs.C &= 0x7f;
     }
 
+    // 0xBA
     private void Res7D()
     {
         Regs.D &= 0x7f;
     }
 
+    // 0xBB
     private void Res7E()
     {
         Regs.E &= 0x7f;
     }
 
+    // 0xBC
     private void Res7H()
     {
         Regs.H &= 0x7f;
     }
 
+    // 0xBD
     private void Res7L()
     {
         Regs.L &= 0x7f;
     }
 
+    // 0xBE
+    private void Res7HLi()
+    {
+        var tmp = (byte)(ReadMemory(Regs.HL) & 0x7f);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
+    }
+
+    // 0xBF
     private void Res7A()
     {
         Regs.A &= 0x7f;
     }
 
+    /// <summary>
+    /// "set N,Q" operation (0xC0-0xFF)
+    /// </summary>
+    /// <remarks>
+    /// Bit N in register Q is set.
+    /// 
+    /// Q: 000=B, 001=C, 010=D, 011=E
+    ///    100=H, 101=L, 110=N/A, 111=A
+    /// T-States: 8 (4, 4)
+    /// Contention breakdown: pc:4,pc+1:4
+    /// </remarks>
+
+    // 0xC0
+    private void Set0B()
+    {
+        Regs.B |= 0x01;
+    }
+
+    /// <summary>
+    /// "set N,(hl)" operation
+    /// </summary>
+    /// <remarks>
+    /// Bit N in the memory location addressed by the contents of HL is set.
+    /// 
+    /// T-States: 15 (4, 4, 4, 3)
+    /// Contention breakdown: pc:4,pc+1:4,hl:3,hl:1,hl(write):3
+    /// Gate array contention breakdown: pc:4,pc+1:4,hl:4,hl(write):3
+    /// </remarks>
+
+    // 0xC1
+    private void Set0C()
+    {
+        Regs.C |= 0x01;
+    }
+
+    // 0xC2
+    private void Set0D()
+    {
+        Regs.D |= 0x01;
+    }
+
+    // 0xC3
+    private void Set0E()
+    {
+        Regs.E |= 0x01;
+    }
+
+    // 0xC4
+    private void Set0H()
+    {
+        Regs.H |= 0x01;
+    }
+
+    // 0xC5
+    private void Set0L()
+    {
+        Regs.L |= 0x01;
+    }
+
+    // 0xC6
+    private void Set0HLi()
+    {
+        var tmp = (byte)(ReadMemory(Regs.HL) | 0x01);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
+    }
+
+    // 0xC7
+    private void Set0A()
+    {
+        Regs.A |= 0x01;
+    }
+
+    // 0xC8
+    private void Set1B()
+    {
+        Regs.B |= 0x02;
+    }
+
+    // 0xC9
+    private void Set1C()
+    {
+        Regs.C |= 0x02;
+    }
+
+    // 0xCA
+    private void Set1D()
+    {
+        Regs.D |= 0x02;
+    }
+
+    // 0xCB
+    private void Set1E()
+    {
+        Regs.E |= 0x02;
+    }
+
+    // 0xCC
+    private void Set1H()
+    {
+        Regs.H |= 0x02;
+    }
+
+    // 0xCD
+    private void Set1L()
+    {
+        Regs.L |= 0x02;
+    }
+
+    // 0xCE
+    private void Set1HLi()
+    {
+        var tmp = (byte)(ReadMemory(Regs.HL) | 0x02);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
+    }
+
+    // 0xCF
+    private void Set1A()
+    {
+        Regs.A |= 0x02;
+    }
+
+    // 0xD0
+    private void Set2B()
+    {
+        Regs.B |= 0x04;
+    }
+
+    // 0xD1
+    private void Set2C()
+    {
+        Regs.C |= 0x04;
+    }
+
+    // 0xD2
+    private void Set2D()
+    {
+        Regs.D |= 0x04;
+    }
+
+    // 0xD3
+    private void Set2E()
+    {
+        Regs.E |= 0x04;
+    }
+
+    // 0xD4
+    private void Set2H()
+    {
+        Regs.H |= 0x04;
+    }
+
+    // 0xD5
+    private void Set2L()
+    {
+        Regs.L |= 0x04;
+    }
+
+    // 0xD6
+    private void Set2HLi()
+    {
+        var tmp = (byte)(ReadMemory(Regs.HL) | 0x04);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
+    }
+
+    // 0xD7
+    private void Set2A()
+    {
+        Regs.A |= 0x04;
+    }
+
+    // 0xD8
+    private void Set3B()
+    {
+        Regs.B |= 0x08;
+    }
+
+    // 0xD9
+    private void Set3C()
+    {
+        Regs.C |= 0x08;
+    }
+
+    // 0xDA
+    private void Set3D()
+    {
+        Regs.D |= 0x08;
+    }
+
+    // 0xDB
+    private void Set3E()
+    {
+        Regs.E |= 0x08;
+    }
+
+    // 0xDC
+    private void Set3H()
+    {
+        Regs.H |= 0x08;
+    }
+
+    // 0xDD
+    private void Set3L()
+    {
+        Regs.L |= 0x08;
+    }
+
+    // 0xDE
+    private void Set3HLi()
+    {
+        var tmp = (byte)(ReadMemory(Regs.HL) | 0x08);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
+    }
+
+    // 0xDF
+    private void Set3A()
+    {
+        Regs.A |= 0x08;
+    }
+
+    // 0xE0
+    private void Set4B()
+    {
+        Regs.B |= 0x10;
+    }
+
+    // 0xE1
+    private void Set4C()
+    {
+        Regs.C |= 0x10;
+    }
+
+    // 0xE2
+    private void Set4D()
+    {
+        Regs.D |= 0x10;
+    }
+
+    // 0xE3
+    private void Set4E()
+    {
+        Regs.E |= 0x10;
+    }
+
+    // 0xE4
+    private void Set4H()
+    {
+        Regs.H |= 0x10;
+    }
+
+    // 0xE5
+    private void Set4L()
+    {
+        Regs.L |= 0x10;
+    }
+
+    // 0xE6
+    private void Set4HLi()
+    {
+        var tmp = (byte)(ReadMemory(Regs.HL) | 0x10);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
+    }
+
+    // 0xE7
+    private void Set4A()
+    {
+        Regs.A |= 0x10;
+    }
+
+    // 0xE8
+    private void Set5B()
+    {
+        Regs.B |= 0x20;
+    }
+
+    // 0xE9
+    private void Set5C()
+    {
+        Regs.C |= 0x20;
+    }
+
+    // 0xEA
+    private void Set5D()
+    {
+        Regs.D |= 0x20;
+    }
+
+    // 0xEB
+    private void Set5E()
+    {
+        Regs.E |= 0x20;
+    }
+
+    // 0xEC
+    private void Set5H()
+    {
+        Regs.H |= 0x20;
+    }
+
+    // 0xED
+    private void Set5L()
+    {
+        Regs.L |= 0x20;
+    }
+
+    // 0xEE
+    private void Set5HLi()
+    {
+        var tmp = (byte)(ReadMemory(Regs.HL) | 0x20);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
+    }
+
+    // 0xEF
+    private void Set5A()
+    {
+        Regs.A |= 0x20;
+    }
+
+    // 0xF0
+    private void Set6B()
+    {
+        Regs.B |= 0x40;
+    }
+
+    // 0xF1
+    private void Set6C()
+    {
+        Regs.C |= 0x40;
+    }
+
+    // 0xF2
+    private void Set6D()
+    {
+        Regs.D |= 0x40;
+    }
+
+    // 0xF3
+    private void Set6E()
+    {
+        Regs.E |= 0x40;
+    }
+
+    // 0xF4
+    private void Set6H()
+    {
+        Regs.H |= 0x40;
+    }
+
+    // 0xF5
+    private void Set6L()
+    {
+        Regs.L |= 0x40;
+    }
+
+    // 0xF6
+    private void Set6HLi()
+    {
+        var tmp = (byte)(ReadMemory(Regs.HL) | 0x40);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
+    }
+
+    // 0xF7
+    private void Set6A()
+    {
+        Regs.A |= 0x40;
+    }
+
+    // 0xF8
+    private void Set7B()
+    {
+        Regs.B |= 0x80;
+    }
+
+    // 0xF9
+    private void Set7C()
+    {
+        Regs.C |= 0x80;
+    }
+
+    // 0xFA
+    private void Set7D()
+    {
+        Regs.D |= 0x80;
+    }
+
+    // 0xFB
+    private void Set7E()
+    {
+        Regs.E |= 0x80;
+    }
+
+    // 0xFC
+    private void Set7H()
+    {
+        Regs.H |= 0x80;
+    }
+
+    // 0xFD
+    private void Set7L()
+    {
+        Regs.L |= 0x80;
+    }
+
+    // 0xFE
+    private void Set7HLi()
+    {
+        var tmp = (byte)(ReadMemory(Regs.HL) | 0x80);
+        TactPlus1(Regs.HL);
+        WriteMemory(Regs.HL, tmp);
+    }
+
+    // 0xFF
+    private void Set7A()
+    {
+        Regs.A |= 0x80;
+    }
 }
