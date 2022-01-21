@@ -445,4 +445,49 @@ public partial class Z80Cpu
         Regs.F |= (byte)(bitVal & FlagsSetMask.S);
         F53Updated = true;
     }
+
+    /// <summary>
+    /// The core of the 16-bit SBC operation.
+    /// </summary>
+    /// <param name="value">Value to subtract from HL</param>
+    private void Sbc16(ushort value)
+    {
+        int tmpVal = Regs.HL - value - (Regs.F & FlagsSetMask.C);
+        var lookup =
+          ((Regs.HL & 0x8800) >> 11) |
+          ((value & 0x8800) >> 10) |
+          ((tmpVal & 0x8800) >> 9);
+        Regs.WZ = (ushort)(Regs.HL + 1);
+        Regs.HL = (ushort)tmpVal;
+        Regs.F = (byte)
+          (((tmpVal & 0x10000) != 0 ? FlagsSetMask.C : 0) |
+          FlagsSetMask.N |
+          s_OverflowSubFlags![lookup >> 4] |
+          (Regs.H & (FlagsSetMask.R3R5 | FlagsSetMask.S)) |
+          s_HalfCarrySubFlags![lookup & 0x07] |
+          (Regs.HL != 0 ? 0 : FlagsSetMask.Z));
+        F53Updated = true;
+    }
+
+    /// <summary>
+    /// The core of the 16-bit SBC operation.
+    /// </summary>
+    /// <param name="value">Value to add to HL</param>
+    private void Adc16(ushort value)
+    {
+        var tmpVal = Regs.HL + value + (Regs.F & FlagsSetMask.C);
+        var lookup =
+          ((Regs.HL & 0x8800) >> 11) |
+          ((value & 0x8800) >> 10) |
+          ((tmpVal & 0x8800) >> 9);
+        Regs.WZ = (ushort)(Regs.HL + 1);
+        Regs.HL = (ushort)tmpVal;
+        Regs.F = (byte)
+          (((tmpVal & 0x10000) != 0 ? FlagsSetMask.C : 0) |
+          s_OverflowAddFlags![lookup >> 4] |
+          (Regs.H & (FlagsSetMask.R3R5 | FlagsSetMask.S)) |
+          s_HalfCarryAddFlags![lookup & 0x07] |
+          (Regs.HL != 0 ? 0 : FlagsSetMask.Z));
+        F53Updated = true;
+    }
 }

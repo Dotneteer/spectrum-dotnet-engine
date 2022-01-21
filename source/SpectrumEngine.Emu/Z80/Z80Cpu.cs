@@ -48,6 +48,9 @@ public partial class Z80Cpu
         InitializeAluTables();
         InitializeStandardInstructionsTable();
         InitializeBitInstructionsTable();
+        InitializeExtendedInstructionsTable();
+        InitializeIndexedInstructionsTable();
+        InitializeIndexedBitInstructionsTable();
     }
 
     /// <summary>
