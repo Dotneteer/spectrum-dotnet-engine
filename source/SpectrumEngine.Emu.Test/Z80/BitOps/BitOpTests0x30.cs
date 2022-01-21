@@ -17,6 +17,7 @@ public class BitOpTests0x30
                 0xCB, 0x30 // SLL B
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.B = 0x08;
 
         // --- Act
@@ -52,6 +53,7 @@ public class BitOpTests0x30
                 0xCB, 0x30 // SLL B
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.B = 0x88;
 
         // --- Act
@@ -87,6 +89,7 @@ public class BitOpTests0x30
                 0xCB, 0x30 // SLL B
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.B = 0x48;
 
         // --- Act
@@ -122,6 +125,7 @@ public class BitOpTests0x30
                 0xCB, 0x31 // SLL C
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.C = 0x08;
 
         // --- Act
@@ -157,6 +161,7 @@ public class BitOpTests0x30
                 0xCB, 0x32 // SLL D
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.D = 0x08;
 
         // --- Act
@@ -192,6 +197,7 @@ public class BitOpTests0x30
                 0xCB, 0x33 // SLL E
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.E = 0x08;
 
         // --- Act
@@ -227,6 +233,7 @@ public class BitOpTests0x30
                 0xCB, 0x34 // SLL H
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.H = 0x08;
 
         // --- Act
@@ -262,6 +269,7 @@ public class BitOpTests0x30
                 0xCB, 0x35 // SLL L
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.L = 0x08;
 
         // --- Act
@@ -297,6 +305,7 @@ public class BitOpTests0x30
                 0xCB, 0x36 // SLL (HUL)
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.HL = 0x1000;
         m.Memory[regs.HL] = 0x08;
 
@@ -333,6 +342,7 @@ public class BitOpTests0x30
                 0xCB, 0x37 // SLL A
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.A = 0x08;
 
         // --- Act
@@ -715,6 +725,4 @@ public class BitOpTests0x30
         regs.PC.ShouldBe((ushort)0x0002);
         m.Cpu.Tacts.ShouldBe(8UL);
     }
-
-
 }

@@ -15,6 +15,7 @@ public class BitOpTests0x20
                 0xCB, 0x20 // SLA B
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.B = 0x08;
 
         // --- Act
@@ -50,6 +51,7 @@ public class BitOpTests0x20
                 0xCB, 0x20 // SLA B
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.B = 0x88;
 
         // --- Act
@@ -85,6 +87,7 @@ public class BitOpTests0x20
                 0xCB, 0x20 // SLA B
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.B = 0x48;
 
         // --- Act
@@ -120,6 +123,7 @@ public class BitOpTests0x20
                 0xCB, 0x20 // SLA B
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.B = 0x80;
 
         // --- Act
@@ -155,6 +159,7 @@ public class BitOpTests0x20
                 0xCB, 0x21 // SLA C
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.C = 0x08;
 
         // --- Act
@@ -190,6 +195,7 @@ public class BitOpTests0x20
                 0xCB, 0x22 // SLA D
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.D = 0x08;
 
         // --- Act
@@ -225,6 +231,7 @@ public class BitOpTests0x20
                 0xCB, 0x23 // SLA E
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.E = 0x08;
 
         // --- Act
@@ -260,6 +267,7 @@ public class BitOpTests0x20
                 0xCB, 0x24 // SLA H
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.H = 0x08;
 
         // --- Act
@@ -295,6 +303,7 @@ public class BitOpTests0x20
                 0xCB, 0x25 // SLA L
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.L = 0x08;
 
         // --- Act
@@ -330,6 +339,7 @@ public class BitOpTests0x20
                 0xCB, 0x26 // SLA (HUL)
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.HL = 0x1000;
         m.Memory[regs.HL] = 0x08;
 
@@ -366,6 +376,7 @@ public class BitOpTests0x20
                 0xCB, 0x27 // SLA A
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.A = 0x08;
 
         // --- Act
@@ -401,6 +412,7 @@ public class BitOpTests0x20
                 0xCB, 0x28 // SRA B
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.B = 0x10;
 
         // --- Act
@@ -436,6 +448,7 @@ public class BitOpTests0x20
                 0xCB, 0x28 // SRA B
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.B = 0x21;
 
         // --- Act
@@ -471,6 +484,7 @@ public class BitOpTests0x20
                 0xCB, 0x28 // SRA B
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.B = 0x01;
 
         // --- Act
@@ -506,6 +520,7 @@ public class BitOpTests0x20
                 0xCB, 0x29 // SRA C
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.C = 0x10;
 
         // --- Act
@@ -541,6 +556,7 @@ public class BitOpTests0x20
                 0xCB, 0x2A // SRA D
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.D = 0x10;
 
         // --- Act
@@ -576,6 +592,7 @@ public class BitOpTests0x20
                 0xCB, 0x2B // SRA E
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.E = 0x10;
 
         // --- Act
@@ -611,6 +628,7 @@ public class BitOpTests0x20
                 0xCB, 0x2C // SRA H
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.H = 0x10;
 
         // --- Act
@@ -646,6 +664,7 @@ public class BitOpTests0x20
                 0xCB, 0x2D // SRA L
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.L = 0x10;
 
         // --- Act
@@ -681,6 +700,7 @@ public class BitOpTests0x20
                 0xCB, 0x2E // SRA (HUL)
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.HL = 0x1000;
         m.Memory[regs.HL] = 0x10;
 
@@ -717,6 +737,7 @@ public class BitOpTests0x20
                 0xCB, 0x2F // SRA A
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.A = 0x10;
 
         // --- Act

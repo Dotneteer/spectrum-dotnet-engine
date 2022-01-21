@@ -353,4 +353,96 @@ public partial class Z80Cpu
         F53Updated = true;
         return tmp;
     }
+
+    /// <summary>
+    /// The core of the 8-bit SLA operation.
+    /// </summary>
+    /// <param name="oper">Operand</param>
+    /// <returns>Operation result</returns>
+    private byte Sla8(byte oper)
+    {
+        Regs.F = (byte)(oper >> 7);
+        byte tmp = (byte)(oper << 1);
+        Regs.F |= s_SZ53PVTable![tmp];
+        F53Updated = true;
+        return tmp;
+    }
+
+    /// <summary>
+    /// The core of the 8-bit SLA operation.
+    /// </summary>
+    /// <param name="oper">Operand</param>
+    /// <returns>Operation result</returns>
+    private byte Sra8(byte oper)
+    {
+        Regs.F = (byte)(oper & FlagsSetMask.C);
+        byte tmp = (byte)((oper & 0x80) | (oper >> 1));
+        Regs.F |= s_SZ53PVTable![tmp];
+        F53Updated = true;
+        return tmp;
+    }
+
+    /// <summary>
+    /// The core of the 8-bit SLL operation.
+    /// </summary>
+    /// <param name="oper">Operand</param>
+    /// <returns>Operation result</returns>
+    private byte Sll8(byte oper)
+    {
+        Regs.F = (byte)(oper >> 7);
+        byte tmp = (byte)((oper << 1) | 0x01);
+        Regs.F |= s_SZ53PVTable![tmp];
+        F53Updated = true;
+        return tmp;
+    }
+
+    /// <summary>
+    /// The core of the 8-bit SRL operation.
+    /// </summary>
+    /// <param name="oper">Operand</param>
+    /// <returns>Operation result</returns>
+    private byte Srl8(byte oper)
+    {
+        Regs.F = (byte)(oper & FlagsSetMask.C);
+        byte tmp = (byte)(oper >> 1);
+        Regs.F |= s_SZ53PVTable![tmp];
+        F53Updated = true;
+        return tmp;
+    }
+
+    /// <summary>
+    /// The core of the 8-bit BIT operation.
+    /// </summary>
+    /// <param name="bit">Bit index (0-7)</param>
+    /// <param name="oper">Operand</param>
+    /// <returns>Operation result</returns>
+    private void Bit8(int bit, byte oper)
+    {
+        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | FlagsSetMask.H | (oper & FlagsSetMask.R3R5));
+        var bitVal = oper & (0x01 << bit);
+        if (bitVal == 0)
+        {
+            Regs.F |= FlagsSetMask.PV | FlagsSetMask.Z;
+        }
+        Regs.F |= (byte)(bitVal & FlagsSetMask.S);
+        F53Updated = true;
+    }
+
+    /// <summary>
+    /// The core of the 8-bit BIT operation with WZ.
+    /// </summary>
+    /// <param name="bit">Bit index (0-7)</param>
+    /// <param name="oper">Operand</param>
+    /// <returns>Operation result</returns>
+    private void Bit8W(int bit, byte oper)
+    {
+        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | FlagsSetMask.H | (Regs.WH & FlagsSetMask.R3R5));
+        var bitVal = oper & (0x01 << bit);
+        if (bitVal == 0)
+        {
+            Regs.F |= FlagsSetMask.PV | FlagsSetMask.Z;
+        }
+        Regs.F |= (byte)(bitVal & FlagsSetMask.S);
+        F53Updated = true;
+    }
 }
