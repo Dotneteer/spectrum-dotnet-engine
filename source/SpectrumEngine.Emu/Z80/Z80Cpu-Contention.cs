@@ -68,6 +68,27 @@ public partial class Z80Cpu
     }
 
     /// <summary>
+    /// This method increments the current CPU tacts by four, using memory contention with the provided address.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void TactPlus4(ushort address)
+    {
+        if (UlaContended) ContendReadFunction(address);
+        Tacts++;
+        TactIncrementedHandler();
+        if (UlaContended) ContendReadFunction(address);
+        Tacts++;
+        TactIncrementedHandler();
+        if (UlaContended) ContendReadFunction(address);
+        Tacts++;
+        TactIncrementedHandler();
+        if (UlaContended) ContendReadFunction(address);
+        Tacts++;
+        TactIncrementedHandler();
+    }
+
+
+    /// <summary>
     /// This method increments the current CPU tacts by five, using memory contention with the provided address.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -178,7 +178,7 @@ public partial class Z80Cpu
 
             // --- Extended instructions
             case OpCodePrefix.ED:
-                // TODO: Process bit instructions
+                _extendedInstrs![OpCode]?.Invoke();
                 Prefix = OpCodePrefix.None;
                 break;
 
@@ -201,14 +201,16 @@ public partial class Z80Cpu
                 }
                 else
                 {
-                    // TODO: Process indexed instructions
+                    _indexedInstrs![OpCode]?.Invoke();
+                    Prefix = OpCodePrefix.None;
+                    break;
                 }
                 break;
 
             // --- IX- or IY-indexed bit instructions
             case OpCodePrefix.DDCB:
             case OpCodePrefix.FDCB:
-                // TODO: Process indexed bit instructions
+                _indexedBitInstrs![OpCode]?.Invoke();
                 Prefix = OpCodePrefix.None;
                 break;
         }
