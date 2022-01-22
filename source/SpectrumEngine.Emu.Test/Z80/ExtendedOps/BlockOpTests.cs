@@ -345,7 +345,7 @@ public class BlockOpTests
         regs.HL.ShouldBe((ushort)0x1001);
 
         regs.ZFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeTrue();
+        regs.NFlag.ShouldBeFalse();
         regs.CFlag.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
@@ -386,7 +386,7 @@ public class BlockOpTests
         regs.HL.ShouldBe((ushort)0x1001);
 
         regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeTrue();
+        regs.NFlag.ShouldBeFalse();
         regs.CFlag.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000");
@@ -413,6 +413,7 @@ public class BlockOpTests
                 0xED, 0xA8 // LDD
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.BC = 0x0010;
         regs.HL = 0x1000;
         regs.DE = 0x1001;
@@ -453,6 +454,7 @@ public class BlockOpTests
                 0xED, 0xA8 // LDI
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.BC = 0x0001;
         regs.HL = 0x1000;
         regs.DE = 0x1001;
@@ -493,6 +495,7 @@ public class BlockOpTests
                 0xED, 0xA9 // CPD
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.BC = 0x0010;
         regs.HL = 0x1000;
         regs.A = 0x11;
@@ -532,6 +535,7 @@ public class BlockOpTests
                 0xED, 0xA9 // CPD
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.BC = 0x0001;
         regs.HL = 0x1000;
         regs.A = 0x11;
@@ -571,6 +575,7 @@ public class BlockOpTests
                 0xED, 0xA9 // CPD
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.BC = 0x0010;
         regs.HL = 0x1000;
         regs.A = 0xA5;
@@ -610,6 +615,7 @@ public class BlockOpTests
                 0xED, 0xA9 // CPD
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.BC = 0x0001;
         regs.HL = 0x1000;
         regs.A = 0xA5;
@@ -664,8 +670,8 @@ public class BlockOpTests
         regs.HL.ShouldBe((ushort)0x0FFF);
 
         regs.ZFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.NFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000");
 
@@ -701,8 +707,8 @@ public class BlockOpTests
         regs.HL.ShouldBe((ushort)0x0FFF);
 
         regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.NFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000");
 
@@ -723,6 +729,7 @@ public class BlockOpTests
                 0xED, 0xAB // OUTD
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.BC = 0x10CC;
         regs.HL = 0x1000;
         m.Memory[regs.HL] = 0x29;
@@ -737,7 +744,7 @@ public class BlockOpTests
         regs.HL.ShouldBe((ushort)0x0FFF);
 
         regs.ZFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeTrue();
+        regs.NFlag.ShouldBeFalse();
         regs.CFlag.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000");
@@ -778,7 +785,7 @@ public class BlockOpTests
         regs.HL.ShouldBe((ushort)0x0FFF);
 
         regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeTrue();
+        regs.NFlag.ShouldBeFalse();
         regs.CFlag.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000");
@@ -805,6 +812,7 @@ public class BlockOpTests
                 0xED, 0xB0 // LDIR
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.BC = 0x0003;
         regs.HL = 0x1001;
         regs.DE = 0x1000;
@@ -848,6 +856,7 @@ public class BlockOpTests
                 0xED, 0xB1 // CPIR
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.BC = 0x0003;
         regs.HL = 0x1000;
         regs.A = 0x11;
@@ -889,6 +898,7 @@ public class BlockOpTests
                 0xED, 0xB1 // CPIR
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.BC = 0x0003;
         regs.HL = 0x1000;
         regs.A = 0xA6;
@@ -949,8 +959,8 @@ public class BlockOpTests
         regs.HL.ShouldBe((ushort)0x1003);
 
         regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.NFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000-1002");
 
@@ -987,7 +997,7 @@ public class BlockOpTests
         regs.HL.ShouldBe((ushort)0x1003);
 
         regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeTrue();
+        regs.NFlag.ShouldBeFalse();
         regs.CFlag.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
@@ -1020,6 +1030,7 @@ public class BlockOpTests
                 0xED, 0xB8 // LDDR
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.BC = 0x0003;
         regs.HL = 0x1002;
         regs.DE = 0x1003;
@@ -1063,6 +1074,7 @@ public class BlockOpTests
                 0xED, 0xB9 // CPDR
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.BC = 0x0003;
         regs.HL = 0x1002;
         regs.A = 0x11;
@@ -1104,6 +1116,7 @@ public class BlockOpTests
                 0xED, 0xB9 // CPDR
         });
         var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
         regs.BC = 0x0003;
         regs.HL = 0x1002;
         regs.A = 0xA6;
@@ -1164,8 +1177,8 @@ public class BlockOpTests
         regs.HL.ShouldBe((ushort)0x0FFF);
 
         regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.NFlag.ShouldBeFalse();
+        regs.CFlag.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000-1002");
 
@@ -1202,7 +1215,7 @@ public class BlockOpTests
         regs.HL.ShouldBe((ushort)0x0FFF);
 
         regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeTrue();
+        regs.NFlag.ShouldBeFalse();
         regs.CFlag.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();

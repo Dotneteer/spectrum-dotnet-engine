@@ -42,10 +42,10 @@ public partial class Z80Cpu
             Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 88-8f
             Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 90-97
             Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // 98-9f
-            Ldi,        Cpi,        Ini,        Nop,        Nop,        Nop,        Nop,        Nop,        // a0-a7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // a8-af
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // b0-b7
-            Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // b8-bf
+            Ldi,        Cpi,        Ini,        Outi,       Nop,        Nop,        Nop,        Nop,        // a0-a7
+            Ldd,        Cpd,        Ind,        Outd,       Nop,        Nop,        Nop,        Nop,        // a8-af
+            Ldir,       Cpir,       Inir,       Otir,       Nop,        Nop,        Nop,        Nop,        // b0-b7
+            Lddr,       Cpdr,       Indr,       Otdr,       Nop,        Nop,        Nop,        Nop,        // b8-bf
 
             Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // c0-c7
             Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        Nop,        // c8-cf
@@ -1042,10 +1042,598 @@ public partial class Z80Cpu
         Regs.HL++;
         byte tmp2 = (byte)(tmp + Regs.C + 1);
         Regs.F = (byte)
-        (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
-        (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
-        (s_ParityTable![(tmp2 & 0x07) ^ Regs.B] != 0 ? FlagsSetMask.PV : 0) |
-        s_SZ53Table![Regs.B]);
+            (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
+            (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
+            (s_ParityTable![(tmp2 & 0x07) ^ Regs.B] != 0 ? FlagsSetMask.PV : 0) |
+            s_SZ53Table![Regs.B]);
         F53Updated = true;
+    }
+
+    /// <summary>
+    /// "outi" operation (0xa3)
+    /// </summary>
+    /// <remarks>
+    /// The contents of the HL register pair are placed on the address bus to select a location in memory. The byte
+    /// contained in this memory location is temporarily stored in the CPU. Then, after B is decremented, the contents
+    /// of C are placed on the bottom half (A0 through A7) of the address bus to select the I/O device at one of 256
+    /// possible ports. Register B is used as a byte counter, and its decremented value is placed on the top half (A8
+    /// through A15) of the address bus. The byte to be output is placed on the data bus and written to a selected
+    /// peripheral device. Finally, the HL is incremented.
+    /// 
+    /// S is unknown.
+    /// Z is set if B – 1 = 0; otherwise it is reset.
+    /// H is unknown.
+    /// P/V is unknown.
+    /// N is set.
+    /// C is not affected.
+    /// 
+    /// T-States: 16 (4, 5, 3, 4)
+    /// Contention breakdown: pc:4,pc+1:5,hl:3,I/O
+    /// </remarks>
+    private void Outi()
+    {
+        TactPlus1(Regs.IR);
+        byte tmp = ReadMemory(Regs.HL);
+        Regs.B--;
+        Regs.WZ = (byte)(Regs.BC + 1);
+        WritePort(Regs.BC, tmp);
+        Regs.HL++;
+        byte tmp2 = (byte)(tmp + Regs.L);
+        Regs.F = (byte)
+            (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
+            (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
+            (s_ParityTable![(tmp2 & 0x07) ^ Regs.B] != 0 ? FlagsSetMask.PV : 0) |
+            s_SZ53Table![Regs.B]);
+        F53Updated = true;
+    }
+
+    /// <summary>
+    /// "ldd" operation (0xA8)
+    /// </summary>
+    /// <remarks>
+    /// Transfers a byte of data from the memory location addressed by HL to the memory location addressed by DE. Then
+    /// DE, HL, and BC is decremented.
+    /// 
+    /// S is not affected.
+    /// Z is not affected.
+    /// H is reset.
+    /// P/V is set if BC – 1 is not 0; otherwise, it is reset.
+    /// N is reset.
+    /// C is not affected.
+    /// 
+    /// T-States: 16 (4, 4, 3, 5)
+    /// Contention breakdown: pc:4,pc+1:4,hl:3,de:3,de:1 ×2
+    /// Gate array contention breakdown: pc:4,pc+1:4,hl:3,de:5
+    /// </remarks>
+    private void Ldd()
+    {
+        byte tmp = ReadMemory(Regs.HL);
+        Regs.BC--;
+        WriteMemory(Regs.DE, tmp);
+        TactPlus2(Regs.DE);
+        Regs.DE--;
+        Regs.HL--;
+        tmp += Regs.A;
+        Regs.F = (byte)
+            ((Regs.F & (FlagsSetMask.C | FlagsSetMask.Z | FlagsSetMask.S)) |
+        (Regs.BC != 0 ? FlagsSetMask.PV : 0) |
+          (tmp & FlagsSetMask.R3) | ((tmp & 0x02) != 0 ? FlagsSetMask.R5 : 0));
+        F53Updated = true;
+    }
+
+    /// <summary>
+    /// "cpd" operation (0xA9)
+    /// </summary>
+    /// <remarks>
+    /// The contents of the memory location addressed by HL is compared with the contents of A. During the compare
+    /// operation, the Zero flag is set or reset. HL and BC are decremented.
+    /// 
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if A is (HL); otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if BC – 1 is not 0; otherwise, it is reset.
+    /// N is set.
+    /// C is not affected.
+    /// 
+    /// T-States: 16 (4, 4, 3, 5)
+    /// Contention breakdown: pc:4,pc+1:4,hl:3,hl:1 ×5
+    /// Gate array contention breakdown: pc:4,pc+1:4,hl:8
+    /// </remarks>
+    private void Cpd()
+    {
+        byte value = ReadMemory(Regs.HL);
+        byte tmp = (byte)(Regs.A - value);
+        var lookup =
+        ((Regs.A & 0x08) >> 3) |
+          ((value & 0x08) >> 2) |
+          ((tmp & 0x08) >> 1);
+        TactPlus5(Regs.HL);
+        Regs.HL--;
+        Regs.BC--;
+        Regs.F = (byte)
+        ((Regs.F & FlagsSetMask.C) |
+        (Regs.BC != 0 ? (FlagsSetMask.PV | FlagsSetMask.N) : FlagsSetMask.N) |
+          s_HalfCarrySubFlags![lookup] |
+        (tmp != 0 ? 0 : FlagsSetMask.Z) |
+          (tmp & FlagsSetMask.S));
+        if ((Regs.F & FlagsSetMask.H) != 0)
+        {
+            tmp -= 1;
+        }
+        Regs.F |= (byte)((tmp & FlagsSetMask.R3) | ((tmp & 0x02) != 0 ? FlagsSetMask.R5 : 0));
+        F53Updated = true;
+        Regs.WZ--;
+    }
+
+    /// <summary>
+    /// "ind" operation (0xAA)
+    /// </summary>
+    /// <remarks>
+    /// The contents of C are placed on the bottom half (A0 through A7) of the address bus to select the I/O device at
+    /// one of 256 possible ports. Register B is used as a byte counter, and its contents are placed on the top half
+    /// (A8 through A15) of the address bus at this time. Then one byte from the selected port is placed on the data
+    /// bus and written to the CPU. The contents of HL are placed on the address bus and the input byte is written to
+    /// the corresponding location of memory. Finally, B and HLL are decremented.
+    /// 
+    /// S is unknown.
+    /// Z is set if B – 1 = 0; otherwise it is reset.
+    /// H is unknown.
+    /// P/V is unknown.
+    /// N is set.
+    /// C is not affected.
+    /// 
+    /// T-States: 16 (4, 5, 3, 4)
+    /// Contention breakdown: pc:4,pc+1:5,I/O,hl:3
+    /// </remarks>
+    private void Ind()
+    {
+        TactPlus1(Regs.IR);
+        byte tmp = ReadPort(Regs.BC);
+        WriteMemory(Regs.HL, tmp);
+        Regs.WZ = (ushort)(Regs.BC - 1);
+        Regs.B--;
+        Regs.HL--;
+        byte tmp2 = (byte)(tmp + Regs.C - 1);
+        Regs.F = (byte)
+            (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
+            (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
+            (s_ParityTable![(tmp2 & 0x07) ^ Regs.B] != 0 ? FlagsSetMask.PV : 0) |
+            s_SZ53Table![Regs.B]);
+        F53Updated = true;
+    }
+
+    /// <summary>
+    /// "outd" operation (0xAD)
+    /// </summary>
+    /// <remarks>
+    /// The contents of the HL register pair are placed on the address bus to select a location in memory. The byte
+    /// contained in this memory location is temporarily stored in the CPU. Then, after B is decremented, the
+    /// contents of C are placed on the bottom half (A0 through A7) of the address bus to select the I/O device at 
+    /// one of 256 possible ports. Register B is used as a byte counter, and its decremented value is placed on the
+    /// top half (A8 through A15) of the address bus. The byte to be output is placed on the data bus and written to
+    /// a selected peripheral device. Finally, the HL is decremented.
+    /// 
+    /// S is unknown.
+    /// Z is set if B – 1 = 0; otherwise it is reset.
+    /// H is unknown.
+    /// P/V is unknown.
+    /// N is set.
+    /// C is not affected.
+    /// 
+    /// T-States: 16 (4, 5, 3, 4)
+    /// Contention breakdown: pc:4,pc+1:5,hl:3,I/O
+    /// </remarks>
+    private void Outd()
+    {
+        TactPlus1(Regs.IR);
+        byte tmp = ReadMemory(Regs.HL);
+        Regs.B--;
+        Regs.WZ = (byte)(Regs.BC - 1);
+        WritePort(Regs.BC, tmp);
+        Regs.HL--;
+        byte tmp2 = (byte)(tmp + Regs.L);
+        Regs.F = (byte)
+            (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
+            (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
+            (s_ParityTable![(tmp2 & 0x07) ^ Regs.B] != 0 ? FlagsSetMask.PV : 0) |
+            s_SZ53Table![Regs.B]);
+        F53Updated = true;
+    }
+
+    /// <summary>
+    /// "ldir" operation (0xB0)
+    /// </summary>
+    /// <remarks>
+    /// Transfers a byte of data from the memory location addressed by HL to the memory location addressed DE. Then HL
+    /// and DE are incremented. BC is decremented. If decrementing allows the BC to go to 0, the instruction is
+    /// terminated. If BC isnot 0, the program counter is decremented by two and the instruction is repeated.
+    /// Interrupts are recognized and two refresh cycles are executed after each data transfer. When the BC is set to
+    /// 0 prior to instruction execution, the instruction loops through 64 KB.
+    /// 
+    /// S is not affected.
+    /// Z is not affected.
+    /// H is reset.
+    /// P/V is set if BC – 1 is not 0; otherwise, it is reset.
+    /// N is reset.
+    /// C is not affected.
+    /// 
+    /// T-States: 
+    ///   BC!=0: 21 (4, 4, 3, 5, 5)
+    ///   BC=0:  16 (4, 4, 3, 5)
+    /// Contention breakdown: pc:4,pc+1:4,hl:3,de:3,de:1 ×2,[de:1 ×5]
+    /// Gate array contention breakdown: pc:4,pc+1:4,hl:3,de:5,[5]
+    /// </remarks>
+    private void Ldir()
+    {
+        byte tmp = ReadMemory(Regs.HL);
+        WriteMemory(Regs.DE, tmp);
+        TactPlus2(Regs.DE);
+        Regs.BC--;
+        tmp += Regs.A;
+        Regs.F = (byte)
+            ((Regs.F & (FlagsSetMask.C | FlagsSetMask.Z | FlagsSetMask.S)) |
+        (Regs.BC != 0 ? FlagsSetMask.PV : 0) |
+          (tmp & FlagsSetMask.R3) | ((tmp & 0x02) != 0 ? FlagsSetMask.R5 : 0));
+        F53Updated = true;
+        if (Regs.BC != 0)
+        {
+            TactPlus5(Regs.DE);
+            Regs.PC -= 2;
+            Regs.WZ = (byte)(Regs.PC +1);
+        }
+        Regs.HL++;
+        Regs.DE++;
+    }
+
+    /// <summary>
+    /// "cpir" operation (0xB1)
+    /// </summary>
+    /// <remarks>
+    /// The contents of the memory location addressed HL is compared with the contents of A. During a compare
+    /// operation, the Zero flag is set or reset. Then HL is incremented and BC is decremented. If decrementing causes
+    /// BC to go to 0 or if A = (HL), the instruction is terminated. If BC is not 0 and A is not equal (HL), the
+    /// program counter is decremented by two and the instruction is repeated. Interrupts are recognized and two 
+    /// refresh cycles are executed after each data transfer. If BC is set to 0 before instruction execution, the
+    /// instruction loops through 64 KB if no match is found.
+    /// 
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if A is (HL); otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if BC – 1 is not 0; otherwise, it is reset.
+    /// N is set.
+    /// C is not affected.
+    /// 
+    /// T-States: 
+    ///   BC!=0: 21 (4, 4, 3, 5, 5)
+    ///   BC=0:  16 (4, 4, 3, 5)
+    /// Contention breakdown: pc:4,pc+1:4,hl:3,hl:1 ×5,[hl:1 ×5]
+    /// Gate array contention breakdown: pc:4,pc+1:4,hl:8,[5]
+    /// </remarks>
+    private void Cpir()
+    {
+        byte value = ReadMemory(Regs.HL);
+        byte tmp = (byte)(Regs.A - value);
+        var lookup =
+        ((Regs.A & 0x08) >> 3) |
+          ((value & 0x08) >> 2) |
+          ((tmp & 0x08) >> 1);
+        TactPlus5(Regs.HL);
+        Regs.BC--;
+        Regs.F = (byte)
+        ((Regs.F & FlagsSetMask.C) |
+        (Regs.BC != 0 ? (FlagsSetMask.PV | FlagsSetMask.N) : FlagsSetMask.N) |
+          s_HalfCarrySubFlags![lookup] |
+        (tmp != 0 ? 0 : FlagsSetMask.Z) |
+          (tmp & FlagsSetMask.S));
+        if ((Regs.F & FlagsSetMask.H) != 0)
+        {
+            tmp -= 1;
+        }
+        Regs.F |= (byte)((tmp & FlagsSetMask.R3) | ((tmp & 0x02) != 0 ? FlagsSetMask.R5 : 0));
+        F53Updated = true;
+        if ((Regs.F & (FlagsSetMask.PV | FlagsSetMask.Z)) == FlagsSetMask.PV)
+        {
+            TactPlus5(Regs.HL);
+            Regs.PC -= 2;
+            Regs.WZ = (byte)(Regs.PC + 1);
+        }
+        else
+        {
+            Regs.WZ++;
+        }
+        Regs.HL++;
+    }
+
+    /// <summary>
+    /// "inir" operation (0xB2)
+    /// </summary>
+    /// <remarks>
+    /// The contents of Register C are placed on the bottom half (A0 through A7) of the address bus to select the I/O
+    /// device at one of 256 possible ports. Register B can be used as a byte counter, and its contents are placed on
+    /// the top half (A8 through A15) of the address bus at this time. Then one byte from the selected port is placed
+    /// on the data bus and written to the CPU. The contents of the HL register pair are then placed on the address 
+    /// bus and the input byte is written to the corresponding location of memory. Finally, B is decremented and HL
+    /// is incremented. If decrementing causes B to go to 0, the instruction is terminated. If B is not 0, PC is
+    /// decremented by two and the instruction repeated. Interrupts are recognized and two refresh cycles execute after
+    /// each data transfer.
+    /// 
+    /// S is unknown.
+    /// Z is set if B – 1 = 0; otherwise it is reset.
+    /// H is unknown.
+    /// P/V is unknown.
+    /// N is set.
+    /// C is not affected.
+    /// 
+    /// T-States: 
+    ///   BC!=0: 21 (4, 5, 3, 4, 5)
+    ///   BC=0:  16 (4, 5, 3, 4)
+    /// Contention breakdown: pc:4,pc+1:5,I/O,hl:3,[hl:1 ×5]
+    /// Gate array contention breakdown: pc:4,pc+1:5,I/O,hl:3,[5]
+    /// </remarks>
+    private void Inir()
+    {
+        TactPlus1(Regs.IR);
+        byte tmp = ReadPort(Regs.BC);
+        WriteMemory(Regs.HL, tmp);
+        Regs.WZ = (ushort)(Regs.BC + 1);
+        Regs.B--;
+        byte tmp2 = (byte)(tmp + Regs.C + 1);
+        Regs.F = (byte)
+            (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
+            (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
+            (s_ParityTable![(tmp2 & 0x07) ^ Regs.B] != 0 ? FlagsSetMask.PV : 0) |
+            s_SZ53Table![Regs.B]);
+        F53Updated = true;
+        if (Regs.B != 0)
+        {
+            TactPlus5(Regs.HL);
+            Regs.PC -= 2;
+        }
+        Regs.HL++;
+    }
+
+    /// <summary>
+    /// "otir" operation (0xB3)
+    /// </summary>
+    /// <remarks>
+    /// The contents of the HL register pair are placed on the address bus to select a location in memory. The byte
+    /// contained in this memory location is temporarily stored in the CPU. Then, after B is decremented, the contents
+    /// of C are placed on the bottom half (A0 through A7) of the address bus to select the I/O device at one of 256
+    /// possible ports. Register B is used as a byte counter, and its decremented value is placed on the top half (A8
+    /// through A15) of the address bus. The byte to be output is placed on the data bus and written to a selected
+    /// peripheral device. Finally, the HL is incremented. If the decremented B Register is not 0, PC is decremented
+    /// by two and the instruction is repeated. If B has gone to 0, the instruction is terminated. Interrupts are
+    /// recognized and two refresh cycles are executed after each data transfer.
+    /// 
+    /// S is unknown.
+    /// Z is set if B – 1 = 0; otherwise it is reset.
+    /// H is unknown.
+    /// P/V is unknown.
+    /// N is set.
+    /// C is not affected.
+    /// T-States: 
+    ///   BC!=0: 21 (4, 5, 3, 4, 5)
+    ///   BC=0:  16 (4, 5, 3, 4)
+    /// Contention breakdown: pc:4,pc+1:5,hl:3,I/O,[bc:1 ×5]
+    /// Gate array contention breakdown: pc:4,pc+1:5,hl:3,I/O,[5]
+    /// </remarks>
+    private void Otir()
+    {
+        TactPlus1(Regs.IR);
+        byte tmp = ReadMemory(Regs.HL);
+        Regs.B--;
+        Regs.WZ = (byte)(Regs.BC + 1);
+        WritePort(Regs.BC, tmp);
+        Regs.HL++;
+        byte tmp2 = (byte)(tmp + Regs.L);
+        Regs.F = (byte)
+            (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
+            (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
+            (s_ParityTable![(tmp2 & 0x07) ^ Regs.B] != 0 ? FlagsSetMask.PV : 0) |
+            s_SZ53Table![Regs.B]);
+        F53Updated = true;
+        if (Regs.B != 0)
+        {
+            TactPlus5(Regs.HL);
+            Regs.PC -= 2;
+        }
+    }
+
+    /// <summary>
+    /// "lddr" operation (0xB8)
+    /// </summary>
+    /// <remarks>
+    /// Transfers a byte of data from the memory location addressed by HL to the memory location addressed by DE. Then
+    /// DE, HL, and BC is decremented. If decrementing causes BC to go to 0, the instruction is terminated. If BC is
+    /// not 0, PC is decremented by two and the instruction is repeated. Interrupts are recognized and two refresh
+    /// cycles execute after each data transfer. When BC is set to 0, prior to instruction execution, the instruction
+    /// loops through 64 KB.
+    ///  
+    /// S is not affected.
+    /// Z is not affected.
+    /// H is reset.
+    /// P/V is set if BC – 1 is not 0; otherwise, it is reset.
+    /// N is reset.
+    /// C is not affected.
+    /// 
+    /// T-States: 
+    ///   BC!=0: 21 (4, 4, 3, 5, 5)
+    ///   BC=0:  16 (4, 4, 3, 5)
+    /// Contention breakdown: pc:4,pc+1:4,hl:3,de:3,de:1 ×2,[de:1 ×5]
+    /// Gate array contention breakdown: pc:4,pc+1:4,hl:3,de:5,[5]
+    /// </remarks>
+    private void Lddr()
+    {
+        byte tmp = ReadMemory(Regs.HL);
+        WriteMemory(Regs.DE, tmp);
+        TactPlus2(Regs.DE);
+        Regs.BC--;
+        tmp += Regs.A;
+        Regs.F = (byte)
+            ((Regs.F & (FlagsSetMask.C | FlagsSetMask.Z | FlagsSetMask.S)) |
+        (Regs.BC != 0 ? FlagsSetMask.PV : 0) |
+          (tmp & FlagsSetMask.R3) | ((tmp & 0x02) != 0 ? FlagsSetMask.R5 : 0));
+        F53Updated = true;
+        if (Regs.BC != 0)
+        {
+            TactPlus5(Regs.DE);
+            Regs.PC -= 2;
+            Regs.WZ = (byte)(Regs.PC + 1);
+        }
+        Regs.HL--;
+        Regs.DE--;
+    }
+
+    /// <summary>
+    /// "cpdr" operation (0xB9)
+    /// </summary>
+    /// <remarks>
+    /// The contents of the memory location addressed by HL is compared with the contents of A. During the compare
+    /// operation, the Zero flag is set or reset. HL and BC are decremented. If BC is not 0 and A = (HL), PC is
+    /// decremented by two and the instruction is repeated. Interrupts are recognized and two refresh cycles execute
+    /// after each data transfer. When the BC is set to 0, prior to instruction execution, the instruction loops 
+    /// through 64 KB if no match is found.
+    /// 
+    /// S is set if result is negative; otherwise, it is reset.
+    /// Z is set if A is (HL); otherwise, it is reset.
+    /// H is set if borrow from bit 4; otherwise, it is reset.
+    /// P/V is set if BC – 1 is not 0; otherwise, it is reset.
+    /// N is set.
+    /// C is not affected.
+    /// 
+    /// T-States: 
+    ///   BC!=0: 21 (4, 4, 3, 5, 5)
+    ///   BC=0:  16 (4, 4, 3, 5)
+    /// Contention breakdown: pc:4,pc+1:4,hl:3,hl:1 ×5,[hl:1 ×5]
+    /// Gate array contention breakdown: pc:4,pc+1:4,hl:8,[5]
+    /// </remarks>
+    private void Cpdr()
+    {
+        byte value = ReadMemory(Regs.HL);
+        byte tmp = (byte)(Regs.A - value);
+        var lookup =
+        ((Regs.A & 0x08) >> 3) |
+          ((value & 0x08) >> 2) |
+          ((tmp & 0x08) >> 1);
+        TactPlus5(Regs.HL);
+        Regs.BC--;
+        Regs.F = (byte)
+        ((Regs.F & FlagsSetMask.C) |
+        (Regs.BC != 0 ? (FlagsSetMask.PV | FlagsSetMask.N) : FlagsSetMask.N) |
+          s_HalfCarrySubFlags![lookup] |
+        (tmp != 0 ? 0 : FlagsSetMask.Z) |
+          (tmp & FlagsSetMask.S));
+        if ((Regs.F & FlagsSetMask.H) != 0)
+        {
+            tmp -= 1;
+        }
+        Regs.F |= (byte)((tmp & FlagsSetMask.R3) | ((tmp & 0x02) != 0 ? FlagsSetMask.R5 : 0));
+        F53Updated = true;
+        if ((Regs.F & (FlagsSetMask.PV | FlagsSetMask.Z)) == FlagsSetMask.PV)
+        {
+            TactPlus5(Regs.HL);
+            Regs.PC -= 2;
+            Regs.WZ = (byte)(Regs.PC + 1);
+        }
+        else
+        {
+            Regs.WZ--;
+        }
+        Regs.HL--;
+    }
+
+    /// <summary>
+    /// "indr" operation (0xBA)
+    /// </summary>
+    /// <remarks>
+    /// The contents of C are placed on the bottom half (A0 through A7) of the address bus to select the I/O device at
+    /// one of 256 possible ports. Register B is used as a byte counter, and its contents are placed on the top half
+    /// (A8 through A15) of the address bus at this time. Then one byte from the selected port is placed on the data
+    /// bus and written to the CPU. The contents of HL are placed on the address bus and the input byte is written to
+    /// the corresponding location of memory. Finally, B and HL are decremented. If decrementing causes B to go to 0,
+    /// the instruction is terminated. If B is not 0, PC is decremented by two and the instruction repeated. Interrupts
+    /// are recognized and two refresh cycles are executed after each data transfer.
+    /// 
+    /// S is unknown.
+    /// Z is set if B – 1 = 0; otherwise it is reset.
+    /// H is unknown.
+    /// P/V is unknown.
+    /// N is set.
+    /// C is not affected.
+    /// 
+    /// T-States: 
+    ///   BC!=0: 21 (4, 5, 3, 4, 5)
+    ///   BC=0:  16 (4, 5, 3, 4)
+    /// Contention breakdown: pc:4,pc+1:5,I/O,hl:3,[hl:1 ×5]
+    /// Gate array contention breakdown: pc:4,pc+1:5,I/O,hl:3,[5]
+    /// </remarks>
+    private void Indr()
+    {
+        TactPlus1(Regs.IR);
+        byte tmp = ReadPort(Regs.BC);
+        WriteMemory(Regs.HL, tmp);
+        Regs.WZ = (ushort)(Regs.BC - 1);
+        Regs.B--;
+        byte tmp2 = (byte)(tmp + Regs.C - 1);
+        Regs.F = (byte)
+            (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
+            (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
+            (s_ParityTable![(tmp2 & 0x07) ^ Regs.B] != 0 ? FlagsSetMask.PV : 0) |
+            s_SZ53Table![Regs.B]);
+        F53Updated = true;
+        if (Regs.B != 0)
+        {
+            TactPlus5(Regs.HL);
+            Regs.PC -= 2;
+        }
+        Regs.HL--;
+    }
+
+    /// <summary>
+    /// "otdr" operation (0xBB)
+    /// </summary>
+    /// <remarks>
+    /// The contents of the HL register pair are placed on the address bus to select a location in memory. The byte
+    /// contained in this memory location is temporarily stored in the CPU. Then, after B is decremented, the
+    /// contents of C are placed on the bottom half (A0 through A7) of the address bus to select the I/O device at 
+    /// one of 256 possible ports. Register B is used as a byte counter, and its decremented value is placed on the
+    /// top half (A8 through A15) of the address bus. The byte to be output is placed on the data bus and written to
+    /// a selected peripheral device. Finally, the HL is decremented. If the decremented B Register is not 0, PC is
+    /// decremented by two and the instruction is repeated. If B has gone to 0, the instruction is terminated.
+    /// Interrupts are recognized and two refresh cycles are executed after each data transfer.
+    /// 
+    /// S is unknown.
+    /// Z is set if B – 1 = 0; otherwise it is reset.
+    /// H is unknown.
+    /// P/V is unknown.
+    /// N is set.
+    /// C is not affected.
+    /// 
+    /// T-States: 
+    ///   BC!=0: 21 (4, 5, 3, 4, 5)
+    ///   BC=0:  16 (4, 5, 3, 4)
+    /// Contention breakdown: pc:4,pc+1:5,hl:3,I/O,[bc:1 ×5]
+    /// Gate array contention breakdown: pc:4,pc+1:5,hl:3,I/O,[5]
+    /// </remarks>
+    private void Otdr()
+    {
+        TactPlus1(Regs.IR);
+        byte tmp = ReadMemory(Regs.HL);
+        Regs.B--;
+        Regs.WZ = (byte)(Regs.BC - 1);
+        WritePort(Regs.BC, tmp);
+        Regs.HL--;
+        byte tmp2 = (byte)(tmp + Regs.L);
+        Regs.F = (byte)
+            (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
+            (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
+            (s_ParityTable![(tmp2 & 0x07) ^ Regs.B] != 0 ? FlagsSetMask.PV : 0) |
+            s_SZ53Table![Regs.B]);
+        F53Updated = true;
+        if (Regs.B != 0)
+        {
+            TactPlus5(Regs.HL);
+            Regs.PC -= 2;
+        }
     }
 }
