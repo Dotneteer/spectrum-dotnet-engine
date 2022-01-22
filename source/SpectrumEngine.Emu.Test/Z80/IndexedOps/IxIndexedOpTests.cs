@@ -262,12 +262,13 @@ public class IxIndexedOpTests
                 0xDD, 0x21, 0x34, 0xFE, // LD IX,FE34H
                 0xDD, 0x24              // INC XH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IX.ShouldBe((ushort)0xFF34);
 
         regs.SFlag.ShouldBeTrue();
@@ -296,12 +297,13 @@ public class IxIndexedOpTests
                 0xDD, 0x21, 0x34, 0x4F, // LD IX,4F34H
                 0xDD, 0x24              // INC XH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IX.ShouldBe((ushort)0x5034);
 
         regs.SFlag.ShouldBeFalse();
@@ -330,12 +332,13 @@ public class IxIndexedOpTests
                 0xDD, 0x21, 0x34, 0x7F, // LD IX,7F34H
                 0xDD, 0x24              // INC XH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IX.ShouldBe((ushort)0x8034);
 
         regs.SFlag.ShouldBeTrue();
@@ -364,12 +367,13 @@ public class IxIndexedOpTests
                 0xDD, 0x21, 0x34, 0xFF, // LD IX,FF34H
                 0xDD, 0x24              // INC XH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IX.ShouldBe((ushort)0x0034);
 
         regs.SFlag.ShouldBeFalse();
@@ -426,12 +430,13 @@ public class IxIndexedOpTests
                 0xDD, 0x21, 0x34, 0x85, // LD IX,8534H
                 0xDD, 0x25              // DEC XH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IX.ShouldBe((ushort)0x8434);
 
         regs.SFlag.ShouldBeTrue();
@@ -460,12 +465,13 @@ public class IxIndexedOpTests
                 0xDD, 0x21, 0x34, 0x40, // LD IX,4034H
                 0xDD, 0x25              // DEC XH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IX.ShouldBe((ushort)0x3F34);
 
         regs.SFlag.ShouldBeFalse();
@@ -494,12 +500,13 @@ public class IxIndexedOpTests
                 0xDD, 0x21, 0x34, 0x80, // LD IX,8034H
                 0xDD, 0x25              // INC XH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IX.ShouldBe((ushort)0x7F34);
 
         regs.SFlag.ShouldBeFalse();
@@ -528,12 +535,13 @@ public class IxIndexedOpTests
                 0xDD, 0x21, 0x34, 0x01, // LD IX,0134H
                 0xDD, 0x25              // DEC XH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IX.ShouldBe((ushort)0x0034);
 
         regs.SFlag.ShouldBeFalse();
@@ -814,14 +822,14 @@ public class IxIndexedOpTests
     /// LD (IX+D),N: 0xDD 0x36
     /// </summary>
     [Fact]
-    public void LD_IXi_N_WorksAsExpected()
+    public void LD_IXi_N_WorksAsExpected1()
     {
         // --- Arrange
         const byte OFFS = 0x52;
         var m = new Z80TestMachine(RunMode.UntilEnd);
         m.InitCode(new byte[]
         {
-                0xDD, 0x36, 0x52, 0xD2  // LD (IX+52H),D2H
+                0xDD, 0x36, OFFS, 0xD2  // LD (IX+52H),D2H
         });
         var regs = m.Cpu.Regs;
         regs.IX = 0x1000;
@@ -834,6 +842,35 @@ public class IxIndexedOpTests
 
         m.ShouldKeepRegisters();
         m.ShouldKeepMemory(except: "1052");
+
+        regs.PC.ShouldBe((ushort)0x0004);
+        m.Cpu.Tacts.ShouldBe(19UL);
+    }
+
+    /// <summary>
+    /// LD (IX+D),N: 0xDD 0x36
+    /// </summary>
+    [Fact]
+    public void LD_IXi_N_WorksAsExpected2()
+    {
+        // --- Arrange
+        const byte OFFS = 0x93;
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+                0xDD, 0x36, OFFS, 0xD2  // LD (IX+52H),D2H
+        });
+        var regs = m.Cpu.Regs;
+        regs.IX = 0x1000;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        m.Memory[regs.IX + unchecked((sbyte)OFFS)].ShouldBe((byte)0xD2);
+
+        m.ShouldKeepRegisters();
+        m.ShouldKeepMemory(except: "F93");
 
         regs.PC.ShouldBe((ushort)0x0004);
         m.Cpu.Tacts.ShouldBe(19UL);
@@ -2816,13 +2853,13 @@ public class IxIndexedOpTests
                 0xE5,             // PUSH HL
                 0xDD, 0xE1        // POP IX
         });
+        var regs = m.Cpu.Regs;
+        regs.SP = 0x0000;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
-
         regs.IX.ShouldBe((ushort)0x2352);
         m.ShouldKeepRegisters(except: "HL, IX");
         m.ShouldKeepMemory(except: "FFFE-FFFF");
@@ -2845,6 +2882,8 @@ public class IxIndexedOpTests
                 0xDD, 0x21, 0x34, 0x12, // LD IX,1234H
                 0xDD, 0xE3              // EX (SP),IX
         });
+        var regs = m.Cpu.Regs;
+        regs.SP = 0x0000;
         m.Memory[0x1000] = 0x78;
         m.Memory[0x1001] = 0x56;
 
@@ -2852,8 +2891,6 @@ public class IxIndexedOpTests
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
-
         regs.IX.ShouldBe((ushort)0x5678);
         m.Memory[0x1000].ShouldBe((byte)0x34);
         m.Memory[0x1001].ShouldBe((byte)0x12);
@@ -2879,13 +2916,13 @@ public class IxIndexedOpTests
                 0xDD, 0xE5,             // PUSH IX
                 0xC1                    // POP BC
         });
+        var regs = m.Cpu.Regs;
+        regs.SP = 0x0000;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
-
         regs.BC.ShouldBe((ushort)0x2352);
         m.ShouldKeepRegisters(except: "IX, BC");
         m.ShouldKeepMemory(except: "FFFE-FFFF");

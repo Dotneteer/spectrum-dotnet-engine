@@ -242,7 +242,7 @@ public class IyIndexedOpTests
         var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0x1334);
 
-        m.ShouldKeepRegisters(except: "IY");
+        m.ShouldKeepRegisters(except: "F, IY");
         m.ShouldKeepMemory();
 
         regs.PC.ShouldBe((ushort)0x0006);
@@ -262,12 +262,13 @@ public class IyIndexedOpTests
                 0xFD, 0x21, 0x34, 0xFE, // LD IY,FE34H
                 0xFD, 0x24              // INC YH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0xFF34);
 
         regs.SFlag.ShouldBeTrue();
@@ -296,12 +297,13 @@ public class IyIndexedOpTests
                 0xFD, 0x21, 0x34, 0x4F, // LD IY,4F34H
                 0xFD, 0x24              // INC YH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0x5034);
 
         regs.SFlag.ShouldBeFalse();
@@ -330,12 +332,13 @@ public class IyIndexedOpTests
                 0xFD, 0x21, 0x34, 0x7F, // LD IY,7F34H
                 0xFD, 0x24              // INC YH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0x8034);
 
         regs.SFlag.ShouldBeTrue();
@@ -364,12 +367,13 @@ public class IyIndexedOpTests
                 0xFD, 0x21, 0x34, 0xFF, // LD IY,FF34H
                 0xFD, 0x24              // INC YH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0x0034);
 
         regs.SFlag.ShouldBeFalse();
@@ -426,12 +430,13 @@ public class IyIndexedOpTests
                 0xFD, 0x21, 0x34, 0x85, // LD IY,8534H
                 0xFD, 0x25              // DEC YH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0x8434);
 
         regs.SFlag.ShouldBeTrue();
@@ -460,12 +465,13 @@ public class IyIndexedOpTests
                 0xFD, 0x21, 0x34, 0x40, // LD IY,4034H
                 0xFD, 0x25              // DEC YH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0x3F34);
 
         regs.SFlag.ShouldBeFalse();
@@ -494,12 +500,13 @@ public class IyIndexedOpTests
                 0xFD, 0x21, 0x34, 0x80, // LD IY,8034H
                 0xFD, 0x25              // INC YH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0x7F34);
 
         regs.SFlag.ShouldBeFalse();
@@ -528,12 +535,13 @@ public class IyIndexedOpTests
                 0xFD, 0x21, 0x34, 0x01, // LD IY,0134H
                 0xFD, 0x25              // DEC YH
         });
+        var regs = m.Cpu.Regs;
+        regs.F &= 0xfe;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0x0034);
 
         regs.SFlag.ShouldBeFalse();
@@ -814,14 +822,14 @@ public class IyIndexedOpTests
     /// LD (IY+D),N: 0xFD 0x36
     /// </summary>
     [Fact]
-    public void LD_IYi_N_WorksAsExpected()
+    public void LD_IYi_N_WorksAsExpected1()
     {
         // --- Arrange
         const byte OFFS = 0x52;
         var m = new Z80TestMachine(RunMode.UntilEnd);
         m.InitCode(new byte[]
         {
-                0xFD, 0x36, 0x52, 0xD2  // DEC (IY+52H),D2H
+                0xFD, 0x36, OFFS, 0xD2  // LD (IY+52H),D2H
         });
         var regs = m.Cpu.Regs;
         regs.IY = 0x1000;
@@ -834,6 +842,35 @@ public class IyIndexedOpTests
 
         m.ShouldKeepRegisters();
         m.ShouldKeepMemory(except: "1052");
+
+        regs.PC.ShouldBe((ushort)0x0004);
+        m.Cpu.Tacts.ShouldBe(19UL);
+    }
+
+    /// <summary>
+    /// LD (IY+D),N: 0xFD 0x36
+    /// </summary>
+    [Fact]
+    public void LD_IYi_N_WorksAsExpected2()
+    {
+        // --- Arrange
+        const byte OFFS = 0x93;
+        var m = new Z80TestMachine(RunMode.UntilEnd);
+        m.InitCode(new byte[]
+        {
+                0xFD, 0x36, OFFS, 0xD2  // LD (IY+93H),D2H
+        });
+        var regs = m.Cpu.Regs;
+        regs.IY = 0x1000;
+
+        // --- Act
+        m.Run();
+
+        // --- Assert
+        m.Memory[regs.IY + unchecked((sbyte)OFFS)].ShouldBe((byte)0xD2);
+
+        m.ShouldKeepRegisters();
+        m.ShouldKeepMemory(except: "F93");
 
         regs.PC.ShouldBe((ushort)0x0004);
         m.Cpu.Tacts.ShouldBe(19UL);
@@ -2816,13 +2853,13 @@ public class IyIndexedOpTests
                 0xE5,             // PUSH HL
                 0xFD, 0xE1        // POP IY
         });
+        var regs = m.Cpu.Regs;
+        regs.SP = 0x0000;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
-
         regs.IY.ShouldBe((ushort)0x2352);
         m.ShouldKeepRegisters(except: "HL, IY");
         m.ShouldKeepMemory(except: "FFFE-FFFF");
@@ -2845,6 +2882,8 @@ public class IyIndexedOpTests
                 0xFD, 0x21, 0x34, 0x12, // LD IY,1234H
                 0xFD, 0xE3              // EX (SP),IY
         });
+        var regs = m.Cpu.Regs;
+        regs.SP = 0x0000;
         m.Memory[0x1000] = 0x78;
         m.Memory[0x1001] = 0x56;
 
@@ -2852,8 +2891,6 @@ public class IyIndexedOpTests
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
-
         regs.IY.ShouldBe((ushort)0x5678);
         m.Memory[0x1000].ShouldBe((byte)0x34);
         m.Memory[0x1001].ShouldBe((byte)0x12);
@@ -2879,13 +2916,13 @@ public class IyIndexedOpTests
                 0xFD, 0xE5,             // PUSH IY
                 0xC1                    // POP BC
         });
+        var regs = m.Cpu.Regs;
+        regs.SP = 0x0000;
 
         // --- Act
         m.Run();
 
         // --- Assert
-        var regs = m.Cpu.Regs;
-
         regs.BC.ShouldBe((ushort)0x2352);
         m.ShouldKeepRegisters(except: "IY, BC");
         m.ShouldKeepMemory(except: "FFFE-FFFF");

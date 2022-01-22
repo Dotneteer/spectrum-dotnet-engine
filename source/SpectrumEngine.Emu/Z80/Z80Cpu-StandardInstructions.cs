@@ -2404,7 +2404,6 @@ public partial class Z80Cpu
         Adc8(ReadMemory(Regs.HL));
     }
 
-
     /// <summary>
     /// "adc a,a" operation (0x8F)
     /// </summary>
