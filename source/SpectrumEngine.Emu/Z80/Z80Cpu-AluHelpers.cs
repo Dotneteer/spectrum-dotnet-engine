@@ -148,7 +148,7 @@ public partial class Z80Cpu
     /// <param name="regHL">HL (IX, IY) value</param>
     /// <param name="regOther">Other value</param>
     /// <returns>Result value</returns>
-    private ushort AluAddHL(ushort regHL, ushort regOther)
+    private ushort Add16(ushort regHL, ushort regOther)
     {
         var tmpVal = regHL + regOther;
         var lookup =
@@ -470,7 +470,7 @@ public partial class Z80Cpu
     }
 
     /// <summary>
-    /// The core of the 16-bit SBC operation.
+    /// The core of the 16-bit ADC operation.
     /// </summary>
     /// <param name="value">Value to add to HL</param>
     private void Adc16(ushort value)

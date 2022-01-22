@@ -228,9 +228,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void AddHLBC()
     {
-        Regs.WZ = (ushort)(Regs.HL + 1);
-        Regs.HL = AluAddHL(Regs.HL, Regs.BC);
         TactPlus7(Regs.IR);
+        Regs.HL = Add16(Regs.HL, Regs.BC);
     }
 
     /// <summary>
@@ -535,9 +534,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void AddHLDE()
     {
-        Regs.WZ = (ushort)(Regs.HL + 1);
-        Regs.HL = AluAddHL(Regs.HL, Regs.DE);
         TactPlus7(Regs.IR);
+        Regs.HL = Add16(Regs.HL, Regs.DE);
     }
 
     /// <summary>
@@ -890,9 +888,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void AddHLHL()
     {
-        Regs.WZ = (ushort)(Regs.HL + 1);
-        Regs.HL = AluAddHL(Regs.HL, Regs.HL);
         TactPlus7(Regs.IR);
+        Regs.HL = Add16(Regs.HL, Regs.HL);
     }
 
     /// <summary>
@@ -1198,9 +1195,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void AddHLSP()
     {
-        Regs.WZ = (ushort)(Regs.HL + 1);
-        Regs.HL = AluAddHL(Regs.HL, Regs.SP);
         TactPlus7(Regs.IR);
+        Regs.HL = Add16(Regs.HL, Regs.SP);
     }
 
     /// <summary>
