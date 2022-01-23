@@ -63,10 +63,10 @@ public partial class Z80Cpu
     /// </summary>
     private ushort IndexReg
     {
-        get => Prefix == OpCodePrefix.DD ? Regs.IX : Regs.IY;
+        get => Prefix == OpCodePrefix.DD || Prefix == OpCodePrefix.DDCB ? Regs.IX : Regs.IY;
         set 
         { 
-            if (Prefix == OpCodePrefix.DD)
+            if (Prefix == OpCodePrefix.DD || Prefix == OpCodePrefix.DDCB)
             {
                 Regs.IX = value;
             }
@@ -82,10 +82,10 @@ public partial class Z80Cpu
     /// </summary>
     private byte IndexL
     {
-        get => Prefix == OpCodePrefix.DD ? Regs.XL : Regs.YL;
+        get => Prefix == OpCodePrefix.DD || Prefix == OpCodePrefix.DDCB ? Regs.XL : Regs.YL;
         set
         {
-            if (Prefix == OpCodePrefix.DD)
+            if (Prefix == OpCodePrefix.DD || Prefix == OpCodePrefix.DDCB)
             {
                 Regs.XL = value;
             }
@@ -101,10 +101,10 @@ public partial class Z80Cpu
     /// </summary>
     private byte IndexH
     {
-        get => Prefix == OpCodePrefix.DD ? Regs.XH : Regs.YH;
+        get => Prefix == OpCodePrefix.DD || Prefix == OpCodePrefix.DDCB ? Regs.XH : Regs.YH;
         set
         {
-            if (Prefix == OpCodePrefix.DD)
+            if (Prefix == OpCodePrefix.DD || Prefix == OpCodePrefix.DDCB)
             {
                 Regs.XH = value;
             }
