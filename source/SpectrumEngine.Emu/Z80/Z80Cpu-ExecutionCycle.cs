@@ -141,8 +141,12 @@ public partial class Z80Cpu
         Regs.PC++;
 
         // --- Third, let's refresh the memory by updating the value of Register R. It takes one T-state.
-        RefreshMemory();
-        TactPlus1();
+        if (Prefix != OpCodePrefix.DDCB && Prefix != OpCodePrefix.FDCB)
+        {
+            // --- Indexed bit operation consider the third byte as an address offset, so no memory refresh occurs.
+            RefreshMemory();
+            TactPlus1();
+        }
 
         // --- It's time to execute the fetched instruction
         switch (Prefix)
@@ -210,6 +214,11 @@ public partial class Z80Cpu
             // --- IX- or IY-indexed bit instructions
             case OpCodePrefix.DDCB:
             case OpCodePrefix.FDCB:
+                // --- OpCode is the distance
+                Regs.WZ = (ushort)(IndexReg + (sbyte)OpCode);
+                OpCode = ReadMemory(Regs.PC);
+                TactPlus2(Regs.PC);
+                Regs.PC++;
                 _indexedBitInstrs![OpCode]?.Invoke();
                 Prefix = OpCodePrefix.None;
                 break;
