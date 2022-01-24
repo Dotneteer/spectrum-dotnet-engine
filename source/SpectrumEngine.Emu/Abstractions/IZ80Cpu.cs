@@ -1,5 +1,8 @@
 ﻿namespace SpectrumEngine.Emu;
 
+/// <summary>
+/// This interface represents the behavior and state of the Z80 CPU that is available from outside by other components.
+/// </summary>
 public interface IZ80Cpu
 {
     /// <summary>
@@ -77,4 +80,19 @@ public interface IZ80Cpu
     /// This flag indicates if those are allowed.
     /// </summary>
     bool AllowExtendedInstructions { get; set; }
+
+    /// <summary>
+    /// Executes a hard reset as if the machine and the CPU had just been turned on.
+    /// </summary>
+    public void HardReset();
+
+    /// <summary>
+    /// Handles the active RESET signal of the CPU.
+    /// </summary>
+    public void Reset();
+
+    /// <summary>
+    /// Call this method to execute a CPU instruction cycle.
+    /// </summary>
+    public void ExecuteCpuCycle();
 }
