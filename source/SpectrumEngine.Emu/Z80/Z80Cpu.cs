@@ -9,7 +9,7 @@ namespace SpectrumEngine.Emu;
 /// <remarks>
 /// This partition defines a couple of nested types the CPU emulation utilizes in its implementation.
 /// </remarks>
-public partial class Z80Cpu
+public partial class Z80Cpu: IZ80Cpu
 {
     /// <summary>
     /// Initializes the Z80 CPU instance.
