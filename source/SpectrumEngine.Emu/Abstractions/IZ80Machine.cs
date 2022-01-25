@@ -39,4 +39,23 @@ public interface IZ80Machine
     /// The value indicates the termination reason of the loop. 
     /// </returns>
     LoopTerminationMode ExecuteMachineLoop();
+
+    /// <summary>
+    /// This property gets or sets the value of the current clock multiplier.
+    /// </summary>
+    /// <remarks>
+    /// By default, the CPU works with its regular (base) clock frequency; however, you can use an integer clock
+    /// frequency multiplier to emulate a faster CPU.
+    /// </remarks>
+    int ClockMultiplier { get; set; }
+
+    /// <summary>
+    /// Represents the CPU's memory handler to read and write the memory contents.
+    /// </summary>
+    public IMemoryDevice MemoryDevice { get; }
+
+    /// <summary>
+    /// Represents the CPU's I/O handler to read and write I/O ports.
+    /// </summary>
+    public IIoHandler IoHandler { get; }    
 }

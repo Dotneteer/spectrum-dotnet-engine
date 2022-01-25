@@ -84,15 +84,71 @@ public interface IZ80Cpu
     /// <summary>
     /// Executes a hard reset as if the machine and the CPU had just been turned on.
     /// </summary>
-    public void HardReset();
+    void HardReset();
 
     /// <summary>
     /// Handles the active RESET signal of the CPU.
     /// </summary>
-    public void Reset();
+    void Reset();
 
     /// <summary>
     /// Call this method to execute a CPU instruction cycle.
     /// </summary>
-    public void ExecuteCpuCycle();
+    void ExecuteCpuCycle();
+
+    /// <summary>
+    /// This function reads a byte (8-bit) from the memory using the provided 16-bit address.
+    /// </summary>
+    /// <remarks>
+    /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the memory
+    /// read operation.
+    /// </remarks>
+    Func<ushort, byte> ReadMemoryFunction { get; set; }
+
+    /// <summary>
+    /// This function writes a byte (8-bit) to the 16-bit memory address provided in the first argument.
+    /// </summary>
+    /// <remarks>
+    /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the memory
+    /// write operation.
+    /// </remarks>
+    Action<ushort, byte> WriteMemoryFunction { get; set; }
+
+    /// <summary>
+    /// This function reads a byte (8-bit) from an I/O port using the provided 16-bit address.
+    /// </summary>
+    /// <remarks>
+    /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the
+    /// I/O port read operation.
+    /// </remarks>
+    Func<ushort, byte> ReadPortFunction { get; set; }
+
+    /// <summary>
+    /// This function writes a byte (8-bit) to the 16-bit I/O port address provided in the first argument.
+    /// </summary>
+    /// <remarks>
+    /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the
+    /// I/O port write operation.
+    /// </remarks>
+    Action<ushort, byte> WritePortFunction { get; set; }
+
+    /// <summary>
+    /// Every time the CPU clock is incremented with a single T-state, this function is executed.
+    /// </summary>
+    /// <remarks>
+    /// With this function, you can emulate hardware activities running simultaneously with the CPU. For example,
+    /// rendering the screen or sound,  handling peripheral devices, and so on.
+    /// </remarks>
+    Action TactIncrementedHandler { get; set; }
+
+    /// <summary>
+    /// This function handles address-based memory read contention.
+    /// </summary>
+    Action<ushort> ContendReadFunction { get; set; }
+
+    /// <summary>
+    /// This function handles address-based memory write contention.
+    /// </summary>
+    Action<ushort> ContendWriteFunction { get; set; }
+
 }

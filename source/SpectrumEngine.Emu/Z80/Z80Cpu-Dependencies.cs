@@ -16,7 +16,7 @@ public partial class Z80Cpu
     /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the memory
     /// read operation.
     /// </remarks>
-    public Func<ushort, byte> ReadMemoryFunction;
+    public Func<ushort, byte> ReadMemoryFunction { get; set; }
 
     /// <summary>
     /// This function writes a byte (8-bit) to the 16-bit memory address provided in the first argument.
@@ -25,7 +25,7 @@ public partial class Z80Cpu
     /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the memory
     /// write operation.
     /// </remarks>
-    public Action<ushort, byte> WriteMemoryFunction;
+    public Action<ushort, byte> WriteMemoryFunction { get; set; }
 
     /// <summary>
     /// This function reads a byte (8-bit) from an I/O port using the provided 16-bit address.
@@ -34,7 +34,7 @@ public partial class Z80Cpu
     /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the
     /// I/O port read operation.
     /// </remarks>
-    public Func<ushort, byte> ReadPortFunction;
+    public Func<ushort, byte> ReadPortFunction { get; set; }
 
     /// <summary>
     /// This function writes a byte (8-bit) to the 16-bit I/O port address provided in the first argument.
@@ -43,7 +43,7 @@ public partial class Z80Cpu
     /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the
     /// I/O port write operation.
     /// </remarks>
-    public Action<ushort, byte> WritePortFunction;
+    public Action<ushort, byte> WritePortFunction { get; set; }
 
     /// <summary>
     /// Every time the CPU clock is incremented with a single T-state, this function is executed.
@@ -52,15 +52,15 @@ public partial class Z80Cpu
     /// With this function, you can emulate hardware activities running simultaneously with the CPU. For example,
     /// rendering the screen or sound,  handling peripheral devices, and so on.
     /// </remarks>
-    public Action TactIncrementedHandler;
+    public Action TactIncrementedHandler { get; set; }
 
     /// <summary>
     /// This function handles address-based memory read contention.
     /// </summary>
-    public Action<ushort> ContendReadFunction;
+    public Action<ushort> ContendReadFunction { get; set; }
 
     /// <summary>
     /// This function handles address-based memory write contention.
     /// </summary>
-    public Action<ushort> ContendWriteFunction;
+    public Action<ushort> ContendWriteFunction { get; set; }
 }
