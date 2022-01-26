@@ -48,14 +48,4 @@ public interface IZ80Machine
     /// frequency multiplier to emulate a faster CPU.
     /// </remarks>
     int ClockMultiplier { get; set; }
-
-    /// <summary>
-    /// Represents the CPU's memory handler to read and write the memory contents.
-    /// </summary>
-    public IMemoryDevice MemoryDevice { get; }
-
-    /// <summary>
-    /// Represents the CPU's I/O handler to read and write I/O ports.
-    /// </summary>
-    public IIoHandler IoHandler { get; }    
 }

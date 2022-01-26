@@ -3,7 +3,7 @@
 /// <summary>
 /// This interface defines the properties and operations of the ZX Spectrum's memory device.
 /// </summary>
-public interface IMemoryDevice: IGenericDevice
+public interface IMemoryDevice: IGenericDevice<IZxSpectrum48Machine>
 {
     /// <summary>
     /// Read the byte at the specified memory address.

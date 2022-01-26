@@ -6,39 +6,60 @@
 public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
 {
     /// <summary>
+    /// Initialize the machine
+    /// </summary>
+    public ZxSpectrum48Machine()
+    {
+        KeyboardDevice = new KeyboardDevice(this);
+        ScreenDevice = new ScreenDevice(this);
+        BeeperDevice = new BeeperDevice(this);
+        FloatingPortDevice = new ZxSpectrum48FloatingPortDevice(this);
+        TapeDevice = new TapeDevice(this);
+        MemoryDevice = new ZxSpectrum48MemoryDevice(this);
+        IoHandler = new ZxSpectrum48IoHandler(this);
+
+        // --- Bind the CPU, memory, and I/O
+        Cpu.ReadMemoryFunction = MemoryDevice.ReadMemory;
+        Cpu.WriteMemoryFunction = MemoryDevice.WriteMemory;
+        Cpu.ReadPortFunction = IoHandler.ReadPort;
+        Cpu.WritePortFunction = IoHandler.WritePort;
+        Cpu.TactIncrementedHandler = OnTactIncremented;
+    }
+
+    /// <summary>
     /// Represents the keyboard device of ZX Spectrum 48K
     /// </summary>
-    public IKeyboardDevice KeyboardDevice { get; } = new KeyboardDevice();
+    public IKeyboardDevice KeyboardDevice { get; }
 
     /// <summary>
     /// Represents the screen device of ZX Spectrum 48K
     /// </summary>
-    public IScreenDevice ScreenDevice { get; } = new ScreenDevice();
+    public IScreenDevice ScreenDevice { get; }
 
     /// <summary>
     /// Represents the beeper device of ZX Spectrum 48K
     /// </summary>
-    public IBeeperDevice BeeperDevice { get; } = new BeeperDevice();
+    public IBeeperDevice BeeperDevice { get; }
 
     /// <summary>
     /// Represents the floating port device of ZX Spectrum 48K
     /// </summary>
-    public IFloatingPortDevice FloatingPortDevice { get; } = new ZxSpectrum48FloatingPortDevice();
+    public IFloatingPortDevice FloatingPortDevice { get; }
 
     /// <summary>
     /// Represents the tape device of ZX Spectrum 48K
     /// </summary>
-    public ITapeDevice TapeDevice { get; } = new TapeDevice();
+    public ITapeDevice TapeDevice { get; }
 
     /// <summary>
-    /// Represents the memory device of ZX Spectrum 48K
+    /// Represents the CPU's memory handler to read and write the memory contents.
     /// </summary>
-    public override IMemoryDevice MemoryDevice { get; } = new ZxSpectrum48MemoryDevice();
+    public IMemoryDevice MemoryDevice { get; }
 
     /// <summary>
-    /// Represents the I/O handler of ZX Spectrum 48K
+    /// Represents the CPU's I/O handler to read and write I/O ports.
     /// </summary>
-    public override IIoHandler IoHandler { get; } = new ZxSpectrum48IoHandler();
+    public IIoHandler<IZxSpectrum48Machine> IoHandler { get; }
 
     /// <summary>
     /// Executes the machine loop using the current execution context.
@@ -54,7 +75,7 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
     /// <summary>
     /// Every time the CPU clock is incremented with a single T-state, this function is executed.
     /// </summary>
-    protected override void OnTactImcremented()
+    protected override void OnTactIncremented()
     {
         throw new NotImplementedException();
     }

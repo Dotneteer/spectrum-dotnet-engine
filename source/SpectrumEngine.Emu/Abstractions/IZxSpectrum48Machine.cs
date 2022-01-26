@@ -7,29 +7,38 @@
 public interface IZxSpectrum48Machine : IZ80Machine
 {
     /// <summary>
+    /// Represents the memory device of ZX Spectrum 48K
+    /// </summary>
+    IMemoryDevice MemoryDevice { get; }
+
+    /// <summary>
+    /// Represents the I/O handler of ZX Spectrum 48K
+    /// </summary>
+    IIoHandler<IZxSpectrum48Machine> IoHandler { get; }
+
+    /// <summary>
     /// Represents the keyboard device of ZX Spectrum 48K
     /// </summary>
-    public IKeyboardDevice KeyboardDevice { get; }
+    IKeyboardDevice KeyboardDevice { get; }
 
     /// <summary>
     /// Represents the screen device of ZX Spectrum 48K
     /// </summary>
-    public IScreenDevice ScreenDevice { get; }
+    IScreenDevice ScreenDevice { get; }
 
     /// <summary>
     /// Represents the beeper device of ZX Spectrum 48K
     /// </summary>
-    public IBeeperDevice BeeperDevice { get; }
+    IBeeperDevice BeeperDevice { get; }
 
     /// <summary>
     /// Represents the floating port device of ZX Spectrum 48K
     /// </summary>
-    public IFloatingPortDevice FloatingPortDevice { get; }
+    IFloatingPortDevice FloatingPortDevice { get; }
 
     /// <summary>
     /// Represents the tape device of ZX Spectrum 48K
     /// </summary>
-    public ITapeDevice TapeDevice { get; }
-
+    ITapeDevice TapeDevice { get; }
 }
 

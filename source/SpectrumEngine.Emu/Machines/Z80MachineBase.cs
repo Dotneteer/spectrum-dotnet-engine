@@ -25,16 +25,6 @@ public abstract class Z80MachineBase : IZ80Machine
     public int ClockMultiplier { get; set; }
 
     /// <summary>
-    /// Represents the CPU's memory handler to read and write the memory contents.
-    /// </summary>
-    public abstract IMemoryDevice MemoryDevice { get; }
-
-    /// <summary>
-    /// Represents the CPU's I/O handler to read and write I/O ports.
-    /// </summary>
-    public abstract IIoHandler IoHandler { get; }
-
-    /// <summary>
     /// This method provides a way to configure (or reconfigure) the emulated machine after changing the properties
     /// of its components.
     /// </summary>
@@ -68,22 +58,10 @@ public abstract class Z80MachineBase : IZ80Machine
     }
 
     /// <summary>
-    /// Initialize the machine by connecting the CPU with the memory device and the I/O handler.
-    /// </summary>
-    protected Z80MachineBase()
-    {
-        Cpu.ReadMemoryFunction = MemoryDevice.ReadMemory;
-        Cpu.WriteMemoryFunction = MemoryDevice.WriteMemory;
-        Cpu.ReadPortFunction = IoHandler.ReadPort;
-        Cpu.WritePortFunction = IoHandler.WritePort;
-        Cpu.TactIncrementedHandler = OnTactImcremented;
-    }
-
-    /// <summary>
     /// Every time the CPU clock is incremented with a single T-state, this function is executed.
     /// </summary>
     /// <remarks>
     /// Override in derived classes to implement hardware components running parallel with the CPU.
     /// </remarks>
-    protected abstract void OnTactImcremented();
+    protected abstract void OnTactIncremented();
 }

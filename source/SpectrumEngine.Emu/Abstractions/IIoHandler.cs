@@ -7,7 +7,7 @@
 /// An I/O handler should recognize if the emulated machine manages a particular input and output port and behave
 /// accordingly.
 /// </remarks>
-public interface IIoHandler
+public interface IIoHandler<TMachine>: IGenericDevice<TMachine> where TMachine : IZ80Machine
 {
     /// <summary>
     /// Read a byte from the specified I/O port.
