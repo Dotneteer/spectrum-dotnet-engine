@@ -28,6 +28,11 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
     }
 
     /// <summary>
+    /// Gets the ULA issue number of the ZX Spectrum model (2 or 3)
+    /// </summary>
+    public int UlaIssue { get; set; } = 3;
+
+    /// <summary>
     /// Represents the keyboard device of ZX Spectrum 48K
     /// </summary>
     public IKeyboardDevice KeyboardDevice { get; }

@@ -7,6 +7,11 @@
 public interface IZxSpectrum48Machine : IZ80Machine
 {
     /// <summary>
+    /// Gets the ULA issue number of the ZX Spectrum model (2 or 3)
+    /// </summary>
+    int UlaIssue { get; }
+
+    /// <summary>
     /// Represents the memory device of ZX Spectrum 48K
     /// </summary>
     IMemoryDevice MemoryDevice { get; }

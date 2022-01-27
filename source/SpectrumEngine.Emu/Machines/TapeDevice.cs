@@ -15,6 +15,11 @@ public sealed class TapeDevice: ITapeDevice
     }
 
     /// <summary>
+    /// Get the current operation mode of the tape device.
+    /// </summary>
+    public TapeMode TapeMode { get; private set; }
+
+    /// <summary>
     /// Get the machine that hosts the device.
     /// </summary>
     public IZxSpectrum48Machine Machine { get; }
@@ -24,6 +29,24 @@ public sealed class TapeDevice: ITapeDevice
     /// </summary>
     public void Reset()
     {
-        throw new NotImplementedException();
+        // TODO: Implement this method
+    }
+
+    /// <summary>
+    /// This method returns the value of the EAR bit read from the tape.
+    /// </summary>
+    public bool GetTapeEarBit()
+    {
+        // TODO: Implement this method
+        return false;
+    }
+
+    /// <summary>
+    /// Process the specified MIC bit value.
+    /// </summary>
+    /// <param name="micBit">MIC bit to process</param>
+    public void ProcessMicBit(bool micBit)
+    {
+        // TODO: Implement this method
     }
 }

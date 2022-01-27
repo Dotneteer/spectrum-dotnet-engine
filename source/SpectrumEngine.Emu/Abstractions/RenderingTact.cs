@@ -19,6 +19,12 @@ public struct RenderingTact
     /// Display memory address used in the particular tact
     /// </summary>
     public ushort AttributeAddress { get; set; }
+
+    /// <summary>
+    /// This property indicates the pixel buffer index associated with the rendering tact. If this tact displays a
+    /// visible pixel (border or display pixel), this value shows the index in the buffer holding the screen bitmap.
+    /// </summary>
+    public int PixelBufferIndex { get; set; }
 }
 
 /// <summary>
