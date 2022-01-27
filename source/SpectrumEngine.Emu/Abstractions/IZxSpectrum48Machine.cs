@@ -34,7 +34,7 @@ public interface IZxSpectrum48Machine : IZ80Machine
     /// <summary>
     /// Represents the floating port device of ZX Spectrum 48K
     /// </summary>
-    IFloatingPortDevice FloatingPortDevice { get; }
+    IFloatingBusDevice FloatingBusDevice { get; }
 
     /// <summary>
     /// Represents the tape device of ZX Spectrum 48K

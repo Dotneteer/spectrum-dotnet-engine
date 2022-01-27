@@ -41,6 +41,27 @@ public interface IZ80Cpu
     ulong Tacts { get; }
 
     /// <summary>
+    /// Show the number of machine frames completed since the CPU started.
+    /// </summary>
+    uint Frames { get; }
+
+    /// <summary>
+    /// Get the current frame tact within the machine frame being executed.
+    /// </summary>
+    uint CurrentFrameTact { get; }
+
+    /// <summary>
+    /// Get the number of T-states in a machine frame.
+    /// </summary>
+    uint TactsInFrame { get; }
+
+    /// <summary>
+    /// Set the number of tacts in a machine frame.
+    /// </summary>
+    /// <param name="tacts">Number of tacts in a machine frame</param>
+    void SetTactInFrame(uint tacts);
+
+    /// <summary>
     /// This flag indicates if bit 3 or 5 of Register F has been updated. We need to keep this value, as we utilize
     /// it within the `SCF` and `CCF` instructions to calculate the new values of bit 3 and 5 of F.
     /// </summary>

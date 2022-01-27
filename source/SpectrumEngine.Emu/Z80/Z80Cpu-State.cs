@@ -51,7 +51,31 @@ public partial class Z80Cpu
     /// <summary>
     /// The number of T-states (clock cycles) elapsed since the last reset
     /// </summary>
-    public ulong Tacts { get; private set; } = 0;
+    public ulong Tacts => Frames * TactsInFrame + CurrentFrameTact;
+
+    /// <summary>
+    /// Show the number of machine frames completed since the CPU started.
+    /// </summary>
+    public uint Frames { get; private set; } = 0;
+
+    /// <summary>
+    /// Get the current frame tact within the machine frame being executed.
+    /// </summary>
+    public uint CurrentFrameTact { get; private set; } = 0;
+
+    /// <summary>
+    /// Get the number of T-states in a machine frame.
+    /// </summary>
+    public uint TactsInFrame { get; private set; } = 100_000_000;
+
+    /// <summary>
+    /// Set the number of tacts in a machine frame.
+    /// </summary>
+    /// <param name="tacts">Number of tacts in a machine frame</param>
+    public void SetTactInFrame(uint tacts)
+    {
+        TactsInFrame = tacts;
+    }
 
     /// <summary>
     /// This flag indicates if bit 3 or 5 of Register F has been updated. We need to keep this value, as we utilize

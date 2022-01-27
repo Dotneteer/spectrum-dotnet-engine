@@ -10,13 +10,14 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
     /// </summary>
     public ZxSpectrum48Machine()
     {
+        MemoryDevice = new ZxSpectrum48MemoryDevice(this);
+        IoHandler = new ZxSpectrum48IoHandler(this);
         KeyboardDevice = new KeyboardDevice(this);
         ScreenDevice = new ScreenDevice(this);
         BeeperDevice = new BeeperDevice(this);
-        FloatingPortDevice = new ZxSpectrum48FloatingPortDevice(this);
+        FloatingBusDevice = new ZxSpectrum48FloatingBusDevice(this);
         TapeDevice = new TapeDevice(this);
-        MemoryDevice = new ZxSpectrum48MemoryDevice(this);
-        IoHandler = new ZxSpectrum48IoHandler(this);
+        Reset();
 
         // --- Bind the CPU, memory, and I/O
         Cpu.ReadMemoryFunction = MemoryDevice.ReadMemory;
@@ -44,7 +45,7 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
     /// <summary>
     /// Represents the floating port device of ZX Spectrum 48K
     /// </summary>
-    public IFloatingPortDevice FloatingPortDevice { get; }
+    public IFloatingBusDevice FloatingBusDevice { get; }
 
     /// <summary>
     /// Represents the tape device of ZX Spectrum 48K
@@ -60,6 +61,30 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
     /// Represents the CPU's I/O handler to read and write I/O ports.
     /// </summary>
     public IIoHandler<IZxSpectrum48Machine> IoHandler { get; }
+
+    /// <summary>
+    /// Emulates turning on a machine (after it has been turned off).
+    /// </summary>
+    public override void HardReset()
+    {
+        base.HardReset();
+        Reset();
+    }
+
+    /// <summary>
+    /// This method emulates resetting a machine with a hardware reset button.
+    /// </summary>
+    public override void Reset()
+    {
+        base.Reset();
+        MemoryDevice.Reset();
+        IoHandler.Reset();
+        KeyboardDevice.Reset();
+        ScreenDevice.Reset();
+        BeeperDevice.Reset();
+        FloatingBusDevice.Reset();
+        TapeDevice.Reset();
+    }
 
     /// <summary>
     /// Executes the machine loop using the current execution context.

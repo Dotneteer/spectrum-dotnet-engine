@@ -95,7 +95,10 @@ Besides the registers and signals, we keep other CPU state information:
 - **`Iff1`**: This flip-flop indicates if the maskable interrupt is enabled (`true`) or disabled (`false`).
 - **`Iff2`**: The purpose of this flop-flop is to save the status of `Iff1` when a non-maskable interrupt occurs.
 - **`Halted`**: This flag indicates if the CPU is in a halted state.
-- **`Tacts`**: The number of T-states (clock cycles) elapsed since the last reset. You know that accurate timing is at the heart of the CPU's implementation. We use a 64-bit counter, representing a long enough period.
+- **`Tacts`**: The number of T-states (clock cycles) elapsed since the last reset. You know that accurate timing is at the heart of the CPU's implementation. We use a 64-bit counter, representing a long enough period. This state variable is read-only; its value is calculated from `Frames`, `CurrentFrameTact`, and `TactsInFrame`.
+- **`TactsInFrame`: The emulated machine runs a loop of machine frames. Each frame has the same duration in T-states; this property shows their number in a machine frame.
+- **`Frames`**: The number of completed machine frames since the machine started.
+- **`CurrentFrameTact`: Indicates the current tact in the executing machine frame. Its value is between 0 and `TactsInFrame`.
 - **`F53Updated`**, **`PrevF53Updated`**: These flags keep track of modifications of the bit 3 and 5 flags of Register F. We need to keep this value, as we utilize it within the `SCF` and `CCF` instructions to calculate the new values of F.
 - **`OpCode`**: The last fetched opcode. If an instruction is prefixed, it contains the prefix or the opcode following the prefix, depending on which was fetched last.
 - **`Prefix`**: The current prefix to consider when processing the subsequent opcode.
@@ -119,8 +122,7 @@ The code contains predefined increment methods named `TactPlus1`, `TactPlus2`, `
 [MethodImpl(MethodImplOptions.AggressiveInlining)]
 public void TactPlus1()
 {
-    Tacts++;
-    TactIncrementedHandler();
+    IncrementTacts();
 }
 
 // ...
@@ -128,11 +130,19 @@ public void TactPlus1()
 [MethodImpl(MethodImplOptions.AggressiveInlining)]
 public void TactPlus3()
 {
-    Tacts++;
-    TactIncrementedHandler();
-    Tacts++;
-    TactIncrementedHandler();
-    Tacts++;
+    IncrementTacts();
+    IncrementTacts();
+    IncrementTacts();
+}
+
+[MethodImpl(MethodImplOptions.AggressiveInlining)]
+private void IncrementTacts()
+{
+    if (++CurrentFrameTact >= TactsInFrame)
+    {
+        CurrentFrameTact = 0;
+        Frames++;
+    }
     TactIncrementedHandler();
 }
 ```
