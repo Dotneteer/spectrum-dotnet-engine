@@ -10,6 +10,12 @@ Querying the state of a particular key is pretty simple. You can use the Z80 CPU
 
 You read a value bit 1 on its associated data line when a key is not pressed. To sense a pressed key, you issue an `IN` statement that puts a zero bit on the address line of the button, and the code checks the appropriate bit of the data read back.
 
+## Keyboard Implementation Source Code Files
+
+- `Abstractions/IKeyboardDevice.cs`: An abstract definition of the device that implements the keyboard functionality.
+- `Abstractions/SpectrumKeyCode.cs`: An enumerated type to define the 40 physical keys of the ZX Spectrum's keyboard matrix.
+- `Machines/KeyboardDevice.cs`: The class that implements the keyboard functionality.
+
 ## The `IKeyboardDevice` interface
 
 The `IKeyboardDevice` interface describes the operations to emulate the behavior of the keyboard:
@@ -37,6 +43,29 @@ public interface IKeyboardDevice: IGenericDevice<IZxSpectrum48Machine>
     /// <param name="address">Port address of the line to query</param>
     /// <returns>The data byte representing the keyboard status</returns>
     byte GetKeyLineStatus(ushort address);
+}
+```
+
+## The `SpectrumKeyCode` enumeration
+
+Instead of using integers between 0 and 39 for the 40 keys of ZX Spectrum, it is more helpful to use enumerated values to make the code more straightforward and readable. The `SpectrumKeyCode` enumeration translates key names to their internal code:
+
+```csharp
+public enum SpectrumKeyCode
+{
+    CShift = 0,
+    Z = 1,
+    X = 2,
+    C = 3,
+    V = 4,
+
+    // Other key codes are omitted for the sake of brevity.
+ 
+    Space = 35,
+    SShift = 36,
+    M = 37,
+    N = 38,
+    B = 39
 }
 ```
 

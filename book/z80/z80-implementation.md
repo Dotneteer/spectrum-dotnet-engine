@@ -328,6 +328,24 @@ public class Z80TestMachine
 }
 ```
 
+The CPU allows you to add your functions to define the delays of the operations above:
+
+```csharp
+public Z80Cpu()
+{
+    // ...
+    public Action<ushort> MemoryReadDelay { get; }
+    public Action<ushort> MemoryWriteDelay { get; }
+    public Action<ushort> PortReadDelay { get; }
+    public Action<ushort, byte> WritePortFunction { get; set; }
+    // ...
+}
+```
+
+Unless you implement hardware that uses contention or other specific memory or port delay, you do not need to set the delay methods; the `Z80Cpu` constructor sets them up.
+
+If you replace the default implementation with your own, remember that memory operations use at least 3 T-states delay, and I/O port operations add at least 4 T-states. If you use values less than those, you implement a Z80 CPU emulation that violates the hardware concepts.
+
 ## Executing Instructions
 
 One of the essential methods of the `Z80Cpu` is the `ExecuteCpuCyle`, which implements the CPU's execution loop, as its name suggests. It carries out the step you have learned earlier in the [The Execution Cycle of the CPU](#the-execution-cycle-of-the-cpu) section. This method follows the signal an instruction processing state through the following members:
