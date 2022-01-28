@@ -16,8 +16,7 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus1()
     {
-        Tacts++;
-        TactIncrementedHandler();
+        IncrementTacts();
     }
 
     /// <summary>
@@ -26,10 +25,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus2()
     {
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
+        IncrementTacts();
+        IncrementTacts();
     }
 
     /// <summary>
@@ -38,12 +35,9 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus3()
     {
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
     }
 
     /// <summary>
@@ -52,14 +46,10 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus4()
     {
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
     }
 
     /// <summary>
@@ -68,16 +58,11 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus5()
     {
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
     }
 
     /// <summary>
@@ -86,18 +71,12 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus6()
     {
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
     }
 
     /// <summary>
@@ -106,20 +85,13 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus7()
     {
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
-        Tacts++;
-        TactIncrementedHandler();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
+        IncrementTacts();
     }
 
     /// <summary>
@@ -130,8 +102,21 @@ public partial class Z80Cpu
     {
         for (int i = 0; i < n; i++)
         {
-            Tacts++;
-            TactIncrementedHandler();
+            IncrementTacts();
         }
+    }
+
+    /// <summary>
+    /// Increments the current CPU tacts
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void IncrementTacts()
+    {
+        if (++CurrentFrameTact >= TactsInFrame)
+        {
+            CurrentFrameTact = 0;
+            Frames++;
+        }
+        TactIncrementedHandler();
     }
 }

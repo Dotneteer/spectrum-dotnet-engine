@@ -34,7 +34,8 @@ public partial class Z80Cpu
         InterruptMode = 0;
         Iff1 = false;
         Iff2 = false;
-        Tacts = 0;
+        Frames = 0;
+        CurrentFrameTact = 0;
         F53Updated = false;
         PrevF53Updated = false;
 
@@ -60,7 +61,8 @@ public partial class Z80Cpu
         InterruptMode = 0;
         Iff1 = false;
         Iff2 = false;
-        Tacts = 0;
+        Frames = 0;
+        CurrentFrameTact= 0;
         F53Updated = false;
         PrevF53Updated = false;
 

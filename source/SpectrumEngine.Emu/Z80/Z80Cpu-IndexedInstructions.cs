@@ -168,8 +168,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdIXNN()
     {
-        IndexL = ReadCodeMemory();
-        IndexH = ReadCodeMemory();
+        IndexL = FetchCodeByte();
+        IndexH = FetchCodeByte();
     }
 
     /// <summary>
@@ -245,7 +245,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdXHN()
     {
-        IndexH = ReadCodeMemory();
+        IndexH = FetchCodeByte();
     }
 
     /// <summary>
@@ -281,7 +281,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdIXNNi()
     {
-        var addr = (ushort)(ReadCodeMemory() + (ReadCodeMemory() << 8));
+        var addr = (ushort)(FetchCodeByte() + (FetchCodeByte() << 8));
         IndexL = ReadMemory(addr);
         Regs.WZ = addr = (ushort)(addr + 1);
         IndexH = ReadMemory(addr);
@@ -344,7 +344,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdXLN()
     {
-        IndexL = ReadCodeMemory();
+        IndexL = FetchCodeByte();
     }
 
     /// <summary>
@@ -423,9 +423,9 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdIXiN()
     {
-        byte dist = ReadCodeMemory();
+        byte dist = FetchCodeByte();
         Regs.WZ = (ushort)(IndexReg + (sbyte)dist);
-        byte value = ReadCodeMemory();
+        byte value = FetchCodeByte();
         TactPlus2(Regs.PC);
         WriteMemory(Regs.WZ, value);
     }
