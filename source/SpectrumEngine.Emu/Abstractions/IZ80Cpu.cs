@@ -53,13 +53,13 @@ public interface IZ80Cpu
     /// <summary>
     /// Get the number of T-states in a machine frame.
     /// </summary>
-    uint TactsInFrame { get; }
+    int TactsInFrame { get; }
 
     /// <summary>
     /// Set the number of tacts in a machine frame.
     /// </summary>
     /// <param name="tacts">Number of tacts in a machine frame</param>
-    void SetTactInFrame(uint tacts);
+    void SetTactsInFrame(int tacts);
 
     /// <summary>
     /// This flag indicates if bit 3 or 5 of Register F has been updated. We need to keep this value, as we utilize

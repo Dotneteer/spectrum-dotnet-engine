@@ -51,7 +51,7 @@ public partial class Z80Cpu
     /// <summary>
     /// The number of T-states (clock cycles) elapsed since the last reset
     /// </summary>
-    public ulong Tacts => Frames * TactsInFrame + CurrentFrameTact;
+    public ulong Tacts => (ulong)(Frames * TactsInFrame + CurrentFrameTact);
 
     /// <summary>
     /// Show the number of machine frames completed since the CPU started.
@@ -66,13 +66,13 @@ public partial class Z80Cpu
     /// <summary>
     /// Get the number of T-states in a machine frame.
     /// </summary>
-    public uint TactsInFrame { get; private set; } = 100_000_000;
+    public int TactsInFrame { get; private set; } = 100_000_000;
 
     /// <summary>
     /// Set the number of tacts in a machine frame.
     /// </summary>
     /// <param name="tacts">Number of tacts in a machine frame</param>
-    public void SetTactInFrame(uint tacts)
+    public void SetTactsInFrame(int tacts)
     {
         TactsInFrame = tacts;
     }

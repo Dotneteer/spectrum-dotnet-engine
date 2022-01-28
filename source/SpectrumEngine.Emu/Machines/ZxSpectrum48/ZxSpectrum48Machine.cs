@@ -99,7 +99,8 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
     /// </returns>
     public override LoopTerminationMode ExecuteMachineLoop()
     {
-        throw new NotImplementedException();
+        // TODO: Implement this method
+        return LoopTerminationMode.Normal;
     }
 
     /// <summary>
@@ -107,6 +108,6 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
     /// </summary>
     protected override void OnTactIncremented()
     {
-        throw new NotImplementedException();
+        // TODO: Implement this method
     }
 }

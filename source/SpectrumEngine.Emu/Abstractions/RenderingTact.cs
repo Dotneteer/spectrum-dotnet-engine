@@ -25,6 +25,11 @@ public struct RenderingTact
     /// visible pixel (border or display pixel), this value shows the index in the buffer holding the screen bitmap.
     /// </summary>
     public int PixelBufferIndex { get; set; }
+
+    /// <summary>
+    /// This property refers to a function that knows how to render the specified tact.
+    /// </summary>
+    public Action RenderingAction { get; set; }
 }
 
 /// <summary>
@@ -53,7 +58,7 @@ public enum RenderingPhase : byte
     /// display, and it prepares to display the first pixel in the row by pre-fetching the corresponding attribute
     /// byte from the display memory.
     /// </summary>
-    BorderFetchPixelAttr,
+    BorderFetchAttr,
 
     /// <summary>
     /// The ULA displays the subsequent two pixels of Byte1 sequentially during a single Z80 clock cycle.
