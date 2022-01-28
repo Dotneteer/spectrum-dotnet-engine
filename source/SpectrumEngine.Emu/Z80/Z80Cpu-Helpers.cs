@@ -21,14 +21,14 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private byte ReadMemory(ushort address)
     {
-        TactPlus3();
+        MemoryReadDelay(address);
         return ReadMemoryFunction(address);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private byte ReadCodeMemory()
     {
-        TactPlus3();
+        MemoryReadDelay(Regs.PC);
         return ReadMemoryFunction(Regs.PC++);
     }
 
@@ -43,7 +43,7 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteMemory(ushort address, byte data)
     {
-        TactPlus3();
+        MemoryWriteDelay(address);
         WriteMemoryFunction(address, data);
     }
 
