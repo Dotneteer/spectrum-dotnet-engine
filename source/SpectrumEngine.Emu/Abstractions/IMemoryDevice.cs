@@ -17,7 +17,20 @@ public interface IMemoryDevice: IGenericDevice<IZxSpectrum48Machine>
     /// </summary>
     /// <param name="address">16-bit memory address</param>
     /// <param name="value">Byte to write into the memory</param>
+    /// <remarks>
+    /// This method does not write into ROM.
+    /// </remarks>
     void WriteMemory(ushort address, byte value);
+
+    /// <summary>
+    /// Write the given byte to the specified memory address
+    /// </summary>
+    /// <param name="address">16-bit memory address</param>
+    /// <param name="value">Byte to write into the memory</param>
+    /// <remarks>
+    /// This method allows writing into ROM.
+    /// </remarks>
+    void DirectWrite(ushort address, byte value);
 
     /// <summary>
     /// This method allocates storage for the memory contention values.

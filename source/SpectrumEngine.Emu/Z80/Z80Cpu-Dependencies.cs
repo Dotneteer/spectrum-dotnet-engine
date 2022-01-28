@@ -26,17 +26,7 @@ public partial class Z80Cpu
     /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 3 T-states!
     /// </remarks>
-    public Action<ushort> MemoryReadDelay { get; }
-
-    /// <summary>
-    /// This function implements the memory write delay of the CPU.
-    /// </summary>
-    /// <remarks>
-    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
-    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
-    /// the CPU tacts at least with 3 T-states!
-    /// </remarks>
-    public Action<ushort> MemoryWriteDelay { get; }
+    public Action<ushort> MemoryReadDelayFunction { get; set; }
 
     /// <summary>
     /// This function writes a byte (8-bit) to the 16-bit memory address provided in the first argument.
@@ -46,6 +36,16 @@ public partial class Z80Cpu
     /// write operation.
     /// </remarks>
     public Action<ushort, byte> WriteMemoryFunction { get; set; }
+
+    /// <summary>
+    /// This function implements the memory write delay of the CPU.
+    /// </summary>
+    /// <remarks>
+    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
+    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
+    /// the CPU tacts at least with 3 T-states!
+    /// </remarks>
+    public Action<ushort> MemoryWriteDelayFunction { get; set; }
 
     /// <summary>
     /// This function reads a byte (8-bit) from an I/O port using the provided 16-bit address.
@@ -64,7 +64,7 @@ public partial class Z80Cpu
     /// action, the Z80 CPU will use its default 4-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 4 T-states!
     /// </remarks>
-    public Action<ushort> PortReadDelay { get; }
+    public Action<ushort> PortReadDelayFunction { get; set; }
 
     /// <summary>
     /// This function writes a byte (8-bit) to the 16-bit I/O port address provided in the first argument.
@@ -83,7 +83,7 @@ public partial class Z80Cpu
     /// action, the Z80 CPU will use its default 4-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 4 T-states!
     /// </remarks>
-    public Action<ushort> PortWriteDelay { get; }
+    public Action<ushort> PortWriteDelayFunction { get; set; }
 
     /// <summary>
     /// Every time the CPU clock is incremented with a single T-state, this function is executed.

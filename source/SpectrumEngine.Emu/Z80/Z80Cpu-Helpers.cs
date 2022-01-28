@@ -21,14 +21,18 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private byte ReadMemory(ushort address)
     {
-        MemoryReadDelay(address);
+        MemoryReadDelayFunction(address);
         return ReadMemoryFunction(address);
     }
 
+    /// <summary>
+    /// Reads the code byte from the current Program Counter address and then increments the Program Counter.
+    /// </summary>
+    /// <returns>The byte read.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private byte ReadCodeMemory()
+    private byte FetchCodeByte()
     {
-        MemoryReadDelay(Regs.PC);
+        MemoryReadDelayFunction(Regs.PC);
         return ReadMemoryFunction(Regs.PC++);
     }
 
@@ -43,7 +47,7 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteMemory(ushort address, byte data)
     {
-        MemoryWriteDelay(address);
+        MemoryWriteDelayFunction(address);
         WriteMemoryFunction(address, data);
     }
 
@@ -60,7 +64,7 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private byte ReadPort(ushort address)
     {
-        TactPlus4();
+        PortReadDelayFunction(address);
         return ReadPortFunction(address);
     }
 
@@ -77,7 +81,7 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WritePort(ushort address, byte data)
     {
-        TactPlus4();
+        PortWriteDelayFunction(address);
         WritePortFunction(address, data);
     }
 
@@ -127,8 +131,8 @@ public partial class Z80Cpu
     /// <param name="high">MSB value to store</param>
     private void Store16(byte low, byte high)
     {
-        ushort tmp = ReadCodeMemory();
-        tmp += (ushort)(ReadCodeMemory() << 8);
+        ushort tmp = FetchCodeByte();
+        tmp += (ushort)(FetchCodeByte() << 8);
         WriteMemory(tmp, low);
         tmp += 1;
         Regs.WZ = tmp;

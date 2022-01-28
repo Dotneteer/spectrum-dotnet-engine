@@ -334,10 +334,10 @@ The CPU allows you to add your functions to define the delays of the operations 
 public Z80Cpu()
 {
     // ...
-    public Action<ushort> MemoryReadDelay { get; }
-    public Action<ushort> MemoryWriteDelay { get; }
-    public Action<ushort> PortReadDelay { get; }
-    public Action<ushort, byte> WritePortFunction { get; set; }
+    public Action<ushort> MemoryReadDelayFunction { get; set; }
+    public Action<ushort> MemoryWriteDelayFunction { get; set; }
+    public Action<ushort> PortReadDelayFunction { get; set; }
+    public Action<ushort> PortWriteDelayFunction { get; set; }
     // ...
 }
 ```
@@ -345,6 +345,45 @@ public Z80Cpu()
 Unless you implement hardware that uses contention or other specific memory or port delay, you do not need to set the delay methods; the `Z80Cpu` constructor sets them up.
 
 If you replace the default implementation with your own, remember that memory operations use at least 3 T-states delay, and I/O port operations add at least 4 T-states. If you use values less than those, you implement a Z80 CPU emulation that violates the hardware concepts.
+
+The `Z80Cpu` class defines its private functions to manage the memory and the I/O ports. All CPU instructions invoke only these methods to ensure that these operations apply the delay according to the current hardware emulation:
+
+```csharp
+[MethodImpl(MethodImplOptions.AggressiveInlining)]
+private byte ReadMemory(ushort address)
+{
+    MemoryReadDelayFunction(address);
+    return ReadMemoryFunction(address);
+}
+
+[MethodImpl(MethodImplOptions.AggressiveInlining)]
+private byte FetchCodeByte()
+{
+    MemoryReadDelayFunction(Regs.PC);
+    return ReadMemoryFunction(Regs.PC++);
+}
+
+[MethodImpl(MethodImplOptions.AggressiveInlining)]
+private void WriteMemory(ushort address, byte data)
+{
+    MemoryWriteDelayFunction(address);
+    WriteMemoryFunction(address, data);
+}
+
+[MethodImpl(MethodImplOptions.AggressiveInlining)]
+private byte ReadPort(ushort address)
+{
+    PortReadDelayFunction(address);
+    return ReadPortFunction(address);
+}
+
+[MethodImpl(MethodImplOptions.AggressiveInlining)]
+private void WritePort(ushort address, byte data)
+{
+    PortWriteDelayFunction(address);
+    WritePortFunction(address, data);
+}
+```
 
 ## Executing Instructions
 

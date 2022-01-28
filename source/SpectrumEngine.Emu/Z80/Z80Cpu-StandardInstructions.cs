@@ -82,8 +82,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdBCNN()
     {
-        Regs.C = ReadCodeMemory();
-        Regs.B = ReadCodeMemory();
+        Regs.C = FetchCodeByte();
+        Regs.B = FetchCodeByte();
     }
 
     /// <summary>
@@ -169,7 +169,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdBN()
     {
-        Regs.B = ReadCodeMemory();
+        Regs.B = FetchCodeByte();
     }
 
     /// <summary>
@@ -314,7 +314,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdCN()
     {
-        Regs.C = ReadCodeMemory();
+        Regs.C = FetchCodeByte();
     }
 
     /// <summary>
@@ -366,7 +366,7 @@ public partial class Z80Cpu
     private void Djnz()
     {
         TactPlus1(Regs.IR);
-        var e = ReadCodeMemory();
+        var e = FetchCodeByte();
         if (--Regs.B != 0)
         {
             RelativeJump(e);
@@ -385,8 +385,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdDENN()
     {
-        Regs.E = ReadCodeMemory();
-        Regs.D = ReadCodeMemory();
+        Regs.E = FetchCodeByte();
+        Regs.D = FetchCodeByte();
     }
 
     /// <summary>
@@ -472,7 +472,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdDN()
     {
-        Regs.D = ReadCodeMemory();
+        Regs.D = FetchCodeByte();
     }
 
     /// <summary>
@@ -516,7 +516,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void JrE()
     {
-        RelativeJump(ReadCodeMemory());
+        RelativeJump(FetchCodeByte());
     }
 
     /// <summary>
@@ -620,7 +620,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdEN()
     {
-        Regs.E = ReadCodeMemory();
+        Regs.E = FetchCodeByte();
     }
 
     /// <summary>
@@ -668,7 +668,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void JrNZ()
     {
-        var e = ReadCodeMemory();
+        var e = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.Z) == 0)
         {
             RelativeJump(e);
@@ -686,8 +686,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdHLNN()
     {
-        Regs.L = ReadCodeMemory();
-        Regs.H = ReadCodeMemory();
+        Regs.L = FetchCodeByte();
+        Regs.H = FetchCodeByte();
     }
 
     /// <summary>
@@ -773,7 +773,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdHN()
     {
-        Regs.H = ReadCodeMemory();
+        Regs.H = FetchCodeByte();
     }
 
     /// <summary>
@@ -866,7 +866,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void JrZ()
     {
-        var e = ReadCodeMemory();
+        var e = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.Z) != 0)
         {
             RelativeJump(e);
@@ -904,8 +904,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdHLNNi()
     {
-        ushort adr = ReadCodeMemory();
-        adr += (ushort)(ReadCodeMemory() << 8);
+        ushort adr = FetchCodeByte();
+        adr += (ushort)(FetchCodeByte() << 8);
         Regs.WZ = (ushort)(adr + 1);
         ushort val = ReadMemory(adr);
         val += (ushort)(ReadMemory(Regs.WZ) << 8);
@@ -979,7 +979,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdLN()
     {
-        Regs.L = ReadCodeMemory();
+        Regs.L = FetchCodeByte();
     }
 
     /// <summary>
@@ -1019,7 +1019,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void JrNC()
     {
-        var e = ReadCodeMemory();
+        var e = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.C) == 0)
         {
             RelativeJump(e);
@@ -1038,7 +1038,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdSPNN()
     {
-        Regs.SP = (ushort)(ReadCodeMemory() + (ReadCodeMemory() << 8));
+        Regs.SP = (ushort)(FetchCodeByte() + (FetchCodeByte() << 8));
     }
 
     /// <summary>
@@ -1052,8 +1052,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdNNiA()
     {
-        var l = ReadCodeMemory();
-        var addr = (ushort)((ReadCodeMemory() << 8) | l);
+        var l = FetchCodeByte();
+        var addr = (ushort)((FetchCodeByte() << 8) | l);
         Regs.WL = (byte)((addr + 1) & 0xFF);
         Regs.WH = Regs.A;
         WriteMemory(addr, Regs.A);
@@ -1135,7 +1135,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdHLiN()
     {
-        var val = ReadCodeMemory();
+        var val = FetchCodeByte();
         WriteMemory(Regs.HL, val);
     }
 
@@ -1173,7 +1173,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void JrC()
     {
-        var e = ReadCodeMemory();
+        var e = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.C) != 0)
         {
             RelativeJump(e);
@@ -1210,8 +1210,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdANNi()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         Regs.A = ReadMemory(Regs.WZ);
         Regs.WZ++;
     }
@@ -1283,7 +1283,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdAN()
     {
-        Regs.A = ReadCodeMemory();
+        Regs.A = FetchCodeByte();
     }
 
     /// <summary>
@@ -3478,8 +3478,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void JpNZ_NN()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.Z) == 0)
         {
             Regs.PC = Regs.WZ;
@@ -3498,8 +3498,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void JpNN()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         Regs.PC = Regs.WZ;
     }
 
@@ -3522,8 +3522,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void CallNZ()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.Z) == 0)
         {
             CallCore();
@@ -3567,7 +3567,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void AddAN()
     {
-        Add8(ReadCodeMemory());
+        Add8(FetchCodeByte());
     }
 
     /// <summary>
@@ -3648,8 +3648,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void JpZ_NN()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.Z) != 0)
         {
             Regs.PC = Regs.WZ;
@@ -3675,8 +3675,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void CallZ()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.Z) != 0)
         {
             CallCore();
@@ -3700,8 +3700,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void CallNN()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         CallCore();
     }
 
@@ -3722,7 +3722,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void AdcAN()
     {
-        Adc8(ReadCodeMemory());
+        Adc8(FetchCodeByte());
     }
 
     /// <summary>
@@ -3803,8 +3803,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void JpNC_NN()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.C) == 0)
         {
             Regs.PC = Regs.WZ;
@@ -3824,7 +3824,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void OutNA()
     {
-        var nn = ReadCodeMemory();
+        var nn = FetchCodeByte();
         var port = (ushort)(nn | (Regs.A << 8));
         Regs.WH = Regs.A;
         Regs.WL = (byte)(nn + 1);
@@ -3850,8 +3850,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void CallNC()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.C) == 0)
         {
             CallCore();
@@ -3896,7 +3896,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void SubAN()
     {
-        Sub8(ReadCodeMemory());
+        Sub8(FetchCodeByte());
     }
 
     /// <summary>
@@ -3971,8 +3971,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void JpC_NN()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.C) != 0)
         {
             Regs.PC = Regs.WZ;
@@ -3992,7 +3992,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void InAN()
     {
-        var inTemp = (ushort)(ReadCodeMemory() | (Regs.A << 8));
+        var inTemp = (ushort)(FetchCodeByte() | (Regs.A << 8));
         Regs.A = ReadPort(inTemp);
         Regs.WZ = (ushort)(inTemp + 1);
     }
@@ -4016,8 +4016,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void CallC()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.C) != 0)
         {
             CallCore();
@@ -4041,7 +4041,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void SbcAN()
     {
-        Sbc8(ReadCodeMemory());
+        Sbc8(FetchCodeByte());
     }
 
     /// <summary>
@@ -4122,8 +4122,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void JpPO_NN()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.PV) == 0)
         {
             Regs.PC = Regs.WZ;
@@ -4174,8 +4174,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void CallPO()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.PV) == 0)
         {
             CallCore();
@@ -4220,7 +4220,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void AndAN()
     {
-        And8(ReadCodeMemory());
+        And8(FetchCodeByte());
     }
 
     /// <summary>
@@ -4295,8 +4295,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void JpPE_NN()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.PV) != 0)
         {
             Regs.PC = Regs.WZ;
@@ -4336,8 +4336,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void CallPE()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.PV) != 0)
         {
             CallCore();
@@ -4361,7 +4361,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void XorAN()
     {
-        Xor8(ReadCodeMemory());
+        Xor8(FetchCodeByte());
     }
 
     /// <summary>
@@ -4442,8 +4442,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void JpP_NN()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.S) == 0)
         {
             Regs.PC = Regs.WZ;
@@ -4483,8 +4483,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void CallP()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.S) == 0)
         {
             CallCore();
@@ -4529,7 +4529,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void OrAN()
     {
-        Or8(ReadCodeMemory());
+        Or8(FetchCodeByte());
     }
 
     /// <summary>
@@ -4604,8 +4604,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void JpM_NN()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.S) != 0)
         {
             Regs.PC = Regs.WZ;
@@ -4648,8 +4648,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void CallM()
     {
-        Regs.WL = ReadCodeMemory();
-        Regs.WH = ReadCodeMemory();
+        Regs.WL = FetchCodeByte();
+        Regs.WH = FetchCodeByte();
         if ((Regs.F & FlagsSetMask.S) != 0)
         {
             CallCore();
@@ -4673,7 +4673,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void CpAN()
     {
-        Cp8(ReadCodeMemory());
+        Cp8(FetchCodeByte());
     }
 
     /// <summary>

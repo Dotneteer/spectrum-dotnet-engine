@@ -17,6 +17,9 @@ public class ZxSpectrum48IoHandler : IIoHandler<IZxSpectrum48Machine>
     // --- Tacts value when last time bit 4 of $fe changed from 1 to 0
     private ulong _portBit4ChangedFrom1Tacts;
 
+    // --- Store a shortcut to the Z80 CPU.
+    private IZ80Cpu _cpu;
+
     /// <summary>
     /// Initialize the I/O handler and assign it to its host machine.
     /// </summary>
@@ -24,6 +27,11 @@ public class ZxSpectrum48IoHandler : IIoHandler<IZxSpectrum48Machine>
     public ZxSpectrum48IoHandler(IZxSpectrum48Machine machine)
     {
         Machine = machine;
+        _cpu = machine.Cpu;
+
+        // --- Set up the contention methods
+        _cpu.PortReadDelayFunction = _cpu.PortWriteDelayFunction =
+            (ushort address) => DelayContendedIo(address);
     }
 
     /// <summary>
@@ -36,6 +44,7 @@ public class ZxSpectrum48IoHandler : IIoHandler<IZxSpectrum48Machine>
     /// </summary>
     public void Reset()
     {
+        // --- Nothing to do
     }
 
     /// <summary>
@@ -156,6 +165,65 @@ public class ZxSpectrum48IoHandler : IIoHandler<IZxSpectrum48Machine>
                 _portBit4ChangedFrom0Tacts = Machine.Cpu.Tacts;
                 _portBit4LastValue = true;
             }
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="address"></param>
+    private void DelayContendedIo(ushort address)
+    {
+        var lowbit = (address & 0x0001) != 0;
+        var memoryDevice = Machine.MemoryDevice;
+
+        // --- Check for contended range
+        if ((address & 0xc000) == 0x4000)
+        {
+            if (lowbit)
+            {
+                // --- Low bit set, C:1, C:1, C:1, C:1
+                applyContentionDelay();
+                _cpu.TactPlus1();
+                applyContentionDelay();
+                _cpu.TactPlus1();
+                applyContentionDelay();
+                _cpu.TactPlus1();
+                applyContentionDelay();
+                _cpu.TactPlus1();
+            }
+            else
+            {
+                // --- Low bit reset, C:1, C:3
+                applyContentionDelay();
+                _cpu.TactPlus1();
+                applyContentionDelay();
+                _cpu.TactPlus3();
+            }
+        }
+        else
+        {
+            if (lowbit)
+            {
+                // --- Low bit set, N:4
+                _cpu.TactPlus4();
+            }
+            else
+            {
+                // --- Low bit reset, C:1, C:3
+                applyContentionDelay();
+                _cpu.TactPlus1();
+                applyContentionDelay();
+                _cpu.TactPlus3();
+            }
+        }
+
+        // --- Apply I/O contention
+        void applyContentionDelay()
+        {
+            var delay = memoryDevice.GetContentionValue((int)_cpu.CurrentFrameTact / Machine.ClockMultiplier);
+            _cpu.TactPlusN(delay);
+
         }
     }
 }

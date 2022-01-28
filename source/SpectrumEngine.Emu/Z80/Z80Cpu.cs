@@ -30,16 +30,16 @@ public partial class Z80Cpu: IZ80Cpu
         // --- Memory and I/O handlers
         ReadMemoryFunction = (ushort address) 
             => throw new InvalidOperationException("ReadMemoryFunction has not been set.");
-        MemoryReadDelay = (ushort address) => TactPlus3();
+        MemoryReadDelayFunction = (ushort address) => TactPlus3();
         WriteMemoryFunction = (ushort address, byte data)
             => throw new InvalidOperationException("WriteMemoryFunction has not been set.");
-        MemoryWriteDelay = (ushort address) => TactPlus3();
+        MemoryWriteDelayFunction = (ushort address) => TactPlus3();
         ReadPortFunction = (ushort address)
             => throw new InvalidOperationException("ReadPortFunction has not been set.");
-        PortReadDelay = (ushort address) => TactPlus4();
+        PortReadDelayFunction = (ushort address) => TactPlus4();
         WritePortFunction = (ushort address, byte data)
             => throw new InvalidOperationException("WritePortFunction has not been set.");
-        PortWriteDelay = (ushort address) => TactPlus4();
+        PortWriteDelayFunction = (ushort address) => TactPlus4();
 
         // --- Concurrency with other hardware components
         TactIncrementedHandler = () => { };

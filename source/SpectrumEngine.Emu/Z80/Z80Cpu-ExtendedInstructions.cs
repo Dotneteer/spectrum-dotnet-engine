@@ -274,8 +274,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdBCNNi()
     {
-        ushort tmp = ReadCodeMemory();
-        tmp += (ushort)(ReadCodeMemory() << 8);
+        ushort tmp = FetchCodeByte();
+        tmp += (ushort)(FetchCodeByte() << 8);
         Regs.C = ReadMemory(tmp);
         tmp += 1;
         Regs.WZ = tmp;
@@ -500,8 +500,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdDENNi()
     {
-        ushort tmp = ReadCodeMemory();
-        tmp += (ushort)(ReadCodeMemory() << 8);
+        ushort tmp = FetchCodeByte();
+        tmp += (ushort)(FetchCodeByte() << 8);
         Regs.E = ReadMemory(tmp);
         tmp += 1;
         Regs.WZ = tmp;
@@ -908,8 +908,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void LdSPNNi()
     {
-        ushort tmp = ReadCodeMemory();
-        tmp += (ushort)(ReadCodeMemory() << 8);
+        ushort tmp = FetchCodeByte();
+        tmp += (ushort)(FetchCodeByte() << 8);
         byte val = ReadMemory(tmp);
         tmp += 1;
         Regs.WZ = tmp;
