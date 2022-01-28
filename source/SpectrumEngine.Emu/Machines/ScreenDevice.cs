@@ -158,7 +158,7 @@ public sealed class ScreenDevice : IScreenDevice
     /// </summary>
     private void InitializeInkAndPaperTables()
     {
-        throw new NotImplementedException();
+        // TODO: Implement this method
     }
 
     /// <summary>
@@ -167,7 +167,7 @@ public sealed class ScreenDevice : IScreenDevice
     /// <exception cref="NotImplementedException"></exception>
     private void InitializeRenderingTactTable()
     {
-        throw new NotImplementedException();
+        // TODO: Implement this method
     }
 }
 

@@ -39,6 +39,6 @@ public sealed class BeeperDevice : IBeeperDevice
     /// </summary>
     public void Reset()
     {
-        throw new NotImplementedException();
+        // TODO: Implement this method
     }
 }

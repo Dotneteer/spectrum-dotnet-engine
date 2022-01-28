@@ -24,7 +24,7 @@ public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice
     /// </summary>
     public void Reset()
     {
-        throw new NotImplementedException();
+        // TODO: Implement this method
     }
 
     /// <summary>

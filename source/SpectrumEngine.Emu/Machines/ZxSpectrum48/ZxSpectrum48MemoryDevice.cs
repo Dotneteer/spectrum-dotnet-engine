@@ -24,7 +24,7 @@ public sealed class ZxSpectrum48MemoryDevice: IMemoryDevice
     /// </summary>
     public void Reset()
     {
-        throw new NotImplementedException();
+        // TODO: Implement this method
     }
 
     /// <summary>

@@ -31,7 +31,7 @@ public sealed class KeyboardDevice: IKeyboardDevice
     /// </summary>
     public void Reset()
     {
-        // --- Nothing to do
+        for (var i = 0; i < 8; i++) _lineStatus[i] = 0;
     }
 
     /// <summary>
@@ -69,16 +69,12 @@ public sealed class KeyboardDevice: IKeyboardDevice
     {
         byte status = 0;
         var lines = (byte)~(address >> 8);
-
-        var lineIndex = 0;
-        while (lines > 0)
+        for (var line = 0; line < 8; line++)
         {
-            if ((lines & 0x01) != 0)
+            if ((lines & (1 << line)) != 0)
             {
-                status |= _lineStatus[lineIndex];
+                status |= _lineStatus[line];
             }
-            lineIndex++;
-            lines >>= 1;
         }
         return (byte)~status;
     }
