@@ -1,4 +1,4 @@
-﻿namespace SpectrumEngine.Emu.Test;
+﻿namespace SpectrumEngine.Emu.Test.Z80;
 
 public class StandardOpTests0x10
 {

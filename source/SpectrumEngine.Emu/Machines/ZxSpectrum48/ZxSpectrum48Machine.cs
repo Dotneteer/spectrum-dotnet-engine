@@ -6,10 +6,16 @@
 public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
 {
     /// <summary>
+    /// Specify the name of the default ROM's resource file within this assembly.
+    /// </summary>
+    protected override string DefaultRomResource => "ZxSpectrum48";
+
+    /// <summary>
     /// Initialize the machine
     /// </summary>
     public ZxSpectrum48Machine()
     {
+        // --- Create and initialize devices
         MemoryDevice = new ZxSpectrum48MemoryDevice(this);
         IoHandler = new ZxSpectrum48IoHandler(this);
         KeyboardDevice = new KeyboardDevice(this);
@@ -19,12 +25,19 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
         TapeDevice = new TapeDevice(this);
         Reset();
 
+        // --- Set up machine attributes
+        BaseClockFrequency = 3_500_000;
+        ScreenDevice.SetMemoryScreenOffset(0x4000);
+
         // --- Bind the CPU, memory, and I/O
         Cpu.ReadMemoryFunction = MemoryDevice.ReadMemory;
         Cpu.WriteMemoryFunction = MemoryDevice.WriteMemory;
         Cpu.ReadPortFunction = IoHandler.ReadPort;
         Cpu.WritePortFunction = IoHandler.WritePort;
         Cpu.TactIncrementedHandler = OnTactIncremented;
+
+        // --- Initialize the machine's ROM
+        UploadRomBytes(LoadRomFromResource(DefaultRomResource));
     }
 
     /// <summary>
@@ -109,5 +122,17 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
     protected override void OnTactIncremented()
     {
         // TODO: Implement this method
+    }
+
+    /// <summary>
+    /// Uploades the specified ROM information to the ZX Spectrum 48 ROM memory
+    /// </summary>
+    /// <param name="data">ROM contents</param>
+    private void UploadRomBytes(byte[] data)
+    {
+        for (var i = 0; i < data.Length; i++)
+        {
+            MemoryDevice.DirectWrite((ushort)i, data[i]);
+        }
     }
 }

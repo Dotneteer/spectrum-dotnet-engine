@@ -17,6 +17,11 @@ public interface IZ80Machine
     IZ80Cpu Cpu { get; }
 
     /// <summary>
+    /// Get the base clock frequency of the CPU. We use this value to calculate the machine frame rate.
+    /// </summary>
+    int BaseClockFrequency { get; }
+
+    /// <summary>
     /// This method provides a way to configure (or reconfigure) the emulated machine after changing the properties
     /// of its components.
     /// </summary>

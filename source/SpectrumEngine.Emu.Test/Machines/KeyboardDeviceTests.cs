@@ -1,4 +1,4 @@
-﻿namespace SpectrumEngine.Emu.Test;
+﻿namespace SpectrumEngine.Emu.Test.Machines;
 
 public class KeyboardDeviceTests
 {

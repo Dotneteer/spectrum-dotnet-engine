@@ -1,6 +1,6 @@
 ﻿using static SpectrumEngine.Emu.Z80Cpu;
 
-namespace SpectrumEngine.Emu.Test;
+namespace SpectrumEngine.Emu.Test.Z80;
 
 public class BitOpTests0x30
 {
