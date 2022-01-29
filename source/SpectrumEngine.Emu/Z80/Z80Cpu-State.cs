@@ -16,7 +16,7 @@ public partial class Z80Cpu
     /// <summary>
     /// The current state of the Z80 signal flags
     /// </summary>
-    public Z80Signals SignalFlags { get; private set; } = Z80Signals.None;
+    public Z80Signals SignalFlags { get; set; } = Z80Signals.None;
 
     /// <summary>
     /// The current maskable interrupt mode (0, 1, or 2)

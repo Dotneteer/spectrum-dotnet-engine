@@ -3,7 +3,9 @@
 /// <summary>
 /// This class represents the emulator of a ZX Spectrum 48 machine.
 /// </summary>
-public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
+public sealed class ZxSpectrum48Machine : 
+    Z80MachineBase, 
+    IZxSpectrum48Machine
 {
     /// <summary>
     /// Specify the name of the default ROM's resource file within this assembly.
@@ -112,24 +114,29 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
     }
 
     /// <summary>
-    /// Executes the machine loop using the current execution context.
+    /// The machine's execution loop calls this method when it is about to initialize a new frame.
+    /// </summary>
+    /// <param name="clockMultiplierChanged">
+    /// Indicates if the clock multiplier has been changed since the execution of the previous frame.
+    /// </param>
+    protected override void OnInitNewFrame(bool clockMultiplierChanged)
+    {
+    }
+
+    /// <summary>
+    /// Tests if the machine should raise a Z80 maskable interrupt
     /// </summary>
     /// <returns>
-    /// The value indicates the termination reason of the loop. 
+    /// True, if the INT signal should be active; otherwise, false.
     /// </returns>
-    public override LoopTerminationMode ExecuteMachineLoop()
+    protected override bool ShouldRaiseInterrupt() => Cpu.CurrentFrameTact / Cpu.ClockMultiplier < 32;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    protected override void AfterInstructionExecuted()
     {
-        // --- Sign that the loop execution is in progress
-        ExecutionContext.LastTerminationReason = null;
 
-        //// --- Test frame completion 
-        //if (!FrameCompleted && (Cpu.CurrentFrameTact >= Cpu.TactsInFrame * Cpu.ClockMultiplier))
-        //{
-        //    FrameCompleted = true;
-        //    Cpu.tacts %= tactsInFrame * clockMultiplier;
-        //}
-
-        return LoopTerminationMode.Normal;
     }
 
     /// <summary>

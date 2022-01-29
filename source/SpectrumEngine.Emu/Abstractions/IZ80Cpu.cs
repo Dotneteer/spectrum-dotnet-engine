@@ -13,7 +13,7 @@ public interface IZ80Cpu
     /// <summary>
     /// The current state of the Z80 signal flags
     /// </summary>
-    Z80Cpu.Z80Signals SignalFlags { get; }
+    Z80Cpu.Z80Signals SignalFlags { get; set; }
 
     /// <summary>
     /// The current maskable interrupt mode (0, 1, or 2)
