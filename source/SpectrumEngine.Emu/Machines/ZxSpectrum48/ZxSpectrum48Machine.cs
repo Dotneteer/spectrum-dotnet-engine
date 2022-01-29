@@ -15,6 +15,10 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
     /// </summary>
     public ZxSpectrum48Machine()
     {
+        // --- Set up machine attributes
+        BaseClockFrequency = 3_500_000;
+        ClockMultiplier = 1;
+
         // --- Create and initialize devices
         MemoryDevice = new ZxSpectrum48MemoryDevice(this);
         IoHandler = new ZxSpectrum48IoHandler(this);
@@ -25,16 +29,15 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
         TapeDevice = new TapeDevice(this);
         Reset();
 
-        // --- Set up machine attributes
-        BaseClockFrequency = 3_500_000;
-        ScreenDevice.SetMemoryScreenOffset(0x4000);
-
         // --- Bind the CPU, memory, and I/O
         Cpu.ReadMemoryFunction = MemoryDevice.ReadMemory;
         Cpu.WriteMemoryFunction = MemoryDevice.WriteMemory;
         Cpu.ReadPortFunction = IoHandler.ReadPort;
         Cpu.WritePortFunction = IoHandler.WritePort;
         Cpu.TactIncrementedHandler = OnTactIncremented;
+
+        // --- Set up devices
+        ScreenDevice.SetMemoryScreenOffset(0x4000);
 
         // --- Initialize the machine's ROM
         UploadRomBytes(LoadRomFromResource(DefaultRomResource));
@@ -102,6 +105,10 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
         BeeperDevice.Reset();
         FloatingBusDevice.Reset();
         TapeDevice.Reset();
+
+        // --- Prepare for running a new machine loop
+        Cpu.ClockMultiplier = ClockMultiplier;
+        ExecutionContext.LastTerminationReason = null;
     }
 
     /// <summary>
@@ -112,7 +119,16 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
     /// </returns>
     public override LoopTerminationMode ExecuteMachineLoop()
     {
-        // TODO: Implement this method
+        // --- Sign that the loop execution is in progress
+        ExecutionContext.LastTerminationReason = null;
+
+        //// --- Test frame completion 
+        //if (!FrameCompleted && (Cpu.CurrentFrameTact >= Cpu.TactsInFrame * Cpu.ClockMultiplier))
+        //{
+        //    FrameCompleted = true;
+        //    Cpu.tacts %= tactsInFrame * clockMultiplier;
+        //}
+
         return LoopTerminationMode.Normal;
     }
 

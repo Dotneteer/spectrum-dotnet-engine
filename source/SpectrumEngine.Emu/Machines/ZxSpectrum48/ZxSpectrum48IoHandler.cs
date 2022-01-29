@@ -221,7 +221,7 @@ public class ZxSpectrum48IoHandler : IIoHandler<IZxSpectrum48Machine>
         // --- Apply I/O contention
         void applyContentionDelay()
         {
-            var delay = memoryDevice.GetContentionValue((int)_cpu.CurrentFrameTact / Machine.ClockMultiplier);
+            var delay = memoryDevice.GetContentionValue((int)_cpu.CurrentFrameTact / _cpu.ClockMultiplier);
             _cpu.TactPlusN(delay);
 
         }

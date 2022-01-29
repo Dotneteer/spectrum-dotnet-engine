@@ -142,7 +142,7 @@ public sealed class ZxSpectrum48MemoryDevice : IMemoryDevice
         if ((address & 0xc000) == 0x4000)
         {
             // --- We read from contended memory
-            var delay = _contentionValues[_cpu.CurrentFrameTact / Machine.ClockMultiplier];
+            var delay = _contentionValues[_cpu.CurrentFrameTact / _cpu.ClockMultiplier];
             _cpu.TactPlusN(delay);
         }
     }

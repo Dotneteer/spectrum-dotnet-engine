@@ -37,5 +37,5 @@ public sealed class ExecutionContext
     /// This property describes the termination reason of the last machine execution loop. It returns null if the
     /// execution loop has not been started at least once.
     /// </summary>
-    public LoopTerminationMode LastTerminationReason { get; set; }
+    public LoopTerminationMode? LastTerminationReason { get; set; }
 }

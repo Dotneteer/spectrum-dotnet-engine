@@ -57,6 +57,10 @@ public class ResetTests
         cpu.Iff1.ShouldBeFalse();
         cpu.Iff2.ShouldBeFalse();
         cpu.Tacts.ShouldBe(0ul);
+        cpu.Frames.ShouldBe(0u);
+        cpu.CurrentFrameTact.ShouldBe(0u);
+        cpu.ClockMultiplier.ShouldBe(1);
+        cpu.FrameCompleted.ShouldBeTrue();
         cpu.F53Updated.ShouldBeFalse();
         cpu.PrevF53Updated.ShouldBeFalse();
 
@@ -98,6 +102,10 @@ public class ResetTests
         cpu.Iff1.ShouldBeFalse();
         cpu.Iff2.ShouldBeFalse();
         cpu.Tacts.ShouldBe(0ul);
+        cpu.Frames.ShouldBe(0u);
+        cpu.CurrentFrameTact.ShouldBe(0u);
+        cpu.ClockMultiplier.ShouldBe(1);
+        cpu.FrameCompleted.ShouldBeTrue();
         cpu.F53Updated.ShouldBeFalse();
         cpu.PrevF53Updated.ShouldBeFalse();
 

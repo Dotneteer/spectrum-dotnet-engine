@@ -36,6 +36,25 @@ public interface IZ80Cpu
     bool Halted { get; }
 
     /// <summary>
+    /// This property gets or sets the value of the current clock multiplier.
+    /// </summary>
+    /// <remarks>
+    /// By default, the CPU works with its regular (base) clock frequency; however, you can use an integer clock
+    /// frequency multiplier to emulate a faster CPU.
+    /// </remarks>
+    int ClockMultiplier { get; set; }
+
+    /// <summary>
+    /// This flag indicates that the current CPU frame has been completed since the last reset of the flag.
+    /// </summary>
+    bool FrameCompleted { get; }
+
+    /// <summary>
+    /// Reset the flag that indicates the machine frame completion.
+    /// </summary>
+    void ResetFrameCompletedFlag();
+
+    /// <summary>
     /// The number of T-states (clock cycles) elapsed since the last reset
     /// </summary>
     ulong Tacts { get; }

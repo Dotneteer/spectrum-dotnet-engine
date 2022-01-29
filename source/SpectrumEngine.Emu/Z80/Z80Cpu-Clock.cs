@@ -10,6 +10,29 @@ namespace SpectrumEngine.Emu;
 /// </remarks>
 public partial class Z80Cpu
 {
+
+    /// <summary>
+    /// This property gets or sets the value of the current clock multiplier.
+    /// </summary>
+    /// <remarks>
+    /// By default, the CPU works with its regular (base) clock frequency; however, you can use an integer clock
+    /// frequency multiplier to emulate a faster CPU.
+    /// </remarks>
+    public int ClockMultiplier { get; set; }
+
+    /// <summary>
+    /// This flag indicates that the current CPU frame has been completed since the last reset of the flag.
+    /// </summary>
+    public bool FrameCompleted { get; private set; }
+
+    /// <summary>
+    /// Reset the flag that indicates the machine frame completion.
+    /// </summary>
+    public void ResetFrameCompletedFlag()
+    {
+        FrameCompleted = false;
+    }
+
     /// <summary>
     /// This method increments the current CPU tacts by one.
     /// </summary>
@@ -112,10 +135,11 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void IncrementTacts()
     {
-        if (++CurrentFrameTact >= TactsInFrame)
+        if (++CurrentFrameTact >= TactsInFrame * ClockMultiplier)
         {
             CurrentFrameTact = 0;
             Frames++;
+            FrameCompleted = true;
         }
         TactIncrementedHandler();
     }

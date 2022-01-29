@@ -22,6 +22,15 @@ public interface IZ80Machine
     int BaseClockFrequency { get; }
 
     /// <summary>
+    /// This property gets or sets the value of the current clock multiplier.
+    /// </summary>
+    /// <remarks>
+    /// By default, the CPU works with its regular (base) clock frequency; however, you can use an integer clock
+    /// frequency multiplier to emulate a faster CPU.
+    /// </remarks>
+    int ClockMultiplier { get; set; }
+
+    /// <summary>
     /// This method provides a way to configure (or reconfigure) the emulated machine after changing the properties
     /// of its components.
     /// </summary>
@@ -44,13 +53,4 @@ public interface IZ80Machine
     /// The value indicates the termination reason of the loop. 
     /// </returns>
     LoopTerminationMode ExecuteMachineLoop();
-
-    /// <summary>
-    /// This property gets or sets the value of the current clock multiplier.
-    /// </summary>
-    /// <remarks>
-    /// By default, the CPU works with its regular (base) clock frequency; however, you can use an integer clock
-    /// frequency multiplier to emulate a faster CPU.
-    /// </remarks>
-    int ClockMultiplier { get; set; }
 }
