@@ -11,18 +11,6 @@ namespace SpectrumEngine.Emu;
 public partial class Z80Cpu
 {
     /// <summary>
-    /// This flag indicates if the Z80 CPU works in hardware with memory contention between the CPU and other hardware
-    /// components.
-    /// </summary>
-    public bool MemoryContended = false;
-
-    /// <summary>
-    /// This flag indicates whether the Z80 CPU works in hardware with a gate array controlled memory contention
-    /// between the CPU and other components.
-    /// </summary>
-    public bool GateArray = false;
-
-    /// <summary>
     /// This flag indicates whether the Z80 CPU works in hardware with ULA-controlled memory contention between the
     /// CPU and other components.
     /// </summary>

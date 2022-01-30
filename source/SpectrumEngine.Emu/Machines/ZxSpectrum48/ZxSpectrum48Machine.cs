@@ -3,10 +3,12 @@
 /// <summary>
 /// This class represents the emulator of a ZX Spectrum 48 machine.
 /// </summary>
-public sealed class ZxSpectrum48Machine : 
-    Z80MachineBase, 
+public sealed class ZxSpectrum48Machine :
+    Z80MachineBase,
     IZxSpectrum48Machine
 {
+    private int _lastRenderedFrameTact;
+
     /// <summary>
     /// Specify the name of the default ROM's resource file within this assembly.
     /// </summary>
@@ -111,6 +113,7 @@ public sealed class ZxSpectrum48Machine :
         // --- Prepare for running a new machine loop
         Cpu.ClockMultiplier = ClockMultiplier;
         ExecutionContext.LastTerminationReason = null;
+        _lastRenderedFrameTact = -1;
     }
 
     /// <summary>
@@ -144,7 +147,13 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     protected override void OnTactIncremented()
     {
-        // TODO: Implement this method
+        var machineTact = Cpu.CurrentFrameTact / Cpu.ClockMultiplier;
+        if (_lastRenderedFrameTact != machineTact)
+        {
+            // --- Render the current frame tact
+        }
+        _lastRenderedFrameTact = machineTact;
+        //TODO: Implement this method
     }
 
     /// <summary>

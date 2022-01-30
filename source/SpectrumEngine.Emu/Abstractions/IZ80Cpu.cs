@@ -62,12 +62,12 @@ public interface IZ80Cpu
     /// <summary>
     /// Show the number of machine frames completed since the CPU started.
     /// </summary>
-    uint Frames { get; }
+    int Frames { get; }
 
     /// <summary>
     /// Get the current frame tact within the machine frame being executed.
     /// </summary>
-    uint CurrentFrameTact { get; }
+    int CurrentFrameTact { get; }
 
     /// <summary>
     /// Get the number of T-states in a machine frame.

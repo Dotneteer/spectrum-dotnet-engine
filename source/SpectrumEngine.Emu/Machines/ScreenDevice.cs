@@ -218,6 +218,16 @@ public sealed class ScreenDevice : IScreenDevice
     }
 
     /// <summary>
+    /// Render the pixel pair belonging to the specified frame tact.
+    /// </summary>
+    /// <param name="tact">Frame tact to render</param>
+    public void RenderTact(int tact)
+    {
+        var renderTact = RenderingTactTable[tact];
+        renderTact.RenderingAction(renderTact);
+    }
+
+    /// <summary>
     /// Get the index of the first display line.
     /// </summary>
     private int FirstDisplayLine { get; set; }

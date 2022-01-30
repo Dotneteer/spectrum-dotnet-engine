@@ -20,8 +20,8 @@ public class ZxSpectrum48MachineTests
 
         var cpu = m.Cpu;
         cpu.Tacts.ShouldBe(0ul);
-        cpu.Frames.ShouldBe(0u);
-        cpu.CurrentFrameTact.ShouldBe(0u);
+        cpu.Frames.ShouldBe(0);
+        cpu.CurrentFrameTact.ShouldBe(0);
         cpu.TactsInFrame.ShouldBe(69888);
 
         var md = m.MemoryDevice;
@@ -31,6 +31,22 @@ public class ZxSpectrum48MachineTests
         var sd = m.ScreenDevice;
         sd.RasterLines.ShouldBe(312);
         sd.ScreenWidth.ShouldBe(352);
-        
+    }
+
+    [Fact]
+    public void MachineLoopWorks()
+    {
+        // --- Arrange
+        var m = new ZxSpectrum48Machine();
+        m.ClockMultiplier = 10;
+
+        // --- Act
+        for (var i = 0; i < 100; i++)
+        {
+            var result = m.ExecuteMachineLoop();
+
+            // --- Assert
+            result.ShouldBe(LoopTerminationMode.Normal);
+        }
     }
 }
