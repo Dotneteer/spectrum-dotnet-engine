@@ -6,4 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Roms\ZxSpectrum48\ZxSpectrum48.rom" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Roms\ZxSpectrum48\ZxSpectrum48.rom" />
+  </ItemGroup>
+
 </Project>

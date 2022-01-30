@@ -13,7 +13,7 @@ public interface IZ80Cpu
     /// <summary>
     /// The current state of the Z80 signal flags
     /// </summary>
-    Z80Cpu.Z80Signals SignalFlags { get; }
+    Z80Cpu.Z80Signals SignalFlags { get; set; }
 
     /// <summary>
     /// The current maskable interrupt mode (0, 1, or 2)
@@ -36,6 +36,25 @@ public interface IZ80Cpu
     bool Halted { get; }
 
     /// <summary>
+    /// This property gets or sets the value of the current clock multiplier.
+    /// </summary>
+    /// <remarks>
+    /// By default, the CPU works with its regular (base) clock frequency; however, you can use an integer clock
+    /// frequency multiplier to emulate a faster CPU.
+    /// </remarks>
+    int ClockMultiplier { get; set; }
+
+    /// <summary>
+    /// This flag indicates that the current CPU frame has been completed since the last reset of the flag.
+    /// </summary>
+    bool FrameCompleted { get; }
+
+    /// <summary>
+    /// Reset the flag that indicates the machine frame completion.
+    /// </summary>
+    void ResetFrameCompletedFlag();
+
+    /// <summary>
     /// The number of T-states (clock cycles) elapsed since the last reset
     /// </summary>
     ulong Tacts { get; }
@@ -43,12 +62,12 @@ public interface IZ80Cpu
     /// <summary>
     /// Show the number of machine frames completed since the CPU started.
     /// </summary>
-    uint Frames { get; }
+    int Frames { get; }
 
     /// <summary>
     /// Get the current frame tact within the machine frame being executed.
     /// </summary>
-    uint CurrentFrameTact { get; }
+    int CurrentFrameTact { get; }
 
     /// <summary>
     /// Get the number of T-states in a machine frame.

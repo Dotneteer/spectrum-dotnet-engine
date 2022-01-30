@@ -3,13 +3,27 @@
 /// <summary>
 /// This class represents the emulator of a ZX Spectrum 48 machine.
 /// </summary>
-public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
+public sealed class ZxSpectrum48Machine :
+    Z80MachineBase,
+    IZxSpectrum48Machine
 {
+    private int _lastRenderedFrameTact;
+
+    /// <summary>
+    /// Specify the name of the default ROM's resource file within this assembly.
+    /// </summary>
+    protected override string DefaultRomResource => "ZxSpectrum48";
+
     /// <summary>
     /// Initialize the machine
     /// </summary>
     public ZxSpectrum48Machine()
     {
+        // --- Set up machine attributes
+        BaseClockFrequency = 3_500_000;
+        ClockMultiplier = 1;
+
+        // --- Create and initialize devices
         MemoryDevice = new ZxSpectrum48MemoryDevice(this);
         IoHandler = new ZxSpectrum48IoHandler(this);
         KeyboardDevice = new KeyboardDevice(this);
@@ -25,6 +39,12 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
         Cpu.ReadPortFunction = IoHandler.ReadPort;
         Cpu.WritePortFunction = IoHandler.WritePort;
         Cpu.TactIncrementedHandler = OnTactIncremented;
+
+        // --- Set up devices
+        ScreenDevice.SetMemoryScreenOffset(0x4000);
+
+        // --- Initialize the machine's ROM
+        UploadRomBytes(LoadRomFromResource(DefaultRomResource));
     }
 
     /// <summary>
@@ -89,18 +109,37 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
         BeeperDevice.Reset();
         FloatingBusDevice.Reset();
         TapeDevice.Reset();
+
+        // --- Prepare for running a new machine loop
+        Cpu.ClockMultiplier = ClockMultiplier;
+        ExecutionContext.LastTerminationReason = null;
+        _lastRenderedFrameTact = -1;
     }
 
     /// <summary>
-    /// Executes the machine loop using the current execution context.
+    /// The machine's execution loop calls this method when it is about to initialize a new frame.
+    /// </summary>
+    /// <param name="clockMultiplierChanged">
+    /// Indicates if the clock multiplier has been changed since the execution of the previous frame.
+    /// </param>
+    protected override void OnInitNewFrame(bool clockMultiplierChanged)
+    {
+    }
+
+    /// <summary>
+    /// Tests if the machine should raise a Z80 maskable interrupt
     /// </summary>
     /// <returns>
-    /// The value indicates the termination reason of the loop. 
+    /// True, if the INT signal should be active; otherwise, false.
     /// </returns>
-    public override LoopTerminationMode ExecuteMachineLoop()
+    protected override bool ShouldRaiseInterrupt() => Cpu.CurrentFrameTact / Cpu.ClockMultiplier < 32;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    protected override void AfterInstructionExecuted()
     {
-        // TODO: Implement this method
-        return LoopTerminationMode.Normal;
+
     }
 
     /// <summary>
@@ -108,6 +147,24 @@ public sealed class ZxSpectrum48Machine : Z80MachineBase, IZxSpectrum48Machine
     /// </summary>
     protected override void OnTactIncremented()
     {
-        // TODO: Implement this method
+        var machineTact = Cpu.CurrentFrameTact / Cpu.ClockMultiplier;
+        if (_lastRenderedFrameTact != machineTact)
+        {
+            // --- Render the current frame tact
+        }
+        _lastRenderedFrameTact = machineTact;
+        //TODO: Implement this method
+    }
+
+    /// <summary>
+    /// Uploades the specified ROM information to the ZX Spectrum 48 ROM memory
+    /// </summary>
+    /// <param name="data">ROM contents</param>
+    private void UploadRomBytes(byte[] data)
+    {
+        for (var i = 0; i < data.Length; i++)
+        {
+            MemoryDevice.DirectWrite((ushort)i, data[i]);
+        }
     }
 }

@@ -95,16 +95,33 @@ Besides the registers and signals, we keep other CPU state information:
 - **`Iff1`**: This flip-flop indicates if the maskable interrupt is enabled (`true`) or disabled (`false`).
 - **`Iff2`**: The purpose of this flop-flop is to save the status of `Iff1` when a non-maskable interrupt occurs.
 - **`Halted`**: This flag indicates if the CPU is in a halted state.
+- **`ClockMultiplier`**: By default, the CPU works with its regular (base) clock frequency; however, you can use an integer clock frequency multiplier to emulate a faster CPU.
 - **`Tacts`**: The number of T-states (clock cycles) elapsed since the last reset. You know that accurate timing is at the heart of the CPU's implementation. We use a 64-bit counter, representing a long enough period. This state variable is read-only; its value is calculated from `Frames`, `CurrentFrameTact`, and `TactsInFrame`.
-- **`TactsInFrame`: The emulated machine runs a loop of machine frames. Each frame has the same duration in T-states; this property shows their number in a machine frame.
+- **`TactsInFrame`**: The emulated machine runs a loop of machine frames. Each frame has the same duration in T-states; this property shows their number in a machine frame.
 - **`Frames`**: The number of completed machine frames since the machine started.
-- **`CurrentFrameTact`: Indicates the current tact in the executing machine frame. Its value is between 0 and `TactsInFrame`.
+- **`CurrentFrameTact`**: Indicates the current tact in the executing machine frame. Its value is between 0 and `TactsInFrame`.
+- **`FrameCompleted`**: This flag indicates that a machine frame has been completed since the last reset of this flag.
 - **`F53Updated`**, **`PrevF53Updated`**: These flags keep track of modifications of the bit 3 and 5 flags of Register F. We need to keep this value, as we utilize it within the `SCF` and `CCF` instructions to calculate the new values of F.
 - **`OpCode`**: The last fetched opcode. If an instruction is prefixed, it contains the prefix or the opcode following the prefix, depending on which was fetched last.
 - **`Prefix`**: The current prefix to consider when processing the subsequent opcode.
 - **`EiBacklog`**: We use this variable to handle the EI instruction properly. When an EI instruction is executed, any pending interrupt request is not accepted until after the instruction following EI is executed. This single instruction delay is necessary when the next instruction is a return instruction. Interrupts are not allowed until a return is completed.
 - **`RetExecuted`**: We need this flag to implement the step-over debugger function that continues the execution and stops when the current subroutine returns to its caller. The debugger will observe the change of this flag and manage its internal tracking of the call stack accordingly.
 - **`AllowExtendedInstructions`**: The ZX Spectrum Next computer uses additional Z80 instructions. This flag indicates if those are allowed.
+
+## Machine Frames
+
+Emulating a computer should simulate the real-time behavior, producing the exact timing as if we used the current hardware. However, the modern PCs on which we run the emulator software use a specific CPU clock frequency that often changes. There is a simple technique to resolve this issue:
+
+We select a known period, called *machine frame*, which carries out a task that always takes the same number of T-states. We can calculate the time the *machine frame* takes from the number of T-states in this period and the current CPU frequency. When emulating real-time behavior, we run the machine frame continuously in a loop:
+
+1. We record the start time on the host PC.
+2. We let the machine and the CPU run as fast as the PC running the emulator allows it, executing a complete machine frame.
+3. We process the output (screen, sound, whatever else) the machine has generated in this single frame.
+4. From the duration of the real-time machine frame, we subtract the time elapsed from the beginning of step 1 and let the emulator process sleep for the calculated time. Then we go back to step 1.
+
+In the case of the ZX Spectrum 48, there is a natural choice of machine frame, the screen rendering frame. It always takes exactly 69,888 T-states (~19.97 milliseconds). At the end of the machine frame, we have a screen to display. We can generate ~50 frames per second with this approach, just as the real hardware does.
+
+The implementation of the Z80 CPU supports the machine frame infrastructure with the `Frames`, `CurrentFrameTact`, and `FrameCompleted` state variables.
 
 ## Timing
 
@@ -138,16 +155,19 @@ public void TactPlus3()
 [MethodImpl(MethodImplOptions.AggressiveInlining)]
 private void IncrementTacts()
 {
-    if (++CurrentFrameTact >= TactsInFrame)
+    if (++CurrentFrameTact >= TactsInFrame * ClockMultiplier)
     {
         CurrentFrameTact = 0;
         Frames++;
+        FrameCompleted = true;
     }
     TactIncrementedHandler();
 }
 ```
 
 Here, the `TactIncrementedHandler` refers to a method in which we can emulate the behavior of other hardware components. By default, this is set to an empty method. However, when integrating the `Z80Cpu` component with other elements in the emulated hardware (such as the ULA), you can create a method that correctly emulates the simultaneous execution.
+
+We emulate multiplied clock frequency to calculate the length of the machine frame as `TactsInFrame * ClockMultiplier`. You can observe the `IncrementTacts` method sets the `FrameCompleted` flag, and resetting it is the responsibility of the machine loop.
 
 You can also observe (see the `[MethodImpl(MethodImplOptions.AggressiveInlining)]` attribute) that we ask the compiler for inlining these timing methods.
 
@@ -638,7 +658,7 @@ public void RET_NZ_DoesNotReturnWhenZ()
         0xC9              // RET
     });
     var regs = m.Cpu.Regs;
-    m.Cpu.Regs.SP = 0;
+    regs.SP = 0;
 
     // --- Act
     m.Run();

@@ -16,7 +16,7 @@ public partial class Z80Cpu
     /// <summary>
     /// The current state of the Z80 signal flags
     /// </summary>
-    public Z80Signals SignalFlags { get; private set; } = Z80Signals.None;
+    public Z80Signals SignalFlags { get; set; } = Z80Signals.None;
 
     /// <summary>
     /// The current maskable interrupt mode (0, 1, or 2)
@@ -56,12 +56,12 @@ public partial class Z80Cpu
     /// <summary>
     /// Show the number of machine frames completed since the CPU started.
     /// </summary>
-    public uint Frames { get; private set; } = 0;
+    public int Frames { get; private set; } = 0;
 
     /// <summary>
     /// Get the current frame tact within the machine frame being executed.
     /// </summary>
-    public uint CurrentFrameTact { get; private set; } = 0;
+    public int CurrentFrameTact { get; private set; } = 0;
 
     /// <summary>
     /// Get the number of T-states in a machine frame.
@@ -69,13 +69,18 @@ public partial class Z80Cpu
     public int TactsInFrame { get; private set; } = 100_000_000;
 
     /// <summary>
-    /// Set the number of tacts in a machine frame.
+    /// This property gets or sets the value of the current clock multiplier.
     /// </summary>
-    /// <param name="tacts">Number of tacts in a machine frame</param>
-    public void SetTactsInFrame(int tacts)
-    {
-        TactsInFrame = tacts;
-    }
+    /// <remarks>
+    /// By default, the CPU works with its regular (base) clock frequency; however, you can use an integer clock
+    /// frequency multiplier to emulate a faster CPU.
+    /// </remarks>
+    public int ClockMultiplier { get; set; }
+
+    /// <summary>
+    /// This flag indicates that the current CPU frame has been completed since the last reset of the flag.
+    /// </summary>
+    public bool FrameCompleted { get; private set; }
 
     /// <summary>
     /// This flag indicates if bit 3 or 5 of Register F has been updated. We need to keep this value, as we utilize
@@ -122,4 +127,16 @@ public partial class Z80Cpu
     /// This flag indicates if those are allowed.
     /// </summary>
     public bool AllowExtendedInstructions { get; set; } = false;
+
+    /// <summary>
+    /// This flag indicates if the Z80 CPU works in hardware with memory contention between the CPU and other hardware
+    /// components.
+    /// </summary>
+    public bool MemoryContended = false;
+
+    /// <summary>
+    /// This flag indicates whether the Z80 CPU works in hardware with a gate array controlled memory contention
+    /// between the CPU and other components.
+    /// </summary>
+    public bool GateArray = false;
 }

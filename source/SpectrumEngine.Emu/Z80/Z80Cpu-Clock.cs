@@ -10,6 +10,24 @@ namespace SpectrumEngine.Emu;
 /// </remarks>
 public partial class Z80Cpu
 {
+
+    /// <summary>
+    /// Set the number of tacts in a machine frame.
+    /// </summary>
+    /// <param name="tacts">Number of tacts in a machine frame</param>
+    public void SetTactsInFrame(int tacts)
+    {
+        TactsInFrame = tacts;
+    }
+
+    /// <summary>
+    /// Reset the flag that indicates the machine frame completion.
+    /// </summary>
+    public void ResetFrameCompletedFlag()
+    {
+        FrameCompleted = false;
+    }
+
     /// <summary>
     /// This method increments the current CPU tacts by one.
     /// </summary>
@@ -112,10 +130,11 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void IncrementTacts()
     {
-        if (++CurrentFrameTact >= TactsInFrame)
+        if (++CurrentFrameTact >= TactsInFrame * ClockMultiplier)
         {
             CurrentFrameTact = 0;
             Frames++;
+            FrameCompleted = true;
         }
         TactIncrementedHandler();
     }

@@ -35,6 +35,18 @@ public sealed class ScreenDevice : IScreenDevice
     // --- Ink color indexes what flash is on
     private readonly byte[] _inkColorFlashOn = new byte[0x100];
 
+    // --- Stores pixel byte #1
+    private byte _pixelByte1;
+
+    // --- Stores pixel byte #2
+    private byte _pixelByte2;
+
+    // --- Stores attribute byte #1
+    private byte _attrByte1;
+
+    // --- Stores attribute byte #2
+    private byte _attrByte2;
+
     /// <summary>
     /// Define the screen configuration attributes of ZX Spectrum 48K (PAL)
     /// </summary>
@@ -109,6 +121,11 @@ public sealed class ScreenDevice : IScreenDevice
     public RenderingTact[] RenderingTactTable { get; private set; } = Array.Empty<RenderingTact>();
 
     /// <summary>
+    /// This buffer stores the bitmap of the screen being rendered. Each 32-bit value represents an ARGB pixel.
+    /// </summary>
+    public uint[] PixelBuffer = Array.Empty<uint>();
+
+    /// <summary>
     /// This value shows the refresh rate calculated from the base clock frequency of the CPU and the screen
     /// configuration (total #of screen rendering tacts per frame).
     /// </summary>
@@ -153,7 +170,7 @@ public sealed class ScreenDevice : IScreenDevice
         _flashFlag = false;
 
         // --- Calculate helper values from screen dimensions
-        
+
         // --- Create helper tables for screen rendering
         InitializeInkAndPaperTables();
         InitializeRenderingTactTable();
@@ -173,9 +190,58 @@ public sealed class ScreenDevice : IScreenDevice
     }
 
     /// <summary>
+    /// Get the number of raster lines (height of the rendered screen).
+    /// </summary>
+    public int RasterLines { get; private set; }
+
+    /// <summary>
+    /// Get the width of the rendered screen.
+    /// </summary>
+    public int ScreenWidth { get; private set; }
+
+    /// <summary>
+    /// Gets the memory address that specifies the screen address in the memory.
+    /// </summary>
+    /// <remarks>
+    /// The ZX Spectrum 48K screen memory address is always $4000. However, the ZX Spectrum 128 and later models 
+    /// support the shadow screen feature, where this address may be different.
+    /// </remarks>
+    public int MemoryScreenOffset { get; private set; }
+
+    /// <summary>
+    /// Sets the memory address that specifies the screen address in the memory.
+    /// </summary>
+    /// <param name="offset">Start offset of the screen memory</param>
+    public void SetMemoryScreenOffset(int offset)
+    {
+        MemoryScreenOffset = offset;
+    }
+
+    /// <summary>
+    /// Render the pixel pair belonging to the specified frame tact.
+    /// </summary>
+    /// <param name="tact">Frame tact to render</param>
+    public void RenderTact(int tact)
+    {
+        var renderTact = RenderingTactTable[tact];
+        renderTact.RenderingAction(renderTact);
+    }
+
+    /// <summary>
     /// Get the index of the first display line.
     /// </summary>
     private int FirstDisplayLine { get; set; }
+
+    /// <summary>
+    /// Get the index of the leftmost pixel's tact within a raster line.
+    /// </summary>
+    private int FirstVisibleBorderTact { get; set; }
+
+    /// <summary>
+    /// Get the index of the first visible line.
+    /// </summary>
+    private int FirstVisibleLine { get; set; }
+
 
     /// <summary>
     /// Initialize the helper tables that accelerate ink and paper color handling.
@@ -209,28 +275,38 @@ public sealed class ScreenDevice : IScreenDevice
 
         // --- Calculate helper screen dimensions
         FirstDisplayLine =
-            _configuration.VerticalSyncLines + 
-            _configuration.NonVisibleBorderTopLines + 
+            _configuration.VerticalSyncLines +
+            _configuration.NonVisibleBorderTopLines +
             _configuration.BorderTopLines;
-        var lastDisplayLine = 
-            FirstDisplayLine + 
+        var lastDisplayLine =
+            FirstDisplayLine +
             _configuration.DisplayLines
             - 1;
 
-        var rasterLines =
-            FirstDisplayLine + 
-            _configuration.DisplayLines + 
-            _configuration.BorderBottomLines + 
+        // --- Calculate the rendered screen size in pixels
+        RasterLines =
+            FirstDisplayLine +
+            _configuration.DisplayLines +
+            _configuration.BorderBottomLines +
             _configuration.NonVisibleBorderBottomLines;
-        var screenLineTime = 
-            _configuration.BorderLeftTime + 
-            _configuration.DisplayLineTime + 
-            _configuration.BorderRightTime + 
+        ScreenWidth = 2 * (
+            _configuration.BorderLeftTime +
+            _configuration.DisplayLineTime +
+            _configuration.BorderRightTime);
+
+        // --- Prepare the pixel buffer to store the rendered screen bitmap
+        PixelBuffer = new uint[RasterLines * ScreenWidth];
+
+        // --- Calculate the entire rendering time of a single screen line
+        var screenLineTime =
+            _configuration.BorderLeftTime +
+            _configuration.DisplayLineTime +
+            _configuration.BorderRightTime +
             _configuration.NonVisibleBorderRightTime +
             _configuration.HorizontalBlankingTime;
 
         // --- Determine the number of tacts in a machine frame
-        var tactsInFrame = rasterLines * screenLineTime;
+        var tactsInFrame = RasterLines * screenLineTime;
 
         // --- Notify the CPU about it
         Machine.Cpu.SetTactsInFrame(tactsInFrame);
@@ -238,10 +314,14 @@ public sealed class ScreenDevice : IScreenDevice
         // --- Notify the memory device to allocate the contention array
         Machine.MemoryDevice.AllocateContentionValues(tactsInFrame);
 
+        // --- Calculate the refresh rate and the flash toggle rate
+        RefreshRate = (decimal)Machine.BaseClockFrequency / tactsInFrame;
+        FlashToggleFrames = (int)Math.Round(RefreshRate / 2);
+
         // --- Calculate the first and last visible lines
-        var firstVisibleLine = _configuration.VerticalSyncLines + _configuration.NonVisibleBorderTopLines;
-        var lastVisibleLine = rasterLines - _configuration.NonVisibleBorderBottomLines;
-        var firstVisibleBorderTact = screenLineTime - _configuration.BorderLeftTime;
+        FirstVisibleLine = _configuration.VerticalSyncLines + _configuration.NonVisibleBorderTopLines;
+        var lastVisibleLine = RasterLines - _configuration.NonVisibleBorderBottomLines;
+        FirstVisibleBorderTact = screenLineTime - _configuration.BorderLeftTime;
 
         // --- Calculate the last visible line tact
         var lastVisibleLineTact = _configuration.DisplayLineTime + _configuration.BorderRightTime;
@@ -261,7 +341,7 @@ public sealed class ScreenDevice : IScreenDevice
                 PixelAddress = 0,
                 AttributeAddress = 0,
                 PixelBufferIndex = 0,
-                RenderingAction = () => { }
+                RenderingAction = (tact) => { }
             };
             memDevice.SetContentionValue(tact, 0);
 
@@ -271,9 +351,9 @@ public sealed class ScreenDevice : IScreenDevice
 
             // Test, if the current tact is visible
             if (
-              (line >= firstVisibleLine) &&
+              (line >= FirstVisibleLine) &&
               (line <= lastVisibleLine) &&
-              (tactInLine < lastVisibleLineTact || tactInLine >= firstVisibleBorderTact)
+              (tactInLine < lastVisibleLineTact || tactInLine >= FirstVisibleBorderTact)
             )
             {
                 // --- Yes, the tact is visible.
@@ -284,8 +364,8 @@ public sealed class ScreenDevice : IScreenDevice
                     if (tactInLine == borderPixelFetchTact - 1)
                     {
                         currentTact.Phase = RenderingPhase.Border;
+                        currentTact.RenderingAction = RenderTactBorder;
                         memDevice.SetContentionValue(tact, _contentionValues[6]);
-                        // TODO: Set action reference
                         calculated = true;
                     }
                     else if (tactInLine == borderPixelFetchTact)
@@ -293,23 +373,23 @@ public sealed class ScreenDevice : IScreenDevice
                         // --- Yes, prefetch pixel data
                         currentTact.Phase = RenderingPhase.BorderFetchPixel;
                         currentTact.PixelAddress = CalcPixelAddress(line + 1, 0);
+                        currentTact.RenderingAction = RenderTactBorderFetchPixel;
                         memDevice.SetContentionValue(tact, _contentionValues[7]);
-                        // TODO: Set action reference
                         calculated = true;
                     }
                     else if (tactInLine == borderAttrFetchTact)
                     {
                         currentTact.Phase = RenderingPhase.BorderFetchAttr;
-                        currentTact.PixelAddress = CalcAttrAddress(line + 1, 0);
+                        currentTact.AttributeAddress = CalcAttrAddress(line + 1, 0);
+                        currentTact.RenderingAction = RenderTactBorderFetchAttr;
                         memDevice.SetContentionValue(tact, _contentionValues[0]);
-                        // TODO: Set action reference
                         calculated = true;
                     }
                 }
 
-                // --- Test, if it is in the display area
                 if (!calculated)
                 {
+                    // --- Test, if the tact is in the display area
                     if (
                       (line >= FirstDisplayLine) &
                       (line <= lastDisplayLine) &
@@ -324,34 +404,34 @@ public sealed class ScreenDevice : IScreenDevice
                             case 0:
                                 currentTact.Phase = RenderingPhase.DisplayB1FetchB2;
                                 currentTact.PixelAddress = CalcPixelAddress(line, tactInLine + 4);
+                                currentTact.RenderingAction = RenderTactDislayByte1FetchByte2;
                                 memDevice.SetContentionValue(tact, _contentionValues[1]);
-                                // TODO: Set action reference
                                 break;
                             case 1:
                                 currentTact.Phase = RenderingPhase.DisplayB1FetchA2;
-                                currentTact.PixelAddress = CalcAttrAddress(line, tactInLine + 3);
+                                currentTact.AttributeAddress = CalcAttrAddress(line, tactInLine + 3);
+                                currentTact.RenderingAction = RenderTactDislayByte1FetchAttr2;
                                 memDevice.SetContentionValue(tact, _contentionValues[2]);
-                                // TODO: Set action reference
                                 break;
                             case 2:
                                 currentTact.Phase = RenderingPhase.DisplayB1;
+                                currentTact.RenderingAction = RenderTactDislayByte1;
                                 memDevice.SetContentionValue(tact, _contentionValues[3]);
-                                // TODO: Set action reference
                                 break;
                             case 3:
                                 currentTact.Phase = RenderingPhase.DisplayB1;
+                                currentTact.RenderingAction = RenderTactDislayByte1;
                                 memDevice.SetContentionValue(tact, _contentionValues[4]);
-                                // TODO: Set action reference
                                 break;
                             case 4:
                                 currentTact.Phase = RenderingPhase.DisplayB2;
+                                currentTact.RenderingAction = RenderTactDislayByte2;
                                 memDevice.SetContentionValue(tact, _contentionValues[5]);
-                                // TODO: Set action reference
                                 break;
                             case 5:
                                 currentTact.Phase = RenderingPhase.DisplayB2;
+                                currentTact.RenderingAction = RenderTactDislayByte2;
                                 memDevice.SetContentionValue(tact, _contentionValues[6]);
-                                // TODO: Set action reference
                                 break;
                             case 6:
                                 // --- Test, if there are more pixels to display in this line
@@ -360,14 +440,14 @@ public sealed class ScreenDevice : IScreenDevice
                                     // --- Yes, there are still more bytes
                                     currentTact.Phase = RenderingPhase.DisplayB2FetchB1;
                                     currentTact.PixelAddress = CalcPixelAddress(line, tactInLine + _configuration.PixelDataPrefetchTime);
+                                    currentTact.RenderingAction = RenderTactDislayByte2FetchByte1;
                                     memDevice.SetContentionValue(tact, _contentionValues[7]);
-                                    // TODO: Set action reference
                                 }
                                 else
                                 {
                                     // --- Last byte in this line
                                     currentTact.Phase = RenderingPhase.DisplayB2;
-                                    // TODO: Set action reference
+                                    currentTact.RenderingAction = RenderTactDislayByte2;
                                 }
                                 break;
                             case 7:
@@ -376,15 +456,15 @@ public sealed class ScreenDevice : IScreenDevice
                                 {
                                     // --- Yes, there are still more bytes
                                     currentTact.Phase = RenderingPhase.DisplayB2FetchA1;
-                                    currentTact.PixelAddress = CalcAttrAddress(line, tactInLine + _configuration.AttributeDataPrefetchTime);
+                                    currentTact.AttributeAddress = CalcAttrAddress(line, tactInLine + _configuration.AttributeDataPrefetchTime);
+                                    currentTact.RenderingAction = RenderTactDislayByte2FetchAttr1;
                                     memDevice.SetContentionValue(tact, _contentionValues[0]);
-                                    // TODO: Set action reference
                                 }
                                 else
                                 {
                                     // --- Last byte in this line
                                     currentTact.Phase = RenderingPhase.DisplayB2;
-                                    // TODO: Set action reference
+                                    currentTact.RenderingAction = RenderTactDislayByte2;
                                 }
                                 break;
 
@@ -396,31 +476,34 @@ public sealed class ScreenDevice : IScreenDevice
                         currentTact.Phase = RenderingPhase.Border;
 
                         // --- Left or right border?
-                        if (line >= FirstDisplayLine)
+                        if (line >= FirstDisplayLine && line < lastDisplayLine)
                         {
-                            if (line < lastDisplayLine)
+                            // -- Yes, it is left or right border
+                            // --- Is it pixel data prefetch time?
+                            if (tactInLine == borderPixelFetchTact)
                             {
-                                // -- Yes, it is left or right border
-                                // --- Is it pixel data prefetch time?
-                                if (tactInLine == borderPixelFetchTact)
-                                {
-                                    // --- Yes, prefetch pixel data
-                                    currentTact.Phase = RenderingPhase.BorderFetchPixel;
-                                    currentTact.PixelAddress = CalcPixelAddress(line + 1, 0);
-                                    memDevice.SetContentionValue(tact, _contentionValues[7]);
-                                    // TODO: Set action reference
-                                }
-                                else if (tactInLine == borderAttrFetchTact)
-                                {
-                                    currentTact.Phase = RenderingPhase.BorderFetchAttr;
-                                    currentTact.PixelAddress = CalcAttrAddress(line + 1, 0);
-                                    memDevice.SetContentionValue(tact, _contentionValues[0]);
-                                    // TODO: Set action reference
-                                }
+                                // --- Yes, prefetch pixel data
+                                currentTact.Phase = RenderingPhase.BorderFetchPixel;
+                                currentTact.PixelAddress = CalcPixelAddress(line + 1, 0);
+                                memDevice.SetContentionValue(tact, _contentionValues[7]);
+                                // TODO: Set action reference
+                            }
+                            else if (tactInLine == borderAttrFetchTact)
+                            {
+                                currentTact.Phase = RenderingPhase.BorderFetchAttr;
+                                currentTact.AttributeAddress = CalcAttrAddress(line + 1, 0);
+                                memDevice.SetContentionValue(tact, _contentionValues[0]);
+                                // TODO: Set action reference
                             }
                         }
                     }
                 }
+            }
+
+            // --- Pre-calculate the pixel buffer index for the pixel pair to display.
+            if (currentTact.Phase != RenderingPhase.None)
+            {
+                currentTact.PixelBufferIndex = CalculateBufferIndex(line, tactInLine);
             }
 
             // --- Store the current rendering item
@@ -456,6 +539,155 @@ public sealed class ScreenDevice : IScreenDevice
           ((tactInLine >> 2) +
           (((line - FirstDisplayLine) >> 3) << 5) +
           0x1800);
+    }
+
+    /// <summary>
+    /// Calculate the index of the specified tact in the pixel buffer.
+    /// </summary>
+    /// <param name="line">Line index</param>
+    /// <param name="tactInLine">Tact within the line</param>
+    /// <returns>The calculated pixel buffer index</returns>
+    /// <remarks>
+    /// Remember, a single tact represents two consecutive pixels.
+    /// </remarks>
+    private int CalculateBufferIndex(int line, int tactInLine)
+    {
+        if (tactInLine >= FirstVisibleBorderTact)
+        {
+            // --- This part is the left border
+            line++;
+            tactInLine -= FirstVisibleBorderTact;
+        }
+        else
+        {
+            tactInLine += _configuration.BorderLeftTime;
+        }
+
+        // --- At this point, tactInLine and line contain the X and Y coordinates of the corresponding pixel pair.
+        return line >= FirstVisibleLine
+            ? 2 * ((line - FirstVisibleLine) * ScreenWidth + tactInLine)
+            : 0;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="pixel">Pixel visibility: zero = paper, non-zero = ink</param>
+    /// <param name="attr">Attribute byte to use</param>
+    /// <returns>ARGB color to display</returns>
+    private uint GetPixelColor(int pixel, byte attr) => pixel != 0
+        ? (_flashFlag ? SpectrumColors[_inkColorFlashOn[attr]] : SpectrumColors[_inkColorFlashOff[attr]])
+        : (_flashFlag ? SpectrumColors[_paperColorFlashOn[attr]] : SpectrumColors[_paperColorFlashOff[attr]]);
+
+    /// <summary>
+    /// Render a border pixel.
+    /// </summary>
+    /// <param name="rt">Rendering tact information</param>
+    private void RenderTactBorder(RenderingTact rt)
+    {
+        var addr = rt.PixelBufferIndex;
+        PixelBuffer[addr] = SpectrumColors[BorderColor];
+        PixelBuffer[addr + 1] = SpectrumColors[BorderColor];
+    }
+
+    /// <summary>
+    /// Render a border pixel and fetch the pixel byte for the first pixel in the line.
+    /// </summary>
+    /// <param name="rt">Rendering tact information</param>
+    private void RenderTactBorderFetchPixel(RenderingTact rt)
+    {
+        var addr = rt.PixelBufferIndex;
+        PixelBuffer[addr] = SpectrumColors[BorderColor];
+        PixelBuffer[addr + 1] = SpectrumColors[BorderColor];
+        _pixelByte1 = _memoryDevice!.ReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
+    }
+
+    /// <summary>
+    /// Render a border pixel and fetch the attribute byte for the first pixel in the line.
+    /// </summary>
+    /// <param name="rt">Rendering tact information</param>
+    private void RenderTactBorderFetchAttr(RenderingTact rt)
+    {
+        var addr = rt.PixelBufferIndex;
+        PixelBuffer[addr] = SpectrumColors[BorderColor];
+        PixelBuffer[addr + 1] = SpectrumColors[BorderColor];
+        _attrByte1 = _memoryDevice!.ReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
+    }
+
+    /// <summary>
+    /// Render the next pixel of byte #1.
+    /// </summary>
+    /// <param name="rt">Rendering tact information</param>
+    private void RenderTactDislayByte1(RenderingTact rt)
+    {
+        var addr = rt.PixelBufferIndex;
+        PixelBuffer[addr] = GetPixelColor(_pixelByte1 & 0x80, _attrByte1);
+        PixelBuffer[addr + 1] = GetPixelColor(_pixelByte1 & 0x40, _attrByte1);
+        _pixelByte1 <<= 2;
+    }
+
+    /// <summary>
+    /// Render the next pixel of byte #1 and fetch byte #2,
+    /// </summary>
+    /// <param name="rt">Rendering tact information</param>
+    private void RenderTactDislayByte1FetchByte2(RenderingTact rt)
+    {
+        var addr = rt.PixelBufferIndex;
+        PixelBuffer[addr] = GetPixelColor(_pixelByte1 & 0x80, _attrByte1);
+        PixelBuffer[addr + 1] = GetPixelColor(_pixelByte1 & 0x40, _attrByte1);
+        _pixelByte1 <<= 2;
+        _pixelByte2 = _memoryDevice!.ReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
+    }
+
+    /// <summary>
+    /// Render the next pixel of byte #1 and fetch attribute #2,
+    /// </summary>
+    /// <param name="rt">Rendering tact information</param>
+    private void RenderTactDislayByte1FetchAttr2(RenderingTact rt)
+    {
+        var addr = rt.PixelBufferIndex;
+        PixelBuffer[addr] = GetPixelColor(_pixelByte1 & 0x80, _attrByte1);
+        PixelBuffer[addr + 1] = GetPixelColor(_pixelByte1 & 0x40, _attrByte1);
+        _pixelByte1 <<= 2;
+        _attrByte2 = _memoryDevice!.ReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
+    }
+
+    /// <summary>
+    /// Render the next pixel of byte #2.
+    /// </summary>
+    /// <param name="rt">Rendering tact information</param>
+    private void RenderTactDislayByte2(RenderingTact rt)
+    {
+        var addr = rt.PixelBufferIndex;
+        PixelBuffer[addr] = GetPixelColor(_pixelByte2 & 0x80, _attrByte2);
+        PixelBuffer[addr + 1] = GetPixelColor(_pixelByte2 & 0x40, _attrByte2);
+        _pixelByte2 <<= 2;
+    }
+
+    /// <summary>
+    /// Render the next pixel of byte #2 and fetch byte #1,
+    /// </summary>
+    /// <param name="rt">Rendering tact information</param>
+    private void RenderTactDislayByte2FetchByte1(RenderingTact rt)
+    {
+        var addr = rt.PixelBufferIndex;
+        PixelBuffer[addr] = GetPixelColor(_pixelByte2 & 0x80, _attrByte2);
+        PixelBuffer[addr + 1] = GetPixelColor(_pixelByte2 & 0x40, _attrByte2);
+        _pixelByte2 <<= 2;
+        _pixelByte1 = _memoryDevice!.ReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
+    }
+
+    /// <summary>
+    /// Render the next pixel of byte #2 and fetch attribute #1,
+    /// </summary>
+    /// <param name="rt">Rendering tact information</param>
+    private void RenderTactDislayByte2FetchAttr1(RenderingTact rt)
+    {
+        var addr = rt.PixelBufferIndex;
+        PixelBuffer[addr] = GetPixelColor(_pixelByte2 & 0x80, _attrByte2);
+        PixelBuffer[addr + 1] = GetPixelColor(_pixelByte2 & 0x40, _attrByte2);
+        _pixelByte2 <<= 2;
+        _attrByte1 = _memoryDevice!.ReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
     }
 }
 

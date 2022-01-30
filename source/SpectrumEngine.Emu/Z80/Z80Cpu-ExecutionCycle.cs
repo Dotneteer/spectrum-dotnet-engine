@@ -36,6 +36,8 @@ public partial class Z80Cpu
         Iff2 = false;
         Frames = 0;
         CurrentFrameTact = 0;
+        ClockMultiplier = 1;
+        FrameCompleted = true;
         F53Updated = false;
         PrevF53Updated = false;
 
@@ -63,6 +65,8 @@ public partial class Z80Cpu
         Iff2 = false;
         Frames = 0;
         CurrentFrameTact= 0;
+        ClockMultiplier = 1;
+        FrameCompleted = true;
         F53Updated = false;
         PrevF53Updated = false;
 

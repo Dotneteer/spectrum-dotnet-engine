@@ -37,5 +37,35 @@ public interface IScreenDevice: IGenericDevice<IZxSpectrum48Machine>
     /// </summary>
     bool FlashFlag { get; }
 
+    /// <summary>
+    /// Get the number of raster lines (height of the rendered screen).
+    /// </summary>
+    int RasterLines { get; }
+
+    /// <summary>
+    /// Get the width of the rendered screen.
+    /// </summary>
+    int ScreenWidth { get; }
+
+    /// <summary>
+    /// Gets the memory address that specifies the screen address in the memory.
+    /// </summary>
+    /// <remarks>
+    /// The ZX Spectrum 48K screen memory address is always $4000. However, the ZX Spectrum 128 and later models 
+    /// support the shadow screen feature, where this address may be different.
+    /// </remarks>
+    int MemoryScreenOffset { get; }
+
+    /// <summary>
+    /// Sets the memory address that specifies the screen address in the memory.
+    /// </summary>
+    /// <param name="offset">Start offset of the screen memory</param>
+    void SetMemoryScreenOffset(int offset);
+
+    /// <summary>
+    /// Render the pixel pair belonging to the specified frame tact.
+    /// </summary>
+    /// <param name="tact">Frame tact to render</param>
+    void RenderTact(int tact);
 }
 
