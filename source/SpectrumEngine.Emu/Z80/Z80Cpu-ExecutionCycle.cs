@@ -34,8 +34,6 @@ public partial class Z80Cpu
         InterruptMode = 0;
         Iff1 = false;
         Iff2 = false;
-        Frames = 0;
-        CurrentFrameTact = 0;
         ClockMultiplier = 1;
         FrameCompleted = true;
         F53Updated = false;
@@ -63,8 +61,6 @@ public partial class Z80Cpu
         InterruptMode = 0;
         Iff1 = false;
         Iff2 = false;
-        Frames = 0;
-        CurrentFrameTact= 0;
         ClockMultiplier = 1;
         FrameCompleted = true;
         F53Updated = false;
@@ -74,6 +70,14 @@ public partial class Z80Cpu
         Prefix = OpCodePrefix.None;
         EiBacklog = 0;
         RetExecuted = false;
+    }
+
+    /// <summary>
+    /// Reset the flag that indicates the machine frame completion.
+    /// </summary>
+    public void ResetFrameCompletedFlag()
+    {
+        FrameCompleted = false;
     }
 
     /// <summary>

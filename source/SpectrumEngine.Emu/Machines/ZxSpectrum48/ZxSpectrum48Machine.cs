@@ -145,7 +145,7 @@ public sealed class ZxSpectrum48Machine :
     /// <summary>
     /// Every time the CPU clock is incremented with a single T-state, this function is executed.
     /// </summary>
-    protected override void OnTactIncremented()
+    protected override void OnTactIncremented(ulong oldTact)
     {
         var machineTact = Cpu.CurrentFrameTact / Cpu.ClockMultiplier;
         if (_lastRenderedFrameTact != machineTact)

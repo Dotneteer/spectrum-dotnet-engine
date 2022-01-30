@@ -92,7 +92,7 @@ public partial class Z80Cpu
     /// With this function, you can emulate hardware activities running simultaneously with the CPU. For example,
     /// rendering the screen or sound,  handling peripheral devices, and so on.
     /// </remarks>
-    public Action TactIncrementedHandler { get; set; }
+    public Action<ulong> TactIncrementedHandler { get; set; }
 
     /// <summary>
     /// This function handles address-based memory read contention.

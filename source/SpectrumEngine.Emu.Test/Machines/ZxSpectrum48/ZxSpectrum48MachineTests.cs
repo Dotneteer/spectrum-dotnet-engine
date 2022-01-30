@@ -20,8 +20,6 @@ public class ZxSpectrum48MachineTests
 
         var cpu = m.Cpu;
         cpu.Tacts.ShouldBe(0ul);
-        cpu.Frames.ShouldBe(0);
-        cpu.CurrentFrameTact.ShouldBe(0);
         cpu.TactsInFrame.ShouldBe(69888);
 
         var md = m.MemoryDevice;

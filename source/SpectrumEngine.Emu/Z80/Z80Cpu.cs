@@ -42,7 +42,7 @@ public partial class Z80Cpu: IZ80Cpu
         PortWriteDelayFunction = (ushort address) => TactPlus4();
 
         // --- Concurrency with other hardware components
-        TactIncrementedHandler = () => { };
+        TactIncrementedHandler = (oldTact) => { };
 
         // --- Memory contention
         ContendReadFunction = (ushort address) => { };

@@ -67,7 +67,7 @@ public abstract class Z80MachineBase :
     /// <remarks>
     /// Override in derived classes to implement hardware components running parallel with the CPU.
     /// </remarks>
-    protected abstract void OnTactIncremented();
+    protected abstract void OnTactIncremented(ulong oldTact);
 
     /// <summary>
     /// Get the name of the default ROM's resource file within this assembly.

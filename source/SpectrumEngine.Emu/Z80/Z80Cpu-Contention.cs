@@ -23,7 +23,7 @@ public partial class Z80Cpu
     public void TactPlus1(ushort address)
     {
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
     }
 
     /// <summary>
@@ -33,9 +33,9 @@ public partial class Z80Cpu
     public void TactPlus2(ushort address)
     {
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
     }
 
     /// <summary>
@@ -45,9 +45,9 @@ public partial class Z80Cpu
     public void TactPlus2Write(ushort address)
     {
         if (UlaContended) ContendWriteFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendWriteFunction(address);
-        IncrementTacts();
+        TactPlus1();
     }
 
     /// <summary>
@@ -57,13 +57,13 @@ public partial class Z80Cpu
     public void TactPlus4(ushort address)
     {
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
     }
 
 
@@ -74,15 +74,15 @@ public partial class Z80Cpu
     public void TactPlus5(ushort address)
     {
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
     }
 
     /// <summary>
@@ -92,18 +92,18 @@ public partial class Z80Cpu
     public void TactPlus7(ushort address)
     {
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
         if (UlaContended) ContendReadFunction(address);
-        IncrementTacts();
+        TactPlus1();
     }
 }
