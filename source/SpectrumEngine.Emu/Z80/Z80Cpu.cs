@@ -28,12 +28,6 @@ public partial class Z80Cpu: IZ80Cpu
     public Z80Cpu()
     {
         // --- Memory and I/O handlers
-        ReadMemoryFunction = (ushort address) 
-            => throw new InvalidOperationException("ReadMemoryFunction has not been set.");
-        MemoryReadDelayFunction = (ushort address) => TactPlus3();
-        WriteMemoryFunction = (ushort address, byte data)
-            => throw new InvalidOperationException("WriteMemoryFunction has not been set.");
-        MemoryWriteDelayFunction = (ushort address) => TactPlus3();
         ReadPortFunction = (ushort address)
             => throw new InvalidOperationException("ReadPortFunction has not been set.");
         PortReadDelayFunction = (ushort address) => TactPlus4();

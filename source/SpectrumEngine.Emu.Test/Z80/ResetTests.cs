@@ -6,7 +6,7 @@ public class ResetTests
     public void HardReset()
     {
         // --- Arrange
-        var cpu = new Z80Cpu();
+        var cpu = new Z80TestMachine().Cpu;
         var regs = cpu.Regs;
 
         // --- Act
@@ -71,7 +71,7 @@ public class ResetTests
     public void ResetHandlesMainRegs()
     {
         // --- Arrange
-        var cpu = new Z80Cpu();
+        var cpu = new Z80TestMachine().Cpu;
         var regs = cpu.Regs;
 
         // --- Act
@@ -113,7 +113,7 @@ public class ResetTests
     public void ResetKeepsRegValues()
     {
         // --- Arrange
-        var cpu = new Z80Cpu();
+        var cpu = new Z80TestMachine().Cpu;
         var regs = cpu.Regs;
         regs.AF = 0x34ac;
         regs._AF_ = 0x34ac;

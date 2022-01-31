@@ -34,8 +34,6 @@ public sealed class ZxSpectrum48Machine :
         Reset();
 
         // --- Bind the CPU, memory, and I/O
-        ReadMemoryFunction = MemoryDevice.ReadMemory;
-        WriteMemoryFunction = MemoryDevice.WriteMemory;
         ReadPortFunction = IoHandler.ReadPort;
         WritePortFunction = IoHandler.WritePort;
         TactIncrementedHandler = OnTactIncremented;
@@ -116,6 +114,56 @@ public sealed class ZxSpectrum48Machine :
         _lastRenderedFrameTact = -1;
     }
 
+    #region Memory Device
+
+    /// <summary>
+    /// Read the byte at the specified memory address.
+    /// </summary>
+    /// <param name="address">16-bit memory address</param>
+    /// <returns>The byte read from the memory</returns>
+    public override byte OnReadMemory(ushort address)
+        => MemoryDevice.ReadMemory(address);
+
+    /// <summary>
+    /// This function implements the memory read delay of the CPU.
+    /// </summary>
+    /// <param name="address">Memory address to read</param>
+    /// <remarks>
+    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
+    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
+    /// the CPU tacts at least with 3 T-states!
+    /// </remarks>
+    public override void OnMemoryReadDelay(ushort address)
+    {
+        MemoryDevice.DelayContendedMemory(address);
+        TactPlus3();
+    }
+
+    /// <summary>
+    /// Write the given byte to the specified memory address.
+    /// </summary>
+    /// <param name="address">16-bit memory address</param>
+    /// <param name="value">Byte to write into the memory</param>
+    public override void OnWriteMemory(ushort address, byte value)
+        => MemoryDevice.WriteMemory(address, value);
+
+    /// <summary>
+    /// This function implements the memory write delay of the CPU.
+    /// </summary>
+    /// <param name="address">Memory address to write</param>
+    /// <remarks>
+    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
+    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
+    /// the CPU tacts at least with 3 T-states!
+    /// </remarks>
+    public override void OnMemoryWriteDelay(ushort address)
+    {
+        MemoryDevice.DelayContendedMemory(address);
+        TactPlus3();
+    }
+
+    #endregion
+
     /// <summary>
     /// The machine's execution loop calls this method when it is about to initialize a new frame.
     /// </summary>
@@ -139,7 +187,6 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     protected override void AfterInstructionExecuted()
     {
-
     }
 
     /// <summary>

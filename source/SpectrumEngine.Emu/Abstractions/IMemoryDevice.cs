@@ -57,5 +57,7 @@ public interface IMemoryDevice: IGenericDevice<IZxSpectrum48Machine>
     /// <param name="tact">Machine frame tact</param>
     /// <returns>The contention value associated with the specified tact.</returns>
     byte GetContentionValue(int tact);
+
+    void DelayContendedMemory(ushort address);
 }
 

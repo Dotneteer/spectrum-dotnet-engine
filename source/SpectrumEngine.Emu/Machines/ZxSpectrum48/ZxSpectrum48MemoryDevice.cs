@@ -27,12 +27,6 @@ public sealed class ZxSpectrum48MemoryDevice : IMemoryDevice
         // --- Set up the contention methods
         machine.ContendReadFunction = machine.ContendWriteFunction =
             (ushort address) => DelayContendedMemory(address);
-        machine.MemoryReadDelayFunction = machine.MemoryWriteDelayFunction =
-            (ushort address) =>
-            {
-                DelayContendedMemory(address);
-                Machine.TactPlus3();
-            };
     }
 
     /// <summary>
@@ -131,7 +125,7 @@ public sealed class ZxSpectrum48MemoryDevice : IMemoryDevice
     /// delay values for a particular machine frame tact in _contentionValues.Independently of the memory address, 
     /// the Z80 CPU takes 3 T-states to read or write the memory contents.
     /// </remarks>
-    private void DelayContendedMemory(ushort address)
+    public void DelayContendedMemory(ushort address)
     {
         if ((address & 0xc000) == 0x4000)
         {

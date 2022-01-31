@@ -1,5 +1,21 @@
 ﻿namespace SpectrumEngine.Emu.Test;
 
+public class TestZ80Cpu: Z80Cpu
+{
+    private Z80TestMachine _machine;
+    public TestZ80Cpu(Z80TestMachine machine)
+    {
+        _machine = machine;
+    }
+
+    public override byte OnReadMemory(ushort address)
+        => _machine.ReadMemory(address);
+
+    public override void OnWriteMemory(ushort address, byte value)
+        => _machine.WriteMemory(address, value);
+
+}
+
 /// <summary>
 /// This class implements a Z80 machine that can be used for unit testing.
 /// </summary>
@@ -16,7 +32,7 @@ public class Z80TestMachine
     /// <summary>
     /// The CPU of the test machine
     /// </summary>
-    public Z80Cpu Cpu { get; }
+    public TestZ80Cpu Cpu { get; }
 
     /// <summary>
     /// Defines the run modes the Z80TestMachine allows
@@ -99,11 +115,9 @@ public class Z80TestMachine
         MemoryAccessLog = new List<MemoryOp>();
         IoAccessLog = new List<IoOp>();
         IoInputSequence = new List<byte>();
-        Cpu = new Z80Cpu
+        Cpu = new TestZ80Cpu(this)
         {
             AllowExtendedInstructions = allowExtendedInstructions,
-            ReadMemoryFunction = ReadMemory,
-            WriteMemoryFunction = WriteMemory,
             ReadPortFunction = ReadPort,
             WritePortFunction = WritePort
         };
@@ -173,7 +187,7 @@ public class Z80TestMachine
     /// <remarks>
     /// Override in derived classes to define a different memory read operation.
     /// </remarks>
-    protected virtual byte ReadMemory(ushort addr)
+    public byte ReadMemory(ushort addr)
     {
         var value = Memory[addr];
         MemoryAccessLog.Add(new MemoryOp(addr, value, false));
@@ -188,7 +202,7 @@ public class Z80TestMachine
     /// <remarks>
     /// Override in derived classes to define a different memory write operation.
     /// </remarks>
-    protected virtual void WriteMemory(ushort addr, byte value)
+    public void WriteMemory(ushort addr, byte value)
     {
         Memory[addr] = value;
         MemoryAccessLog.Add(new MemoryOp(addr, value, true));
