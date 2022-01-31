@@ -45,16 +45,6 @@ public interface IZ80Cpu
     int ClockMultiplier { get; set; }
 
     /// <summary>
-    /// This flag indicates that the current CPU frame has been completed since the last reset of the flag.
-    /// </summary>
-    bool FrameCompleted { get; }
-
-    /// <summary>
-    /// Reset the flag that indicates the machine frame completion.
-    /// </summary>
-    void ResetFrameCompletedFlag();
-
-    /// <summary>
     /// The number of T-states (clock cycles) elapsed since the last reset
     /// </summary>
     ulong Tacts { get; }

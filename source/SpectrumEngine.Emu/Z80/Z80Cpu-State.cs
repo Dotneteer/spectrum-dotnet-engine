@@ -78,11 +78,6 @@ public partial class Z80Cpu
     public int ClockMultiplier { get; set; }
 
     /// <summary>
-    /// This flag indicates that the current CPU frame has been completed since the last reset of the flag.
-    /// </summary>
-    public bool FrameCompleted { get; private set; }
-
-    /// <summary>
     /// This flag indicates if bit 3 or 5 of Register F has been updated. We need to keep this value, as we utilize
     /// it within the `SCF` and `CCF` instructions to calculate the new values of bit 3 and 5 of F.
     /// </summary>

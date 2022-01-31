@@ -53,4 +53,14 @@ public interface IZ80Machine
     /// The value indicates the termination reason of the loop. 
     /// </returns>
     LoopTerminationMode ExecuteMachineLoop();
+
+    /// <summary>
+    /// This flag indicates that the last machine frame has been completed.
+    /// </summary>
+    bool FrameCompleted { get; set; }
+
+    /// <summary>
+    /// Shows the number of frame tacts that overflow to the subsequent machine frame.
+    /// </summary>
+    int FrameOverflow { get; set; }
 }

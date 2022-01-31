@@ -7,6 +7,9 @@ public abstract class Z80MachineBase :
     IZ80Machine, 
     IDebugSupport
 {
+    // --- Store the start tact of the next machine frame
+    private ulong _nextFrameStartTact;
+
     /// <summary>
     /// The folder where the ROM files are stored
     /// </summary>
@@ -37,6 +40,16 @@ public abstract class Z80MachineBase :
     public int ClockMultiplier { get; set; }
 
     /// <summary>
+    /// This flag indicates that the last machine frame has been completed.
+    /// </summary>
+    public bool FrameCompleted { get; set; }
+
+    /// <summary>
+    /// Shows the number of frame tacts that overflow to the subsequent machine frame.
+    /// </summary>
+    public int FrameOverflow { get; set; }
+
+    /// <summary>
     /// This method provides a way to configure (or reconfigure) the emulated machine after changing the properties
     /// of its components.
     /// </summary>
@@ -59,6 +72,8 @@ public abstract class Z80MachineBase :
     public virtual void Reset()
     {
         Cpu.Reset();
+        FrameCompleted = true;
+        FrameOverflow = 0;
     }
 
     /// <summary>
@@ -139,8 +154,10 @@ public abstract class Z80MachineBase :
         do
         {
             // --- Test if the machine frame has just been completed.
-            if (Cpu.FrameCompleted)
+            if (FrameCompleted)
             {
+                var currentFrameStart = Cpu.Tacts - (ulong)FrameOverflow;
+
                 // --- Update the CPU's clock multiplier, if the machine's has changed.
                 var clockMultiplierChanged = false;
                 if (AllowCpuClockChange() && Cpu.ClockMultiplier != ClockMultiplier)
@@ -152,7 +169,10 @@ public abstract class Z80MachineBase :
 
                 // --- Allow a machine to handle frame initialization
                 OnInitNewFrame(clockMultiplierChanged);
-                Cpu.ResetFrameCompletedFlag();
+                FrameCompleted = false;
+
+                // --- Calculate the start tact of the next machine frame
+                _nextFrameStartTact = currentFrameStart + (ulong)(Cpu.TactsInFrame * Cpu.ClockMultiplier);
             }
 
             // --- Set the interrupt signal, if required so
@@ -198,8 +218,11 @@ public abstract class Z80MachineBase :
                 return (ExecutionContext.LastTerminationReason = LoopTerminationMode.UntilHalt).Value;
             }
 
+            FrameCompleted = Cpu.Tacts >= _nextFrameStartTact;
+        } while (!FrameCompleted);
 
-        } while (!Cpu.FrameCompleted);
+        // --- Calculate the overflow, we need this value in the next frame
+        FrameOverflow = (int)(Cpu.Tacts - _nextFrameStartTact);
 
         // --- Done
         return (ExecutionContext.LastTerminationReason = LoopTerminationMode.Normal).Value;
