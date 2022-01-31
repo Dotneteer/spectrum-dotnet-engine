@@ -16,28 +16,22 @@ public sealed class ZxSpectrum48MemoryDevice : IMemoryDevice
     private byte[] _contentionValues;
 
     /// <summary>
-    /// Store a shortcut to the Z80 CPU.
-    /// </summary>
-    private IZ80Cpu _cpu;
-
-    /// <summary>
     /// Initialize the floating port device and assign it to its host machine.
     /// </summary>
     /// <param name="machine">The machine hosting this device</param>
     public ZxSpectrum48MemoryDevice(IZxSpectrum48Machine machine)
     {
         Machine = machine;
-        _cpu = machine.Cpu;
         _contentionValues = Array.Empty<byte>();
 
         // --- Set up the contention methods
-        _cpu.ContendReadFunction = _cpu.ContendWriteFunction =
+        machine.ContendReadFunction = machine.ContendWriteFunction =
             (ushort address) => DelayContendedMemory(address);
-        _cpu.MemoryReadDelayFunction = _cpu.MemoryWriteDelayFunction =
+        machine.MemoryReadDelayFunction = machine.MemoryWriteDelayFunction =
             (ushort address) =>
             {
                 DelayContendedMemory(address);
-                _cpu.TactPlus3();
+                Machine.TactPlus3();
             };
     }
 
@@ -142,8 +136,8 @@ public sealed class ZxSpectrum48MemoryDevice : IMemoryDevice
         if ((address & 0xc000) == 0x4000)
         {
             // --- We read from contended memory
-            var delay = _contentionValues[_cpu.CurrentFrameTact / _cpu.ClockMultiplier];
-            _cpu.TactPlusN(delay);
+            var delay = _contentionValues[Machine.CurrentFrameTact / Machine.ClockMultiplier];
+            Machine.TactPlusN(delay);
         }
     }
 }

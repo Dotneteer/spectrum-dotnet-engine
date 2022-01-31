@@ -69,6 +69,11 @@ public partial class Z80Cpu
     public int TactsInFrame { get; private set; } = 100_000_000;
 
     /// <summary>
+    /// Get the base clock frequency of the CPU. We use this value to calculate the machine frame rate.
+    /// </summary>
+    public int BaseClockFrequency { get; set; }
+
+    /// <summary>
     /// This property gets or sets the value of the current clock multiplier.
     /// </summary>
     /// <remarks>

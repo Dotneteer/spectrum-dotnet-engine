@@ -34,11 +34,11 @@ public sealed class ZxSpectrum48Machine :
         Reset();
 
         // --- Bind the CPU, memory, and I/O
-        Cpu.ReadMemoryFunction = MemoryDevice.ReadMemory;
-        Cpu.WriteMemoryFunction = MemoryDevice.WriteMemory;
-        Cpu.ReadPortFunction = IoHandler.ReadPort;
-        Cpu.WritePortFunction = IoHandler.WritePort;
-        Cpu.TactIncrementedHandler = OnTactIncremented;
+        ReadMemoryFunction = MemoryDevice.ReadMemory;
+        WriteMemoryFunction = MemoryDevice.WriteMemory;
+        ReadPortFunction = IoHandler.ReadPort;
+        WritePortFunction = IoHandler.WritePort;
+        TactIncrementedHandler = OnTactIncremented;
 
         // --- Set up devices
         ScreenDevice.SetMemoryScreenOffset(0x4000);
@@ -111,7 +111,7 @@ public sealed class ZxSpectrum48Machine :
         TapeDevice.Reset();
 
         // --- Prepare for running a new machine loop
-        Cpu.ClockMultiplier = ClockMultiplier;
+        ClockMultiplier = TargetClockMultiplier;
         ExecutionContext.LastTerminationReason = null;
         _lastRenderedFrameTact = -1;
     }
@@ -132,7 +132,7 @@ public sealed class ZxSpectrum48Machine :
     /// <returns>
     /// True, if the INT signal should be active; otherwise, false.
     /// </returns>
-    protected override bool ShouldRaiseInterrupt() => Cpu.CurrentFrameTact / Cpu.ClockMultiplier < 32;
+    protected override bool ShouldRaiseInterrupt() => CurrentFrameTact / ClockMultiplier < 32;
 
     /// <summary>
     /// 
@@ -147,7 +147,7 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     protected override void OnTactIncremented(ulong oldTact)
     {
-        var machineTact = Cpu.CurrentFrameTact / Cpu.ClockMultiplier;
+        var machineTact = CurrentFrameTact / ClockMultiplier;
         if (_lastRenderedFrameTact != machineTact)
         {
             // --- Render the current frame tact

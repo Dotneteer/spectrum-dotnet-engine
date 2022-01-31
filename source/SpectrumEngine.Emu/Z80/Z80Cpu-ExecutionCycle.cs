@@ -13,7 +13,7 @@ public partial class Z80Cpu
     /// <summary>
     /// Executes a hard reset as if the machine and the CPU had just been turned on.
     /// </summary>
-    public void HardReset()
+    public virtual void HardReset()
     {
         Regs.AF = 0xffff;
         Regs._AF_ = 0xffff;
@@ -47,7 +47,7 @@ public partial class Z80Cpu
     /// <summary>
     /// Handles the active RESET signal of the CPU.
     /// </summary>
-    public void Reset()
+    public virtual void Reset()
     {
         Regs.AF = 0xffff;
         Regs._AF_ = 0xffff;

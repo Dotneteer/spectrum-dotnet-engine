@@ -8,7 +8,7 @@ public class ZxSpectrum48MachineTests
         var m = new ZxSpectrum48Machine();
 
         // --- Assert
-        m.Cpu.ShouldNotBeNull();
+        m.ShouldNotBeNull();
         m.MemoryDevice.ShouldNotBeNull();
         m.IoHandler.ShouldNotBeNull();
         m.KeyboardDevice.ShouldNotBeNull();
@@ -18,9 +18,8 @@ public class ZxSpectrum48MachineTests
         m.TapeDevice.ShouldNotBeNull();
         m.BaseClockFrequency.ShouldBe(3_500_000);
 
-        var cpu = m.Cpu;
-        cpu.Tacts.ShouldBe(0ul);
-        cpu.TactsInFrame.ShouldBe(69888);
+        m.Tacts.ShouldBe(0ul);
+        m.TactsInFrame.ShouldBe(69888);
 
         var md = m.MemoryDevice;
         md.ReadMemory(0x0000).ShouldBe((byte)0xF3);
@@ -35,8 +34,10 @@ public class ZxSpectrum48MachineTests
     public void MachineLoopWorks()
     {
         // --- Arrange
-        var m = new ZxSpectrum48Machine();
-        m.ClockMultiplier = 10;
+        var m = new ZxSpectrum48Machine
+        {
+            TargetClockMultiplier = 10
+        };
 
         // --- Act
         for (var i = 0; i < 100; i++)

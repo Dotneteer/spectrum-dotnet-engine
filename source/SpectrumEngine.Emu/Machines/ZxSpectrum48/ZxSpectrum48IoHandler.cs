@@ -17,9 +17,6 @@ public class ZxSpectrum48IoHandler : IIoHandler<IZxSpectrum48Machine>
     // --- Tacts value when last time bit 4 of $fe changed from 1 to 0
     private ulong _portBit4ChangedFrom1Tacts;
 
-    // --- Store a shortcut to the Z80 CPU.
-    private IZ80Cpu _cpu;
-
     /// <summary>
     /// Initialize the I/O handler and assign it to its host machine.
     /// </summary>
@@ -27,10 +24,9 @@ public class ZxSpectrum48IoHandler : IIoHandler<IZxSpectrum48Machine>
     public ZxSpectrum48IoHandler(IZxSpectrum48Machine machine)
     {
         Machine = machine;
-        _cpu = machine.Cpu;
 
         // --- Set up the contention methods
-        _cpu.PortReadDelayFunction = _cpu.PortWriteDelayFunction =
+        machine.PortReadDelayFunction = machine.PortWriteDelayFunction =
             (ushort address) => DelayContendedIo(address);
     }
 
@@ -104,7 +100,7 @@ public class ZxSpectrum48IoHandler : IIoHandler<IZxSpectrum48Machine>
                     chargeTime = chargeTime > 700 ? 2800 : 4 * chargeTime;
 
                     // --- Calculate time ellapsed since last change from 1 to 0
-                    bit4Sensed = Machine.Cpu.Tacts - _portBit4ChangedFrom1Tacts < chargeTime;
+                    bit4Sensed = Machine.Tacts - _portBit4ChangedFrom1Tacts < chargeTime;
                 }
             }
 
@@ -153,7 +149,7 @@ public class ZxSpectrum48IoHandler : IIoHandler<IZxSpectrum48Machine>
             // --- Bit 4 was 1, is it now 0?
             if (bit4 == 0)
             {
-                _portBit4ChangedFrom1Tacts = Machine.Cpu.Tacts;
+                _portBit4ChangedFrom1Tacts = Machine.Tacts;
                 _portBit4LastValue = false;
             }
         }
@@ -162,7 +158,7 @@ public class ZxSpectrum48IoHandler : IIoHandler<IZxSpectrum48Machine>
             // --- Bit 4 was 0, is it now 1?
             if (bit4 != 0)
             {
-                _portBit4ChangedFrom0Tacts = Machine.Cpu.Tacts;
+                _portBit4ChangedFrom0Tacts = Machine.Tacts;
                 _portBit4LastValue = true;
             }
         }
@@ -184,21 +180,21 @@ public class ZxSpectrum48IoHandler : IIoHandler<IZxSpectrum48Machine>
             {
                 // --- Low bit set, C:1, C:1, C:1, C:1
                 applyContentionDelay();
-                _cpu.TactPlus1();
+                Machine.TactPlus1();
                 applyContentionDelay();
-                _cpu.TactPlus1();
+                Machine.TactPlus1();
                 applyContentionDelay();
-                _cpu.TactPlus1();
+                Machine.TactPlus1();
                 applyContentionDelay();
-                _cpu.TactPlus1();
+                Machine.TactPlus1();
             }
             else
             {
                 // --- Low bit reset, C:1, C:3
                 applyContentionDelay();
-                _cpu.TactPlus1();
+                Machine.TactPlus1();
                 applyContentionDelay();
-                _cpu.TactPlus3();
+                Machine.TactPlus3();
             }
         }
         else
@@ -206,23 +202,23 @@ public class ZxSpectrum48IoHandler : IIoHandler<IZxSpectrum48Machine>
             if (lowbit)
             {
                 // --- Low bit set, N:4
-                _cpu.TactPlus4();
+                Machine.TactPlus4();
             }
             else
             {
                 // --- Low bit reset, C:1, C:3
                 applyContentionDelay();
-                _cpu.TactPlus1();
+                Machine.TactPlus1();
                 applyContentionDelay();
-                _cpu.TactPlus3();
+                Machine.TactPlus3();
             }
         }
 
         // --- Apply I/O contention
         void applyContentionDelay()
         {
-            var delay = memoryDevice.GetContentionValue((int)_cpu.CurrentFrameTact / _cpu.ClockMultiplier);
-            _cpu.TactPlusN(delay);
+            var delay = memoryDevice.GetContentionValue((int)Machine.CurrentFrameTact / Machine.ClockMultiplier);
+            Machine.TactPlusN(delay);
 
         }
     }

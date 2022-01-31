@@ -309,7 +309,7 @@ public sealed class ScreenDevice : IScreenDevice
         var tactsInFrame = RasterLines * screenLineTime;
 
         // --- Notify the CPU about it
-        Machine.Cpu.SetTactsInFrame(tactsInFrame);
+        Machine.SetTactsInFrame(tactsInFrame);
 
         // --- Notify the memory device to allocate the contention array
         Machine.MemoryDevice.AllocateContentionValues(tactsInFrame);

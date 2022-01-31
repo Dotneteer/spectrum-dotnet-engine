@@ -36,6 +36,11 @@ public interface IZ80Cpu
     bool Halted { get; }
 
     /// <summary>
+    /// Get the base clock frequency of the CPU. We use this value to calculate the machine frame rate.
+    /// </summary>
+    int BaseClockFrequency { get; }
+
+    /// <summary>
     /// This property gets or sets the value of the current clock multiplier.
     /// </summary>
     /// <remarks>
