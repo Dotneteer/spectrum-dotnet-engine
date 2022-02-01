@@ -38,11 +38,6 @@ public interface IZxSpectrum48Machine : IZ80Machine
     byte GetContentionValue(int tact);
 
     /// <summary>
-    /// Represents the I/O handler of ZX Spectrum 48K
-    /// </summary>
-    IIoHandler<IZxSpectrum48Machine> IoHandler { get; }
-
-    /// <summary>
     /// Represents the keyboard device of ZX Spectrum 48K
     /// </summary>
     IKeyboardDevice KeyboardDevice { get; }

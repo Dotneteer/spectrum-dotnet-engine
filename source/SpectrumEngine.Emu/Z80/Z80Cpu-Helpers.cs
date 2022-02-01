@@ -64,8 +64,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private byte ReadPort(ushort address)
     {
-        PortReadDelayFunction(address);
-        return ReadPortFunction(address);
+        DelayPortRead(address);
+        return DoReadPort(address);
     }
 
     /// <summary>
@@ -81,8 +81,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WritePort(ushort address, byte data)
     {
-        PortWriteDelayFunction(address);
-        WritePortFunction(address, data);
+        DelayPortWrite(address);
+        DoWritePort(address, data);
     }
 
     /// <summary>

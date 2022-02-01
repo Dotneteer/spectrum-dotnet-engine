@@ -17,6 +17,14 @@ public class TestZ80Cpu: Z80Cpu
     public override void DelayAddressBusAccess(ushort address)
     {
     }
+
+    public override byte DoReadPort(ushort address)
+    => _machine.ReadPort(address);
+
+    public override void DoWritePort(ushort address, byte value)
+        => _machine.WritePort(address, value);
+
+
 }
 
 /// <summary>
@@ -121,8 +129,6 @@ public class Z80TestMachine
         Cpu = new TestZ80Cpu(this)
         {
             AllowExtendedInstructions = allowExtendedInstructions,
-            ReadPortFunction = ReadPort,
-            WritePortFunction = WritePort
         };
         RunMode = runMode;
     }
@@ -219,7 +225,7 @@ public class Z80TestMachine
     /// <remarks>
     /// Override in derived classes to define a different I/O read operation.
     /// </remarks>
-    protected virtual byte ReadPort(ushort addr)
+    public virtual byte ReadPort(ushort addr)
     {
         var value = IoReadCount >= IoInputSequence.Count
             ? (byte)0x00
@@ -236,7 +242,7 @@ public class Z80TestMachine
     /// <remarks>
     /// Override in derived classes to define a different I/O port write operation.
     /// </remarks>
-    protected virtual void WritePort(ushort addr, byte value)
+    public virtual void WritePort(ushort addr, byte value)
     {
         IoAccessLog.Add(new IoOp(addr, value, true));
     }

@@ -7,7 +7,7 @@
 /// This partition contains the definition of dependencies that you need to define to allow the Z80 to work in an
 /// emulated hardware environment.
 /// </remarks>
-public abstract partial class Z80Cpu
+public partial class Z80Cpu
 {
     /// <summary>
     /// Read the byte at the specified memory address.
@@ -57,7 +57,7 @@ public abstract partial class Z80Cpu
     /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the
     /// I/O port read operation.
     /// </remarks>
-    public Func<ushort, byte> ReadPortFunction { get; set; }
+    public abstract byte DoReadPort(ushort address);
 
     /// <summary>
     /// This function implements the I/O port read delay of the CPU.
@@ -67,7 +67,7 @@ public abstract partial class Z80Cpu
     /// action, the Z80 CPU will use its default 4-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 4 T-states!
     /// </remarks>
-    public Action<ushort> PortReadDelayFunction { get; set; }
+    public virtual void DelayPortRead(ushort address) => TactPlus4();
 
     /// <summary>
     /// This function writes a byte (8-bit) to the 16-bit I/O port address provided in the first argument.
@@ -76,7 +76,7 @@ public abstract partial class Z80Cpu
     /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the
     /// I/O port write operation.
     /// </remarks>
-    public Action<ushort, byte> WritePortFunction { get; set; }
+    public abstract void DoWritePort(ushort address, byte value);
 
     /// <summary>
     /// This function implements the I/O port write delay of the CPU.
@@ -86,7 +86,7 @@ public abstract partial class Z80Cpu
     /// action, the Z80 CPU will use its default 4-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 4 T-states!
     /// </remarks>
-    public Action<ushort> PortWriteDelayFunction { get; set; }
+    public virtual void DelayPortWrite(ushort address) => TactPlus4();
 
     /// <summary>
     /// Every time the CPU clock is incremented with a single T-state, this function is executed.

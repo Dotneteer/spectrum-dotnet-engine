@@ -179,7 +179,7 @@ public interface IZ80Cpu
     /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the
     /// I/O port read operation.
     /// </remarks>
-    Func<ushort, byte> ReadPortFunction { get; set; }
+    public abstract byte DoReadPort(ushort address);
 
     /// <summary>
     /// This function implements the I/O port read delay of the CPU.
@@ -189,7 +189,7 @@ public interface IZ80Cpu
     /// action, the Z80 CPU will use its default 4-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 4 T-states!
     /// </remarks>
-    public Action<ushort> PortReadDelayFunction { get; set; }
+    void DelayPortRead(ushort address);
 
     /// <summary>
     /// This function writes a byte (8-bit) to the 16-bit I/O port address provided in the first argument.
@@ -198,7 +198,7 @@ public interface IZ80Cpu
     /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the
     /// I/O port write operation.
     /// </remarks>
-    Action<ushort, byte> WritePortFunction { get; set; }
+    void DoWritePort(ushort address, byte value);
 
     /// <summary>
     /// This function implements the I/O port write delay of the CPU.
@@ -208,7 +208,7 @@ public interface IZ80Cpu
     /// action, the Z80 CPU will use its default 4-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 4 T-states!
     /// </remarks>
-    Action<ushort> PortWriteDelayFunction { get; set; }
+    void DelayPortWrite(ushort address);
 
     /// <summary>
     /// Every time the CPU clock is incremented with a single T-state, this function is executed.

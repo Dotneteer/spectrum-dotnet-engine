@@ -9,7 +9,6 @@ public class ZxSpectrum48MachineTests
 
         // --- Assert
         m.ShouldNotBeNull();
-        m.IoHandler.ShouldNotBeNull();
         m.KeyboardDevice.ShouldNotBeNull();
         m.ScreenDevice.ShouldNotBeNull();
         m.BeeperDevice.ShouldNotBeNull();

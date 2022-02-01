@@ -9,7 +9,7 @@ namespace SpectrumEngine.Emu;
 /// <remarks>
 /// This partition defines a couple of nested types the CPU emulation utilizes in its implementation.
 /// </remarks>
-public partial class Z80Cpu: IZ80Cpu
+public abstract partial class Z80Cpu: IZ80Cpu
 {
     /// <summary>
     /// Initializes the Z80 CPU instance.
@@ -27,14 +27,6 @@ public partial class Z80Cpu: IZ80Cpu
     /// </remarks>
     public Z80Cpu()
     {
-        // --- Memory and I/O handlers
-        ReadPortFunction = (ushort address)
-            => throw new InvalidOperationException("ReadPortFunction has not been set.");
-        PortReadDelayFunction = (ushort address) => TactPlus4();
-        WritePortFunction = (ushort address, byte data)
-            => throw new InvalidOperationException("WritePortFunction has not been set.");
-        PortWriteDelayFunction = (ushort address) => TactPlus4();
-
         // --- Initialize worker tables
         InitializeAluTables();
         InitializeStandardInstructionsTable();
