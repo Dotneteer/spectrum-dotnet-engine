@@ -8,12 +8,15 @@ public class TestZ80Cpu: Z80Cpu
         _machine = machine;
     }
 
-    public override byte OnReadMemory(ushort address)
+    public override byte DoReadMemory(ushort address)
         => _machine.ReadMemory(address);
 
-    public override void OnWriteMemory(ushort address, byte value)
+    public override void DoWriteMemory(ushort address, byte value)
         => _machine.WriteMemory(address, value);
 
+    public override void DelayAddressBusAccess(ushort address)
+    {
+    }
 }
 
 /// <summary>

@@ -28,7 +28,7 @@ public partial class Z80Cpu
     {
         var oldTacts = Tacts;
         Tacts += 1;
-        TactIncrementedHandler(oldTacts);
+        OnTactIncremented(oldTacts);
     }
 
     /// <summary>
@@ -39,7 +39,7 @@ public partial class Z80Cpu
     {
         var oldTacts = Tacts;
         Tacts += 2;
-        TactIncrementedHandler(oldTacts);
+        OnTactIncremented(oldTacts);
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ public partial class Z80Cpu
     {
         var oldTacts = Tacts;
         Tacts += 3;
-        TactIncrementedHandler(oldTacts);
+        OnTactIncremented(oldTacts);
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ public partial class Z80Cpu
     {
         var oldTacts = Tacts;
         Tacts += 4;
-        TactIncrementedHandler(oldTacts);
+        OnTactIncremented(oldTacts);
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ public partial class Z80Cpu
     {
         var oldTacts = Tacts;
         Tacts += 5;
-        TactIncrementedHandler(oldTacts);
+        OnTactIncremented(oldTacts);
     }
 
     /// <summary>
@@ -83,7 +83,7 @@ public partial class Z80Cpu
     {
         var oldTacts = Tacts;
         Tacts += 6;
-        TactIncrementedHandler(oldTacts);
+        OnTactIncremented(oldTacts);
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public partial class Z80Cpu
     {
         var oldTacts = Tacts;
         Tacts += 7;
-        TactIncrementedHandler(oldTacts);
+        OnTactIncremented(oldTacts);
     }
 
     /// <summary>
@@ -105,6 +105,6 @@ public partial class Z80Cpu
     {
         var oldTacts = Tacts;
         Tacts += n;
-        TactIncrementedHandler(oldTacts);
+        OnTactIncremented(oldTacts);
     }
 }

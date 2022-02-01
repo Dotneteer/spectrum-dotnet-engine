@@ -591,7 +591,7 @@ public sealed class ScreenDevice : IScreenDevice
         var addr = rt.PixelBufferIndex;
         PixelBuffer[addr] = SpectrumColors[BorderColor];
         PixelBuffer[addr + 1] = SpectrumColors[BorderColor];
-        _pixelByte1 = Machine.OnReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
+        _pixelByte1 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
     }
 
     /// <summary>
@@ -603,7 +603,7 @@ public sealed class ScreenDevice : IScreenDevice
         var addr = rt.PixelBufferIndex;
         PixelBuffer[addr] = SpectrumColors[BorderColor];
         PixelBuffer[addr + 1] = SpectrumColors[BorderColor];
-        _attrByte1 = Machine.OnReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
+        _attrByte1 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
     }
 
     /// <summary>
@@ -628,7 +628,7 @@ public sealed class ScreenDevice : IScreenDevice
         PixelBuffer[addr] = GetPixelColor(_pixelByte1 & 0x80, _attrByte1);
         PixelBuffer[addr + 1] = GetPixelColor(_pixelByte1 & 0x40, _attrByte1);
         _pixelByte1 <<= 2;
-        _pixelByte2 = Machine.OnReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
+        _pixelByte2 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
     }
 
     /// <summary>
@@ -641,7 +641,7 @@ public sealed class ScreenDevice : IScreenDevice
         PixelBuffer[addr] = GetPixelColor(_pixelByte1 & 0x80, _attrByte1);
         PixelBuffer[addr + 1] = GetPixelColor(_pixelByte1 & 0x40, _attrByte1);
         _pixelByte1 <<= 2;
-        _attrByte2 = Machine.OnReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
+        _attrByte2 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
     }
 
     /// <summary>
@@ -666,7 +666,7 @@ public sealed class ScreenDevice : IScreenDevice
         PixelBuffer[addr] = GetPixelColor(_pixelByte2 & 0x80, _attrByte2);
         PixelBuffer[addr + 1] = GetPixelColor(_pixelByte2 & 0x40, _attrByte2);
         _pixelByte2 <<= 2;
-        _pixelByte1 = Machine.OnReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
+        _pixelByte1 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
     }
 
     /// <summary>
@@ -679,7 +679,7 @@ public sealed class ScreenDevice : IScreenDevice
         PixelBuffer[addr] = GetPixelColor(_pixelByte2 & 0x80, _attrByte2);
         PixelBuffer[addr + 1] = GetPixelColor(_pixelByte2 & 0x40, _attrByte2);
         _pixelByte2 <<= 2;
-        _attrByte1 = Machine.OnReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
+        _attrByte1 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
     }
 }
 

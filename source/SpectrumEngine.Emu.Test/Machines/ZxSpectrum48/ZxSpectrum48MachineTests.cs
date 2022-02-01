@@ -20,8 +20,8 @@ public class ZxSpectrum48MachineTests
         m.Tacts.ShouldBe(0ul);
         m.TactsInFrame.ShouldBe(69888);
 
-        m.OnReadMemory(0x0000).ShouldBe((byte)0xF3);
-        m.OnReadMemory(0x3fff).ShouldBe((byte)0x3C);
+        m.DoReadMemory(0x0000).ShouldBe((byte)0xF3);
+        m.DoReadMemory(0x3fff).ShouldBe((byte)0x3C);
 
         var sd = m.ScreenDevice;
         sd.RasterLines.ShouldBe(312);

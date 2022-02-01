@@ -14,7 +14,7 @@ public abstract partial class Z80Cpu
     /// </summary>
     /// <param name="address">16-bit memory address</param>
     /// <returns>The byte read from the memory</returns>
-    public abstract byte OnReadMemory(ushort address);
+    public abstract byte DoReadMemory(ushort address);
 
     /// <summary>
     /// This function implements the memory read delay of the CPU.
@@ -25,14 +25,14 @@ public abstract partial class Z80Cpu
     /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 3 T-states!
     /// </remarks>
-    public virtual void OnMemoryReadDelay(ushort address) => TactPlus3();
+    public virtual void DelayMemoryRead(ushort address) => TactPlus3();
 
     /// <summary>
     /// Write the given byte to the specified memory address.
     /// </summary>
     /// <param name="address">16-bit memory address</param>
     /// <param name="value">Byte to write into the memory</param>
-    public abstract void OnWriteMemory(ushort address, byte value);
+    public abstract void DoWriteMemory(ushort address, byte value);
 
     /// <summary>
     /// This function implements the memory write delay of the CPU.
@@ -43,7 +43,12 @@ public abstract partial class Z80Cpu
     /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 3 T-states!
     /// </remarks>
-    public virtual void OnMemoryWriteDelay(ushort address) => TactPlus3();
+    public virtual void DelayMemoryWrite(ushort address) => TactPlus3();
+
+    /// <summary>
+    /// This function handles address-based memory read contention.
+    /// </summary>
+    public abstract void DelayAddressBusAccess(ushort address);
 
     /// <summary>
     /// This function reads a byte (8-bit) from an I/O port using the provided 16-bit address.
@@ -86,19 +91,12 @@ public abstract partial class Z80Cpu
     /// <summary>
     /// Every time the CPU clock is incremented with a single T-state, this function is executed.
     /// </summary>
+    /// <param name="oldTacts">Number of tacts before the increment event</param>
     /// <remarks>
     /// With this function, you can emulate hardware activities running simultaneously with the CPU. For example,
     /// rendering the screen or sound,  handling peripheral devices, and so on.
     /// </remarks>
-    public Action<ulong> TactIncrementedHandler { get; set; }
-
-    /// <summary>
-    /// This function handles address-based memory read contention.
-    /// </summary>
-    public Action<ushort> ContendReadFunction { get; set; }
-
-    /// <summary>
-    /// This function handles address-based memory write contention.
-    /// </summary>
-    public Action<ushort> ContendWriteFunction { get; set; }
+    public virtual void OnTactIncremented(ulong oldTacts)
+    {
+    }
 }

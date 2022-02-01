@@ -49,7 +49,6 @@ public sealed class ZxSpectrum48Machine :
         // --- Bind the CPU and I/O
         ReadPortFunction = IoHandler.ReadPort;
         WritePortFunction = IoHandler.WritePort;
-        TactIncrementedHandler = OnTactIncremented;
 
         // --- Set up devices
         ScreenDevice.SetMemoryScreenOffset(0x4000);
@@ -141,7 +140,7 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     /// <param name="address">16-bit memory address</param>
     /// <returns>The byte read from the memory</returns>
-    public override byte OnReadMemory(ushort address)
+    public override byte DoReadMemory(ushort address)
         => _memory[address];
 
     /// <summary>
@@ -153,9 +152,9 @@ public sealed class ZxSpectrum48Machine :
     /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 3 T-states!
     /// </remarks>
-    public override void OnMemoryReadDelay(ushort address)
+    public override void DelayMemoryRead(ushort address)
     {
-        DelayContendedMemory(address);
+        DelayAddressBusAccess(address);
         TactPlus3();
     }
 
@@ -164,7 +163,7 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     /// <param name="address">16-bit memory address</param>
     /// <param name="value">Byte to write into the memory</param>
-    public override void OnWriteMemory(ushort address, byte value)
+    public override void DoWriteMemory(ushort address, byte value)
     {
         if ((address & 0xc000) != 0x0000)
         {
@@ -181,10 +180,29 @@ public sealed class ZxSpectrum48Machine :
     /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 3 T-states!
     /// </remarks>
-    public override void OnMemoryWriteDelay(ushort address)
+    public override void DelayMemoryWrite(ushort address)
     {
-        DelayContendedMemory(address);
+        DelayAddressBusAccess(address);
         TactPlus3();
+    }
+
+    /// <summary>
+    /// This method implements memory operation delays.
+    /// </summary>
+    /// <param name="address"></param>
+    /// <remarks>
+    /// Whenever the CPU accesses the 0x4000-0x7fff memory range, it contends with the ULA. We keep the contention
+    /// delay values for a particular machine frame tact in _contentionValues.Independently of the memory address, 
+    /// the Z80 CPU takes 3 T-states to read or write the memory contents.
+    /// </remarks>
+    public override void DelayAddressBusAccess(ushort address)
+    {
+        if ((address & 0xc000) == 0x4000)
+        {
+            // --- We read from contended memory
+            var delay = _contentionValues[CurrentFrameTact / ClockMultiplier];
+            TactPlusN(delay);
+        }
     }
 
     /// <summary>
@@ -222,25 +240,6 @@ public sealed class ZxSpectrum48Machine :
         return _contentionValues[tact];
     }
 
-    /// <summary>
-    /// This method implements memory operation delays.
-    /// </summary>
-    /// <param name="address"></param>
-    /// <remarks>
-    /// Whenever the CPU accesses the 0x4000-0x7fff memory range, it contends with the ULA. We keep the contention
-    /// delay values for a particular machine frame tact in _contentionValues.Independently of the memory address, 
-    /// the Z80 CPU takes 3 T-states to read or write the memory contents.
-    /// </remarks>
-    private void DelayContendedMemory(ushort address)
-    {
-        if ((address & 0xc000) == 0x4000)
-        {
-            // --- We read from contended memory
-            var delay = _contentionValues[CurrentFrameTact / ClockMultiplier];
-            TactPlusN(delay);
-        }
-    }
-
     #endregion
 
     /// <summary>
@@ -271,7 +270,7 @@ public sealed class ZxSpectrum48Machine :
     /// <summary>
     /// Every time the CPU clock is incremented with a single T-state, this function is executed.
     /// </summary>
-    protected override void OnTactIncremented(ulong oldTact)
+    public override void OnTactIncremented(ulong oldTact)
     {
         var machineTact = CurrentFrameTact / ClockMultiplier;
         if (_lastRenderedFrameTact != machineTact)
