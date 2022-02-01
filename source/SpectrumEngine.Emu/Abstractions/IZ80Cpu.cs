@@ -36,6 +36,11 @@ public interface IZ80Cpu
     bool Halted { get; }
 
     /// <summary>
+    /// Get the base clock frequency of the CPU. We use this value to calculate the machine frame rate.
+    /// </summary>
+    int BaseClockFrequency { get; }
+
+    /// <summary>
     /// This property gets or sets the value of the current clock multiplier.
     /// </summary>
     /// <remarks>
@@ -43,16 +48,6 @@ public interface IZ80Cpu
     /// frequency multiplier to emulate a faster CPU.
     /// </remarks>
     int ClockMultiplier { get; set; }
-
-    /// <summary>
-    /// This flag indicates that the current CPU frame has been completed since the last reset of the flag.
-    /// </summary>
-    bool FrameCompleted { get; }
-
-    /// <summary>
-    /// Reset the flag that indicates the machine frame completion.
-    /// </summary>
-    void ResetFrameCompletedFlag();
 
     /// <summary>
     /// The number of T-states (clock cycles) elapsed since the last reset
@@ -137,42 +132,45 @@ public interface IZ80Cpu
     void ExecuteCpuCycle();
 
     /// <summary>
-    /// This function reads a byte (8-bit) from the memory using the provided 16-bit address.
+    /// Read the byte at the specified memory address.
     /// </summary>
-    /// <remarks>
-    /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the memory
-    /// read operation.
-    /// </remarks>
-    Func<ushort, byte> ReadMemoryFunction { get; set; }
+    /// <param name="address">16-bit memory address</param>
+    /// <returns>The byte read from the memory</returns>
+    byte DoReadMemory(ushort address);
 
     /// <summary>
     /// This function implements the memory read delay of the CPU.
     /// </summary>
+    /// <param name="address">Memory address to read</param>
     /// <remarks>
     /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
     /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 3 T-states!
     /// </remarks>
-    public Action<ushort> MemoryReadDelayFunction { get; set; }
+    void DelayMemoryRead(ushort address) => TactPlus3();
 
     /// <summary>
-    /// This function writes a byte (8-bit) to the 16-bit memory address provided in the first argument.
+    /// Write the given byte to the specified memory address.
     /// </summary>
-    /// <remarks>
-    /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the memory
-    /// write operation.
-    /// </remarks>
-    Action<ushort, byte> WriteMemoryFunction { get; set; }
+    /// <param name="address">16-bit memory address</param>
+    /// <param name="value">Byte to write into the memory</param>
+    void DoWriteMemory(ushort address, byte value);
 
     /// <summary>
     /// This function implements the memory write delay of the CPU.
     /// </summary>
+    /// <param name="address">Memory address to write</param>
     /// <remarks>
     /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
     /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 3 T-states!
     /// </remarks>
-    public Action<ushort> MemoryWriteDelayFunction { get; set; }
+    void DelayMemoryWrite(ushort address) => TactPlus3();
+
+    /// <summary>
+    /// This function handles address-based memory read contention.
+    /// </summary>
+    void DelayAddressBusAccess(ushort address);
 
     /// <summary>
     /// This function reads a byte (8-bit) from an I/O port using the provided 16-bit address.
@@ -181,7 +179,7 @@ public interface IZ80Cpu
     /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the
     /// I/O port read operation.
     /// </remarks>
-    Func<ushort, byte> ReadPortFunction { get; set; }
+    public abstract byte DoReadPort(ushort address);
 
     /// <summary>
     /// This function implements the I/O port read delay of the CPU.
@@ -191,7 +189,7 @@ public interface IZ80Cpu
     /// action, the Z80 CPU will use its default 4-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 4 T-states!
     /// </remarks>
-    public Action<ushort> PortReadDelayFunction { get; set; }
+    void DelayPortRead(ushort address);
 
     /// <summary>
     /// This function writes a byte (8-bit) to the 16-bit I/O port address provided in the first argument.
@@ -200,7 +198,7 @@ public interface IZ80Cpu
     /// When placing the CPU into an emulated environment, you must provide a concrete function that emulates the
     /// I/O port write operation.
     /// </remarks>
-    Action<ushort, byte> WritePortFunction { get; set; }
+    void DoWritePort(ushort address, byte value);
 
     /// <summary>
     /// This function implements the I/O port write delay of the CPU.
@@ -210,26 +208,17 @@ public interface IZ80Cpu
     /// action, the Z80 CPU will use its default 4-T-state delay. If you use custom delay, take care that you increment
     /// the CPU tacts at least with 4 T-states!
     /// </remarks>
-    public Action<ushort> PortWriteDelayFunction { get; set; }
+    void DelayPortWrite(ushort address);
 
     /// <summary>
     /// Every time the CPU clock is incremented with a single T-state, this function is executed.
     /// </summary>
+    /// <param name="oldTacts">Number of tacts before the increment event</param>
     /// <remarks>
     /// With this function, you can emulate hardware activities running simultaneously with the CPU. For example,
     /// rendering the screen or sound,  handling peripheral devices, and so on.
     /// </remarks>
-    Action TactIncrementedHandler { get; set; }
-
-    /// <summary>
-    /// This function handles address-based memory read contention.
-    /// </summary>
-    Action<ushort> ContendReadFunction { get; set; }
-
-    /// <summary>
-    /// This function handles address-based memory write contention.
-    /// </summary>
-    Action<ushort> ContendWriteFunction { get; set; }
+    void OnTactIncremented(ulong oldTacts);
 
     /// <summary>
     /// This method increments the current CPU tacts by one.

@@ -4149,7 +4149,7 @@ public partial class Z80Cpu
         TactPlus1(Regs.SP);
         WriteMemory(sp1, Regs.H);
         WriteMemory(Regs.SP, Regs.L);
-        TactPlus2Write(Regs.SP);
+        TactPlus2(Regs.SP);
         Regs.WL = tempL;
         Regs.WH = tempH;
         Regs.HL = Regs.WZ;

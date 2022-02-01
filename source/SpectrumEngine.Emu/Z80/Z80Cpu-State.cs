@@ -11,7 +11,7 @@ public partial class Z80Cpu
     /// <summary>
     /// The registers of the CPU
     /// </summary>
-    public Registers Regs { get; private set; } = new ();
+    public Registers Regs { get; private set; } = new();
 
     /// <summary>
     /// The current state of the Z80 signal flags
@@ -51,22 +51,27 @@ public partial class Z80Cpu
     /// <summary>
     /// The number of T-states (clock cycles) elapsed since the last reset
     /// </summary>
-    public ulong Tacts => (ulong)(Frames * TactsInFrame + CurrentFrameTact);
+    public ulong Tacts { get; set; }
 
     /// <summary>
     /// Show the number of machine frames completed since the CPU started.
     /// </summary>
-    public int Frames { get; private set; } = 0;
+    public int Frames => (int)(Tacts / ((ulong)TactsInFrame * (ulong)ClockMultiplier));
 
     /// <summary>
     /// Get the current frame tact within the machine frame being executed.
     /// </summary>
-    public int CurrentFrameTact { get; private set; } = 0;
+    public int CurrentFrameTact => (int)(Tacts / ((ulong)TactsInFrame * (ulong)ClockMultiplier));
 
     /// <summary>
     /// Get the number of T-states in a machine frame.
     /// </summary>
     public int TactsInFrame { get; private set; } = 100_000_000;
+
+    /// <summary>
+    /// Get the base clock frequency of the CPU. We use this value to calculate the machine frame rate.
+    /// </summary>
+    public int BaseClockFrequency { get; set; }
 
     /// <summary>
     /// This property gets or sets the value of the current clock multiplier.
@@ -76,11 +81,6 @@ public partial class Z80Cpu
     /// frequency multiplier to emulate a faster CPU.
     /// </remarks>
     public int ClockMultiplier { get; set; }
-
-    /// <summary>
-    /// This flag indicates that the current CPU frame has been completed since the last reset of the flag.
-    /// </summary>
-    public bool FrameCompleted { get; private set; }
 
     /// <summary>
     /// This flag indicates if bit 3 or 5 of Register F has been updated. We need to keep this value, as we utilize

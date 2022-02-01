@@ -4,9 +4,16 @@
 /// This class is intended to be a reusable base class for emulators using the Z80 CPU.
 /// </summary>
 public abstract class Z80MachineBase : 
+    Z80Cpu,
     IZ80Machine, 
     IDebugSupport
 {
+    // --- Store the start tact of the next machine frame
+    private ulong _nextFrameStartTact;
+
+    // --- This flag indicates that the last machine frame has been completed.
+    private bool _frameCompleted;
+
     /// <summary>
     /// The folder where the ROM files are stored
     /// </summary>
@@ -18,23 +25,23 @@ public abstract class Z80MachineBase :
     public ExecutionContext ExecutionContext { get; } = new();
 
     /// <summary>
-    /// Get the Z80 instance associated with the machine.
-    /// </summary>
-    public IZ80Cpu Cpu { get; } = new Z80Cpu();
-
-    /// <summary>
-    /// Get the base clock frequency of the CPU. We use this value to calculate the machine frame rate.
-    /// </summary>
-    public int BaseClockFrequency { get; set; }
-
-    /// <summary>
-    /// This property gets or sets the value of the current clock multiplier.
+    /// This property gets or sets the value of the target clock multiplier to set when the next machine frame starts.
     /// </summary>
     /// <remarks>
     /// By default, the CPU works with its regular (base) clock frequency; however, you can use an integer clock
     /// frequency multiplier to emulate a faster CPU.
     /// </remarks>
-    public int ClockMultiplier { get; set; }
+    public int TargetClockMultiplier { get; set; }
+
+    /// <summary>
+    /// This flag indicates that the last machine frame has been completed.
+    /// </summary>
+    public bool FrameCompleted { get => _frameCompleted; set => _frameCompleted = value; }
+
+    /// <summary>
+    /// Shows the number of frame tacts that overflow to the subsequent machine frame.
+    /// </summary>
+    public int FrameOverflow { get; set; }
 
     /// <summary>
     /// This method provides a way to configure (or reconfigure) the emulated machine after changing the properties
@@ -48,26 +55,20 @@ public abstract class Z80MachineBase :
     /// <summary>
     /// Emulates turning on a machine (after it has been turned off).
     /// </summary>
-    public virtual void HardReset()
+    public override void HardReset()
     {
-        Cpu.HardReset();
+        base.HardReset();
     }
 
     /// <summary>
     /// This method emulates resetting a machine with a hardware reset button.
     /// </summary>
-    public virtual void Reset()
+    public override void Reset()
     {
-        Cpu.Reset();
+        base.Reset();
+        FrameCompleted = true;
+        FrameOverflow = 0;
     }
-
-    /// <summary>
-    /// Every time the CPU clock is incremented with a single T-state, this function is executed.
-    /// </summary>
-    /// <remarks>
-    /// Override in derived classes to implement hardware components running parallel with the CPU.
-    /// </remarks>
-    protected abstract void OnTactIncremented();
 
     /// <summary>
     /// Get the name of the default ROM's resource file within this assembly.
@@ -114,11 +115,90 @@ public abstract class Z80MachineBase :
     /// </returns>
     public virtual LoopTerminationMode ExecuteMachineLoop()
     {
+        return ExecutionContext.LoopTerminationMode == LoopTerminationMode.Normal
+            ? ExecuteMachineLoopWithNoDebug()
+            : ExecuteMachineLoopWithDebug();
+    }
+
+    /// <summary>
+    /// Executes the machine loop using the current execution context.
+    /// </summary>
+    /// <returns>
+    /// The value indicates the termination reason of the loop. 
+    /// </returns>
+    private LoopTerminationMode ExecuteMachineLoopWithNoDebug()
+    {
+        // --- Sign that the loop execution is in progress
+        ExecutionContext.LastTerminationReason = null;
+
+        // --- Execute the machine loop until the frame is completed or the loop is interrupted because of any other
+        // --- completion reason, like reaching a breakpoint, etc.
+        do
+        {
+            // --- Test if the machine frame has just been completed.
+            if (_frameCompleted)
+            {
+                var currentFrameStart = Tacts - (ulong)FrameOverflow;
+
+                // --- Update the CPU's clock multiplier, if the machine's has changed.
+                var clockMultiplierChanged = false;
+                if (AllowCpuClockChange() && ClockMultiplier != TargetClockMultiplier)
+                {
+                    // --- Use the current clock multiplier
+                    ClockMultiplier = TargetClockMultiplier;
+                    clockMultiplierChanged = true;
+                }
+
+                // --- Allow a machine to handle frame initialization
+                OnInitNewFrame(clockMultiplierChanged);
+                _frameCompleted = false;
+
+                // --- Calculate the start tact of the next machine frame
+                _nextFrameStartTact = currentFrameStart + (ulong)(TactsInFrame * ClockMultiplier);
+            }
+
+            // --- Set the interrupt signal, if required so
+            if (ShouldRaiseInterrupt())
+            {
+                SignalFlags |= Z80Signals.Int;
+            }
+            else
+            {
+                SignalFlags &= ~Z80Signals.Int;
+            }
+
+            // --- Execute the next CPU instruction entirely 
+            do
+            {
+                ExecuteCpuCycle();
+            } while (Prefix != OpCodePrefix.None);
+
+            // --- Allow the machine to do additional tasks after the completed CPU instruction
+            AfterInstructionExecuted();
+
+            _frameCompleted = Tacts >= _nextFrameStartTact;
+        } while (!_frameCompleted);
+
+        // --- Calculate the overflow, we need this value in the next frame
+        FrameOverflow = (int)(Tacts - _nextFrameStartTact);
+
+        // --- Done
+        return (ExecutionContext.LastTerminationReason = LoopTerminationMode.Normal).Value;
+    }
+
+    /// <summary>
+    /// Executes the machine loop using the current execution context.
+    /// </summary>
+    /// <returns>
+    /// The value indicates the termination reason of the loop. 
+    /// </returns>
+    private LoopTerminationMode ExecuteMachineLoopWithDebug()
+    {
         // --- Sign that the loop execution is in progress
         ExecutionContext.LastTerminationReason = null;
 
         // --- Check the startup breakpoint
-        if (Cpu.Regs.PC != LastStartupBreakpoint)
+        if (Regs.PC != LastStartupBreakpoint)
         {
             // --- Check startup breakpoint
             CheckBreakpoints();
@@ -126,7 +206,7 @@ public abstract class Z80MachineBase :
             {
                 // --- The code execution has stopped at the startup breakpoint.
                 // --- Sign that fact so that the next time the code do not stop
-                LastStartupBreakpoint = Cpu.Regs.PC;
+                LastStartupBreakpoint = Regs.PC;
                 return ExecutionContext.LastTerminationReason.Value;
             }
         }
@@ -139,42 +219,47 @@ public abstract class Z80MachineBase :
         do
         {
             // --- Test if the machine frame has just been completed.
-            if (Cpu.FrameCompleted)
+            if (_frameCompleted)
             {
+                var currentFrameStart = Tacts - (ulong)FrameOverflow;
+
                 // --- Update the CPU's clock multiplier, if the machine's has changed.
                 var clockMultiplierChanged = false;
-                if (AllowCpuClockChange() && Cpu.ClockMultiplier != ClockMultiplier)
+                if (AllowCpuClockChange() && ClockMultiplier != TargetClockMultiplier)
                 {
                     // --- Use the current clock multiplier
-                    Cpu.ClockMultiplier = ClockMultiplier;
+                    ClockMultiplier = TargetClockMultiplier;
                     clockMultiplierChanged = true;
                 }
 
                 // --- Allow a machine to handle frame initialization
                 OnInitNewFrame(clockMultiplierChanged);
-                Cpu.ResetFrameCompletedFlag();
+                _frameCompleted = false;
+
+                // --- Calculate the start tact of the next machine frame
+                _nextFrameStartTact = currentFrameStart + (ulong)(TactsInFrame * ClockMultiplier);
             }
 
             // --- Set the interrupt signal, if required so
             if (ShouldRaiseInterrupt())
             {
-                Cpu.SignalFlags |= Z80Cpu.Z80Signals.Int;
+                SignalFlags |= Z80Signals.Int;
             }
             else
             {
-                Cpu.SignalFlags &= ~Z80Cpu.Z80Signals.Int;
+                SignalFlags &= ~Z80Signals.Int;
             }
 
             // --- Execute the next CPU instruction entirely 
             do
             {
-                Cpu.ExecuteCpuCycle();
-            } while (Cpu.Prefix != Z80Cpu.OpCodePrefix.None);
+                ExecuteCpuCycle();
+            } while (Prefix != OpCodePrefix.None);
 
             // --- Allow the machine to do additional tasks after the completed CPU instruction
             AfterInstructionExecuted();
 
-            // --- De the machine reached the termination point?
+            // --- Do the machine reached the termination point?
             if (TestTerminationPoint())
             {
                 // --- The machine reached the termination point
@@ -187,19 +272,15 @@ public abstract class Z80MachineBase :
             {
                 // --- The code execution has stopped at the startup breakpoint.
                 // --- Sign that fact so that the next time the code do not stop
-                LastStartupBreakpoint = Cpu.Regs.PC;
+                LastStartupBreakpoint = Regs.PC;
                 return ExecutionContext.LastTerminationReason.Value;
             }
 
-            // --- Test HALT mode
-            if (ExecutionContext.LoopTerminationMode == LoopTerminationMode.UntilHalt && Cpu.Halted)
-            {
-                // --- The CPU is halted
-                return (ExecutionContext.LastTerminationReason = LoopTerminationMode.UntilHalt).Value;
-            }
+            _frameCompleted = Tacts >= _nextFrameStartTact;
+        } while (!_frameCompleted);
 
-
-        } while (!Cpu.FrameCompleted);
+        // --- Calculate the overflow, we need this value in the next frame
+        FrameOverflow = (int)(Tacts - _nextFrameStartTact);
 
         // --- Done
         return (ExecutionContext.LastTerminationReason = LoopTerminationMode.Normal).Value;
@@ -224,7 +305,7 @@ public abstract class Z80MachineBase :
     /// </remarks>
     protected virtual bool TestTerminationPoint() 
         => ExecutionContext.LoopTerminationMode == LoopTerminationMode.UntilExecutionPoint && 
-           Cpu.Regs.PC == ExecutionContext.TerminationPoint;
+           Regs.PC == ExecutionContext.TerminationPoint;
 
     /// <summary>
     /// The machine's execution loop calls this method to check if it can change the clock multiplier.

@@ -21,20 +21,14 @@ public partial class Z80Cpu
     }
 
     /// <summary>
-    /// Reset the flag that indicates the machine frame completion.
-    /// </summary>
-    public void ResetFrameCompletedFlag()
-    {
-        FrameCompleted = false;
-    }
-
-    /// <summary>
     /// This method increments the current CPU tacts by one.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus1()
     {
-        IncrementTacts();
+        var oldTacts = Tacts;
+        Tacts += 1;
+        OnTactIncremented(oldTacts);
     }
 
     /// <summary>
@@ -43,8 +37,9 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus2()
     {
-        IncrementTacts();
-        IncrementTacts();
+        var oldTacts = Tacts;
+        Tacts += 2;
+        OnTactIncremented(oldTacts);
     }
 
     /// <summary>
@@ -53,9 +48,9 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus3()
     {
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
+        var oldTacts = Tacts;
+        Tacts += 3;
+        OnTactIncremented(oldTacts);
     }
 
     /// <summary>
@@ -64,10 +59,9 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus4()
     {
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
+        var oldTacts = Tacts;
+        Tacts += 4;
+        OnTactIncremented(oldTacts);
     }
 
     /// <summary>
@@ -76,11 +70,9 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus5()
     {
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
+        var oldTacts = Tacts;
+        Tacts += 5;
+        OnTactIncremented(oldTacts);
     }
 
     /// <summary>
@@ -89,12 +81,9 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus6()
     {
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
+        var oldTacts = Tacts;
+        Tacts += 6;
+        OnTactIncremented(oldTacts);
     }
 
     /// <summary>
@@ -103,13 +92,9 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus7()
     {
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
-        IncrementTacts();
+        var oldTacts = Tacts;
+        Tacts += 7;
+        OnTactIncremented(oldTacts);
     }
 
     /// <summary>
@@ -118,24 +103,8 @@ public partial class Z80Cpu
     /// <param name="n">The number to increate the CPU tacts by</param>
     public void TactPlusN(byte n)
     {
-        for (int i = 0; i < n; i++)
-        {
-            IncrementTacts();
-        }
-    }
-
-    /// <summary>
-    /// Increments the current CPU tacts
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void IncrementTacts()
-    {
-        if (++CurrentFrameTact >= TactsInFrame * ClockMultiplier)
-        {
-            CurrentFrameTact = 0;
-            Frames++;
-            FrameCompleted = true;
-        }
-        TactIncrementedHandler();
+        var oldTacts = Tacts;
+        Tacts += n;
+        OnTactIncremented(oldTacts);
     }
 }

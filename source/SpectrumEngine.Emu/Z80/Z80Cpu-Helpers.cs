@@ -21,8 +21,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private byte ReadMemory(ushort address)
     {
-        MemoryReadDelayFunction(address);
-        return ReadMemoryFunction(address);
+        DelayMemoryRead(address);
+        return DoReadMemory(address);
     }
 
     /// <summary>
@@ -32,8 +32,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private byte FetchCodeByte()
     {
-        MemoryReadDelayFunction(Regs.PC);
-        return ReadMemoryFunction(Regs.PC++);
+        DelayMemoryRead(Regs.PC);
+        return DoReadMemory(Regs.PC++);
     }
 
     /// <summary>
@@ -47,8 +47,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteMemory(ushort address, byte data)
     {
-        MemoryWriteDelayFunction(address);
-        WriteMemoryFunction(address, data);
+        DelayMemoryWrite(address);
+        DoWriteMemory(address, data);
     }
 
     /// <summary>
@@ -64,8 +64,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private byte ReadPort(ushort address)
     {
-        PortReadDelayFunction(address);
-        return ReadPortFunction(address);
+        DelayPortRead(address);
+        return DoReadPort(address);
     }
 
     /// <summary>
@@ -81,8 +81,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WritePort(ushort address, byte data)
     {
-        PortWriteDelayFunction(address);
-        WritePortFunction(address, data);
+        DelayPortWrite(address);
+        DoWritePort(address, data);
     }
 
     /// <summary>

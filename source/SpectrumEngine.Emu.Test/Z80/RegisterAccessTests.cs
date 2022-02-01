@@ -6,7 +6,8 @@ public class RegisterAccessTests
     public void WriteA()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.AF = 0;
 
         // --- Act
@@ -21,7 +22,8 @@ public class RegisterAccessTests
     public void WriteF()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.AF = 0;
 
         // --- Act
@@ -36,7 +38,8 @@ public class RegisterAccessTests
     public void WriteAF()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
 
         // --- Act
         regs.AF = 0x4a28;
@@ -51,7 +54,8 @@ public class RegisterAccessTests
     public void WriteAFSec()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
 
         // --- Act
         regs._AF_ = 0x4a28;
@@ -64,7 +68,8 @@ public class RegisterAccessTests
     public void WriteB()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.BC = 0;
 
         // --- Act
@@ -79,7 +84,8 @@ public class RegisterAccessTests
     public void WriteC()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.BC = 0;
 
         // --- Act
@@ -94,7 +100,8 @@ public class RegisterAccessTests
     public void WriteBC()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
 
         // --- Act
         regs.BC = 0x4a28;
@@ -109,7 +116,8 @@ public class RegisterAccessTests
     public void WriteBCSec()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
 
         // --- Act
         regs._BC_ = 0x4a28;
@@ -122,7 +130,8 @@ public class RegisterAccessTests
     public void WriteD()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.DE = 0;
 
         // --- Act
@@ -137,7 +146,8 @@ public class RegisterAccessTests
     public void WriteE()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.DE = 0;
 
         // --- Act
@@ -152,7 +162,8 @@ public class RegisterAccessTests
     public void WriteDE()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
 
         // --- Act
         regs.DE = 0x4a28;
@@ -167,7 +178,8 @@ public class RegisterAccessTests
     public void WriteDESec()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
 
         // --- Act
         regs._DE_ = 0x4a28;
@@ -180,7 +192,8 @@ public class RegisterAccessTests
     public void WriteH()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.HL = 0;
 
         // --- Act
@@ -195,7 +208,8 @@ public class RegisterAccessTests
     public void WriteL()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.HL = 0;
 
         // --- Act
@@ -210,7 +224,8 @@ public class RegisterAccessTests
     public void WriteHL()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
 
         // --- Act
         regs.HL = 0x4a28;
@@ -225,7 +240,8 @@ public class RegisterAccessTests
     public void WriteHLSec()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
 
         // --- Act
         regs._HL_ = 0x4a28;
@@ -238,7 +254,8 @@ public class RegisterAccessTests
     public void WriteXH()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.IX = 0;
 
         // --- Act
@@ -253,7 +270,8 @@ public class RegisterAccessTests
     public void WriteXL()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.IX = 0;
 
         // --- Act
@@ -268,7 +286,8 @@ public class RegisterAccessTests
     public void WriteIX()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
 
         // --- Act
         regs.IX = 0x4a28;
@@ -283,7 +302,8 @@ public class RegisterAccessTests
     public void WriteYH()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.IY = 0;
 
         // --- Act
@@ -298,7 +318,8 @@ public class RegisterAccessTests
     public void WriteYL()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.IY = 0;
 
         // --- Act
@@ -313,7 +334,8 @@ public class RegisterAccessTests
     public void WriteIY()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
 
         // --- Act
         regs.IY = 0x4a28;
@@ -328,7 +350,8 @@ public class RegisterAccessTests
     public void WriteWH()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.WZ = 0;
 
         // --- Act
@@ -343,7 +366,8 @@ public class RegisterAccessTests
     public void WriteWL()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.WZ = 0;
 
         // --- Act
@@ -358,7 +382,8 @@ public class RegisterAccessTests
     public void WriteWZ()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
 
         // --- Act
         regs.WZ = 0x4a28;
@@ -373,7 +398,8 @@ public class RegisterAccessTests
     public void WriteI()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.IR = 0;
 
         // --- Act
@@ -388,7 +414,8 @@ public class RegisterAccessTests
     public void WriteR()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
         regs.IR = 0;
 
         // --- Act
@@ -403,7 +430,8 @@ public class RegisterAccessTests
     public void WriteIR()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
 
         // --- Act
         regs.IR = 0x4a28;
@@ -418,7 +446,8 @@ public class RegisterAccessTests
     public void WritePC()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
 
         // --- Act
         regs.PC = 0x4a28;
@@ -431,7 +460,8 @@ public class RegisterAccessTests
     public void WriteSP()
     {
         // --- Arrange
-        var regs = new Z80Cpu().Regs;
+        var m = new Z80TestMachine();
+        var regs = m.Cpu.Regs;
 
         // --- Act
         regs.SP = 0x4a28;

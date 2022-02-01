@@ -6,7 +6,7 @@ public class ResetTests
     public void HardReset()
     {
         // --- Arrange
-        var cpu = new Z80Cpu();
+        var cpu = new Z80TestMachine().Cpu;
         var regs = cpu.Regs;
 
         // --- Act
@@ -57,10 +57,7 @@ public class ResetTests
         cpu.Iff1.ShouldBeFalse();
         cpu.Iff2.ShouldBeFalse();
         cpu.Tacts.ShouldBe(0ul);
-        cpu.Frames.ShouldBe(0);
-        cpu.CurrentFrameTact.ShouldBe(0);
         cpu.ClockMultiplier.ShouldBe(1);
-        cpu.FrameCompleted.ShouldBeTrue();
         cpu.F53Updated.ShouldBeFalse();
         cpu.PrevF53Updated.ShouldBeFalse();
 
@@ -74,7 +71,7 @@ public class ResetTests
     public void ResetHandlesMainRegs()
     {
         // --- Arrange
-        var cpu = new Z80Cpu();
+        var cpu = new Z80TestMachine().Cpu;
         var regs = cpu.Regs;
 
         // --- Act
@@ -102,10 +99,7 @@ public class ResetTests
         cpu.Iff1.ShouldBeFalse();
         cpu.Iff2.ShouldBeFalse();
         cpu.Tacts.ShouldBe(0ul);
-        cpu.Frames.ShouldBe(0);
-        cpu.CurrentFrameTact.ShouldBe(0);
         cpu.ClockMultiplier.ShouldBe(1);
-        cpu.FrameCompleted.ShouldBeTrue();
         cpu.F53Updated.ShouldBeFalse();
         cpu.PrevF53Updated.ShouldBeFalse();
 
@@ -119,7 +113,7 @@ public class ResetTests
     public void ResetKeepsRegValues()
     {
         // --- Arrange
-        var cpu = new Z80Cpu();
+        var cpu = new Z80TestMachine().Cpu;
         var regs = cpu.Regs;
         regs.AF = 0x34ac;
         regs._AF_ = 0x34ac;

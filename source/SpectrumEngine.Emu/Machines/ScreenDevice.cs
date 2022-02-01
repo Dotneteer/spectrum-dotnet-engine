@@ -20,9 +20,6 @@ public sealed class ScreenDevice : IScreenDevice
     // --- The current value of the flash flag
     private bool _flashFlag;
 
-    // --- Access the memory device directly
-    private IMemoryDevice? _memoryDevice;
-
     // --- Paper color indexes what flash is off
     private readonly byte[] _paperColorFlashOff = new byte[0x100];
 
@@ -162,9 +159,6 @@ public sealed class ScreenDevice : IScreenDevice
     /// </summary>
     public void Reset()
     {
-        // --- Attach the screen device to the memory device
-        _memoryDevice = Machine.MemoryDevice;
-
         // --- Set default color values
         BorderColor = 7;
         _flashFlag = false;
@@ -271,8 +265,6 @@ public sealed class ScreenDevice : IScreenDevice
     private void InitializeRenderingTactTable()
     {
         // --- Shortcut to the memory device
-        var memDevice = Machine.MemoryDevice;
-
         // --- Calculate helper screen dimensions
         FirstDisplayLine =
             _configuration.VerticalSyncLines +
@@ -309,10 +301,10 @@ public sealed class ScreenDevice : IScreenDevice
         var tactsInFrame = RasterLines * screenLineTime;
 
         // --- Notify the CPU about it
-        Machine.Cpu.SetTactsInFrame(tactsInFrame);
+        Machine.SetTactsInFrame(tactsInFrame);
 
         // --- Notify the memory device to allocate the contention array
-        Machine.MemoryDevice.AllocateContentionValues(tactsInFrame);
+        Machine.AllocateContentionValues(tactsInFrame);
 
         // --- Calculate the refresh rate and the flash toggle rate
         RefreshRate = (decimal)Machine.BaseClockFrequency / tactsInFrame;
@@ -343,7 +335,7 @@ public sealed class ScreenDevice : IScreenDevice
                 PixelBufferIndex = 0,
                 RenderingAction = (tact) => { }
             };
-            memDevice.SetContentionValue(tact, 0);
+            Machine.SetContentionValue(tact, 0);
 
             // --- Calculate line index and the tact index within line
             var line = tact / screenLineTime;
@@ -365,7 +357,7 @@ public sealed class ScreenDevice : IScreenDevice
                     {
                         currentTact.Phase = RenderingPhase.Border;
                         currentTact.RenderingAction = RenderTactBorder;
-                        memDevice.SetContentionValue(tact, _contentionValues[6]);
+                        Machine.SetContentionValue(tact, _contentionValues[6]);
                         calculated = true;
                     }
                     else if (tactInLine == borderPixelFetchTact)
@@ -374,7 +366,7 @@ public sealed class ScreenDevice : IScreenDevice
                         currentTact.Phase = RenderingPhase.BorderFetchPixel;
                         currentTact.PixelAddress = CalcPixelAddress(line + 1, 0);
                         currentTact.RenderingAction = RenderTactBorderFetchPixel;
-                        memDevice.SetContentionValue(tact, _contentionValues[7]);
+                        Machine.SetContentionValue(tact, _contentionValues[7]);
                         calculated = true;
                     }
                     else if (tactInLine == borderAttrFetchTact)
@@ -382,7 +374,7 @@ public sealed class ScreenDevice : IScreenDevice
                         currentTact.Phase = RenderingPhase.BorderFetchAttr;
                         currentTact.AttributeAddress = CalcAttrAddress(line + 1, 0);
                         currentTact.RenderingAction = RenderTactBorderFetchAttr;
-                        memDevice.SetContentionValue(tact, _contentionValues[0]);
+                        Machine.SetContentionValue(tact, _contentionValues[0]);
                         calculated = true;
                     }
                 }
@@ -405,33 +397,33 @@ public sealed class ScreenDevice : IScreenDevice
                                 currentTact.Phase = RenderingPhase.DisplayB1FetchB2;
                                 currentTact.PixelAddress = CalcPixelAddress(line, tactInLine + 4);
                                 currentTact.RenderingAction = RenderTactDislayByte1FetchByte2;
-                                memDevice.SetContentionValue(tact, _contentionValues[1]);
+                                Machine.SetContentionValue(tact, _contentionValues[1]);
                                 break;
                             case 1:
                                 currentTact.Phase = RenderingPhase.DisplayB1FetchA2;
                                 currentTact.AttributeAddress = CalcAttrAddress(line, tactInLine + 3);
                                 currentTact.RenderingAction = RenderTactDislayByte1FetchAttr2;
-                                memDevice.SetContentionValue(tact, _contentionValues[2]);
+                                Machine.SetContentionValue(tact, _contentionValues[2]);
                                 break;
                             case 2:
                                 currentTact.Phase = RenderingPhase.DisplayB1;
                                 currentTact.RenderingAction = RenderTactDislayByte1;
-                                memDevice.SetContentionValue(tact, _contentionValues[3]);
+                                Machine.SetContentionValue(tact, _contentionValues[3]);
                                 break;
                             case 3:
                                 currentTact.Phase = RenderingPhase.DisplayB1;
                                 currentTact.RenderingAction = RenderTactDislayByte1;
-                                memDevice.SetContentionValue(tact, _contentionValues[4]);
+                                Machine.SetContentionValue(tact, _contentionValues[4]);
                                 break;
                             case 4:
                                 currentTact.Phase = RenderingPhase.DisplayB2;
                                 currentTact.RenderingAction = RenderTactDislayByte2;
-                                memDevice.SetContentionValue(tact, _contentionValues[5]);
+                                Machine.SetContentionValue(tact, _contentionValues[5]);
                                 break;
                             case 5:
                                 currentTact.Phase = RenderingPhase.DisplayB2;
                                 currentTact.RenderingAction = RenderTactDislayByte2;
-                                memDevice.SetContentionValue(tact, _contentionValues[6]);
+                                Machine.SetContentionValue(tact, _contentionValues[6]);
                                 break;
                             case 6:
                                 // --- Test, if there are more pixels to display in this line
@@ -441,7 +433,7 @@ public sealed class ScreenDevice : IScreenDevice
                                     currentTact.Phase = RenderingPhase.DisplayB2FetchB1;
                                     currentTact.PixelAddress = CalcPixelAddress(line, tactInLine + _configuration.PixelDataPrefetchTime);
                                     currentTact.RenderingAction = RenderTactDislayByte2FetchByte1;
-                                    memDevice.SetContentionValue(tact, _contentionValues[7]);
+                                    Machine.SetContentionValue(tact, _contentionValues[7]);
                                 }
                                 else
                                 {
@@ -458,7 +450,7 @@ public sealed class ScreenDevice : IScreenDevice
                                     currentTact.Phase = RenderingPhase.DisplayB2FetchA1;
                                     currentTact.AttributeAddress = CalcAttrAddress(line, tactInLine + _configuration.AttributeDataPrefetchTime);
                                     currentTact.RenderingAction = RenderTactDislayByte2FetchAttr1;
-                                    memDevice.SetContentionValue(tact, _contentionValues[0]);
+                                    Machine.SetContentionValue(tact, _contentionValues[0]);
                                 }
                                 else
                                 {
@@ -485,14 +477,14 @@ public sealed class ScreenDevice : IScreenDevice
                                 // --- Yes, prefetch pixel data
                                 currentTact.Phase = RenderingPhase.BorderFetchPixel;
                                 currentTact.PixelAddress = CalcPixelAddress(line + 1, 0);
-                                memDevice.SetContentionValue(tact, _contentionValues[7]);
+                                Machine.SetContentionValue(tact, _contentionValues[7]);
                                 // TODO: Set action reference
                             }
                             else if (tactInLine == borderAttrFetchTact)
                             {
                                 currentTact.Phase = RenderingPhase.BorderFetchAttr;
                                 currentTact.AttributeAddress = CalcAttrAddress(line + 1, 0);
-                                memDevice.SetContentionValue(tact, _contentionValues[0]);
+                                Machine.SetContentionValue(tact, _contentionValues[0]);
                                 // TODO: Set action reference
                             }
                         }
@@ -599,7 +591,7 @@ public sealed class ScreenDevice : IScreenDevice
         var addr = rt.PixelBufferIndex;
         PixelBuffer[addr] = SpectrumColors[BorderColor];
         PixelBuffer[addr + 1] = SpectrumColors[BorderColor];
-        _pixelByte1 = _memoryDevice!.ReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
+        _pixelByte1 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
     }
 
     /// <summary>
@@ -611,7 +603,7 @@ public sealed class ScreenDevice : IScreenDevice
         var addr = rt.PixelBufferIndex;
         PixelBuffer[addr] = SpectrumColors[BorderColor];
         PixelBuffer[addr + 1] = SpectrumColors[BorderColor];
-        _attrByte1 = _memoryDevice!.ReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
+        _attrByte1 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
     }
 
     /// <summary>
@@ -636,7 +628,7 @@ public sealed class ScreenDevice : IScreenDevice
         PixelBuffer[addr] = GetPixelColor(_pixelByte1 & 0x80, _attrByte1);
         PixelBuffer[addr + 1] = GetPixelColor(_pixelByte1 & 0x40, _attrByte1);
         _pixelByte1 <<= 2;
-        _pixelByte2 = _memoryDevice!.ReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
+        _pixelByte2 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
     }
 
     /// <summary>
@@ -649,7 +641,7 @@ public sealed class ScreenDevice : IScreenDevice
         PixelBuffer[addr] = GetPixelColor(_pixelByte1 & 0x80, _attrByte1);
         PixelBuffer[addr + 1] = GetPixelColor(_pixelByte1 & 0x40, _attrByte1);
         _pixelByte1 <<= 2;
-        _attrByte2 = _memoryDevice!.ReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
+        _attrByte2 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
     }
 
     /// <summary>
@@ -674,7 +666,7 @@ public sealed class ScreenDevice : IScreenDevice
         PixelBuffer[addr] = GetPixelColor(_pixelByte2 & 0x80, _attrByte2);
         PixelBuffer[addr + 1] = GetPixelColor(_pixelByte2 & 0x40, _attrByte2);
         _pixelByte2 <<= 2;
-        _pixelByte1 = _memoryDevice!.ReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
+        _pixelByte1 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
     }
 
     /// <summary>
@@ -687,7 +679,7 @@ public sealed class ScreenDevice : IScreenDevice
         PixelBuffer[addr] = GetPixelColor(_pixelByte2 & 0x80, _attrByte2);
         PixelBuffer[addr + 1] = GetPixelColor(_pixelByte2 & 0x40, _attrByte2);
         _pixelByte2 <<= 2;
-        _attrByte1 = _memoryDevice!.ReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
+        _attrByte1 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
     }
 }
 
