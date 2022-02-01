@@ -12,9 +12,30 @@ public interface IZxSpectrum48Machine : IZ80Machine
     int UlaIssue { get; }
 
     /// <summary>
-    /// Represents the memory device of ZX Spectrum 48K
+    /// This method allocates storage for the memory contention values.
     /// </summary>
-    IMemoryDevice MemoryDevice { get; }
+    /// <param name="tactsInFrame">Number of tacts in a machine frame</param>
+    /// <remarks>
+    /// Each machine frame tact that renders a display pixel may have a contention delay. If the CPU reads or writes
+    /// data or uses an I/O port in that particular frame tact, the memory operation may be delayed. When the machine's
+    /// screen device is initialized, it calculates the number of tacts in a frame and calls this method to allocate
+    /// storage for the contention values.
+    /// </remarks>
+    void AllocateContentionValues(int tactsInFrame);
+
+    /// <summary>
+    /// This method sets the contention value associated with the specified machine frame tact.
+    /// </summary>
+    /// <param name="tact">Machine frame tact</param>
+    /// <param name="value">Contention value</param>
+    void SetContentionValue(int tact, byte value);
+
+    /// <summary>
+    /// This method gets the contention value for the specified machine frame tact.
+    /// </summary>
+    /// <param name="tact">Machine frame tact</param>
+    /// <returns>The contention value associated with the specified tact.</returns>
+    byte GetContentionValue(int tact);
 
     /// <summary>
     /// Represents the I/O handler of ZX Spectrum 48K

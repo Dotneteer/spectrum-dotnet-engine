@@ -132,6 +132,42 @@ public interface IZ80Cpu
     void ExecuteCpuCycle();
 
     /// <summary>
+    /// Read the byte at the specified memory address.
+    /// </summary>
+    /// <param name="address">16-bit memory address</param>
+    /// <returns>The byte read from the memory</returns>
+    byte OnReadMemory(ushort address);
+
+    /// <summary>
+    /// This function implements the memory read delay of the CPU.
+    /// </summary>
+    /// <param name="address">Memory address to read</param>
+    /// <remarks>
+    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
+    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
+    /// the CPU tacts at least with 3 T-states!
+    /// </remarks>
+    void OnMemoryReadDelay(ushort address) => TactPlus3();
+
+    /// <summary>
+    /// Write the given byte to the specified memory address.
+    /// </summary>
+    /// <param name="address">16-bit memory address</param>
+    /// <param name="value">Byte to write into the memory</param>
+    void OnWriteMemory(ushort address, byte value);
+
+    /// <summary>
+    /// This function implements the memory write delay of the CPU.
+    /// </summary>
+    /// <param name="address">Memory address to write</param>
+    /// <remarks>
+    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
+    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
+    /// the CPU tacts at least with 3 T-states!
+    /// </remarks>
+    void OnMemoryWriteDelay(ushort address) => TactPlus3();
+
+    /// <summary>
     /// This function reads a byte (8-bit) from an I/O port using the provided 16-bit address.
     /// </summary>
     /// <remarks>

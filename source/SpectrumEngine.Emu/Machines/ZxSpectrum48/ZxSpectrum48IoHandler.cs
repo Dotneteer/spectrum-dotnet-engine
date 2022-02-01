@@ -171,7 +171,6 @@ public class ZxSpectrum48IoHandler : IIoHandler<IZxSpectrum48Machine>
     private void DelayContendedIo(ushort address)
     {
         var lowbit = (address & 0x0001) != 0;
-        var memoryDevice = Machine.MemoryDevice;
 
         // --- Check for contended range
         if ((address & 0xc000) == 0x4000)
@@ -217,7 +216,7 @@ public class ZxSpectrum48IoHandler : IIoHandler<IZxSpectrum48Machine>
         // --- Apply I/O contention
         void applyContentionDelay()
         {
-            var delay = memoryDevice.GetContentionValue((int)Machine.CurrentFrameTact / Machine.ClockMultiplier);
+            var delay = Machine.GetContentionValue((int)Machine.CurrentFrameTact / Machine.ClockMultiplier);
             Machine.TactPlusN(delay);
 
         }

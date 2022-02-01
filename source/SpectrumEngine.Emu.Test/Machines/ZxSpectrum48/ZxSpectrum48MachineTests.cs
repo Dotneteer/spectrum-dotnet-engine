@@ -9,7 +9,6 @@ public class ZxSpectrum48MachineTests
 
         // --- Assert
         m.ShouldNotBeNull();
-        m.MemoryDevice.ShouldNotBeNull();
         m.IoHandler.ShouldNotBeNull();
         m.KeyboardDevice.ShouldNotBeNull();
         m.ScreenDevice.ShouldNotBeNull();
@@ -21,9 +20,8 @@ public class ZxSpectrum48MachineTests
         m.Tacts.ShouldBe(0ul);
         m.TactsInFrame.ShouldBe(69888);
 
-        var md = m.MemoryDevice;
-        md.ReadMemory(0x0000).ShouldBe((byte)0xF3);
-        md.ReadMemory(0x3fff).ShouldBe((byte)0x3C);
+        m.OnReadMemory(0x0000).ShouldBe((byte)0xF3);
+        m.OnReadMemory(0x3fff).ShouldBe((byte)0x3C);
 
         var sd = m.ScreenDevice;
         sd.RasterLines.ShouldBe(312);
