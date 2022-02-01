@@ -115,6 +115,85 @@ public abstract class Z80MachineBase :
     /// </returns>
     public virtual LoopTerminationMode ExecuteMachineLoop()
     {
+        return ExecutionContext.LoopTerminationMode == LoopTerminationMode.Normal
+            ? ExecuteMachineLoopWithNoDebug()
+            : ExecuteMachineLoopWithDebug();
+    }
+
+    /// <summary>
+    /// Executes the machine loop using the current execution context.
+    /// </summary>
+    /// <returns>
+    /// The value indicates the termination reason of the loop. 
+    /// </returns>
+    private LoopTerminationMode ExecuteMachineLoopWithNoDebug()
+    {
+        // --- Sign that the loop execution is in progress
+        ExecutionContext.LastTerminationReason = null;
+
+        // --- Execute the machine loop until the frame is completed or the loop is interrupted because of any other
+        // --- completion reason, like reaching a breakpoint, etc.
+        do
+        {
+            // --- Test if the machine frame has just been completed.
+            if (_frameCompleted)
+            {
+                var currentFrameStart = Tacts - (ulong)FrameOverflow;
+
+                // --- Update the CPU's clock multiplier, if the machine's has changed.
+                var clockMultiplierChanged = false;
+                if (AllowCpuClockChange() && ClockMultiplier != TargetClockMultiplier)
+                {
+                    // --- Use the current clock multiplier
+                    ClockMultiplier = TargetClockMultiplier;
+                    clockMultiplierChanged = true;
+                }
+
+                // --- Allow a machine to handle frame initialization
+                OnInitNewFrame(clockMultiplierChanged);
+                _frameCompleted = false;
+
+                // --- Calculate the start tact of the next machine frame
+                _nextFrameStartTact = currentFrameStart + (ulong)(TactsInFrame * ClockMultiplier);
+            }
+
+            // --- Set the interrupt signal, if required so
+            if (ShouldRaiseInterrupt())
+            {
+                SignalFlags |= Z80Signals.Int;
+            }
+            else
+            {
+                SignalFlags &= ~Z80Signals.Int;
+            }
+
+            // --- Execute the next CPU instruction entirely 
+            do
+            {
+                ExecuteCpuCycle();
+            } while (Prefix != OpCodePrefix.None);
+
+            // --- Allow the machine to do additional tasks after the completed CPU instruction
+            AfterInstructionExecuted();
+
+            _frameCompleted = Tacts >= _nextFrameStartTact;
+        } while (!_frameCompleted);
+
+        // --- Calculate the overflow, we need this value in the next frame
+        FrameOverflow = (int)(Tacts - _nextFrameStartTact);
+
+        // --- Done
+        return (ExecutionContext.LastTerminationReason = LoopTerminationMode.Normal).Value;
+    }
+
+    /// <summary>
+    /// Executes the machine loop using the current execution context.
+    /// </summary>
+    /// <returns>
+    /// The value indicates the termination reason of the loop. 
+    /// </returns>
+    private LoopTerminationMode ExecuteMachineLoopWithDebug()
+    {
         // --- Sign that the loop execution is in progress
         ExecutionContext.LastTerminationReason = null;
 
@@ -195,13 +274,6 @@ public abstract class Z80MachineBase :
                 // --- Sign that fact so that the next time the code do not stop
                 LastStartupBreakpoint = Regs.PC;
                 return ExecutionContext.LastTerminationReason.Value;
-            }
-
-            // --- Test HALT mode
-            if (ExecutionContext.LoopTerminationMode == LoopTerminationMode.UntilHalt && Halted)
-            {
-                // --- The CPU is halted
-                return (ExecutionContext.LastTerminationReason = LoopTerminationMode.UntilHalt).Value;
             }
 
             _frameCompleted = Tacts >= _nextFrameStartTact;

@@ -33,7 +33,7 @@ public class ZxSpectrum48MachineTests
         // --- Arrange
         var m = new ZxSpectrum48Machine
         {
-            TargetClockMultiplier = 10
+            TargetClockMultiplier = 24
         };
 
         // --- Act

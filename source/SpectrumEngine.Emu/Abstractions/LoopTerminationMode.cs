@@ -16,11 +16,6 @@ public enum LoopTerminationMode
     DebugEvent,
 
     /// <summary>
-    /// The execution loop completes when the CPU gets halted.
-    /// </summary>
-    UntilHalt,
-
-    /// <summary>
     /// The execution loop completes when the current PC address (and an optional memory partition) reaches a specified termination point.
     /// </summary>
     UntilExecutionPoint,
