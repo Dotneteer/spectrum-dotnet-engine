@@ -222,6 +222,12 @@ public sealed class ScreenDevice : IScreenDevice
     }
 
     /// <summary>
+    /// Gets the buffer that stores the rendered pixels
+    /// </summary>
+    /// <returns></returns>
+    public uint[] GetPixelBuffer() => PixelBuffer;
+
+    /// <summary>
     /// Get the index of the first display line.
     /// </summary>
     private int FirstDisplayLine { get; set; }
@@ -466,6 +472,7 @@ public sealed class ScreenDevice : IScreenDevice
                     {
                         // --- It is the border area
                         currentTact.Phase = RenderingPhase.Border;
+                        currentTact.RenderingAction = RenderTactBorder;
 
                         // --- Left or right border?
                         if (line >= FirstDisplayLine && line < lastDisplayLine)
@@ -477,15 +484,15 @@ public sealed class ScreenDevice : IScreenDevice
                                 // --- Yes, prefetch pixel data
                                 currentTact.Phase = RenderingPhase.BorderFetchPixel;
                                 currentTact.PixelAddress = CalcPixelAddress(line + 1, 0);
+                                currentTact.RenderingAction = RenderTactBorderFetchPixel;
                                 Machine.SetContentionValue(tact, _contentionValues[7]);
-                                // TODO: Set action reference
                             }
                             else if (tactInLine == borderAttrFetchTact)
                             {
                                 currentTact.Phase = RenderingPhase.BorderFetchAttr;
                                 currentTact.AttributeAddress = CalcAttrAddress(line + 1, 0);
+                                currentTact.RenderingAction = RenderTactBorderFetchAttr;
                                 Machine.SetContentionValue(tact, _contentionValues[0]);
-                                // TODO: Set action reference
                             }
                         }
                     }
@@ -557,7 +564,7 @@ public sealed class ScreenDevice : IScreenDevice
 
         // --- At this point, tactInLine and line contain the X and Y coordinates of the corresponding pixel pair.
         return line >= FirstVisibleLine
-            ? 2 * ((line - FirstVisibleLine) * ScreenWidth + tactInLine)
+            ? 2 *((line - FirstVisibleLine) * ScreenWidth/2 + tactInLine)
             : 0;
     }
 

@@ -444,6 +444,35 @@ public sealed class ZxSpectrum48Machine :
 
     #endregion
 
+    #region Display
+
+    /// <summary>
+    /// Width of the screen in native machine screen pixels
+    /// </summary>
+    public override int ScreenWidthInPixels => ScreenDevice.ScreenWidth;
+
+    /// <summary>
+    /// Height of the screen in native machine screen pixels
+    /// </summary>
+    public override int ScreenHeightInPixels => ScreenDevice.RasterLines;
+
+    /// <summary>
+    /// The multiplier for the pixel width (defaults to 1)
+    /// </summary>
+    public override int HorizontalPixelRatio => 1;
+
+    /// <summary>
+    /// The multiplier for the pixel height (defaults to 1)
+    /// </summary>
+    public override int VerticalPixelRation => 1;
+
+    /// <summary>
+    /// Gets the buffer that stores the rendered pixels
+    /// </summary>
+    public override uint[] GetPixelBuffer() => ScreenDevice.GetPixelBuffer();
+
+    #endregion
+
     /// <summary>
     /// The machine's execution loop calls this method when it is about to initialize a new frame.
     /// </summary>
@@ -467,6 +496,11 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     protected override void AfterInstructionExecuted()
     {
+        if (CurrentFrameTact > 10000)
+        {
+            var x = 1;
+        }
+        ScreenDevice.RenderTact(CurrentFrameTact);
     }
 
     /// <summary>

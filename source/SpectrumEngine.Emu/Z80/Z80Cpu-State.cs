@@ -61,7 +61,7 @@ public partial class Z80Cpu
     /// <summary>
     /// Get the current frame tact within the machine frame being executed.
     /// </summary>
-    public int CurrentFrameTact => (int)(Tacts / ((ulong)TactsInFrame * (ulong)ClockMultiplier));
+    public int CurrentFrameTact => (int)(Tacts % ((ulong)TactsInFrame * (ulong)ClockMultiplier));
 
     /// <summary>
     /// Get the number of T-states in a machine frame.

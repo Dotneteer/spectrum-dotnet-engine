@@ -38,4 +38,9 @@ public sealed class ExecutionContext
     /// execution loop has not been started at least once.
     /// </summary>
     public LoopTerminationMode? LastTerminationReason { get; set; }
+
+    /// <summary>
+    /// Has the last execution loop cancelled?
+    /// </summary>
+    public bool Cancelled { get; set; }
 }

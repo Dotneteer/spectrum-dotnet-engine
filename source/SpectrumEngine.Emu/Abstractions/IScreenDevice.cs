@@ -67,5 +67,10 @@ public interface IScreenDevice: IGenericDevice<IZxSpectrum48Machine>
     /// </summary>
     /// <param name="tact">Frame tact to render</param>
     void RenderTact(int tact);
+
+    /// <summary>
+    /// Gets the buffer that stores the rendered pixels
+    /// </summary>
+    uint[] GetPixelBuffer();
 }
 

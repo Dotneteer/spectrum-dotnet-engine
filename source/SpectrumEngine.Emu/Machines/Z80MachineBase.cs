@@ -25,13 +25,18 @@ public abstract class Z80MachineBase :
     public ExecutionContext ExecutionContext { get; } = new();
 
     /// <summary>
+    /// Get the duration of a machine frame in milliseconds.
+    /// </summary>
+    public double FrameTimeInMs { get; private set; }
+
+    /// <summary>
     /// This property gets or sets the value of the target clock multiplier to set when the next machine frame starts.
     /// </summary>
     /// <remarks>
     /// By default, the CPU works with its regular (base) clock frequency; however, you can use an integer clock
     /// frequency multiplier to emulate a faster CPU.
     /// </remarks>
-    public int TargetClockMultiplier { get; set; }
+    public int TargetClockMultiplier { get; set; } = 1;
 
     /// <summary>
     /// This flag indicates that the last machine frame has been completed.
@@ -42,6 +47,16 @@ public abstract class Z80MachineBase :
     /// Shows the number of frame tacts that overflow to the subsequent machine frame.
     /// </summary>
     public int FrameOverflow { get; set; }
+
+    /// <summary>
+    /// Set the number of tacts in a machine frame.
+    /// </summary>
+    /// <param name="tacts">Number of tacts in a machine frame</param>
+    public override void SetTactsInFrame(int tacts)
+    {
+        base.SetTactsInFrame(tacts);
+        FrameTimeInMs = tacts * 1000 / BaseClockFrequency;
+    }
 
     /// <summary>
     /// This method provides a way to configure (or reconfigure) the emulated machine after changing the properties
@@ -119,6 +134,31 @@ public abstract class Z80MachineBase :
             ? ExecuteMachineLoopWithNoDebug()
             : ExecuteMachineLoopWithDebug();
     }
+
+    /// <summary>
+    /// Width of the screen in native machine screen pixels
+    /// </summary>
+    public abstract int ScreenWidthInPixels { get; }
+
+    /// <summary>
+    /// Height of the screen in native machine screen pixels
+    /// </summary>
+    public abstract int ScreenHeightInPixels { get; }
+
+    /// <summary>
+    /// The multiplier for the pixel width (defaults to 1)
+    /// </summary>
+    public abstract int HorizontalPixelRatio { get; }
+
+    /// <summary>
+    /// The multiplier for the pixel height (defaults to 1)
+    /// </summary>
+    public abstract int VerticalPixelRation { get; }
+
+    /// <summary>
+    /// Gets the buffer that stores the rendered pixels
+    /// </summary>
+    public abstract uint[] GetPixelBuffer();
 
     /// <summary>
     /// Executes the machine loop using the current execution context.
