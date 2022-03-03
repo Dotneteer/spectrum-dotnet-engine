@@ -124,7 +124,7 @@ public sealed class ZxSpectrum48Machine :
         // --- Prepare for running a new machine loop
         ClockMultiplier = TargetClockMultiplier;
         ExecutionContext.LastTerminationReason = null;
-        _lastRenderedFrameTact = -1;
+        _lastRenderedFrameTact = -0;
     }
 
     #endregion
@@ -454,7 +454,7 @@ public sealed class ZxSpectrum48Machine :
     /// <summary>
     /// Height of the screen in native machine screen pixels
     /// </summary>
-    public override int ScreenHeightInPixels => ScreenDevice.RasterLines;
+    public override int ScreenHeightInPixels => ScreenDevice.ScreenLines;
 
     /// <summary>
     /// The multiplier for the pixel width (defaults to 1)
@@ -481,6 +481,7 @@ public sealed class ZxSpectrum48Machine :
     /// </param>
     protected override void OnInitNewFrame(bool clockMultiplierChanged)
     {
+        _lastRenderedFrameTact = 0;
     }
 
     /// <summary>
@@ -496,11 +497,6 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     protected override void AfterInstructionExecuted()
     {
-        if (CurrentFrameTact > 10000)
-        {
-            var x = 1;
-        }
-        ScreenDevice.RenderTact(CurrentFrameTact);
     }
 
     /// <summary>
@@ -509,11 +505,10 @@ public sealed class ZxSpectrum48Machine :
     public override void OnTactIncremented(ulong oldTact)
     {
         var machineTact = CurrentFrameTact / ClockMultiplier;
-        if (_lastRenderedFrameTact != machineTact)
+        while (_lastRenderedFrameTact <= machineTact)
         {
-            // --- Render the current frame tact
+            ScreenDevice.RenderTact(_lastRenderedFrameTact++);
         }
-        _lastRenderedFrameTact = machineTact;
     }
 
     /// <summary>

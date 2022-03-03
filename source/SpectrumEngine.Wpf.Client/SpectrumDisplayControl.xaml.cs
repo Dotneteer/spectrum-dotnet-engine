@@ -13,7 +13,7 @@ namespace SpectrumEngine.Wpf.Client;
 public partial class SpectrumDisplayControl : UserControl
 {
     private byte _currentColor;
-    private WriteableBitmap _bitmap;
+    private WriteableBitmap? _bitmap;
 
     public SpectrumDisplayControl()
     {
@@ -37,8 +37,8 @@ public partial class SpectrumDisplayControl : UserControl
         var horZoom = (int)(ActualWidth / context.Machine!.ScreenWidthInPixels);
         var vertZoom = (int)(ActualHeight / context.Machine!.ScreenHeightInPixels);
         var zoom = context.ZoomFactor = Math.Max(1, Math.Min(horZoom, vertZoom));
-        context.ScreenWidth = zoom * context.Machine!.ScreenWidthInPixels;
-        context.ScreenHeight = zoom * context.Machine!.ScreenHeightInPixels;
+        Display.Width = context.ScreenWidth = zoom * context.Machine!.ScreenWidthInPixels;
+        Display.Height = context.ScreenHeight = zoom * context.Machine!.ScreenHeightInPixels;
     }
 
     private void DisplayControl_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -77,23 +77,23 @@ public partial class SpectrumDisplayControl : UserControl
             var width = Vm.Machine.ScreenWidthInPixels;
             var height = Vm.Machine.ScreenHeightInPixels;
 
-            _bitmap.Lock();
+            _bitmap!.Lock();
             try
             {
                 unsafe
                 {
-                    var stride = _bitmap.BackBufferStride;
                     var buffer = Vm.Machine.GetPixelBuffer();
+                    var stride = _bitmap.BackBufferStride;
                     // Get a pointer to the back buffer.
-                    var pBackBuffer = (long)_bitmap.BackBuffer;
+                    var pBackBuffer = _bitmap.BackBuffer;
 
                     for (var x = 0; x < width; x++)
                     {
                         for (var y = 0; y < height; y++)
                         {
                             var addr = pBackBuffer + y * stride + x * 4;
-                            //uint color = (0xff000000 | (uint)(_currentColor << 16) | (uint)(_currentColor << 8) | _currentColor);
-                            *(uint*)addr = buffer[y * width + x];
+                            var value = buffer[y * width + x];
+                            *(uint*)addr = value;
                         }
                     }
                 }
@@ -110,7 +110,6 @@ public partial class SpectrumDisplayControl : UserControl
 
     private void DisplayControl_Loaded(object sender, RoutedEventArgs e)
     {
-        ResizeScreen();
         var machine = Vm?.Machine;
         if (machine == null) return;
 
@@ -123,8 +122,9 @@ public partial class SpectrumDisplayControl : UserControl
                 PixelFormats.Bgr32,
                 null);
         Display.Source = _bitmap;
-        Display.Width = Vm!.ScreenWidth;
-        Display.Height = Vm!.ScreenHeight;
+        Display.Width = machine.ScreenWidthInPixels;
+        Display.Height = machine.ScreenHeightInPixels;
         Display.Stretch = Stretch.Fill;
+        ResizeScreen();
     }
 }

@@ -29,7 +29,7 @@ public struct RenderingTact
     /// <summary>
     /// This property refers to a function that knows how to render the specified tact.
     /// </summary>
-    public Action<RenderingTact> RenderingAction { get; set; }
+    public Action<RenderingTact>? RenderingAction { get; set; }
 }
 
 /// <summary>

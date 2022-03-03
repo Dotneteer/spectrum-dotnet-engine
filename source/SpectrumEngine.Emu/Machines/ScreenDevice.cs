@@ -50,8 +50,8 @@ public sealed class ScreenDevice : IScreenDevice
     public static readonly ScreenConfiguration ZxSpectrum48ScreenConfiguration = new()
     {
         VerticalSyncLines = 8,
-        NonVisibleBorderTopLines = 8,
-        BorderTopLines = 48,
+        NonVisibleBorderTopLines = 7,
+        BorderTopLines = 49,
         BorderBottomLines = 48,
         NonVisibleBorderBottomLines = 8,
         DisplayLines = 192,
@@ -110,7 +110,7 @@ public sealed class ScreenDevice : IScreenDevice
     /// <summary>
     /// Get or set the current border color.
     /// </summary>
-    public int BorderColor { get; set; }
+    public int BorderColor { get; set; } = 7;
 
     /// <summary>
     /// This table defines the rendering information associated with the tacts of the ULA screen rendering frame.
@@ -184,7 +184,7 @@ public sealed class ScreenDevice : IScreenDevice
     }
 
     /// <summary>
-    /// Get the number of raster lines (height of the rendered screen).
+    /// Get the number of raster lines (height of the screen including non-visible lines).
     /// </summary>
     public int RasterLines { get; private set; }
 
@@ -192,6 +192,11 @@ public sealed class ScreenDevice : IScreenDevice
     /// Get the width of the rendered screen.
     /// </summary>
     public int ScreenWidth { get; private set; }
+
+    /// <summary>
+    /// Get the number of visible screen lines.
+    /// </summary>
+    public int ScreenLines { get; private set; }
 
     /// <summary>
     /// Gets the memory address that specifies the screen address in the memory.
@@ -218,7 +223,7 @@ public sealed class ScreenDevice : IScreenDevice
     public void RenderTact(int tact)
     {
         var renderTact = RenderingTactTable[tact];
-        renderTact.RenderingAction(renderTact);
+        renderTact.RenderingAction?.Invoke(renderTact);
     }
 
     /// <summary>
@@ -287,13 +292,16 @@ public sealed class ScreenDevice : IScreenDevice
             _configuration.DisplayLines +
             _configuration.BorderBottomLines +
             _configuration.NonVisibleBorderBottomLines;
+        ScreenLines = _configuration.BorderTopLines +
+            _configuration.DisplayLines +
+            _configuration.BorderBottomLines;
         ScreenWidth = 2 * (
             _configuration.BorderLeftTime +
             _configuration.DisplayLineTime +
             _configuration.BorderRightTime);
 
         // --- Prepare the pixel buffer to store the rendered screen bitmap
-        PixelBuffer = new uint[RasterLines * ScreenWidth];
+        PixelBuffer = new uint[(ScreenLines+2) * ScreenWidth];
 
         // --- Calculate the entire rendering time of a single screen line
         var screenLineTime =
@@ -339,7 +347,7 @@ public sealed class ScreenDevice : IScreenDevice
                 PixelAddress = 0,
                 AttributeAddress = 0,
                 PixelBufferIndex = 0,
-                RenderingAction = (tact) => { }
+                RenderingAction = null
             };
             Machine.SetContentionValue(tact, 0);
 
@@ -389,8 +397,8 @@ public sealed class ScreenDevice : IScreenDevice
                 {
                     // --- Test, if the tact is in the display area
                     if (
-                      (line >= FirstDisplayLine) &
-                      (line <= lastDisplayLine) &
+                      (line >= FirstDisplayLine) &&
+                      (line <= lastDisplayLine) &&
                       (tactInLine < _configuration.DisplayLineTime)
                     )
                     {

@@ -48,6 +48,11 @@ public interface IScreenDevice: IGenericDevice<IZxSpectrum48Machine>
     int ScreenWidth { get; }
 
     /// <summary>
+    /// Get the number of visible screen lines.
+    /// </summary>
+    int ScreenLines { get; }
+
+    /// <summary>
     /// Gets the memory address that specifies the screen address in the memory.
     /// </summary>
     /// <remarks>
