@@ -1,7 +1,10 @@
-﻿using System;
+﻿using SpectrumEngine.Emu;
+using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -83,17 +86,15 @@ public partial class SpectrumDisplayControl : UserControl
                 unsafe
                 {
                     var buffer = Vm.Machine.GetPixelBuffer();
-                    var stride = _bitmap.BackBufferStride;
-                    // Get a pointer to the back buffer.
                     var pBackBuffer = _bitmap.BackBuffer;
-
-                    for (var x = 0; x < width; x++)
+                    var offset = width;
+                    for (var y = 0; y < height; y++)
                     {
-                        for (var y = 0; y < height; y++)
+                        for (var x = 0; x < width; x++)
                         {
-                            var addr = pBackBuffer + y * stride + x * 4;
-                            var value = buffer[y * width + x];
-                            *(uint*)addr = value;
+                            *(uint*)pBackBuffer = buffer[offset];
+                            offset++;
+                            pBackBuffer += 4;
                         }
                     }
                 }
@@ -126,5 +127,39 @@ public partial class SpectrumDisplayControl : UserControl
         Display.Height = machine.ScreenHeightInPixels;
         Display.Stretch = Stretch.Fill;
         ResizeScreen();
+    }
+
+    private void DisplayControl_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (DataContext is not DisplayViewModel context || context.Machine == null) return;
+        var keyMapping = KeyMappings.DefaultMapping.FirstOrDefault(m => m.Input == e.Key);
+        if (keyMapping != null)
+        {
+            if (context.Machine is ZxSpectrum48Machine zxMachine)
+            {
+                zxMachine.KeyboardDevice.SetStatus(keyMapping.Primary, true);
+                if (keyMapping.Secondary != null)
+                {
+                    zxMachine.KeyboardDevice.SetStatus(keyMapping.Secondary.Value, true);
+                }
+            }
+        }
+    }
+
+    private void DisplayControl_PreviewKeyUp(object sender, KeyEventArgs e)
+    {
+        if (DataContext is not DisplayViewModel context || context.Machine == null) return;
+        var keyMapping = KeyMappings.DefaultMapping.FirstOrDefault(m => m.Input == e.Key);
+        if (keyMapping != null)
+        {
+            if (context.Machine is ZxSpectrum48Machine zxMachine)
+            {
+                zxMachine.KeyboardDevice.SetStatus(keyMapping.Primary, false);
+                if (keyMapping.Secondary != null)
+                {
+                    zxMachine.KeyboardDevice.SetStatus(keyMapping.Secondary.Value, false);
+                }
+            }
+        }
     }
 }

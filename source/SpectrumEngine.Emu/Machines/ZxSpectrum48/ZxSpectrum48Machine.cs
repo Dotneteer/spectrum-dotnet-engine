@@ -482,6 +482,7 @@ public sealed class ZxSpectrum48Machine :
     protected override void OnInitNewFrame(bool clockMultiplierChanged)
     {
         _lastRenderedFrameTact = 0;
+        ScreenDevice.OnNewFrame();
     }
 
     /// <summary>

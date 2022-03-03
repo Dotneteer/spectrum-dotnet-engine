@@ -147,6 +147,7 @@ public sealed class ScreenDevice : IScreenDevice
     {
         Machine = machine;
         _configuration = ZxSpectrum48ScreenConfiguration;
+        _flashFlag = false;
     }
 
     /// <summary>
@@ -233,6 +234,14 @@ public sealed class ScreenDevice : IScreenDevice
     public uint[] GetPixelBuffer() => PixelBuffer;
 
     /// <summary>
+    /// This method signs that a new screen frame has been started
+    /// </summary>
+    public void OnNewFrame()
+    {
+        _flashFlag = (Machine.Frames / FlashToggleFrames) % 2 == 0;
+    }
+
+    /// <summary>
     /// Get the index of the first display line.
     /// </summary>
     private int FirstDisplayLine { get; set; }
@@ -294,14 +303,14 @@ public sealed class ScreenDevice : IScreenDevice
             _configuration.NonVisibleBorderBottomLines;
         ScreenLines = _configuration.BorderTopLines +
             _configuration.DisplayLines +
-            _configuration.BorderBottomLines;
+            _configuration.BorderBottomLines - 1;
         ScreenWidth = 2 * (
             _configuration.BorderLeftTime +
             _configuration.DisplayLineTime +
             _configuration.BorderRightTime);
 
         // --- Prepare the pixel buffer to store the rendered screen bitmap
-        PixelBuffer = new uint[(ScreenLines+2) * ScreenWidth];
+        PixelBuffer = new uint[(ScreenLines+4) * ScreenWidth];
 
         // --- Calculate the entire rendering time of a single screen line
         var screenLineTime =

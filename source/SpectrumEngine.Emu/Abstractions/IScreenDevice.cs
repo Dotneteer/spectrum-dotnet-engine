@@ -77,5 +77,10 @@ public interface IScreenDevice: IGenericDevice<IZxSpectrum48Machine>
     /// Gets the buffer that stores the rendered pixels
     /// </summary>
     uint[] GetPixelBuffer();
+
+    /// <summary>
+    /// This method signs that a new screen frame has been started
+    /// </summary>
+    void OnNewFrame();
 }
 

@@ -6,7 +6,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpectrumEngine.Wpf.Client"
         mc:Ignorable="d"
-        Title="SpectrumEngine - ZX Spectrun 48K Emulator" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        Title="SpectrumEngine - ZX Spectrun 48K Emulator" 
+        Height="450" 
+        Width="800" 
+        WindowStartupLocation="CenterScreen" 
+        WindowState="Maximized" 
+        TabIndex="0"
+        FocusManager.FocusedElement="{Binding ElementName=SpectrumDisplay}">
     <Window.DataContext>
         <local:AppViewModel x:Name="ViewModel" />
     </Window.DataContext>
@@ -31,7 +37,7 @@
             </Menu>
             <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineFrames}" ></TextBlock>
             <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineControllerState}" ></TextBlock>
-            <local:SpectrumDisplayControl DockPanel.Dock="Bottom" DataContext="{Binding DisplayViewModel}"/>
+            <local:SpectrumDisplayControl x:Name="SpectrumDisplay"  DockPanel.Dock="Bottom" DataContext="{Binding DisplayViewModel}" />
         </DockPanel>
     </Grid>
 </Window>
