@@ -15,7 +15,7 @@ public partial class Z80Cpu
     /// Set the number of tacts in a machine frame.
     /// </summary>
     /// <param name="tacts">Number of tacts in a machine frame</param>
-    public void SetTactsInFrame(int tacts)
+    public virtual void SetTactsInFrame(int tacts)
     {
         TactsInFrame = tacts;
     }

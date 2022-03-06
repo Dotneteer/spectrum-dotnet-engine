@@ -50,8 +50,8 @@ public sealed class ScreenDevice : IScreenDevice
     public static readonly ScreenConfiguration ZxSpectrum48ScreenConfiguration = new()
     {
         VerticalSyncLines = 8,
-        NonVisibleBorderTopLines = 8,
-        BorderTopLines = 48,
+        NonVisibleBorderTopLines = 7,
+        BorderTopLines = 49,
         BorderBottomLines = 48,
         NonVisibleBorderBottomLines = 8,
         DisplayLines = 192,
@@ -110,7 +110,7 @@ public sealed class ScreenDevice : IScreenDevice
     /// <summary>
     /// Get or set the current border color.
     /// </summary>
-    public int BorderColor { get; set; }
+    public int BorderColor { get; set; } = 7;
 
     /// <summary>
     /// This table defines the rendering information associated with the tacts of the ULA screen rendering frame.
@@ -147,6 +147,7 @@ public sealed class ScreenDevice : IScreenDevice
     {
         Machine = machine;
         _configuration = ZxSpectrum48ScreenConfiguration;
+        _flashFlag = false;
     }
 
     /// <summary>
@@ -184,7 +185,7 @@ public sealed class ScreenDevice : IScreenDevice
     }
 
     /// <summary>
-    /// Get the number of raster lines (height of the rendered screen).
+    /// Get the number of raster lines (height of the screen including non-visible lines).
     /// </summary>
     public int RasterLines { get; private set; }
 
@@ -192,6 +193,11 @@ public sealed class ScreenDevice : IScreenDevice
     /// Get the width of the rendered screen.
     /// </summary>
     public int ScreenWidth { get; private set; }
+
+    /// <summary>
+    /// Get the number of visible screen lines.
+    /// </summary>
+    public int ScreenLines { get; private set; }
 
     /// <summary>
     /// Gets the memory address that specifies the screen address in the memory.
@@ -218,7 +224,21 @@ public sealed class ScreenDevice : IScreenDevice
     public void RenderTact(int tact)
     {
         var renderTact = RenderingTactTable[tact];
-        renderTact.RenderingAction(renderTact);
+        renderTact.RenderingAction?.Invoke(renderTact);
+    }
+
+    /// <summary>
+    /// Gets the buffer that stores the rendered pixels
+    /// </summary>
+    /// <returns></returns>
+    public uint[] GetPixelBuffer() => PixelBuffer;
+
+    /// <summary>
+    /// This method signs that a new screen frame has been started
+    /// </summary>
+    public void OnNewFrame()
+    {
+        _flashFlag = (Machine.Frames / FlashToggleFrames) % 2 == 0;
     }
 
     /// <summary>
@@ -281,13 +301,16 @@ public sealed class ScreenDevice : IScreenDevice
             _configuration.DisplayLines +
             _configuration.BorderBottomLines +
             _configuration.NonVisibleBorderBottomLines;
+        ScreenLines = _configuration.BorderTopLines +
+            _configuration.DisplayLines +
+            _configuration.BorderBottomLines - 1;
         ScreenWidth = 2 * (
             _configuration.BorderLeftTime +
             _configuration.DisplayLineTime +
             _configuration.BorderRightTime);
 
         // --- Prepare the pixel buffer to store the rendered screen bitmap
-        PixelBuffer = new uint[RasterLines * ScreenWidth];
+        PixelBuffer = new uint[(ScreenLines+4) * ScreenWidth];
 
         // --- Calculate the entire rendering time of a single screen line
         var screenLineTime =
@@ -333,7 +356,7 @@ public sealed class ScreenDevice : IScreenDevice
                 PixelAddress = 0,
                 AttributeAddress = 0,
                 PixelBufferIndex = 0,
-                RenderingAction = (tact) => { }
+                RenderingAction = null
             };
             Machine.SetContentionValue(tact, 0);
 
@@ -383,8 +406,8 @@ public sealed class ScreenDevice : IScreenDevice
                 {
                     // --- Test, if the tact is in the display area
                     if (
-                      (line >= FirstDisplayLine) &
-                      (line <= lastDisplayLine) &
+                      (line >= FirstDisplayLine) &&
+                      (line <= lastDisplayLine) &&
                       (tactInLine < _configuration.DisplayLineTime)
                     )
                     {
@@ -466,6 +489,7 @@ public sealed class ScreenDevice : IScreenDevice
                     {
                         // --- It is the border area
                         currentTact.Phase = RenderingPhase.Border;
+                        currentTact.RenderingAction = RenderTactBorder;
 
                         // --- Left or right border?
                         if (line >= FirstDisplayLine && line < lastDisplayLine)
@@ -477,15 +501,15 @@ public sealed class ScreenDevice : IScreenDevice
                                 // --- Yes, prefetch pixel data
                                 currentTact.Phase = RenderingPhase.BorderFetchPixel;
                                 currentTact.PixelAddress = CalcPixelAddress(line + 1, 0);
+                                currentTact.RenderingAction = RenderTactBorderFetchPixel;
                                 Machine.SetContentionValue(tact, _contentionValues[7]);
-                                // TODO: Set action reference
                             }
                             else if (tactInLine == borderAttrFetchTact)
                             {
                                 currentTact.Phase = RenderingPhase.BorderFetchAttr;
                                 currentTact.AttributeAddress = CalcAttrAddress(line + 1, 0);
+                                currentTact.RenderingAction = RenderTactBorderFetchAttr;
                                 Machine.SetContentionValue(tact, _contentionValues[0]);
-                                // TODO: Set action reference
                             }
                         }
                     }
@@ -557,7 +581,7 @@ public sealed class ScreenDevice : IScreenDevice
 
         // --- At this point, tactInLine and line contain the X and Y coordinates of the corresponding pixel pair.
         return line >= FirstVisibleLine
-            ? 2 * ((line - FirstVisibleLine) * ScreenWidth + tactInLine)
+            ? 2 *((line - FirstVisibleLine) * ScreenWidth/2 + tactInLine)
             : 0;
     }
 

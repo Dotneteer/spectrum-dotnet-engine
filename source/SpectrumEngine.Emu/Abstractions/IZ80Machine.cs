@@ -12,13 +12,18 @@ public interface IZ80Machine : IZ80Cpu
     ExecutionContext ExecutionContext { get; }
 
     /// <summary>
+    /// Get the duration of a machine frame in milliseconds.
+    /// </summary>
+    double FrameTimeInMs { get; }
+
+    /// <summary>
     /// This property gets or sets the value of the target clock multiplier to set when the next machine frame starts.
     /// </summary>
     /// <remarks>
     /// By default, the CPU works with its regular (base) clock frequency; however, you can use an integer clock
     /// frequency multiplier to emulate a faster CPU.
     /// </remarks>
-    public int TargetClockMultiplier { get; set; }
+    int TargetClockMultiplier { get; set; }
 
     /// <summary>
     /// This method provides a way to configure (or reconfigure) the emulated machine after changing the properties
@@ -43,4 +48,29 @@ public interface IZ80Machine : IZ80Cpu
     /// Shows the number of frame tacts that overflow to the subsequent machine frame.
     /// </summary>
     int FrameOverflow { get; set; }
+
+    /// <summary>
+    /// Width of the screen in native machine screen pixels
+    /// </summary>
+    int ScreenWidthInPixels { get; }
+
+    /// <summary>
+    /// Height of the screen in native machine screen pixels
+    /// </summary>
+    int ScreenHeightInPixels { get; }
+
+    /// <summary>
+    /// The multiplier for the pixel width (defaults to 1)
+    /// </summary>
+    int HorizontalPixelRatio { get; }
+
+    /// <summary>
+    /// The multiplier for the pixel height (defaults to 1)
+    /// </summary>
+    int VerticalPixelRation { get; }
+
+    /// <summary>
+    /// Gets the buffer that stores the rendered pixels
+    /// </summary>
+    uint[] GetPixelBuffer();
 }

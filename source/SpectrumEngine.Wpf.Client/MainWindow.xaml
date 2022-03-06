@@ -1,0 +1,43 @@
+﻿<Window x:Class="SpectrumEngine.Wpf.Client.MainWindow"
+        x:Name="AppWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SpectrumEngine.Wpf.Client"
+        mc:Ignorable="d"
+        Title="SpectrumEngine - ZX Spectrun 48K Emulator" 
+        Height="450" 
+        Width="800" 
+        WindowStartupLocation="CenterScreen" 
+        WindowState="Maximized" 
+        TabIndex="0"
+        FocusManager.FocusedElement="{Binding ElementName=SpectrumDisplay}">
+    <Window.DataContext>
+        <local:AppViewModel x:Name="ViewModel" />
+    </Window.DataContext>
+    <Grid>
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="File">
+                    <MenuItem Header="Exit" Click="MenuItem_Click" />
+                </MenuItem>
+                <MenuItem Header="Machine">
+                    <MenuItem Header="Start" Command="{Binding StartCommand, Mode=OneWay}" />
+                    <MenuItem Header="Pause" Command="{Binding PauseCommand, Mode=OneWay}"/>
+                    <MenuItem Header="Stop" Command="{Binding StopCommand, Mode=OneWay}" />
+                    <Separator />
+                    <MenuItem Header="Restart" Command="{Binding RestartCommand, Mode=OneWay}" />
+                    <Separator />
+                    <MenuItem Header="Debug" Command="{Binding StartDebugCommand, Mode=OneWay}" />
+                    <MenuItem Header="Step Into" Command="{Binding StepIntoCommand, Mode=OneWay}" />
+                    <MenuItem Header="Step Over" Command="{Binding StepOverCommand, Mode=OneWay}" />
+                    <MenuItem Header="Step Out" Command="{Binding StepOutCommand, Mode=OneWay}" />
+                </MenuItem>
+            </Menu>
+            <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineFrames}" ></TextBlock>
+            <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineControllerState}" ></TextBlock>
+            <local:SpectrumDisplayControl x:Name="SpectrumDisplay"  DockPanel.Dock="Bottom" DataContext="{Binding DisplayViewModel}" />
+        </DockPanel>
+    </Grid>
+</Window>

@@ -9,6 +9,8 @@ public sealed class ZxSpectrum48Machine :
 {
     #region Private members
 
+    private const int AUDIO_SAMPLE_RATE = 48_000;
+
     // --- This byte array represents the 64K memory, including the 16K ROM and 48K RAM.
     private readonly byte[] _memory = new byte[0x1_0000];
 
@@ -30,6 +32,8 @@ public sealed class ZxSpectrum48Machine :
     // --- Tacts value when last time bit 4 of $fe changed from 1 to 0
     private ulong _portBit4ChangedFrom1Tacts;
 
+    // --- The clock multiplier value used in the previous machine frame;
+    private int _oldClockMultiplier;
 
     #endregion
 
@@ -114,17 +118,21 @@ public sealed class ZxSpectrum48Machine :
         // --- Reset memory
         for (var i = 0x4000; i < _memory.Length; i++) _memory[i] = 0;
 
-        // --- Reset devices
+        // --- Reset and setup devices
         KeyboardDevice.Reset();
         ScreenDevice.Reset();
         BeeperDevice.Reset();
+        BeeperDevice.SetAudioSampleRate(AUDIO_SAMPLE_RATE);
         FloatingBusDevice.Reset();
         TapeDevice.Reset();
+
+        // --- Unknown clock multiplier in the previous frame
+        _oldClockMultiplier = -1;
 
         // --- Prepare for running a new machine loop
         ClockMultiplier = TargetClockMultiplier;
         ExecutionContext.LastTerminationReason = null;
-        _lastRenderedFrameTact = -1;
+        _lastRenderedFrameTact = -0;
     }
 
     #endregion
@@ -444,6 +452,35 @@ public sealed class ZxSpectrum48Machine :
 
     #endregion
 
+    #region Display
+
+    /// <summary>
+    /// Width of the screen in native machine screen pixels
+    /// </summary>
+    public override int ScreenWidthInPixels => ScreenDevice.ScreenWidth;
+
+    /// <summary>
+    /// Height of the screen in native machine screen pixels
+    /// </summary>
+    public override int ScreenHeightInPixels => ScreenDevice.ScreenLines;
+
+    /// <summary>
+    /// The multiplier for the pixel width (defaults to 1)
+    /// </summary>
+    public override int HorizontalPixelRatio => 1;
+
+    /// <summary>
+    /// The multiplier for the pixel height (defaults to 1)
+    /// </summary>
+    public override int VerticalPixelRation => 1;
+
+    /// <summary>
+    /// Gets the buffer that stores the rendered pixels
+    /// </summary>
+    public override uint[] GetPixelBuffer() => ScreenDevice.GetPixelBuffer();
+
+    #endregion
+
     /// <summary>
     /// The machine's execution loop calls this method when it is about to initialize a new frame.
     /// </summary>
@@ -452,6 +489,21 @@ public sealed class ZxSpectrum48Machine :
     /// </param>
     protected override void OnInitNewFrame(bool clockMultiplierChanged)
     {
+        // --- No screen tact rendered in this frame
+        _lastRenderedFrameTact = 0;
+
+        // --- Prepare the screen device for the new machine frame
+        ScreenDevice.OnNewFrame();
+
+        // --- Handle audio sample recalculations when the actual clock frequency changes
+        if (_oldClockMultiplier != ClockMultiplier)
+        {
+            BeeperDevice.SetAudioSampleRate(AUDIO_SAMPLE_RATE);
+            _oldClockMultiplier = ClockMultiplier;
+        }
+
+        // --- Prepare the beeper device for the new frame
+        BeeperDevice.OnNewFrame();
     }
 
     /// <summary>
@@ -467,6 +519,7 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     protected override void AfterInstructionExecuted()
     {
+        BeeperDevice.RenderBeeperSample();
     }
 
     /// <summary>
@@ -475,11 +528,10 @@ public sealed class ZxSpectrum48Machine :
     public override void OnTactIncremented(ulong oldTact)
     {
         var machineTact = CurrentFrameTact / ClockMultiplier;
-        if (_lastRenderedFrameTact != machineTact)
+        while (_lastRenderedFrameTact <= machineTact)
         {
-            // --- Render the current frame tact
+            ScreenDevice.RenderTact(_lastRenderedFrameTact++);
         }
-        _lastRenderedFrameTact = machineTact;
     }
 
     /// <summary>

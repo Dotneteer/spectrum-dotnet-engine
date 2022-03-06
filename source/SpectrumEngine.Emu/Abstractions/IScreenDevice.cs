@@ -48,6 +48,11 @@ public interface IScreenDevice: IGenericDevice<IZxSpectrum48Machine>
     int ScreenWidth { get; }
 
     /// <summary>
+    /// Get the number of visible screen lines.
+    /// </summary>
+    int ScreenLines { get; }
+
+    /// <summary>
     /// Gets the memory address that specifies the screen address in the memory.
     /// </summary>
     /// <remarks>
@@ -67,5 +72,15 @@ public interface IScreenDevice: IGenericDevice<IZxSpectrum48Machine>
     /// </summary>
     /// <param name="tact">Frame tact to render</param>
     void RenderTact(int tact);
+
+    /// <summary>
+    /// Gets the buffer that stores the rendered pixels
+    /// </summary>
+    uint[] GetPixelBuffer();
+
+    /// <summary>
+    /// This method signs that a new screen frame has been started
+    /// </summary>
+    void OnNewFrame();
 }
 
