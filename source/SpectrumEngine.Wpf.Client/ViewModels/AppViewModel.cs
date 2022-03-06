@@ -70,10 +70,10 @@ public class AppViewModel : ObservableObject
         // --- Update view model properties
         DisplayViewModel = new(_mc);
 
-        void OnStateChanged(object? sender, MachineControllerState state)
+        void OnStateChanged(object? sender, (MachineControllerState OldState, MachineControllerState NewState) e)
         {
             // --- Refresh command states whenever the controller state changes
-            MachineControllerState = state;
+            MachineControllerState = e.NewState;
             StartCommand.NotifyCanExecuteChanged();
             PauseCommand.NotifyCanExecuteChanged();
             StopCommand.NotifyCanExecuteChanged();

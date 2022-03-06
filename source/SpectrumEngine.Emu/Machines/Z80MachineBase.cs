@@ -55,7 +55,7 @@ public abstract class Z80MachineBase :
     public override void SetTactsInFrame(int tacts)
     {
         base.SetTactsInFrame(tacts);
-        FrameTimeInMs = tacts * 1000 / BaseClockFrequency;
+        FrameTimeInMs = tacts * 1000.0 / BaseClockFrequency;
     }
 
     /// <summary>

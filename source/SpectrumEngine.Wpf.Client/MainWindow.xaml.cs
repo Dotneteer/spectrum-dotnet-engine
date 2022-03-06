@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using SpectrumEngine.Emu;
+using System.Windows;
 
 namespace SpectrumEngine.Wpf.Client;
 
@@ -15,6 +16,7 @@ public partial class MainWindow : Window
 
     private void MenuItem_Click(object sender, RoutedEventArgs e)
     {
+        Logger.Flush();
         Application.Current.Shutdown();
     }
 }

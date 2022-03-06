@@ -3,7 +3,7 @@
 /// <summary>
 /// This interface defines the properties and operations of the ZX Spectrum's beeper device.
 /// </summary>
-public interface IBeeperDevice: IGenericDevice<IZxSpectrum48Machine>
+public interface IBeeperDevice: IAudioDevice
 {
     /// <summary>
     /// Gets the last EAR bit value.
@@ -15,4 +15,9 @@ public interface IBeeperDevice: IGenericDevice<IZxSpectrum48Machine>
     /// </summary>
     /// <param name="value">EAR bit value to set</param>
     void SetEarBit(bool value);
+
+    /// <summary>
+    /// Renders the subsequent beeper sample according to the current EAR bit value
+    /// </summary>
+    void RenderBeeperSample();
 }

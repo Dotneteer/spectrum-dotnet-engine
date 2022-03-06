@@ -1,5 +1,5 @@
 ﻿<UserControl x:Class="SpectrumEngine.Wpf.Client.SpectrumDisplayControl"
-             x:Name="DisplayControl"
+             x:Name="UserControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -10,10 +10,10 @@
              Background="#FF202020"
              SizeChanged="DisplayControl_SizeChanged"
              DataContextChanged="DisplayControl_DataContextChanged"
-             Loaded="DisplayControl_Loaded"
+             Loaded="UserControl_Loaded"
              Focusable="True"
-             PreviewKeyDown="DisplayControl_PreviewKeyDown" 
-             PreviewKeyUp="DisplayControl_PreviewKeyUp"
+             PreviewKeyDown="HandleKeyboardEvent" 
+             PreviewKeyUp="HandleKeyboardEvent"
              IsTabStop="True"
              TabIndex="0">
     <UserControl.DataContext>

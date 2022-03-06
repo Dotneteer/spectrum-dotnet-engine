@@ -9,6 +9,8 @@ public sealed class ZxSpectrum48Machine :
 {
     #region Private members
 
+    private const int AUDIO_SAMPLE_RATE = 48_000;
+
     // --- This byte array represents the 64K memory, including the 16K ROM and 48K RAM.
     private readonly byte[] _memory = new byte[0x1_0000];
 
@@ -30,6 +32,8 @@ public sealed class ZxSpectrum48Machine :
     // --- Tacts value when last time bit 4 of $fe changed from 1 to 0
     private ulong _portBit4ChangedFrom1Tacts;
 
+    // --- The clock multiplier value used in the previous machine frame;
+    private int _oldClockMultiplier;
 
     #endregion
 
@@ -114,12 +118,16 @@ public sealed class ZxSpectrum48Machine :
         // --- Reset memory
         for (var i = 0x4000; i < _memory.Length; i++) _memory[i] = 0;
 
-        // --- Reset devices
+        // --- Reset and setup devices
         KeyboardDevice.Reset();
         ScreenDevice.Reset();
         BeeperDevice.Reset();
+        BeeperDevice.SetAudioSampleRate(AUDIO_SAMPLE_RATE);
         FloatingBusDevice.Reset();
         TapeDevice.Reset();
+
+        // --- Unknown clock multiplier in the previous frame
+        _oldClockMultiplier = -1;
 
         // --- Prepare for running a new machine loop
         ClockMultiplier = TargetClockMultiplier;
@@ -481,8 +489,21 @@ public sealed class ZxSpectrum48Machine :
     /// </param>
     protected override void OnInitNewFrame(bool clockMultiplierChanged)
     {
+        // --- No screen tact rendered in this frame
         _lastRenderedFrameTact = 0;
+
+        // --- Prepare the screen device for the new machine frame
         ScreenDevice.OnNewFrame();
+
+        // --- Handle audio sample recalculations when the actual clock frequency changes
+        if (_oldClockMultiplier != ClockMultiplier)
+        {
+            BeeperDevice.SetAudioSampleRate(AUDIO_SAMPLE_RATE);
+            _oldClockMultiplier = ClockMultiplier;
+        }
+
+        // --- Prepare the beeper device for the new frame
+        BeeperDevice.OnNewFrame();
     }
 
     /// <summary>
@@ -498,6 +519,7 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     protected override void AfterInstructionExecuted()
     {
+        BeeperDevice.RenderBeeperSample();
     }
 
     /// <summary>

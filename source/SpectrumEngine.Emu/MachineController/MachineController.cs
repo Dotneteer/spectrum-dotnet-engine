@@ -42,8 +42,9 @@ public class MachineController
         {
             if (_machineState != value)
             {
+                var oldState = _machineState; ;
                 _machineState = value;
-                StateChanged?.Invoke(this, value);
+                StateChanged?.Invoke(this, (oldState, _machineState));
             }
         }
     }
@@ -51,7 +52,7 @@ public class MachineController
     /// <summary>
     /// This event fires when the state of the controller changes.
     /// </summary>
-    public event EventHandler<MachineControllerState>? StateChanged;
+    public event EventHandler<(MachineControllerState OldState, MachineControllerState NewState)>? StateChanged;
 
     /// <summary>
     /// This event fires whenever an execution loop has been completed. The event parameter flag indicates if the
@@ -141,6 +142,11 @@ public class MachineController
         {
             throw new InvalidOperationException("The machine is already running");
         }
+        if (State == MachineControllerState.None || State == MachineControllerState.Stopped)
+        {
+            // --- First start (after stop), reset the machine
+            Machine.Reset();
+        }
         Context.LoopTerminationMode = terminationMode;
         Context.DebugStepMode = debugStepMode;
         Context.TerminationPartition = terminationPartition;
@@ -168,14 +174,15 @@ public class MachineController
 
                 // --- Calculate the time to wait before the next machine frame starts
                 completedFrames++;
-                var nexFrameTimeInTicks = loopStartInTicks + ((long)Machine.FrameTimeInMs * completedFrames * 10_000);
+                var nexFrameTimeInTicks = loopStartInTicks + ((long)(Machine.FrameTimeInMs * completedFrames * 10_000));
                 var currentTimeInTicks = DateTime.Now.Ticks;
+                Logger.Log($"{completedFrames}: {nexFrameTimeInTicks}, {nexFrameTimeInTicks - loopStartInTicks}, {nexFrameTimeInTicks - currentTimeInTicks}, {TimeSpan.FromTicks(nexFrameTimeInTicks - currentTimeInTicks).Milliseconds}");
                 var waitTimeInMs = TimeSpan.FromTicks(nexFrameTimeInTicks - currentTimeInTicks).Milliseconds;
                 if (waitTimeInMs > 2)
                 {
                     try
                     {
-                        await Task.Delay(waitTimeInMs, token);
+                        await Task.Delay(waitTimeInMs - 2, token);
                     }
                     catch
                     {
