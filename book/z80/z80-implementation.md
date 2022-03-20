@@ -8,8 +8,6 @@ There are limitless ways to implement the software emulation of the Z80 CPU. Whe
 - **High-fidelity emulation of undocumented Z80 instructions**. The emulator handles all (officially) undocumented instructions, and those handle the third and fifth bits of Register F as well as the internal `WZ` (`MEMPTR`) register accurately.
 - **Focus on performance**. I have chosen an implementation model that prefers performance against the conciseness of the source code to write.
 
-> _Note_: I know that in the future when I implement other Z80-based virtual machines, I may need more accurate implementation on the Z80 signals.
-
 In this article, you find significant details that allow you to follow and understand the source code that implements the Z80 CPU.
 
 ## Z80 CPU Implementation Source Code Files
@@ -29,6 +27,12 @@ All the Z80 CPU-related source files are within the `Z80` folder of the emulator
 - `Z80Cpu-IndexedInstructions.cs`: This partition contains the code for processing IX- or IY-indexed Z80 instructions (with `$DD` or `$FD` prefix).
 - `Z80Cpu-StandardInstructions.cs`: This file contains the code for processing standard Z80 instructions (with no prefix).
 - `Z80Cpu-State.cs`: This partition defines the state information we use while emulating the behavior of the CPU.
+
+## The connection of the Z80 CPU and the Emulated Machine
+
+When designing the emulator's architecture, I made a design decision (you can read more about it [here](../machine/architecture.md#design-decisions)). This design improves the performance of the emulator; however, it has some consequences:
+- The class that emulates a particular machine (in this case, `ZxSpectrum48Machine`) must derive from the `Z80Cpu` class and override a few methods that implement memory and I/O port handling.
+- The `Z80Cpu` implementation must support machine frames (see [here](#machine-frames)).
 
 ## Registers and CPU state
 
@@ -67,6 +71,8 @@ public class Registers
     /// <summary>Flags</summary>
     [FieldOffset(0)]
     public byte F;
+
+    // ...
 }
 ```
 
@@ -95,11 +101,11 @@ Besides the registers and signals, we keep other CPU state information:
 - **`Iff1`**: This flip-flop indicates if the maskable interrupt is enabled (`true`) or disabled (`false`).
 - **`Iff2`**: The purpose of this flop-flop is to save the status of `Iff1` when a non-maskable interrupt occurs.
 - **`Halted`**: This flag indicates if the CPU is in a halted state.
-- **`ClockMultiplier`**: By default, the CPU works with its regular (base) clock frequency; however, you can use an integer clock frequency multiplier to emulate a faster CPU.
 - **`Tacts`**: The number of T-states (clock cycles) elapsed since the last reset. You know that accurate timing is at the heart of the CPU's implementation. We use a 64-bit counter, representing a long enough period. This state variable is read-only; its value is calculated from `Frames`, `CurrentFrameTact`, and `TactsInFrame`.
-- **`TactsInFrame`**: The emulated machine runs a loop of machine frames. Each frame has the same duration in T-states; this property shows their number in a machine frame.
 - **`Frames`**: The number of completed machine frames since the machine started.
+- **`TactsInFrame`**: The emulated machine runs a loop of machine frames. Each frame has the same duration in T-states; this property shows their number in a machine frame.
 - **`CurrentFrameTact`**: Indicates the current tact in the executing machine frame. Its value is between 0 and `TactsInFrame`.
+- **`ClockMultiplier`**: By default, the CPU works with its regular (base) clock frequency; however, you can use an integer clock frequency multiplier to emulate a faster CPU.
 - **`FrameCompleted`**: This flag indicates that a machine frame has been completed since the last reset of this flag.
 - **`F53Updated`**, **`PrevF53Updated`**: These flags keep track of modifications of the bit 3 and 5 flags of Register F. We need to keep this value, as we utilize it within the `SCF` and `CCF` instructions to calculate the new values of F.
 - **`OpCode`**: The last fetched opcode. If an instruction is prefixed, it contains the prefix or the opcode following the prefix, depending on which was fetched last.
