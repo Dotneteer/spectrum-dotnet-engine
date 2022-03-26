@@ -101,11 +101,12 @@ Besides the registers and signals, we keep other CPU state information:
 - **`Iff1`**: This flip-flop indicates if the maskable interrupt is enabled (`true`) or disabled (`false`).
 - **`Iff2`**: The purpose of this flop-flop is to save the status of `Iff1` when a non-maskable interrupt occurs.
 - **`Halted`**: This flag indicates if the CPU is in a halted state.
-- **`Tacts`**: The number of T-states (clock cycles) elapsed since the last reset. You know that accurate timing is at the heart of the CPU's implementation. We use a 64-bit counter, representing a long enough period. This state variable is read-only; its value is calculated from `Frames`, `CurrentFrameTact`, and `TactsInFrame`.
-- **`Frames`**: The number of completed machine frames since the machine started.
-- **`TactsInFrame`**: The emulated machine runs a loop of machine frames. Each frame has the same duration in T-states; this property shows their number in a machine frame.
-- **`CurrentFrameTact`**: Indicates the current tact in the executing machine frame. Its value is between 0 and `TactsInFrame`.
+- **`BaseClockFrequency`** : Holds the base clock frequency of the CPU. We use this value to calculate other machine attributes regarding the machine frame.
 - **`ClockMultiplier`**: By default, the CPU works with its regular (base) clock frequency; however, you can use an integer clock frequency multiplier to emulate a faster CPU.
+- **`Tacts`**: The number of T-states (clock cycles) elapsed since the last reset. You know that accurate timing is at the heart of the CPU's implementation. We use a 64-bit counter, representing a long enough period.
+- **`TactsInFrame`**: The emulated machine runs a loop of machine frames. Each frame has the same duration in T-states; this property shows their number in a machine frame.
+- **`Frames`**: The number of completed machine frames since the machine started. The value is calculated from `Tacts`, `TactsInFrame`, and `ClockMultiplier`.
+- **`CurrentFrameTact`**: Indicates the current tact in the executing machine frame. Its value is between 0 and `TactsInFrame`; it is calculated from `Tacts`, `TactsInFrame`, and `ClockMultiplier`.
 - **`FrameCompleted`**: This flag indicates that a machine frame has been completed since the last reset of this flag.
 - **`F53Updated`**, **`PrevF53Updated`**: These flags keep track of modifications of the bit 3 and 5 flags of Register F. We need to keep this value, as we utilize it within the `SCF` and `CCF` instructions to calculate the new values of F.
 - **`OpCode`**: The last fetched opcode. If an instruction is prefixed, it contains the prefix or the opcode following the prefix, depending on which was fetched last.
@@ -125,9 +126,11 @@ We select a known period, called *machine frame*, which carries out a task that 
 3. We process the output (screen, sound, whatever else) the machine has generated in this single frame.
 4. From the duration of the real-time machine frame, we subtract the time elapsed from the beginning of step 1 and let the emulator process sleep for the calculated time. Then we go back to step 1.
 
-In the case of the ZX Spectrum 48, there is a natural choice of machine frame, the screen rendering frame. It always takes exactly 69,888 T-states (~19.97 milliseconds). At the end of the machine frame, we have a screen to display. We can generate ~50 frames per second with this approach, just as the real hardware does.
+In the case of the ZX Spectrum 48, there is a natural choice of machine frame, the screen rendering frame. It always takes exactly 69,888 T-states (ca. 19.97 milliseconds). At the end of the machine frame, we have a screen to display. We can generate 50.08 frames per second with this approach, just as the real hardware does.
 
 The implementation of the Z80 CPU supports the machine frame infrastructure with the `Frames`, `CurrentFrameTact`, and `FrameCompleted` state variables.
+
+> *Note*:  A machine emulator must calculate the `TactsInFrame` value of the corresponding machine when creating the machine instance and invoke the `SetTactsInFrame` method to set this value.
 
 ## Timing
 
@@ -145,33 +148,27 @@ The code contains predefined increment methods named `TactPlus1`, `TactPlus2`, `
 [MethodImpl(MethodImplOptions.AggressiveInlining)]
 public void TactPlus1()
 {
-    IncrementTacts();
+    Tacts += 1;
+    OnTactIncremented(1);
 }
 
 // ...
 
 [MethodImpl(MethodImplOptions.AggressiveInlining)]
-public void TactPlus3()
+public void TactPlusN(byte n)
 {
-    IncrementTacts();
-    IncrementTacts();
-    IncrementTacts();
+    Tacts += n;
+    OnTactIncremented(n);
 }
 
-[MethodImpl(MethodImplOptions.AggressiveInlining)]
-private void IncrementTacts()
+// ...
+
+public virtual void OnTactIncremented(int increment)
 {
-    if (++CurrentFrameTact >= TactsInFrame * ClockMultiplier)
-    {
-        CurrentFrameTact = 0;
-        Frames++;
-        FrameCompleted = true;
-    }
-    TactIncrementedHandler();
 }
 ```
 
-Here, the `TactIncrementedHandler` refers to a method in which we can emulate the behavior of other hardware components. By default, this is set to an empty method. However, when integrating the `Z80Cpu` component with other elements in the emulated hardware (such as the ULA), you can create a method that correctly emulates the simultaneous execution.
+A machine emulator can use the `OnTactIncremented` method to emulate the behavior of other hardware components. The method receives the increment value; the default implementation has an empty method body. However, when integrating the `Z80Cpu` component with other elements in the emulated hardware (such as the ULA), you can create a method that correctly emulates the simultaneous execution.
 
 We emulate multiplied clock frequency to calculate the length of the machine frame as `TactsInFrame * ClockMultiplier`. You can observe the `IncrementTacts` method sets the `FrameCompleted` flag, and resetting it is the responsibility of the machine loop.
 
@@ -192,6 +189,42 @@ void TactPlus1(ushort address);
 
 While the first method always increments the current T-state counter by one. The second implements it by one, and if the provided `address` points to a contended memory address, the T-state counter may be incremented with another value (zero or higher), depending on `address`.
 
+The `TactPlusN` methods use this implementation:
+
+```csharp
+[MethodImpl(MethodImplOptions.AggressiveInlining)]
+public void TactPlus1(ushort address)
+{
+    if (DelayedAddressBus) DelayAddressBusAccess(address);
+    TactPlus1();
+}
+
+// ...
+
+[MethodImpl(MethodImplOptions.AggressiveInlining)]
+public void TactPlus4(ushort address)
+{
+    if (DelayedAddressBus) DelayAddressBusAccess(address);
+    TactPlus1();
+    if (DelayedAddressBus) DelayAddressBusAccess(address);
+    TactPlus1();
+    if (DelayedAddressBus) DelayAddressBusAccess(address);
+    TactPlus1();
+    if (DelayedAddressBus) DelayAddressBusAccess(address);
+    TactPlus1();
+}
+
+// ...
+
+public virtual void DelayAddressBusAccess(ushort address) 
+{
+}
+```
+
+Here, the `DelayedAddressBus` flag determines if the address bus of a particular emulated machine is delayed or not; the ZX Spectrum 48 machine sets this value to `true`.
+
+The `DelayAddressBusAccess` method has an empty body; an emulated machine must override it to emulate the contention used by the multiple components when accessing the address bus.
+
 ## The Execution Cycle of the CPU
 
 We emulate the behavior of the CPU by invoking its execution cycle in a loop. This cycle focuses on processing the subsequent instruction byte (pointed by the Program Counter register). Standard instructions use a single-byte opcode, so the execution cycle processes the entire instruction. If the opcode uses some operation data (like the `LD BC,nnnn` instruction, which has two data bytes defining the 16-bit lata to load to BC), the CPU reads those bytes in a single cycle.
@@ -205,15 +238,15 @@ The execution loop contains these steps:
    - Non-Maskable Interrupt (NMI)
    - Maskable Interrupt (INT)
 2. If the CPU is halted, it waits for 4 T-states and immediately completes the execution loop.
-3. The CPU reads the next opcode byte from the address pointed by the PC register. This activity takes 3 T-states
-4. The CPU increments the last seven bits of the R register and puts the value of the IR register-pair to the address bus. Then, it triggers a memory refresh operation on physical hardware. In the emulator, we do not need this step.
+3. The CPU reads the next opcode byte from the address pointed by the PC register. This activity takes 3 T-states.
+4. The CPU increments the last seven bits of the R register and puts the value of the IR register-pair to the address bus. Then, it triggers a memory refresh operation on physical hardware. (In the emulator, we do not need to execute this last step.)
 5. The CPU completes the processing of the opcode byte (this phase takes one T-state). For the simplest instructions, it means completing the instruction. For instructions with data bytes, this step prepares for processing the rest of the instruction. For prefixed operations, the CPU prepares to carry on further processing.
 
 > _Note_: Of course, in step 5, executing instructions may take additional time, including memory and I/O port access and 16-bit arithmetic.
 
 ## Handling Z80 Signals
 
-The execution cycle first tests if there are any active signals to handle. Those are processed separately, following the priority order (RESET, NMI, INT). The Z80 CPU has other input signals, such as WAIT and BUSRQ. We do not need them for the ZX Spectrum 48K emulation. Nonetheless, we may need them later for emulating the communication with a peripheral device. Actually, the ULA uses the WAIT signal to delay the CPU while reading the screen memory. Nonetheless, we have a relatively simple way to emulate the delay without the need to watch the WAIT signal.
+The execution cycle first tests if there are any active signals to handle. Those are processed separately, following the priority order (RESET, NMI, INT). The Z80 CPU has other input signals, such as WAIT and BUSRQ. We do not need them for the ZX Spectrum 48K emulation. Nonetheless, we may need them later for emulating the communication with a peripheral device. Actually, the ULA uses the WAIT signal to delay the CPU while reading the screen memory. Anyhow, we have a relatively simple way to emulate the delay without watching the WAIT signal.
 
 ### Hard Reset and Soft Reset
 
@@ -264,152 +297,66 @@ According to the current Interrupt Mode, the CPU invokes the interrupt handler m
 ## Memory and I/O Operations
 
 The operation of the CPU is not complete without physical memory that stores the program to execute and the data to operate—also, most hardware use some I/O ports to communicate with the environment.
-The `Z80Cpu` class provides four functions that ensure the connection to the physical memory and I/O ports:
+
+The `Z80Cpu` class provides eight virtual and abstract functions that handle the memory and the I/O:
 
 ```csharp
 public class Z80Cpu
 {
     // ...
-    public Func<ushort, byte> ReadMemoryFunction;
-    public Action<ushort, byte> WriteMemoryFunction;
-    public Func<ushort, byte> ReadPortFunction;
-    public Action<ushort, byte> WritePortFunction;
+    public abstract byte DoReadMemory(ushort address);
+    public virtual void DelayMemoryRead(ushort address) => TactPlus3();
+    public abstract void DoWriteMemory(ushort address, byte value);
+    public virtual void DelayMemoryWrite(ushort address) => TactPlus3();
+    public abstract byte DoReadPort(ushort address);
+    public virtual void DelayPortRead(ushort address) => TactPlus4();
+    public abstract void DoWritePort(ushort address, byte value);
+    public virtual void DelayPortWrite(ushort address) => TactPlus4();
     // ...
 }
 ```
 
-- `ReadMemoryFunction`: This function reads a byte (8-bit) from the memory using the provided 16-bit address.
-- `WriteMemoryFunction`: It writes a byte (8-bit) to the 16-bit memory address provided in the first argument.
-- `ReadPortFunction`: This function reads a byte (8-bit) from an I/O port using the provided 16-bit address.
-- `WritePortFunction`: It writes a byte (8-bit) to the 16-bit I/O port address provided in the first argument.
+The names of these methods are self-explaining. An emulated machine must override all `Do...` methods, as they are abstract. The `Delay...` methods implement the default delay of the Z80 CPU. However, particular hardware may result in different delays; you can override these methods to emulate them accurately.
 
-The `Z80Cpu` constructor sets up these function references to their default to throw an exception. The default implementation of each raises an exception:
+The `Z80Cpu` implementation uses the methods above in its `ReadMemory`, `Writememory`, `ReadPort`, and `WritePort` operations:
 
 ```csharp
-public Z80Cpu()
-{
-    ReadMemoryFunction = (ushort address)
-        => throw new InvalidOperationException("ReadMemoryFunction has not been set.");
-    WriteMemoryFunction = (ushort address, byte data)
-        => throw new InvalidOperationException("WriteMemoryFunction has not been set.");
-    ReadPortFunction = (ushort address)
-        => throw new InvalidOperationException("ReadPortFunction has not been set.");
-    WritePortFunction = (ushort address, byte data)
-        => throw new InvalidOperationException("WritePortFunction has not been set.");
-    // ...
-}
-```
-
-You must set up these function references when you use a `Z80Cpu` instance. This extract shows how the `TestZ80Machine` class (used in the automatic unit tests of `Z80Cpu`) does it:
-
-```csharp
-public class Z80TestMachine
+public class Z80Cpu
 {
     // ...
-    public Z80Cpu Cpu { get; }
-    // ...
-    public Z80TestMachine(/* ... */)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private byte ReadMemory(ushort address)
     {
-        // ...
-        Memory = new byte[ushort.MaxValue + 1];
-        Cpu = new Z80Cpu
-        {
-            // ...
-            ReadMemoryFunction = ReadMemory,
-            WriteMemoryFunction = WriteMemory,
-            ReadPortFunction = ReadPort,
-            WritePortFunction = WritePort
-        };
-        // ...
+        DelayMemoryRead(address);
+        return DoReadMemory(address);
     }
 
-    protected virtual byte ReadMemory(ushort addr)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void WriteMemory(ushort address, byte data)
     {
-        var value = Memory[addr];
-        MemoryAccessLog.Add(new MemoryOp(addr, value, false));
-        return value;
+        DelayMemoryWrite(address);
+        DoWriteMemory(address, data);
     }
 
-    protected virtual void WriteMemory(ushort addr, byte value)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private byte ReadPort(ushort address)
     {
-        Memory[addr] = value;
-        MemoryAccessLog.Add(new MemoryOp(addr, value, true));
+        DelayPortRead(address);
+        return DoReadPort(address);
     }
 
-    protected virtual byte ReadPort(ushort addr)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void WritePort(ushort address, byte data)
     {
-        var value = IoReadCount >= IoInputSequence.Count
-            ? (byte)0x00
-            : IoInputSequence[IoReadCount++];
-        IoAccessLog.Add(new IoOp(addr, value, false));
-        return value;
-    }
-
-    protected virtual void WritePort(ushort addr, byte value)
-    {
-        IoAccessLog.Add(new IoOp(addr, value, true));
+        DelayPortWrite(address);
+        DoWritePort(address, data);
     }
 
     // ...
 }
 ```
-
-The CPU allows you to add your functions to define the delays of the operations above:
-
-```csharp
-public Z80Cpu()
-{
-    // ...
-    public Action<ushort> MemoryReadDelayFunction { get; set; }
-    public Action<ushort> MemoryWriteDelayFunction { get; set; }
-    public Action<ushort> PortReadDelayFunction { get; set; }
-    public Action<ushort> PortWriteDelayFunction { get; set; }
-    // ...
-}
-```
-
-Unless you implement hardware that uses contention or other specific memory or port delay, you do not need to set the delay methods; the `Z80Cpu` constructor sets them up.
 
 If you replace the default implementation with your own, remember that memory operations use at least 3 T-states delay, and I/O port operations add at least 4 T-states. If you use values less than those, you implement a Z80 CPU emulation that violates the hardware concepts.
-
-The `Z80Cpu` class defines its private functions to manage the memory and the I/O ports. All CPU instructions invoke only these methods to ensure that these operations apply the delay according to the current hardware emulation:
-
-```csharp
-[MethodImpl(MethodImplOptions.AggressiveInlining)]
-private byte ReadMemory(ushort address)
-{
-    MemoryReadDelayFunction(address);
-    return ReadMemoryFunction(address);
-}
-
-[MethodImpl(MethodImplOptions.AggressiveInlining)]
-private byte FetchCodeByte()
-{
-    MemoryReadDelayFunction(Regs.PC);
-    return ReadMemoryFunction(Regs.PC++);
-}
-
-[MethodImpl(MethodImplOptions.AggressiveInlining)]
-private void WriteMemory(ushort address, byte data)
-{
-    MemoryWriteDelayFunction(address);
-    WriteMemoryFunction(address, data);
-}
-
-[MethodImpl(MethodImplOptions.AggressiveInlining)]
-private byte ReadPort(ushort address)
-{
-    PortReadDelayFunction(address);
-    return ReadPortFunction(address);
-}
-
-[MethodImpl(MethodImplOptions.AggressiveInlining)]
-private void WritePort(ushort address, byte data)
-{
-    PortWriteDelayFunction(address);
-    WritePortFunction(address, data);
-}
-```
 
 ## Executing Instructions
 
@@ -471,9 +418,19 @@ public void ExecuteCpuCycle()
     switch (Prefix)
     {
         case OpCodePrefix.None:
-            _standardInstrs![OpCode]?.Invoke();
-            Prefix = OpCodePrefix.None;
-            break;
+            switch (OpCode)
+            {
+                case 0xcb:
+                    Prefix = OpCodePrefix.CB;
+                    break;
+                
+                // ...
+                default:
+                    _standardInstrs![OpCode]?.Invoke();
+                    Prefix = OpCodePrefix.None;
+                    break;
+                }
+                break;
         // ...
     }
     // ...
@@ -629,7 +586,344 @@ Regs.F |= (byte)(bitVal & FlagsSetMask.S);
 
 In this section, I will highlight a few interesting implementation details of particular instructions.
 
-_TBD_
+### Register loading operations
+
+> 8-bit register-to-register load operations are as simple as you expect them:
+
+```csharp
+// "ld h,c" operation (0x61)
+private void LdH_C()
+{
+    Regs.H = Regs.C;
+}
+```
+
+> Observe that the `LD (BC),A` operation sets the upper 8 bits of the `WZ` internal register (`MEMPTR`):
+
+```csharp
+// "ld (bc),a" operation (0x02)
+private void LdBCiA()
+{
+    WriteMemory(Regs.BC, Regs.A);
+    Regs.WH = Regs.A;
+}
+```
+
+> The `WZ` register is used in every load operation when the CPU uses 16-bit addresses:
+
+```csharp
+// "ld hl,(NN)" operation (0x2A)
+private void LdHLNNi()
+{
+    ushort adr = FetchCodeByte();
+    adr += (ushort)(FetchCodeByte() << 8);
+    Regs.WZ = (ushort)(adr + 1);
+    ushort val = ReadMemory(adr);
+    val += (ushort)(ReadMemory(Regs.WZ) << 8);
+    Regs.HL = val;
+}
+
+// "ld (NN),a" operation (0x32)
+private void LdNNiA()
+{
+    var l = FetchCodeByte();
+    var addr = (ushort)((FetchCodeByte() << 8) | l);
+    Regs.WL = (byte)((addr + 1) & 0xFF);
+    Regs.WH = Regs.A;
+    WriteMemory(addr, Regs.A);
+}
+```
+
+> Indexed load operations use a signed 8-bit displacement relative to the base address. The `IndexReg` property of `Z80Cpu` refers to `IX` or `IY` depending on the current instruction prefix (`0xDD` or `0xFD`):
+
+```csharp
+// "ld (ix+D),d" operation (0x72)
+private void LdIXiD()
+{
+    byte dist = ReadMemory(Regs.PC);
+    TactPlus5(Regs.PC);
+    Regs.PC++;
+    Regs.WZ = (ushort)(IndexReg + (sbyte)dist);
+    WriteMemory(Regs.WZ, Regs.D);
+}
+```
+
+### 8-bit ALU Operations
+
+> Several 8-bit operations use pre-calculated flag arrays to get the resulting flag values faster than calculating them on-the-fly:
+
+```csharp
+// "dec c" operation (0x0D)
+// Register C is decremented.
+// S is set if result is negative; otherwise, it is reset.
+// Z is set if result is 0; otherwise, it is reset.
+// H is set if borrow from bit 4, otherwise, it is reset.
+// P/V is set if m was 80h before operation; otherwise, it is reset.
+// N is set.
+// C is not affected.
+private void DecC()
+{
+    Regs.F = (byte)(s_8BitDecFlags[Regs.C--] | (Regs.F & FlagsSetMask.C));
+    F53Updated = true;
+}
+
+// "inc e" operation (0x1C)
+// Register E is incremented.
+// S is set if result is negative; otherwise, it is reset.
+// Z is set if result is 0; otherwise, it is reset.
+// H is set if carry from bit 3; otherwise, it is reset.
+// P/V is set if r was 7Fh before operation; otherwise, it is reset.
+// N is reset.
+// C is not affected.
+private void IncE()
+{
+    Regs.F = (byte)(s_8BitIncFlags[Regs.E++] | (Regs.F & FlagsSetMask.C));
+    F53Updated = true;
+}
+```
+
+> Many 8-bit ALU operations have helper methods that calculate the resulting flag values:
+
+```csharp
+// "and d" operation (0xA2)
+private void AndD()
+{
+    And8(Regs.D);
+}
+
+// The core of the 8-bit AND operation
+private void And8(byte value)
+{
+    Regs.A &= value;
+    Regs.F = (byte)(FlagsSetMask.H | s_SZ53PVTable![Regs.A]);
+    F53Updated = true;
+}
+
+/// "sub l" operation (0x95)
+private void SubL()
+{
+    Sub8(Regs.L);
+}
+
+// The core of the 8-bit SUB operation
+private void Sub8(byte value)
+{
+    var tmp = Regs.A - value;
+    var lookup =
+        ((Regs.A & 0x88) >> 3) |
+        ((value & 0x88) >> 2) |
+        ((tmp & 0x88) >> 1);
+    Regs.A = (byte)tmp;
+    Regs.F =(byte)
+        (((tmp & 0x100) != 0 ? FlagsSetMask.C : 0) |
+        FlagsSetMask.N |
+        s_HalfCarrySubFlags[lookup & 0x07] |
+        s_OverflowSubFlags[lookup >> 4] |
+        s_SZ53Table![Regs.A]);
+        F53Updated = true;
+}
+```
+
+### Conditional Jump Operations
+
+> The implementation of conditional jump statements is pretty straightforward. Observe, 16-bit address handling uses the `WZ` internal register:
+
+```csharp
+// "jr nc,E" operation (0x30)
+private void JrNC()
+{
+    var e = FetchCodeByte();
+    if ((Regs.F & FlagsSetMask.C) == 0)
+    {
+        RelativeJump(e);
+    }
+}
+
+// "jp nc,NN" operation (0xD2)
+private void JpNC_NN()
+{
+    Regs.WL = FetchCodeByte();
+    Regs.WH = FetchCodeByte();
+    if ((Regs.F & FlagsSetMask.C) == 0)
+    {
+        Regs.PC = Regs.WZ;
+    }
+}
+```
+
+### Subroutine Calls
+
+> The `CALL` instructions use a helper method (`CallCore`) that deals with the details of managing the stack:
+
+```csharp
+// "call NN" operation (0xCD)
+private void CallNN()
+{
+    Regs.WL = FetchCodeByte();
+    Regs.WH = FetchCodeByte();
+    CallCore();
+}
+
+// "call nz,NN" operation (0xC4)
+private void CallNZ()
+{
+    Regs.WL = FetchCodeByte();
+    Regs.WH = FetchCodeByte();
+    if ((Regs.F & FlagsSetMask.Z) == 0)
+    {
+        CallCore();
+    }
+}
+
+// The core of the CALL instruction 
+private void CallCore()
+{
+    TactPlus1(Regs.IR);
+    Regs.SP--;
+    WriteMemory(Regs.SP, (byte)(Regs.PC >> 8));
+    Regs.SP--;
+    WriteMemory(Regs.SP, (byte)Regs.PC);
+    Regs.PC = Regs.WZ;
+}
+```
+
+### Bit Instrcutions
+
+> Bit instructions use simple helpers:
+
+```csharp
+// "sla c" operation (0xCB, 0x21)
+private void Sla_C()
+{
+    Regs.C = Sla8(Regs.C);
+}
+
+// The core of the 8-bit SLA operation.
+private byte Sla8(byte oper)
+{
+    Regs.F = (byte)(oper >> 7);
+    byte result = (byte)(oper << 1);
+    Regs.F |= s_SZ53PVTable![tmp];
+    F53Updated = true;
+    return result;
+}
+
+// "bit 7,e" operation (0xCB, 0x7B)
+private void Bit7_E()
+{
+    Bit8(7, Regs.E);
+}
+
+// The core of the 8-bit BIT operation.
+private void Bit8(int bit, byte oper)
+{
+    Regs.F = (byte)((Regs.F & FlagsSetMask.C) | FlagsSetMask.H | (oper & FlagsSetMask.R3R5));
+    var bitVal = oper & (0x01 << bit);
+    if (bitVal == 0)
+    {
+        Regs.F |= FlagsSetMask.PV | FlagsSetMask.Z;
+    }
+    Regs.F |= (byte)(bitVal & FlagsSetMask.S);
+    F53Updated = true;
+}
+```
+
+> The `RES` and `SET` instruction are straightforward:
+
+```csharp
+// "res 3,c" operation (0xCB, 0x99)
+private void Res3C()
+{
+    Regs.C &= 0xf7;
+}
+
+// "res 5,(hl)" operation (0xCB, 0xAE)
+private void Res5HLi()
+{
+    var tmp = (byte)(ReadMemory(Regs.HL) & 0xdf);
+    TactPlus1(Regs.HL);
+    WriteMemory(Regs.HL, tmp);
+}
+
+// "set 6,h" operation (0xCB, 0xF4)
+private void Set6H()
+{
+    Regs.H |= 0x40;
+}
+
+// "set 2,(hl)" operation (0xCB, 0xD6)
+private void Set2HLi()
+{
+    var tmp = (byte)(ReadMemory(Regs.HL) | 0x04);
+    TactPlus1(Regs.HL);
+    WriteMemory(Regs.HL, tmp);
+}
+```
+
+### Block Operations
+
+> Block operations are more complex than others, as the following implementation samples show. Look at the strange way they update the flag values! This information comes from the documentation that details officially undocumented details:
+
+```csharp
+// "ldir" operation (0xED, 0xB0)
+private void Ldir()
+{
+    byte tmp = ReadMemory(Regs.HL);
+    WriteMemory(Regs.DE, tmp);
+    TactPlus2(Regs.DE);
+    Regs.BC--;
+    tmp += Regs.A;
+    Regs.F = (byte)
+        ((Regs.F & (FlagsSetMask.C | FlagsSetMask.Z | FlagsSetMask.S)) |
+        (Regs.BC != 0 ? FlagsSetMask.PV : 0) |
+        (tmp & FlagsSetMask.R3) | ((tmp & 0x02) != 0 ? FlagsSetMask.R5 : 0));
+    F53Updated = true;
+    if (Regs.BC != 0)
+    {
+        TactPlus5(Regs.DE);
+        Regs.PC -= 2;
+        Regs.WZ = (byte)(Regs.PC +1);
+    }
+    Regs.HL++;
+    Regs.DE++;
+}
+
+// "cpdr" operation (0xED, 0xB9)
+private void Cpdr()
+{
+    byte value = ReadMemory(Regs.HL);
+    byte tmp = (byte)(Regs.A - value);
+    var lookup =
+    ((Regs.A & 0x08) >> 3) |
+        ((value & 0x08) >> 2) |
+        ((tmp & 0x08) >> 1);
+    TactPlus5(Regs.HL);
+    Regs.BC--;
+    Regs.F = (byte)
+    ((Regs.F & FlagsSetMask.C) |
+        (Regs.BC != 0 ? (FlagsSetMask.PV | FlagsSetMask.N) : FlagsSetMask.N) |
+        s_HalfCarrySubFlags![lookup] |
+        (tmp != 0 ? 0 : FlagsSetMask.Z) |
+        (tmp & FlagsSetMask.S));
+    if ((Regs.F & FlagsSetMask.H) != 0)
+    {
+        tmp -= 1;
+    }
+    Regs.F |= (byte)((tmp & FlagsSetMask.R3) | ((tmp & 0x02) != 0 ? FlagsSetMask.R5 : 0));
+    F53Updated = true;
+    if ((Regs.F & (FlagsSetMask.PV | FlagsSetMask.Z)) == FlagsSetMask.PV)
+    {
+        TactPlus5(Regs.HL);
+        Regs.PC -= 2;
+        Regs.WZ = (byte)(Regs.PC + 1);
+    }
+    else
+    {
+        Regs.WZ--;
+    }
+    Regs.HL--;
+}
+```
 
 ## Testing the Z80 CPU
 

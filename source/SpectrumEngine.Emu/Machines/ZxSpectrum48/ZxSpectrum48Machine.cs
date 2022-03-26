@@ -47,6 +47,7 @@ public sealed class ZxSpectrum48Machine :
         // --- Set up machine attributes
         BaseClockFrequency = 3_500_000;
         ClockMultiplier = 1;
+        DelayedAddressBus = true;
 
         // --- Create and initialize devices
         KeyboardDevice = new KeyboardDevice(this);
@@ -525,7 +526,8 @@ public sealed class ZxSpectrum48Machine :
     /// <summary>
     /// Every time the CPU clock is incremented with a single T-state, this function is executed.
     /// </summary>
-    public override void OnTactIncremented(ulong oldTact)
+    /// <param name="increment">The tact increment value</param>
+    public override void OnTactIncremented(int increment)
     {
         var machineTact = CurrentFrameTact / ClockMultiplier;
         while (_lastRenderedFrameTact <= machineTact)

@@ -308,10 +308,10 @@ public partial class Z80Cpu
     /// <returns>Operation result</returns>
     private byte Rlc8(byte oper)
     {
-        byte tmp = (byte)((oper << 1) | (oper >> 7));
-        Regs.F = (byte)((tmp & FlagsSetMask.C) | s_SZ53PVTable![tmp]);
+        byte result = (byte)((oper << 1) | (oper >> 7));
+        Regs.F = (byte)((result & FlagsSetMask.C) | s_SZ53PVTable![result]);
         F53Updated = true;
-        return tmp;
+        return result;
     }
 
     /// <summary>
@@ -322,10 +322,10 @@ public partial class Z80Cpu
     private byte Rrc8(byte oper)
     {
         Regs.F = (byte)(oper & FlagsSetMask.C);
-        byte tmp = (byte)((oper >> 1) | (oper << 7));
-        Regs.F |= s_SZ53PVTable![tmp];
+        byte result = (byte)((oper >> 1) | (oper << 7));
+        Regs.F |= s_SZ53PVTable![result];
         F53Updated = true;
-        return tmp;
+        return result;
     }
 
     /// <summary>
@@ -335,10 +335,10 @@ public partial class Z80Cpu
     /// <returns>Operation result</returns>
     private byte Rl8(byte oper)
     {
-        byte tmp = (byte)((oper << 1) | (Regs.F & FlagsSetMask.C));
-        Regs.F = (byte)((oper >> 7) | s_SZ53PVTable![tmp]);
+        byte result = (byte)((oper << 1) | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)((oper >> 7) | s_SZ53PVTable![result]);
         F53Updated = true;
-        return tmp;
+        return result;
     }
 
     /// <summary>
@@ -348,10 +348,10 @@ public partial class Z80Cpu
     /// <returns>Operation result</returns>
     private byte Rr8(byte oper)
     {
-        byte tmp = (byte)((oper >> 1) | (Regs.F << 7));
-        Regs.F = (byte)((oper & FlagsSetMask.C) | s_SZ53PVTable![tmp]);
+        byte result = (byte)((oper >> 1) | (Regs.F << 7));
+        Regs.F = (byte)((oper & FlagsSetMask.C) | s_SZ53PVTable![result]);
         F53Updated = true;
-        return tmp;
+        return result;
     }
 
     /// <summary>
@@ -362,10 +362,10 @@ public partial class Z80Cpu
     private byte Sla8(byte oper)
     {
         Regs.F = (byte)(oper >> 7);
-        byte tmp = (byte)(oper << 1);
-        Regs.F |= s_SZ53PVTable![tmp];
+        byte result = (byte)(oper << 1);
+        Regs.F |= s_SZ53PVTable![result];
         F53Updated = true;
-        return tmp;
+        return result;
     }
 
     /// <summary>
@@ -376,10 +376,10 @@ public partial class Z80Cpu
     private byte Sra8(byte oper)
     {
         Regs.F = (byte)(oper & FlagsSetMask.C);
-        byte tmp = (byte)((oper & 0x80) | (oper >> 1));
-        Regs.F |= s_SZ53PVTable![tmp];
+        byte result = (byte)((oper & 0x80) | (oper >> 1));
+        Regs.F |= s_SZ53PVTable![result];
         F53Updated = true;
-        return tmp;
+        return result;
     }
 
     /// <summary>
@@ -390,10 +390,10 @@ public partial class Z80Cpu
     private byte Sll8(byte oper)
     {
         Regs.F = (byte)(oper >> 7);
-        byte tmp = (byte)((oper << 1) | 0x01);
-        Regs.F |= s_SZ53PVTable![tmp];
+        byte result = (byte)((oper << 1) | 0x01);
+        Regs.F |= s_SZ53PVTable![result];
         F53Updated = true;
-        return tmp;
+        return result;
     }
 
     /// <summary>
@@ -404,10 +404,10 @@ public partial class Z80Cpu
     private byte Srl8(byte oper)
     {
         Regs.F = (byte)(oper & FlagsSetMask.C);
-        byte tmp = (byte)(oper >> 1);
-        Regs.F |= s_SZ53PVTable![tmp];
+        byte result = (byte)(oper >> 1);
+        Regs.F |= s_SZ53PVTable![result];
         F53Updated = true;
-        return tmp;
+        return result;
     }
 
     /// <summary>

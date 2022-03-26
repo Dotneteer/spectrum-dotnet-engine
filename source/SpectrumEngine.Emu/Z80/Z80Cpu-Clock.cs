@@ -26,9 +26,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus1()
     {
-        var oldTacts = Tacts;
         Tacts += 1;
-        OnTactIncremented(oldTacts);
+        OnTactIncremented(1);
     }
 
     /// <summary>
@@ -37,9 +36,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus2()
     {
-        var oldTacts = Tacts;
         Tacts += 2;
-        OnTactIncremented(oldTacts);
+        OnTactIncremented(2);
     }
 
     /// <summary>
@@ -48,9 +46,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus3()
     {
-        var oldTacts = Tacts;
         Tacts += 3;
-        OnTactIncremented(oldTacts);
+        OnTactIncremented(3);
     }
 
     /// <summary>
@@ -59,9 +56,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus4()
     {
-        var oldTacts = Tacts;
         Tacts += 4;
-        OnTactIncremented(oldTacts);
+        OnTactIncremented(4);
     }
 
     /// <summary>
@@ -70,9 +66,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus5()
     {
-        var oldTacts = Tacts;
         Tacts += 5;
-        OnTactIncremented(oldTacts);
+        OnTactIncremented(5);
     }
 
     /// <summary>
@@ -81,9 +76,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus6()
     {
-        var oldTacts = Tacts;
         Tacts += 6;
-        OnTactIncremented(oldTacts);
+        OnTactIncremented(6);
     }
 
     /// <summary>
@@ -92,9 +86,8 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus7()
     {
-        var oldTacts = Tacts;
         Tacts += 7;
-        OnTactIncremented(oldTacts);
+        OnTactIncremented(7);
     }
 
     /// <summary>
@@ -103,8 +96,7 @@ public partial class Z80Cpu
     /// <param name="n">The number to increate the CPU tacts by</param>
     public void TactPlusN(byte n)
     {
-        var oldTacts = Tacts;
         Tacts += n;
-        OnTactIncremented(oldTacts);
+        OnTactIncremented(n);
     }
 }

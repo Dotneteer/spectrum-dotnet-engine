@@ -14,7 +14,7 @@ public partial class Z80Cpu
     /// This flag indicates whether the Z80 CPU works in hardware with ULA-controlled memory contention between the
     /// CPU and other components.
     /// </summary>
-    public bool UlaContended => MemoryContended && !GateArray;
+    public virtual bool DelayedAddressBus { get; set; }
 
     /// <summary>
     /// This method increments the current CPU tacts using memory contention with the provided address.
@@ -22,7 +22,7 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus1(ushort address)
     {
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
     }
 
@@ -32,9 +32,9 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus2(ushort address)
     {
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
     }
 
@@ -44,13 +44,13 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus4(ushort address)
     {
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
     }
 
@@ -61,15 +61,15 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus5(ushort address)
     {
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
     }
 
@@ -79,19 +79,19 @@ public partial class Z80Cpu
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void TactPlus7(ushort address)
     {
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
-        if (UlaContended) DelayAddressBusAccess(address);
+        if (DelayedAddressBus) DelayAddressBusAccess(address);
         TactPlus1();
     }
 }
