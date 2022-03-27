@@ -100,6 +100,16 @@ public sealed class ZxSpectrum48Machine :
     public ITapeDevice TapeDevice { get; }
 
     /// <summary>
+    /// Indicates if the currently selected ROM is the ZX Spectrum 48 ROM
+    /// </summary>
+    public bool IsSpectrum48RomSelected => true;
+
+    /// <summary>
+    /// Indicates that the machine can use the FAST LOAD mode
+    /// </summary>
+    public bool UseFastLoad { get; set; }
+
+    /// <summary>
     /// Emulates turning on a machine (after it has been turned off).
     /// </summary>
     public override void HardReset()
@@ -521,6 +531,7 @@ public sealed class ZxSpectrum48Machine :
     protected override void AfterInstructionExecuted()
     {
         BeeperDevice.RenderBeeperSample();
+        TapeDevice.UpdateTapeMode();
     }
 
     /// <summary>

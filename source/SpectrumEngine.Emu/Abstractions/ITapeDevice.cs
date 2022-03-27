@@ -11,6 +11,11 @@ public interface ITapeDevice: IGenericDevice<IZxSpectrum48Machine>
     TapeMode TapeMode { get; }
 
     /// <summary>
+    /// This mehtod updates the current tape mode according to the current ROM index and PC value
+    /// </summary>
+    void UpdateTapeMode();
+
+    /// <summary>
     /// This method returns the value of the EAR bit read from the tape.
     /// </summary>
     bool GetTapeEarBit();
