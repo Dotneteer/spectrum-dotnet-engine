@@ -213,12 +213,12 @@ public interface IZ80Cpu
     /// <summary>
     /// Every time the CPU clock is incremented with a single T-state, this function is executed.
     /// </summary>
-    /// <param name="oldTacts">Number of tacts before the increment event</param>
+    /// <param name="increment">The tact increment value</param>
     /// <remarks>
     /// With this function, you can emulate hardware activities running simultaneously with the CPU. For example,
     /// rendering the screen or sound,  handling peripheral devices, and so on.
     /// </remarks>
-    void OnTactIncremented(ulong oldTacts);
+    void OnTactIncremented(int increment);
 
     /// <summary>
     /// This method increments the current CPU tacts by one.

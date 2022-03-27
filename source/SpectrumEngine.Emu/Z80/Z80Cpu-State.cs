@@ -49,26 +49,6 @@ public partial class Z80Cpu
     public bool Halted { get; private set; }
 
     /// <summary>
-    /// The number of T-states (clock cycles) elapsed since the last reset
-    /// </summary>
-    public ulong Tacts { get; set; }
-
-    /// <summary>
-    /// Show the number of machine frames completed since the CPU started.
-    /// </summary>
-    public int Frames => (int)(Tacts / ((ulong)TactsInFrame * (ulong)ClockMultiplier));
-
-    /// <summary>
-    /// Get the current frame tact within the machine frame being executed.
-    /// </summary>
-    public int CurrentFrameTact => (int)(Tacts % ((ulong)TactsInFrame * (ulong)ClockMultiplier));
-
-    /// <summary>
-    /// Get the number of T-states in a machine frame.
-    /// </summary>
-    public int TactsInFrame { get; private set; } = 100_000_000;
-
-    /// <summary>
     /// Get the base clock frequency of the CPU. We use this value to calculate the machine frame rate.
     /// </summary>
     public int BaseClockFrequency { get; set; }
@@ -81,6 +61,26 @@ public partial class Z80Cpu
     /// frequency multiplier to emulate a faster CPU.
     /// </remarks>
     public int ClockMultiplier { get; set; }
+
+    /// <summary>
+    /// The number of T-states (clock cycles) elapsed since the last reset
+    /// </summary>
+    public ulong Tacts { get; set; }
+
+    /// <summary>
+    /// Get the number of T-states in a machine frame.
+    /// </summary>
+    public int TactsInFrame { get; private set; } = 100_000_000;
+
+    /// <summary>
+    /// Show the number of machine frames completed since the CPU started.
+    /// </summary>
+    public int Frames => (int)(Tacts / ((ulong)TactsInFrame * (ulong)ClockMultiplier));
+
+    /// <summary>
+    /// Get the current frame tact within the machine frame being executed.
+    /// </summary>
+    public int CurrentFrameTact => (int)(Tacts % ((ulong)TactsInFrame * (ulong)ClockMultiplier));
 
     /// <summary>
     /// This flag indicates if bit 3 or 5 of Register F has been updated. We need to keep this value, as we utilize
@@ -127,16 +127,4 @@ public partial class Z80Cpu
     /// This flag indicates if those are allowed.
     /// </summary>
     public bool AllowExtendedInstructions { get; set; } = false;
-
-    /// <summary>
-    /// This flag indicates if the Z80 CPU works in hardware with memory contention between the CPU and other hardware
-    /// components.
-    /// </summary>
-    public bool MemoryContended = false;
-
-    /// <summary>
-    /// This flag indicates whether the Z80 CPU works in hardware with a gate array controlled memory contention
-    /// between the CPU and other components.
-    /// </summary>
-    public bool GateArray = false;
 }

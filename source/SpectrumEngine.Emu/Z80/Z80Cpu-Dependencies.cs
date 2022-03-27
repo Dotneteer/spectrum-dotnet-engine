@@ -48,7 +48,10 @@ public partial class Z80Cpu
     /// <summary>
     /// This function handles address-based memory read contention.
     /// </summary>
-    public abstract void DelayAddressBusAccess(ushort address);
+    public virtual void DelayAddressBusAccess(ushort address) 
+    {
+        // --- Override this method in derived classes
+    }
 
     /// <summary>
     /// This function reads a byte (8-bit) from an I/O port using the provided 16-bit address.
@@ -91,12 +94,12 @@ public partial class Z80Cpu
     /// <summary>
     /// Every time the CPU clock is incremented with a single T-state, this function is executed.
     /// </summary>
-    /// <param name="oldTacts">Number of tacts before the increment event</param>
+    /// <param name="increment">The tact increment value</param>
     /// <remarks>
     /// With this function, you can emulate hardware activities running simultaneously with the CPU. For example,
-    /// rendering the screen or sound,  handling peripheral devices, and so on.
+    /// rendering the screen or sound, handling peripheral devices, and so on.
     /// </remarks>
-    public virtual void OnTactIncremented(ulong oldTacts)
+    public virtual void OnTactIncremented(int increment)
     {
     }
 }
