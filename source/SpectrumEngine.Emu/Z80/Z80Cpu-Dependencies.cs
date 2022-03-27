@@ -48,7 +48,10 @@ public partial class Z80Cpu
     /// <summary>
     /// This function handles address-based memory read contention.
     /// </summary>
-    public abstract void DelayAddressBusAccess(ushort address);
+    public virtual void DelayAddressBusAccess(ushort address) 
+    {
+        // --- Override this method in derived classes
+    }
 
     /// <summary>
     /// This function reads a byte (8-bit) from an I/O port using the provided 16-bit address.

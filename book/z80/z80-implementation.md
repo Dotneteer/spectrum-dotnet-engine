@@ -787,7 +787,7 @@ private void CallCore()
 }
 ```
 
-### Bit Instrcutions
+### Bit Instructions
 
 > Bit instructions use simple helpers:
 
