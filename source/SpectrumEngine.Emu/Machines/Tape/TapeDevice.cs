@@ -72,7 +72,7 @@ public sealed class TapeDevice: ITapeDevice
     }
 
     /// <summary>
-    /// This mehtod updates the current tape mode according to the current ROM index and PC value
+    /// This method updates the current tape mode according to the current ROM index and PC value
     /// </summary>
     public void UpdateTapeMode()
     {
@@ -147,6 +147,23 @@ public sealed class TapeDevice: ITapeDevice
     /// </summary>
     /// <param name="micBit">MIC bit to process</param>
     public void ProcessMicBit(bool micBit)
+    {
+        // TODO: Implement this method
+    }
+
+    /// <summary>
+    /// Sets the data to be loaded from the tape when emulating a LOAD
+    /// </summary>
+    /// <param name="dataBlocks">List of data blocks to play</param>
+    public void SetTapeData(IEnumerable<TapeDataBlock> dataBlocks)
+    {
+        // TODO: Implement this method
+    }
+
+    /// <summary>
+    /// Rewinds the tape, sets the first block as the beginning to play
+    /// </summary>
+    public void RewindTape()
     {
         // TODO: Implement this method
     }
