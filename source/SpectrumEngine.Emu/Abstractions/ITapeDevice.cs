@@ -11,6 +11,11 @@ public interface ITapeDevice: IGenericDevice<IZxSpectrum48Machine>
     TapeMode TapeMode { get; }
 
     /// <summary>
+    /// This mehtod updates the current tape mode according to the current ROM index and PC value
+    /// </summary>
+    void UpdateTapeMode();
+
+    /// <summary>
     /// This method returns the value of the EAR bit read from the tape.
     /// </summary>
     bool GetTapeEarBit();
@@ -20,6 +25,17 @@ public interface ITapeDevice: IGenericDevice<IZxSpectrum48Machine>
     /// </summary>
     /// <param name="micBit">MIC bit to process</param>
     void ProcessMicBit(bool micBit);
+
+    /// <summary>
+    /// Sets the data to be loaded from the tape when emulating a LOAD
+    /// </summary>
+    /// <param name="dataBlocks">List of data blocks to play</param>
+    void SetTapeData(IEnumerable<TapeDataBlock> dataBlocks);
+
+    /// <summary>
+    /// Rewinds the tape, sets the first block as the beginning to play
+    /// </summary>
+    void RewindTape();
 }
 
 /// <summary>

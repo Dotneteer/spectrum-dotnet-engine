@@ -61,5 +61,15 @@ public interface IZxSpectrum48Machine : IZ80Machine
     /// Represents the tape device of ZX Spectrum 48K
     /// </summary>
     ITapeDevice TapeDevice { get; }
+
+    /// <summary>
+    /// Indicates if the currently selected ROM is the ZX Spectrum 48 ROM
+    /// </summary>
+    bool IsSpectrum48RomSelected { get; }
+
+    /// <summary>
+    /// Indicates that the machine can use the FAST LOAD mode
+    /// </summary>
+    bool UseFastLoad { get; }
 }
 
