@@ -1,7 +1,7 @@
 ﻿using SpectrumEngine.Emu;
 using System.Windows.Input;
 
-namespace SpectrumEngine.Wpf.Client;
+namespace SpectrumEngine.Client.Wpf;
 
 /// <summary>
 /// Represents a mapping between physical keys and Spectrum keyboard keys

@@ -2,12 +2,12 @@
 using SpectrumEngine.Emu;
 using System;
 
-namespace SpectrumEngine.Wpf.Client;
+namespace SpectrumEngine.Client.Wpf;
 
 /// <summary>
 /// This provider uses the NAudio library to create sound from samples.
 /// </summary>
-public class NAudioProvider: ISampleProvider
+public class NAudioProvider : ISampleProvider
 {
     /// <summary>
     /// Number of sound frames buffered

@@ -1,4 +1,5 @@
-﻿using SpectrumEngine.Emu;
+﻿using SpectrumEngine.Client.Wpf;
+using SpectrumEngine.Emu;
 using System;
 using System.Linq;
 using System.Windows;
@@ -7,7 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace SpectrumEngine.Wpf.Client;
+namespace SpectrumEngine.Client.Wpf;
 
 /// <summary>
 /// Interaction logic for SpectrumDisplayControl.xaml

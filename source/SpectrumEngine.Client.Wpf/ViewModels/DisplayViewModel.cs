@@ -2,7 +2,7 @@
 using SpectrumEngine.Emu;
 using System.Windows.Media;
 
-namespace SpectrumEngine.Wpf.Client;
+namespace SpectrumEngine.Client.Wpf;
 
 public class DisplayViewModel: ObservableObject
 {

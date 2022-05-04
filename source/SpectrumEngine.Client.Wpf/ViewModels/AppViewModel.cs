@@ -2,7 +2,7 @@
 using Microsoft.Toolkit.Mvvm.Input;
 using SpectrumEngine.Emu;
 
-namespace SpectrumEngine.Wpf.Client;
+namespace SpectrumEngine.Client.Wpf;
 
 /// <summary>
 /// This class represents the application's view model

@@ -1,7 +1,7 @@
 ﻿using SpectrumEngine.Emu;
 using System.Windows;
 
-namespace SpectrumEngine.Wpf.Client;
+namespace SpectrumEngine.Client.Wpf;
 
 /// <summary>
 /// Interaction logic for App.xaml
