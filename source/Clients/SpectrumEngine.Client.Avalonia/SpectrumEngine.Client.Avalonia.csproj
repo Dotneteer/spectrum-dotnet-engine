@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
+    <TrimMode>copyused</TrimMode>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>	  
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="I18n\Strings_en.xaml" />
+    <None Remove="I18n\Strings_es.xaml" />
+    <None Remove="Themes\Default\Style.xaml" />
+  </ItemGroup>
+	<ItemGroup>
+		<AvaloniaResource Include="I18n\Strings_en.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</AvaloniaResource>
+		<AvaloniaResource Include="I18n\Strings_es.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</AvaloniaResource>
+		<AvaloniaResource Include="Themes\Default\Images\avalonia-logo.ico">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</AvaloniaResource>
+		<AvaloniaResource Include="Themes\Default\Style.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+		<Page Include="I18n\Strings_es.xaml">
+			<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+		</Page>
+		<Page Include="I18n\Strings_en.xaml">
+			<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+		</Page>
+	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />    
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.14" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.14" />
+    <PackageReference Include="Material.Avalonia" Version="2.5.1" />
+    <PackageReference Include="ReactiveUI.Fody" Version="18.0.10" />
+	<PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SpectrumEngine.Emu\SpectrumEngine.Emu.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\MainWindowView.axaml.cs">
+      <DependentUpon>MainWindowView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

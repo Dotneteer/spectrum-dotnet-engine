@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=netstandard">
+
+
+	<!-- Common -->
+
+	<!-- MainWindow -->
+	<system:String x:Key="MainWindowTitle">Emulador Zx Spectrum</system:String>
+	<system:String x:Key="MainWindowIcon">avares://SpectrumEngine.Client.Avalonia/Themes/Default/Images/avalonia-logo.ico</system:String>
+
+
+
+</ResourceDictionary>

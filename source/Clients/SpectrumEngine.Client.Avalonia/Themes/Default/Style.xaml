@@ -1,0 +1,20 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:system="clr-namespace:System;assembly=netstandard"
+		xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
+
+
+	<Styles.Resources>		
+		
+		<controls:BitmapResourcesControl x:Key="AppLogoIcon64x64">
+			<x:Arguments>
+				<x:Uri>avares://SpectrumEngine.Client.Avalonia/Themes/Default/Images/avalonia-logo.ico</x:Uri>
+			</x:Arguments>
+		</controls:BitmapResourcesControl>
+
+		<system:Double x:Key="FontSizeMedium">14</system:Double>
+		<system:Double x:Key="PackIconSizeMedium">18</system:Double>
+
+	</Styles.Resources>
+
+</Styles>
