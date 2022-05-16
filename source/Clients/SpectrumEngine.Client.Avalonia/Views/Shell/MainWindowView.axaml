@@ -1,0 +1,76 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:rxui="http://reactiveui.net"
+        x:Class="SpectrumEngine.Client.Avalonia.Views.Shell.MainWindowView"
+        xmlns:vm="using:SpectrumEngine.Client.Avalonia.ViewModels.Shell"
+		xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		Icon="{Binding Icon}"
+		Title="{Binding Title}">
+
+
+	<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="10" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="30" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="8*" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+
+
+
+		<!-- IsBusy indicator -->
+		<Border Grid.RowSpan="4" Grid.ColumnSpan="3" ZIndex="1000" Background="#B2FFFFFF" IsVisible="{Binding IsBusy}" >
+			<ProgressBar Classes="Circle"
+						 IsIndeterminate="True"
+						 Value="0"
+						 VerticalAlignment="Center"
+						 HorizontalAlignment="Center"
+						 RenderTransformOrigin="0.5,0.5" >
+				<ProgressBar.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform ScaleX="5" ScaleY="5"/>
+					</TransformGroup>
+				</ProgressBar.RenderTransform>
+			</ProgressBar>
+		</Border>
+
+
+		<!-- main toolbar -->
+		<ContentControl Grid.Row="0" Grid.ColumnSpan="3" Content="{Binding MainToolBar.Value}" />
+
+		<!-- Content -->
+		<rxui:RoutedViewHost
+			Grid.Row="2" Grid.Column="1"
+			Router="{Binding Router}"
+			HorizontalContentAlignment="Stretch"
+			VerticalContentAlignment="Stretch" />
+
+
+	</Grid>
+
+
+	<!--<Grid>
+		<DockPanel>		
+
+			
+			<TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineFrames}" ></TextBlock>
+			<TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineControllerState}" ></TextBlock>
+			-->
+	<!--<local:SpectrumDisplayControl x:Name="SpectrumDisplay"  DockPanel.Dock="Bottom" DataContext="{Binding DisplayViewModel}" />-->
+	<!--
+		</DockPanel>
+	</Grid>-->
+
+</Window>

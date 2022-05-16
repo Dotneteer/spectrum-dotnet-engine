@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using Avalonia;
 using Avalonia.ReactiveUI;
-using ReactiveUI;
-using SpectrumEngine.Client.Avalonia.ViewModels;
-using SpectrumEngine.Client.Avalonia.Views;
-using Splat;
 
 namespace SpectrumEngine.Client.Avalonia.Desktop
 {
@@ -21,10 +16,8 @@ namespace SpectrumEngine.Client.Avalonia.Desktop
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
         {
-            // Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
-            Locator.CurrentMutable.Register(() => new FirstView(), typeof(IViewFor<FirstViewModel>));
-
             return AppBuilder.Configure<App>()
+                .RegisterComponents()
                 .UseReactiveUI()
                 .UsePlatformDetect()
                 .LogToTrace();

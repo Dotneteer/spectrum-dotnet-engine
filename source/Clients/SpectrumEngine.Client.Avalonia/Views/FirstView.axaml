@@ -4,12 +4,11 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		x:Class="SpectrumEngine.Client.Avalonia.Views.FirstView"
 		xmlns:vm="using:SpectrumEngine.Client.Avalonia.ViewModels"
-		Background="LightSeaGreen"
 		mc:Ignorable="d">
 
 	<Design.DataContext>
 		<vm:FirstViewModel />
 	</Design.DataContext>
 	
-	<TextBlock x:Name="PathTextBlock" Foreground="White" Margin="10" />
+	<TextBlock Text="Sample View" Foreground="White" Margin="10" />
 </UserControl>

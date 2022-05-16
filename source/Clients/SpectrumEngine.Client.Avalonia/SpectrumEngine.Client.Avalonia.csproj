@@ -44,8 +44,11 @@
     <ProjectReference Include="..\..\SpectrumEngine.Emu\SpectrumEngine.Emu.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Views\MainWindowView.axaml.cs">
+    <Compile Update="Views\Shell\MainWindowView.axaml.cs">
       <DependentUpon>MainWindowView.axaml</DependentUpon>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 </Project>

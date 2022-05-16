@@ -1,12 +1,9 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
-using ReactiveUI;
-using SpectrumEngine.Client.Avalonia.ViewModels;
-using SpectrumEngine.Client.Avalonia.Views;
+using SpectrumEngine.Client.Avalonia.ViewModels.Shell;
+using SpectrumEngine.Client.Avalonia.Views.Shell;
 using Splat;
-using System.Reflection;
 
 namespace SpectrumEngine.Client.Avalonia
 {
@@ -23,7 +20,7 @@ namespace SpectrumEngine.Client.Avalonia
             {
                 desktop.MainWindow = new MainWindowView
                 {
-                    DataContext = new MainWindowViewModel()
+                    DataContext = Locator.Current.GetService<IMainWindow>()!
                 };
             }
             

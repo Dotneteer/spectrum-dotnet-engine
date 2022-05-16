@@ -1,12 +1,9 @@
 ﻿using Avalonia;
 using ReactiveUI;
+using SpectrumEngine.Client.Avalonia.ViewModels;
+using SpectrumEngine.Client.Avalonia.ViewModels.Shell;
+using SpectrumEngine.Client.Avalonia.Views;
 using Splat;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpectrumEngine.Client.Avalonia
 {
@@ -15,7 +12,13 @@ namespace SpectrumEngine.Client.Avalonia
 
         public static AppBuilder RegisterComponents(this AppBuilder appBuilder)
         {
-            Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
+            // Shell
+            Locator.CurrentMutable.RegisterLazySingleton<IMainToolBar>(() => new MainToolBarViewModel());
+            Locator.CurrentMutable.RegisterLazySingleton<IMainWindow>(() => new MainWindowViewModel());
+
+            // Views
+            Locator.CurrentMutable.Register(() => new FirstView(), typeof(IViewFor<FirstViewModel>));
+
 
             return appBuilder;
         }

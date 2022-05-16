@@ -1,5 +1,4 @@
-﻿using SpectrumEngine.Client.Wpf;
-using SpectrumEngine.Emu;
+﻿using SpectrumEngine.Emu;
 using System;
 using System.Linq;
 using System.Windows;

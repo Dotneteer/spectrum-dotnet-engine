@@ -1,9 +1,7 @@
 using System;
-using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using SpectrumEngine.Client.Avalonia.ViewModels;
-using Splat;
 
 namespace SpectrumEngine.Client.Avalonia
 {

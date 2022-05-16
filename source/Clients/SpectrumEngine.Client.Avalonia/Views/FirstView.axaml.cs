@@ -1,8 +1,6 @@
-using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
 using SpectrumEngine.Client.Avalonia.ViewModels;
-using System.Reactive.Disposables;
 
 namespace SpectrumEngine.Client.Avalonia.Views
 {
@@ -12,11 +10,7 @@ namespace SpectrumEngine.Client.Avalonia.Views
         {
             InitializeComponent();
 
-            this.WhenActivated(disposables =>
-            {
-                this.OneWayBind(ViewModel, x => x.UrlPathSegment, x => x.PathTextBlock.Text)
-                    .DisposeWith(disposables);
-            });
+            this.WhenActivated(disposables => { });
         }
     }
 }

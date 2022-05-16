@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 x:Class="SpectrumEngine.Client.Avalonia.Views.Shell.MainToolBarView"
+			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+			 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800">
+
+	<Grid IsVisible="{Binding ToolBarVisibility}">
+
+		<styles:ColorZone Height="56" Padding="12" Mode="PrimaryMid">
+			<Grid>
+
+				<!--<StackPanel Orientation="Horizontal">
+					<Button ToolTip="{DynamicResource MAIN_TOOLBAR_GOBACK}" Style="{StaticResource MaterialDesignToolButton}"
+							Command="{Binding GoBackCmd}"
+							Visibility="{Binding BackButtonVisibility}"
+							HorizontalAlignment="Left"
+							Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
+							VerticalAlignment="Center">
+						<avalonia:MaterialIcon Kind="ArrowLeftBold" Height="24" Width="24" />
+					</Button>
+					<Image Height="24" />
+				</StackPanel>-->				
+
+				<Menu>
+					<MenuItem Header="File" Height="32" >
+						<MenuItem Header="Exit" Click="MenuItem_Click" />
+					</MenuItem>
+					<MenuItem Header="Machine" Height="32" Padding="20,0" HorizontalAlignment="Left" >
+						<MenuItem Header="Start"  Command="{Binding StartCommand, Mode=OneWay}" />
+						<MenuItem Header="Pause" Command="{Binding PauseCommand, Mode=OneWay}"/>
+						<MenuItem Header="Stop" Command="{Binding StopCommand, Mode=OneWay}" />
+						<Separator />
+						<MenuItem Header="Restart" Command="{Binding RestartCommand, Mode=OneWay}" />
+						<Separator />
+						<MenuItem Header="Debug" Command="{Binding StartDebugCommand, Mode=OneWay}" />
+						<MenuItem Header="Step Into" Command="{Binding StepIntoCommand, Mode=OneWay}" />
+						<MenuItem Header="Step Over" Command="{Binding StepOverCommand, Mode=OneWay}" />
+						<MenuItem Header="Step Out" Command="{Binding StepOutCommand, Mode=OneWay}" />
+					</MenuItem>
+				</Menu>
+
+				<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Title}" Classes="Headline6"/>
+				
+			</Grid>
+		</styles:ColorZone>
+
+	</Grid>
+</UserControl>
