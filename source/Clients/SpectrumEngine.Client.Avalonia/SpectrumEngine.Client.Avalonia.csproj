@@ -44,8 +44,17 @@
     <ProjectReference Include="..\..\SpectrumEngine.Emu\SpectrumEngine.Emu.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Views\Shell\MainWindowView.axaml.cs">
-      <DependentUpon>MainWindowView.axaml</DependentUpon>
+    <Compile Update="Views\Shell\MenuView.axaml.cs">
+      <DependentUpon>MenuView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Shell\StatusBarView.axaml.cs">
+      <DependentUpon>StatusBarView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Shell\ToolBarView.axaml.cs">
+      <DependentUpon>ToolBarView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Shell\WindowView.axaml.cs">
+      <DependentUpon>WindowView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

@@ -18,9 +18,9 @@ namespace SpectrumEngine.Client.Avalonia
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindowView
+                desktop.MainWindow = new WindowView
                 {
-                    DataContext = Locator.Current.GetService<IMainWindow>()!
+                    DataContext = Locator.Current.GetService<IWindow>()!
                 };
             }
             

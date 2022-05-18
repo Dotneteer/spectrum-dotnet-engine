@@ -9,26 +9,26 @@ using System;
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 {
-    public class MainWindowViewModel : ReactiveObject, IMainWindow
+    public class WindowViewModel : ReactiveObject, IWindow
     {
         private readonly Application app;
 
-        public MainWindowViewModel()
+        public WindowViewModel()
         {
-            app = Application.Current ?? throw new InvalidProgramException("Application.Current is null on MainWindowViewModel");
+            app = Application.Current ?? throw new InvalidProgramException("Application.Current is null on WindowViewModel");
 
-            MainToolBar = new Lazy<IMainToolBar>(() => Locator.Current.GetService<IMainToolBar>()!);
+            MainToolBar = new Lazy<IToolBar>(() => Locator.Current.GetService<IToolBar>()!);
 
             app.SetCurrentLanguage(System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
 
-            Icon = new WindowIcon(new AssetLoader().Open(new Uri(app.FirstResource<string>("MainWindowIcon"))));
-            Title = app.FirstResource<string>("MainWindowTitle");            
+            Icon = new WindowIcon(new AssetLoader().Open(new Uri(app.FirstResource<string>("WindowIcon"))));
+            Title = app.FirstResource<string>("WindowTitle");            
 
             Router = new RoutingState();
             Router.NavigateAndReset.Execute(new FirstViewModel());
         }
 
-        public Lazy<IMainToolBar> MainToolBar { get; }
+        public Lazy<IToolBar> MainToolBar { get; }
 
         public RoutingState Router { get; }
 

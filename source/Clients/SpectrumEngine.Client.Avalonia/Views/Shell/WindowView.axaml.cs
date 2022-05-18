@@ -4,9 +4,9 @@ using SpectrumEngine.Client.Avalonia.ViewModels.Shell;
 
 namespace SpectrumEngine.Client.Avalonia.Views.Shell
 {
-    public partial class MainWindowView : ReactiveWindow<MainWindowViewModel>
+    public partial class WindowView : ReactiveWindow<WindowViewModel>
     {
-        public MainWindowView()
+        public WindowView()
         {
             InitializeComponent();
 

@@ -13,8 +13,8 @@ namespace SpectrumEngine.Client.Avalonia
         public static AppBuilder RegisterComponents(this AppBuilder appBuilder)
         {
             // Shell
-            Locator.CurrentMutable.RegisterLazySingleton<IMainToolBar>(() => new MainToolBarViewModel());
-            Locator.CurrentMutable.RegisterLazySingleton<IMainWindow>(() => new MainWindowViewModel());
+            Locator.CurrentMutable.RegisterLazySingleton<IToolBar>(() => new ToolBarViewModel());
+            Locator.CurrentMutable.RegisterLazySingleton<IWindow>(() => new WindowViewModel());
 
             // Views
             Locator.CurrentMutable.Register(() => new FirstView(), typeof(IViewFor<FirstViewModel>));

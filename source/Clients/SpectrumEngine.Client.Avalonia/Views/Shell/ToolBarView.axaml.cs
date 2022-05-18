@@ -4,9 +4,9 @@ using SpectrumEngine.Emu;
 
 namespace SpectrumEngine.Client.Avalonia.Views.Shell
 {
-    public partial class MainToolBarView : UserControl
+    public partial class ToolBarView : UserControl
     {
-        public MainToolBarView()
+        public ToolBarView()
         {
             InitializeComponent();
         }

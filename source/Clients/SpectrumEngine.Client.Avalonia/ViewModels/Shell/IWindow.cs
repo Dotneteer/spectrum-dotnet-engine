@@ -4,12 +4,12 @@ using System;
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 {
-    public interface IMainWindow : IScreen
+    public interface IWindow : IScreen
     {
         string Title { get; set; }
 
         WindowIcon Icon { get; set; }
 
-        Lazy<IMainToolBar> MainToolBar { get; }
+        Lazy<IToolBar> MainToolBar { get; }
     }
 }

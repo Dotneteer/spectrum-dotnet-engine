@@ -9,10 +9,10 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels
     {
         public ViewModelBase()
         {
-            MainWindow = Locator.Current.GetService<IMainWindow>()!;
+            MainWindow = Locator.Current.GetService<IWindow>()!;
         }
 
-        public IMainWindow MainWindow { get; }
+        public IWindow MainWindow { get; }
 
         [Reactive]
         public bool IsBusy { get; set; } = false;

@@ -2,9 +2,9 @@
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 {
-    public class MainToolBarViewModel : ViewModelBase, IMainToolBar
+    public class ToolBarViewModel : ViewModelBase, IToolBar
     {
-        public MainToolBarViewModel()
+        public ToolBarViewModel()
         {
             SetDefaultValues();
 
@@ -28,7 +28,7 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
         public string? Title { get; set; }
 
         [Reactive]
-        public bool ToolBarVisibility { get; set; }
+        public bool Visibility { get; set; }
 
         [Reactive]
         public bool BackButtonVisibility { get; set; }
@@ -37,7 +37,7 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
         {
             this.Title = string.Empty;
             this.BackButtonVisibility = false;
-            this.ToolBarVisibility = true;
+            this.Visibility = true;
         }
     }
 }

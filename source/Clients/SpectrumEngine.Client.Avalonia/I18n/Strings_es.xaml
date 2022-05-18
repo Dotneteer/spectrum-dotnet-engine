@@ -5,9 +5,9 @@
 
 	<!-- Common -->
 
-	<!-- MainWindow -->
-	<system:String x:Key="MainWindowTitle">Emulador Zx Spectrum</system:String>
-	<system:String x:Key="MainWindowIcon">avares://SpectrumEngine.Client.Avalonia/Themes/Default/Images/avalonia-logo.ico</system:String>
+	<!-- Window -->
+	<system:String x:Key="WindowTitle">Emulador Zx Spectrum</system:String>
+	<system:String x:Key="WindowIcon">avares://SpectrumEngine.Client.Avalonia/Themes/Default/Images/avalonia-logo.ico</system:String>
 
 
 
