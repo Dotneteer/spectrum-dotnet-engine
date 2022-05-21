@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SpectrumEngine.Emu\SpectrumEngine.Emu.csproj" />
+    <ProjectReference Include="..\..\SpectrumEngine.Emu\SpectrumEngine.Emu.csproj" />
   </ItemGroup>
 
 </Project>
