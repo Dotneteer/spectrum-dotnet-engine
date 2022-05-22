@@ -9,8 +9,6 @@ namespace SpectrumEngine.Client.Avalonia.Views.Shell
         public WindowView()
         {
             InitializeComponent();
-
-            this.WhenActivated(disposables => { });
         }
     }
 }

@@ -6,8 +6,10 @@
 	<!-- Common -->
 
 	<!-- Window -->
-	<system:String x:Key="WindowTitle">Emulador Zx Spectrum</system:String>	
+	<system:String x:Key="WindowTitle">Emulador Zx Spectrum</system:String>
 
-
-
+	<!-- Menu -->
+	<system:String x:Key="MenuEmulatorItem">Emulador Zx Spectrum</system:String>
+	<system:String x:Key="MenuExitItem">Salir</system:String>
+	
 </ResourceDictionary>
