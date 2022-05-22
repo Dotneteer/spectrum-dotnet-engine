@@ -4,19 +4,20 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Avalonia.Threading;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
+// ReSharper disable UnusedParameter.Local
 
 namespace SpectrumEngine.Client.Avalonia.Controls;
 
 public partial class SpectrumDisplayControl : UserControl
 {
     private object? _prevDataContext;
-    private WriteableBitmap? _bitmap;
     private Rect? _effectiveViewport;
+    private int _zoomFactor = 1;
 
     public SpectrumDisplayControl()
     {
@@ -28,30 +29,8 @@ public partial class SpectrumDisplayControl : UserControl
     /// </summary>
     private DisplayViewModel? Vm => DataContext as DisplayViewModel;
 
-    // private void InitializeComponent()
-    // {
-    //     AvaloniaXamlLoader.Load(this);
-    // }
-
-    private void InitializeDisplay()
-    {
-        var machine = Vm?.Machine;
-        if (machine == null) return;
-
-        // --- Set up the bitmap
-        _bitmap = new WriteableBitmap(
-            new PixelSize(machine.ScreenWidthInPixels, machine.ScreenHeightInPixels),
-            new Vector(96, 96),
-            PixelFormat.Rgba8888,
-            AlphaFormat.Opaque);
-        Display.Source = _bitmap;
-        Display.Width = machine.ScreenWidthInPixels;
-        Display.Height = machine.ScreenHeightInPixels;
-        Display.Stretch = Stretch.Fill;
-        ResizeScreen();
-    }
-    
-        /// <summary>
+  
+    /// <summary>
     /// Change the view model properties when the user control is resized.
     /// </summary>
     /// <remarks>
@@ -66,9 +45,9 @@ public partial class SpectrumDisplayControl : UserControl
 
         var horZoom = (int)(_effectiveViewport.Value.Width / context.Machine!.ScreenWidthInPixels);
         var vertZoom = (int)(_effectiveViewport.Value.Height / context.Machine!.ScreenHeightInPixels);
-        var zoom = context.ZoomFactor = Math.Max(1, Math.Min(horZoom, vertZoom));
-        Display.Width = context.ScreenWidth = zoom * context.Machine!.ScreenWidthInPixels;
-        Display.Height = context.ScreenHeight = zoom * context.Machine!.ScreenHeightInPixels;
+        _zoomFactor = context.ZoomFactor = Math.Max(1, Math.Min(horZoom, vertZoom));
+        Display.Width = context.ScreenWidth = _zoomFactor * context.Machine!.ScreenWidthInPixels;
+        Display.Height = context.ScreenHeight = _zoomFactor * context.Machine!.ScreenHeightInPixels;
     }
 
     /// <summary>
@@ -92,40 +71,46 @@ public partial class SpectrumDisplayControl : UserControl
 
     private void Controller_FrameCompleted(object? sender, bool e)
     {
-        // // --- Use the Dispatcher to render the screen
-        // Dispatcher.UIThread.InvokeAsync(() =>
-        // {
-        //     if (Vm?.Machine == null) return;
-        //
-        //     // --- Set the next set of sound samples
-        //     var samples = (Vm.Machine as ZxSpectrum48Machine)?.BeeperDevice?.GetAudioSamples();
-        //     if (samples != null)
-        //     {
-        //         // _audioProvider?.AddSoundFrame(samples);
-        //     }
-        //
-        //     // --- Display the new screen frame
-        //     var width = Vm.Machine.ScreenWidthInPixels;
-        //     var height = Vm.Machine.ScreenHeightInPixels;
-        //
-        //     _bitmap!.Lock();
-        //         // unsafe
-        //         // {
-        //         //     var buffer = Vm.Machine.GetPixelBuffer();
-        //         //     var pBackBuffer = _bitmap.BackBuffer;
-        //         //     var offset = width;
-        //         //     for (var y = 0; y < height; y++)
-        //         //     {
-        //         //         for (var x = 0; x < width; x++)
-        //         //         {
-        //         //             *(uint*)pBackBuffer = buffer[offset];
-        //         //             offset++;
-        //         //             pBackBuffer += 4;
-        //         //         }
-        //         //     }
-        //         // }
-        //         // _bitmap.AddDirtyRect(new Int32Rect(0, 0, width, height));
-        // });
+        // --- Use the Dispatcher to render the screen
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            var machine = Vm?.Machine;
+            if (machine == null) return;
+        
+            // --- Set the next set of sound samples
+            //var samples = (Vm.Machine as ZxSpectrum48Machine)?.BeeperDevice?.GetAudioSamples();
+            // if (samples != null)
+            // {
+            //     // _audioProvider?.AddSoundFrame(samples);
+            // }
+        
+            // --- Display the new screen frame
+            var bitmap = new WriteableBitmap(
+                new PixelSize(machine.ScreenWidthInPixels, machine.ScreenHeightInPixels),
+                new Vector(96, 96),
+                PixelFormat.Bgra8888,
+                AlphaFormat.Opaque);
+            var width = machine.ScreenWidthInPixels;
+            var height = machine.ScreenHeightInPixels;
+            
+            using var bitmapBuffer = bitmap.Lock();
+            unsafe
+            {
+                var buffer = machine.GetPixelBuffer();
+                var pBackBuffer = bitmapBuffer.Address;
+                var offset = width;
+                for (var y = 0; y < height; y++)
+                {
+                    for (var x = 0; x < width; x++)
+                    {
+                        *(uint*)pBackBuffer = buffer[offset];
+                        offset++;
+                        pBackBuffer += 4;
+                    }
+                }
+            }
+            Display.Source = bitmap;
+        });
     }
 
     /// <summary>
@@ -135,7 +120,7 @@ public partial class SpectrumDisplayControl : UserControl
     /// This method maps a physical key to one or two ZX Spectrum keys and sets the key states through the keyboard
     /// device of the emulated machine.
     /// </remarks>
-    private void HandleKeyboardEvent(object? sender, KeyEventArgs e, bool isPressed)
+    private void HandleKeyboardEvent(KeyEventArgs e, bool isPressed)
     {
         if (DataContext is not DisplayViewModel context || context.Machine == null) return;
         var keyMapping = KeyMappings.DefaultMapping.FirstOrDefault(m => m.Input == e.Key);
@@ -174,12 +159,11 @@ public partial class SpectrumDisplayControl : UserControl
             }
         }
         _prevDataContext = DataContext;
-        InitializeDisplay();
     }
 
-    private void OnKeyDown(object? sender, KeyEventArgs e) => HandleKeyboardEvent(sender, e, true);
+    private void OnKeyDown(object? sender, KeyEventArgs e) => HandleKeyboardEvent(e, true);
 
-    private void OnKeyUp(object? sender, KeyEventArgs e) => HandleKeyboardEvent(sender, e, false);
+    private void OnKeyUp(object? sender, KeyEventArgs e) => HandleKeyboardEvent(e, false);
 
     private void OnViewportChanged(object? sender, EffectiveViewportChangedEventArgs e)
     {

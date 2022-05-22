@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.SpectrumDisplayControl"
+             Focusable="True"
              DataContextChanged="OnDataContextChanged"
              KeyDown="OnKeyDown"
              KeyUp="OnKeyUp"
@@ -23,6 +24,8 @@
         <Image Name="Display"  
                UseLayoutRounding="True"
                HorizontalAlignment="Stretch" 
-               VerticalAlignment="Stretch" />
+               VerticalAlignment="Stretch"
+               RenderOptions.BitmapInterpolationMode="LowQuality"
+               Stretch="Fill" />
     </Grid>
 </UserControl>
