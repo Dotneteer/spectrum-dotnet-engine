@@ -1,0 +1,28 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SpectrumEngine.Client.Avalonia.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.SpectrumDisplayControl"
+             DataContextChanged="OnDataContextChanged"
+             KeyDown="OnKeyDown"
+             KeyUp="OnKeyUp"
+             EffectiveViewportChanged="OnViewportChanged">
+    
+    <Design.DataContext>
+        <vm:DisplayViewModel x:Name="ViewModel" />
+    </Design.DataContext>
+    <Grid 
+        Name="Screen"
+        Width="{Binding ScreenWidth}" d:Width="600"
+        Height="{Binding ScreenHeight}" d:Height="400"
+        HorizontalAlignment="Center" 
+        VerticalAlignment="Center" 
+        Background="{Binding Background}" d:Background="#ffdbc10e">
+        <Image Name="Display"  
+               UseLayoutRounding="True"
+               HorizontalAlignment="Stretch" 
+               VerticalAlignment="Stretch" />
+    </Grid>
+</UserControl>

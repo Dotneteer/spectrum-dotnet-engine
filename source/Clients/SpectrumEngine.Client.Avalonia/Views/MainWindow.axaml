@@ -1,0 +1,43 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SpectrumEngine.Client.Avalonia.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="using:SpectrumEngine.Client.Avalonia.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="SpectrumEngine.Client.Avalonia.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="SpectrumEngine - ZX Spectrum 48K Emulator"
+        DataContextChanged="OnDataContextChanged">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid>
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="File">
+                    <MenuItem Header="Exit" Click="MenuItem_OnClick" />
+                    <MenuItem Header="About" />
+                </MenuItem>
+                <MenuItem Header="Machine">
+                    <MenuItem Header="Start" Command="{Binding Start}" />
+                    <MenuItem Header="Pause" Command="{Binding Pause}" />
+                    <MenuItem Header="Stop" Command="{Binding Stop}" />
+                    <Separator />
+                    <MenuItem Header="Restart" Command="{Binding Restart}" />
+                    <Separator />
+                    <MenuItem Header="Debug" Command="{Binding StartDebug}" />
+                    <MenuItem Header="Step Into" Command="{Binding StepInto}" />
+                    <MenuItem Header="Step Over" Command="{Binding StepOver}" />
+                    <MenuItem Header="Step Out" Command="{Binding StepOut}" />
+                </MenuItem>
+            </Menu>
+            <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineFrames}" ></TextBlock>
+            <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineControllerState}" ></TextBlock>
+            <local:SpectrumDisplayControl x:Name="SpectrumDisplay" DockPanel.Dock="Bottom" DataContext="{Binding DisplayViewModel}" />
+        </DockPanel>
+    </Grid>
+
+</Window>
