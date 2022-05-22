@@ -6,7 +6,6 @@
 
 	<!-- Window -->
 	<system:String x:Key="WindowTitle">Zx Spectrum Emulator</system:String>
-	<system:String x:Key="WindowIcon">avares://SpectrumEngine.Client.Avalonia/Themes/Default/Images/avalonia-logo.ico</system:String>
 
 
 </ResourceDictionary>

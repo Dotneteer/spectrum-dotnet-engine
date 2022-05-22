@@ -9,6 +9,7 @@
   <ItemGroup>
     <None Remove="I18n\Strings_en.xaml" />
     <None Remove="I18n\Strings_es.xaml" />
+    <None Remove="Themes\Default\Images\zx-spectrum.jpg" />
     <None Remove="Themes\Default\Style.xaml" />
   </ItemGroup>
 	<ItemGroup>
@@ -21,6 +22,7 @@
 		<AvaloniaResource Include="Themes\Default\Images\avalonia-logo.ico">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</AvaloniaResource>
+		<AvaloniaResource Include="Themes\Default\Images\zx-spectrum.jpg" />
 		<AvaloniaResource Include="Themes\Default\Style.xaml" />
 	</ItemGroup>
 	<ItemGroup>

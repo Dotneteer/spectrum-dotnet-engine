@@ -2,10 +2,6 @@
 {
     public interface IToolBar
     {
-        string? Title { get; }
-
-        bool Visibility { get; }
-
-        bool BackButtonVisibility { get; }
+        string? Title { get; set;  }
     }
 }

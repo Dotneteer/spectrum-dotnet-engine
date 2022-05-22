@@ -7,9 +7,70 @@
 			 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800">
 
-	<Grid IsVisible="{Binding ToolBarVisibility}">
+	<Grid>
 
-		<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Title}" Classes="Headline6"/>
+		<ScrollViewer>
+			<StackPanel>
+
+				<Grid>
+					<Image HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Source="{StaticResource ZxSpectrum}" />
+					<ToggleButton Width="32" Height="32" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="16" IsChecked="{Binding MainWindow.IsMenuOpened, Mode=TwoWay}">
+						<avalonia:MaterialIcon Kind="Backburger" />
+					</ToggleButton>
+				</Grid>
+
+				<TreeView Classes="NoScroll" Focusable="{Binding MainWindow.IsMenuOpened}">
+					<TreeViewItem >
+						<TreeViewItem.Header>
+							<Grid ColumnDefinitions="Auto, 8, *">
+								<avalonia:MaterialIcon Kind="DesktopMac" />
+								<TextBlock Text="Apple MacOS" Grid.Column="2" />
+							</Grid>
+						</TreeViewItem.Header>
+					</TreeViewItem>
+					<TreeViewItem>
+						<TreeViewItem.Header>
+							<Grid ColumnDefinitions="Auto, 8, *">
+								<avalonia:MaterialIcon Kind="AppleIos" />
+								<TextBlock Text="Apple iOS" Grid.Column="2" />
+							</Grid>
+						</TreeViewItem.Header>
+					</TreeViewItem>
+					<TreeViewItem>
+						<TreeViewItem.Header>
+							<Grid ColumnDefinitions="Auto, 8, *">
+								<avalonia:MaterialIcon Kind="MicrosoftWindows" />
+								<TextBlock Text="Windows" Grid.Column="2" />
+							</Grid>
+						</TreeViewItem.Header>
+					</TreeViewItem>
+				</TreeView>
+			
+
+
+
+					<!--<Menu Grid.Column="1">
+						<MenuItem Header="File" Height="32" >
+							<MenuItem Header="Exit" Click="MenuItem_Click" />
+						</MenuItem>
+						<MenuItem Header="Machine" Height="32" Padding="20,0" HorizontalAlignment="Left" >
+							<MenuItem Header="Start"  Command="{Binding StartCommand, Mode=OneWay}" />
+							<MenuItem Header="Pause" Command="{Binding PauseCommand, Mode=OneWay}"/>
+							<MenuItem Header="Stop" Command="{Binding StopCommand, Mode=OneWay}" />
+							<Separator />
+							<MenuItem Header="Restart" Command="{Binding RestartCommand, Mode=OneWay}" />
+							<Separator />
+							<MenuItem Header="Debug" Command="{Binding StartDebugCommand, Mode=OneWay}" />
+							<MenuItem Header="Step Into" Command="{Binding StepIntoCommand, Mode=OneWay}" />
+							<MenuItem Header="Step Over" Command="{Binding StepOverCommand, Mode=OneWay}" />
+							<MenuItem Header="Step Out" Command="{Binding StepOutCommand, Mode=OneWay}" />
+						</MenuItem>
+					</Menu>-->
+					
+					
+				<!--</ListBox>-->
+			</StackPanel>
+		</ScrollViewer>
 
 	</Grid>
 </UserControl>

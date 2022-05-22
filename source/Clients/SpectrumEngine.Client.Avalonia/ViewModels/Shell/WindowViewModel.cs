@@ -27,9 +27,9 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
             Router.NavigateAndReset.Execute(new FirstViewModel());
 
             Icon = new WindowIcon(new AssetLoader().Open(new Uri(app.FirstResource<string>("WindowIcon"))));
-            Title = app.FirstResource<string>("WindowTitle");
-            IsMenuOpened = false;
+            Title = app.FirstResource<string>("WindowTitle");            
             IsBusy = false;
+            IsMenuOpened = false;
         }
 
         public Lazy<IToolBar> ToolBar { get; }

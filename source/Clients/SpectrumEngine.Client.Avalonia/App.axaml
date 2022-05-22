@@ -8,7 +8,7 @@
     </Application.DataTemplates>
 
 	<Application.Resources>
-		<themes:BundledTheme BaseTheme="Dark" PrimaryColor="Teal" SecondaryColor="Amber"/>
+		<themes:BundledTheme BaseTheme="Dark" PrimaryColor="Green" SecondaryColor="Blue"/>
 	</Application.Resources>
 
 	<Application.Styles>

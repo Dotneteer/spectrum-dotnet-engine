@@ -6,14 +6,10 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
     {
         public MenuViewModel()
         {
-            Title = string.Empty;
-            Visibility = true;
+            Title = string.Empty;            
         }
 
         [Reactive]
         public string? Title { get; set; }
-
-        [Reactive]
-        public bool Visibility { get; set; }
     }
 }

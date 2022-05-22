@@ -6,12 +6,13 @@
 
 	<Styles.Resources>
 
-		<controls:BitmapResourcesControl x:Key="AppLogoIcon64x64">
+		<controls:BitmapResourcesControl x:Key="ZxSpectrum">
 			<x:Arguments>
-				<x:Uri>avares://SpectrumEngine.Client.Avalonia/Themes/Default/Images/avalonia-logo.ico</x:Uri>
+				<x:Uri>avares://SpectrumEngine.Client.Avalonia/Themes/Default/Images/zx-spectrum.jpg</x:Uri>
 			</x:Arguments>
 		</controls:BitmapResourcesControl>
 
+		<system:String x:Key="WindowIcon">avares://SpectrumEngine.Client.Avalonia/Themes/Default/Images/avalonia-logo.ico</system:String>
 		<system:Double x:Key="FontSizeMedium">14</system:Double>
 		<system:Double x:Key="PackIconSizeMedium">18</system:Double>
 
@@ -23,7 +24,7 @@
 	</Style>
 
 
-	<Style Selector="ProgressBar.Busy">		
+	<Style Selector="ProgressBar.Busy">
 		<Setter Property="IsIndeterminate" Value="True" />
 		<Setter Property="Value" Value="0" />
 		<Setter Property="VerticalAlignment" Value="Center" />
@@ -35,5 +36,12 @@
 			</TransformGroup>
 		</Setter>
 	</Style>
-	
+
+	<Style Selector="ListBoxItem.Menu">
+		<Setter Property="Height" Value="48" />
+		<Setter Property="Padding" Value="16,0" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="IsEnabled" Value="{Binding $self.Content.IsEnabled}" />
+	</Style>
+
 </Styles>

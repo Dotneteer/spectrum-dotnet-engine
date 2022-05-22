@@ -2,8 +2,6 @@
 {
     public interface IStatusBar
     {
-        string? Title { get; }
-
-        bool Visibility { get; }
+        string? Title { get; set; }
     }
 }
