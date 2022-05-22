@@ -4,8 +4,8 @@
 		xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
 
 
-	<Styles.Resources>		
-		
+	<Styles.Resources>
+
 		<controls:BitmapResourcesControl x:Key="AppLogoIcon64x64">
 			<x:Arguments>
 				<x:Uri>avares://SpectrumEngine.Client.Avalonia/Themes/Default/Images/avalonia-logo.ico</x:Uri>
@@ -17,4 +17,23 @@
 
 	</Styles.Resources>
 
+	<Style Selector="Border.Busy">
+		<Setter Property="ZIndex" Value="1000" />
+		<Setter Property="Background" Value="#B2FFFFFF" />
+	</Style>
+
+
+	<Style Selector="ProgressBar.Busy">		
+		<Setter Property="IsIndeterminate" Value="True" />
+		<Setter Property="Value" Value="0" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="HorizontalAlignment" Value="Center" />
+		<Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+		<Setter Property="RenderTransform">
+			<TransformGroup>
+				<ScaleTransform ScaleX="5" ScaleY="5"/>
+			</TransformGroup>
+		</Setter>
+	</Style>
+	
 </Styles>

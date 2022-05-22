@@ -13,24 +13,5 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels
         }
 
         public IWindow MainWindow { get; }
-
-        [Reactive]
-        public bool IsBusy { get; set; } = false;
-        //protected bool _isBusy;
-        //public bool IsBusy
-        //{
-        //    get
-        //    {
-        //        return _isBusy;
-        //    }
-        //    set
-        //    {
-        //        if (value == _isBusy) return;
-
-        //        _isBusy = value;
-        //        this._events.PublishOnUIThread(new BusyEvent(_isBusy));
-        //        NotifyOfPropertyChange(() => IsBusy);
-        //    }
-        //}
     }
 }

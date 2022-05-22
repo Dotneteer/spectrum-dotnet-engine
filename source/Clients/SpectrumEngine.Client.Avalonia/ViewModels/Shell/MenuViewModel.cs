@@ -6,7 +6,8 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
     {
         public MenuViewModel()
         {
-            SetDefaultValues();
+            Title = string.Empty;
+            Visibility = true;
         }
 
         [Reactive]
@@ -14,11 +15,5 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 
         [Reactive]
         public bool Visibility { get; set; }
-
-        private void SetDefaultValues()
-        {
-            this.Title = string.Empty;
-            this.Visibility = true;
-        }
     }
 }

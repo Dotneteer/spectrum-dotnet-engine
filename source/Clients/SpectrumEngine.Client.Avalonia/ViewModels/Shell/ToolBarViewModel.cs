@@ -1,4 +1,7 @@
-﻿using ReactiveUI.Fody.Helpers;
+﻿using ReactiveUI;
+using System;
+using ReactiveUI.Fody.Helpers;
+using System.Reactive;
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 {
@@ -6,16 +9,17 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
     {
         public ToolBarViewModel()
         {
-            SetDefaultValues();
+            this.Title = string.Empty;
+            this.BackButtonVisibility = false;
+            this.Visibility = true;
 
-            // REactiveUI
-            //        var canGoBack = this
-            //.WhenAnyValue(x => x.Router.NavigationStack.Count)
-            //.Select(count => count > 0);
-            //        GoBack = ReactiveCommand.CreateFromObservable(() => Router.NavigateBack.Execute(Unit.Default), canGoBack);
+            //var canGoBack = this.WhenAnyValue(x => x.Router.NavigationStack.Count).Select(count => count > 0);
+            OpenMenuCmd = ReactiveCommand.Create(() => this.MainWindow.IsMenuOpened = true);
+
+            //this.WhenAnyValue(x => x.MainWindow.IsMenuOpened).Subscribe(value => MainWindow.IsMenuOpened = value);
         }
 
-        //public ReactiveCommand<Unit, IRoutableViewModel?> GoBack { get; }
+        public ReactiveCommand<Unit, bool> OpenMenuCmd { get; private set; }
 
 
         //public void GoBackCmd()
@@ -32,12 +36,5 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 
         [Reactive]
         public bool BackButtonVisibility { get; set; }
-
-        private void SetDefaultValues()
-        {
-            this.Title = string.Empty;
-            this.BackButtonVisibility = false;
-            this.Visibility = true;
-        }
     }
 }

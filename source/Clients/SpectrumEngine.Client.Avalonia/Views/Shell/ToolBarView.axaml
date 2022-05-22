@@ -11,7 +11,10 @@
 
 		<styles:ColorZone Height="56" Padding="12" Mode="PrimaryMid">
 			<Grid>
-
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
 				<!--<StackPanel Orientation="Horizontal">
 					<Button ToolTip="{DynamicResource MAIN_TOOLBAR_GOBACK}" Style="{StaticResource MaterialDesignToolButton}"
 							Command="{Binding GoBackCmd}"
@@ -22,9 +25,13 @@
 						<avalonia:MaterialIcon Kind="ArrowLeftBold" Height="24" Width="24" />
 					</Button>
 					<Image Height="24" />
-				</StackPanel>-->				
+				</StackPanel>-->
 
-				<Menu>
+				<ToggleButton Classes="Flat TransparentBack" Width="32" Height="32" Padding="4" Command="{Binding OpenMenuCmd}">
+					<avalonia:MaterialIcon Kind="Menu" Width="24" Height="24" />
+				</ToggleButton>
+
+				<Menu Grid.Column="1">
 					<MenuItem Header="File" Height="32" >
 						<MenuItem Header="Exit" Click="MenuItem_Click" />
 					</MenuItem>
@@ -43,7 +50,7 @@
 				</Menu>
 
 				<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Title}" Classes="Headline6"/>
-				
+
 			</Grid>
 		</styles:ColorZone>
 

@@ -17,18 +17,24 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
         {
             app = Application.Current ?? throw new InvalidProgramException("Application.Current is null on WindowViewModel");
 
-            MainToolBar = new Lazy<IToolBar>(() => Locator.Current.GetService<IToolBar>()!);
+            ToolBar = new Lazy<IToolBar>(() => Locator.Current.GetService<IToolBar>()!);
+            StatusBar = new Lazy<IStatusBar>(() => Locator.Current.GetService<IStatusBar>()!);
+            Menu = new Lazy<IMenu>(() => Locator.Current.GetService<IMenu>()!);
 
             app.SetCurrentLanguage(System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
 
-            Icon = new WindowIcon(new AssetLoader().Open(new Uri(app.FirstResource<string>("WindowIcon"))));
-            Title = app.FirstResource<string>("WindowTitle");            
-
             Router = new RoutingState();
             Router.NavigateAndReset.Execute(new FirstViewModel());
+
+            Icon = new WindowIcon(new AssetLoader().Open(new Uri(app.FirstResource<string>("WindowIcon"))));
+            Title = app.FirstResource<string>("WindowTitle");
+            IsMenuOpened = false;
+            IsBusy = false;
         }
 
-        public Lazy<IToolBar> MainToolBar { get; }
+        public Lazy<IToolBar> ToolBar { get; }
+        public Lazy<IStatusBar> StatusBar { get; }
+        public Lazy<IMenu> Menu { get; }
 
         public RoutingState Router { get; }
 
@@ -38,6 +44,10 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
         [Reactive]
         public WindowIcon Icon { get; set; }
 
+        [Reactive]
+        public bool IsMenuOpened { get; set; }
+
+        [Reactive]
         public bool IsBusy { get; set; } = false;
     }
 }

@@ -14,11 +14,12 @@ namespace SpectrumEngine.Client.Avalonia
         {
             // Shell
             Locator.CurrentMutable.RegisterLazySingleton<IToolBar>(() => new ToolBarViewModel());
+            Locator.CurrentMutable.RegisterLazySingleton<IMenu>(() => new MenuViewModel());
+            Locator.CurrentMutable.RegisterLazySingleton<IStatusBar>(() => new StatusBarViewModel());
             Locator.CurrentMutable.RegisterLazySingleton<IWindow>(() => new WindowViewModel());
 
             // Views
             Locator.CurrentMutable.Register(() => new FirstView(), typeof(IViewFor<FirstViewModel>));
-
 
             return appBuilder;
         }
