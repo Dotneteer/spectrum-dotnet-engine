@@ -1,34 +1,37 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Shared.PlatformSupport;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using SpectrumEngine.Client.Avalonia.Extensions;
+using SpectrumEngine.Client.Avalonia.Services;
+using SpectrumEngine.Emu;
 using Splat;
 using System;
+using System.Reactive;
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 {
     public class WindowViewModel : ReactiveObject, IWindow
     {
-        private readonly Application app;
+        private readonly IApplicationService applicationService;
 
-        public WindowViewModel()
+        public WindowViewModel(IApplicationService? applicationService = null)
         {
-            app = Application.Current ?? throw new InvalidProgramException("Application.Current is null on WindowViewModel");
+            this.applicationService = applicationService ?? Locator.Current.GetRequiredService<IApplicationService>();
 
-            ToolBar = new Lazy<IToolBar>(() => Locator.Current.GetService<IToolBar>()!);
-            StatusBar = new Lazy<IStatusBar>(() => Locator.Current.GetService<IStatusBar>()!);
-            Menu = new Lazy<IMenu>(() => Locator.Current.GetService<IMenu>()!);
+            ToolBar = new Lazy<IToolBar>(() => Locator.Current.GetRequiredService<IToolBar>());
+            StatusBar = new Lazy<IStatusBar>(() => Locator.Current.GetRequiredService<IStatusBar>());
+            Menu = new Lazy<IMenu>(() => Locator.Current.GetRequiredService<IMenu>());
 
-            app.SetCurrentLanguage(System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
+            this.applicationService.Application.SetCurrentLanguage(System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
 
             Router = new RoutingState();
             Router.NavigateAndReset.Execute(new FirstViewModel());
 
-            Icon = new WindowIcon(new AssetLoader().Open(new Uri(app.FirstResource<string>("WindowIcon"))));
-            Title = app.FirstResource<string>("WindowTitle");            
-            IsBusy = false;
+            Icon = new WindowIcon(new AssetLoader().Open(new Uri(this.applicationService.Application.FirstResource<string>("WindowIcon"))));
+            Title = this.applicationService.Application.FirstResource<string>("WindowTitle");
             IsMenuOpened = false;
         }
 
@@ -48,6 +51,6 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
         public bool IsMenuOpened { get; set; }
 
         [Reactive]
-        public bool IsBusy { get; set; } = false;
+        public bool IsBusy { get; set; }
     }
 }

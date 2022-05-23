@@ -11,11 +11,5 @@ namespace SpectrumEngine.Client.Avalonia.Views.Shell
         {
             InitializeComponent();            
         }
-
-        private void CloseTreeItem_Tapped(object? sender, RoutedEventArgs e)
-        {
-            Logger.Flush();
-            (this.VisualRoot as Window)?.Close();
-        }
     }
 }

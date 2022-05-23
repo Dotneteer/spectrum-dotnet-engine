@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using ReactiveUI;
+using SpectrumEngine.Client.Avalonia.Services;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Client.Avalonia.ViewModels.Shell;
 using SpectrumEngine.Client.Avalonia.Views;
@@ -17,6 +18,9 @@ namespace SpectrumEngine.Client.Avalonia
             Locator.CurrentMutable.RegisterLazySingleton<IMenu>(() => new MenuViewModel());
             Locator.CurrentMutable.RegisterLazySingleton<IStatusBar>(() => new StatusBarViewModel());
             Locator.CurrentMutable.RegisterLazySingleton<IWindow>(() => new WindowViewModel());
+
+            // services
+            Locator.CurrentMutable.RegisterLazySingleton<IApplicationService>(() => new ApplicationService());
 
             // Views
             Locator.CurrentMutable.Register(() => new FirstView(), typeof(IViewFor<FirstViewModel>));

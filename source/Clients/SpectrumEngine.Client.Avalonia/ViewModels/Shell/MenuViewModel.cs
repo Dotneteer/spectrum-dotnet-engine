@@ -5,6 +5,8 @@ using SpectrumEngine.Client.Avalonia.Extensions;
 using SpectrumEngine.Client.Avalonia.Models;
 using System.Collections.Generic;
 using System;
+using SpectrumEngine.Client.Avalonia.Services;
+using Splat;
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 {
@@ -17,8 +19,12 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
             Exit
         }
 
-        public MenuViewModel()
+        private readonly IApplicationService applicationService;
+
+        public MenuViewModel(IApplicationService? applicationService = null)
         {
+            this.applicationService = applicationService ?? Locator.Current.GetRequiredService<IApplicationService>();
+
             Title = string.Empty;
             MenuItems = CreateMenuItems();
             this.WhenAny(x => x.SelectedMenuItem, x => x.Value).Subscribe(OnSelectedMenuItem);
@@ -35,8 +41,8 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 
         private IEnumerable<MenuItemModel> CreateMenuItems() => new List<MenuItemModel>()
             {
-                new MenuItemModel((int)MenuItem.Emulator, MaterialIconKind.ControllerClassicOutline,  App.FirstResource<string>($"Menu{MenuItem.Emulator}Item")),
-                new MenuItemModel((int)MenuItem.Exit, MaterialIconKind.ExitToApp,  App.FirstResource<string>($"Menu{MenuItem.Exit}Item")),
+                new MenuItemModel((int)MenuItem.Emulator, MaterialIconKind.ControllerClassicOutline,  applicationService.Application.FirstResource<string>($"Menu{MenuItem.Emulator}Item")),
+                new MenuItemModel((int)MenuItem.Exit, MaterialIconKind.ExitToApp,  applicationService.Application.FirstResource<string>($"Menu{MenuItem.Exit}Item")),
             };
 
         private void OnSelectedMenuItem(MenuItemModel? selectedItem)
@@ -47,9 +53,10 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
             {
                 case MenuItem.Emulator:
                     // TODO: implement
+                    applicationService.IsBusy = !applicationService.IsBusy;
                     break;
                 case MenuItem.Exit:
-                    // TODO: implement
+                    applicationService.ShutdownApplication();
                     break;
                 default:
                     break;

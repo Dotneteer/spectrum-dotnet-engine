@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using ReactiveUI;
+using SpectrumEngine.Client.Avalonia.Extensions;
 using SpectrumEngine.Client.Avalonia.ViewModels.Shell;
 using Splat;
 using System;
@@ -10,11 +11,8 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels
     {
         public ViewModelBase()
         {
-            App = Application.Current ?? throw new InvalidProgramException($"Application.Current is null on {this.GetType()}");
-            MainWindow = Locator.Current.GetService<IWindow>()!;
+            MainWindow = Locator.Current.GetRequiredService<IWindow>();
         }
-
-        public Application App { get; }
 
         public IWindow MainWindow { get; }
     }

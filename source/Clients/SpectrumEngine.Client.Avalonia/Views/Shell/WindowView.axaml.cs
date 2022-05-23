@@ -10,5 +10,5 @@ namespace SpectrumEngine.Client.Avalonia.Views.Shell
         {
             InitializeComponent();
         }
-    }
+	}
 }
