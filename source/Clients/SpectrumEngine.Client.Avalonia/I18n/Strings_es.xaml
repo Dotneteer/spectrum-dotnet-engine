@@ -11,5 +11,15 @@
 	<!-- Menu -->
 	<system:String x:Key="MenuEmulatorItem">Emulador Zx Spectrum</system:String>
 	<system:String x:Key="MenuExitItem">Salir</system:String>
-	
+
+	<!-- Toolbar -->
+	<system:String x:Key="ToolbarExecutionStartButtonTooltip">Iniciar</system:String>
+	<system:String x:Key="ToolbarExecutionPauseButtonTooltip">Pausar</system:String>
+	<system:String x:Key="ToolbarExecutionStopButtonTooltip">Detener</system:String>
+	<system:String x:Key="ToolbarExecutionResetButtonTooltip">Reiniciar</system:String>
+	<system:String x:Key="ToolbarExecutionDebugButtonTooltip">Depurar</system:String>
+	<system:String x:Key="ToolbarExecutionDebugStepIntoButtonTooltip">Paso Dentro</system:String>
+	<system:String x:Key="ToolbarExecutionDebugStepOverButtonTooltip">Paso Sobre</system:String>
+	<system:String x:Key="ToolbarExecutionDebugStepOutButtonTooltip">Paso Fuera</system:String>
+
 </ResourceDictionary>

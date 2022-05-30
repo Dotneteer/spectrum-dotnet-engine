@@ -1,16 +1,13 @@
 using Avalonia.ReactiveUI;
-using ReactiveUI;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 
 namespace SpectrumEngine.Client.Avalonia.Views
 {
-    public partial class FirstView : ReactiveUserControl<FirstViewModel>
+    public partial class EmulatorView : ReactiveUserControl<EmulatorViewViewModel>
     {
-        public FirstView()
+        public EmulatorView()
         {
             InitializeComponent();
-
-            this.WhenActivated(disposables => { });
         }
     }
 }

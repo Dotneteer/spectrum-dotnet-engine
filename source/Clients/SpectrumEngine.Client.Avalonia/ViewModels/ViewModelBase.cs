@@ -1,9 +1,7 @@
-﻿using Avalonia;
-using ReactiveUI;
+﻿using ReactiveUI;
 using SpectrumEngine.Client.Avalonia.Extensions;
 using SpectrumEngine.Client.Avalonia.ViewModels.Shell;
 using Splat;
-using System;
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels
 {

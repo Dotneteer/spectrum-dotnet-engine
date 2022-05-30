@@ -1,21 +1,19 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
+﻿using Avalonia.Controls;
 using Avalonia.Shared.PlatformSupport;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using SpectrumEngine.Client.Avalonia.Extensions;
 using SpectrumEngine.Client.Avalonia.Services;
-using SpectrumEngine.Emu;
 using Splat;
 using System;
-using System.Reactive;
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 {
     public class WindowViewModel : ReactiveObject, IWindow
     {
         private readonly IApplicationService applicationService;
+
+        public WindowViewModel() : this(null) { }
 
         public WindowViewModel(IApplicationService? applicationService = null)
         {
@@ -28,11 +26,14 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
             this.applicationService.Application.SetCurrentLanguage(System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
 
             Router = new RoutingState();
-            Router.NavigateAndReset.Execute(new FirstViewModel());
+            Router.NavigateAndReset.Execute(new EmulatorViewViewModel());
 
             Icon = new WindowIcon(new AssetLoader().Open(new Uri(this.applicationService.Application.FirstResource<string>("WindowIcon"))));
             Title = this.applicationService.Application.FirstResource<string>("WindowTitle");
             IsMenuOpened = false;
+            VerticalScrollBarContentVisibility = false;
+
+            this.applicationService.IsBusyChange.Subscribe(value => IsBusy = value);            
         }
 
         public Lazy<IToolBar> ToolBar { get; }
@@ -52,5 +53,8 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 
         [Reactive]
         public bool IsBusy { get; set; }
+
+        [Reactive]
+        public bool VerticalScrollBarContentVisibility { get; set; }
     }
 }

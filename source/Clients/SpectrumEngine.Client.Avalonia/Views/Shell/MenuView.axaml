@@ -3,10 +3,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 x:Class="SpectrumEngine.Client.Avalonia.Views.Shell.MenuView"
+			 xmlns:vm="using:SpectrumEngine.Client.Avalonia.ViewModels.Shell"
 			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
 			 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800">
 
+	<Design.DataContext>
+		<vm:MenuViewModel/>
+	</Design.DataContext>
+	
 	<Grid>
 
 		<ScrollViewer>
@@ -22,10 +27,12 @@
 				<TreeView Classes="NoScroll Menu" Focusable="{Binding MainWindow.IsMenuOpened}" Items="{Binding MenuItems}" SelectedItem="{Binding SelectedMenuItem}">
 					<TreeView.ItemTemplate>
 						<TreeDataTemplate ItemsSource="{Binding SubItems}">
-							<Grid ColumnDefinitions="Auto, 8, *">
-								<avalonia:MaterialIcon Kind="{Binding IconKind}" />
-								<TextBlock Text="{Binding Text}" Grid.Column="2" />
-							</Grid>
+							<Border Classes="MenuItem">
+								<Grid ColumnDefinitions="Auto, 8, *">
+									<avalonia:MaterialIcon Kind="{Binding IconKind}" />
+									<TextBlock Text="{Binding Text}" Grid.Column="2" />
+								</Grid>
+							</Border>
 						</TreeDataTemplate>
 					</TreeView.ItemTemplate>
 				</TreeView>

@@ -2,6 +2,6 @@
 {
     public interface IToolBar
     {
-        string? Title { get; set;  }
+        bool IsExecutionToolsVisible { get; set; }
     }
 }

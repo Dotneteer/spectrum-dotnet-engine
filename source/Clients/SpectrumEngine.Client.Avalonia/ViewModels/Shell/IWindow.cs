@@ -15,5 +15,6 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
         WindowIcon Icon { get; set; }
 
         bool IsMenuOpened { get; set; }
+        bool VerticalScrollBarContentVisibility { get; set; }
     }
 }

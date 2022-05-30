@@ -2,6 +2,6 @@
 {
     public interface IStatusBar
     {
-        string? Title { get; set; }
+        string? Slot1 { get; set; }
     }
 }

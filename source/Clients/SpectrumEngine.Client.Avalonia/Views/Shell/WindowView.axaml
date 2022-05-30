@@ -15,60 +15,42 @@
 		<vm:WindowViewModel/>
 	</Design.DataContext>
 
-	<styles:SnackbarHost HostName="Root">
-		<styles:NavigationDrawer Name="LeftDrawer" LeftDrawerOpened="{Binding IsMenuOpened, Mode=TwoWay}">
+	<Grid>
+		<!-- IsBusy indicator -->
+		<Border Classes="Busy" IsVisible="{Binding IsBusy}" >
+			<ProgressBar Classes="Circle Busy" />
+		</Border>
+
+		<styles:SnackbarHost HostName="Root">
+			<styles:NavigationDrawer Name="LeftDrawer" LeftDrawerOpened="{Binding IsMenuOpened, Mode=TwoWay}">
+
+				<styles:NavigationDrawer.LeftDrawerContent>
+					<!-- menu -->
+					<ContentControl Content="{Binding Menu.Value}" />
+				</styles:NavigationDrawer.LeftDrawerContent>
+
+				<Grid RowDefinitions="Auto, *, 30" ColumnDefinitions="*">
+
+					<!-- toolbar -->
+					<ContentControl Grid.Row="0" Content="{Binding ToolBar.Value}" />
+
+					<!-- Content -->
+					<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="{Binding VerticalScrollBarContentVisibility}">
+						<rxui:RoutedViewHost Classes="Content"
+							Grid.Row="2"
+							Router="{Binding Router}"
+							HorizontalContentAlignment="Stretch"
+							VerticalContentAlignment="Stretch" />
+					</ScrollViewer>
+
+					<!-- statusbar -->
+					<ContentControl Grid.Row="3" Content="{Binding StatusBar.Value}" />
+
+				</Grid>
+
+			</styles:NavigationDrawer>
+		</styles:SnackbarHost>
+
+	</Grid>
 			
-			<styles:NavigationDrawer.LeftDrawerContent>
-				<!-- menu -->
-				<ContentControl Content="{Binding Menu.Value}" />
-			</styles:NavigationDrawer.LeftDrawerContent>
-
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="*" />
-					<RowDefinition Height="30" />
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-
-				<!-- IsBusy indicator -->
-				<Border Grid.RowSpan="3" Classes="Busy" IsVisible="{Binding IsBusy}" >
-					<ProgressBar Classes="Circle Busy" />
-				</Border>
-
-				<!-- toolbar -->
-				<ContentControl Grid.Row="0" Content="{Binding ToolBar.Value}" />
-
-				<!-- Content -->
-				<ScrollViewer Grid.Row="2"  VerticalScrollBarVisibility="Auto">
-					<rxui:RoutedViewHost
-						Grid.Row="2" Grid.Column="1"
-						Router="{Binding Router}"
-						HorizontalContentAlignment="Stretch"
-						VerticalContentAlignment="Stretch" />
-				</ScrollViewer>
-
-				<!-- statusbar -->
-				<ContentControl Grid.Row="3" Content="{Binding StatusBar.Value}" />
-
-			</Grid>
-
-
-		</styles:NavigationDrawer>
-	</styles:SnackbarHost>
-
-	<!--<Grid>
-		<DockPanel>		
-
-			
-			<TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineFrames}" ></TextBlock>
-			<TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineControllerState}" ></TextBlock>
-			-->
-	<!--<local:SpectrumDisplayControl x:Name="SpectrumDisplay"  DockPanel.Dock="Bottom" DataContext="{Binding DisplayViewModel}" />-->
-	<!--
-		</DockPanel>
-	</Grid>-->
-
 </Window>

@@ -1,7 +1,9 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:rxui="http://reactiveui.net"
         xmlns:system="clr-namespace:System;assembly=netstandard"
 		xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+		xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
 		xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
 
 
@@ -24,7 +26,6 @@
 		<Setter Property="Background" Value="#B2FFFFFF" />
 	</Style>
 
-
 	<Style Selector="ProgressBar.Busy">
 		<Setter Property="IsIndeterminate" Value="True" />
 		<Setter Property="Value" Value="0" />
@@ -38,12 +39,62 @@
 		</Setter>
 	</Style>
 
+	<!-- Content -->
+	<Style Selector="ContentControl.Content" >
+		<Setter Property="Margin" Value="30, 30, 30, 30" />
+	</Style>
+	
+	<!-- Menu -->
+	<Style Selector="TreeView.Menu">
+		<Setter Property="Margin" Value="-30, 10, 0, 0" />
+	</Style>
+
+	<Style Selector="Border.MenuItem">
+		<Setter Property="Padding" Value="0, 10" />
+	</Style>
+
 	<Style Selector="ToggleButton.Menu">
 		<Setter Property="Width" Value="32" />
 		<Setter Property="Height" Value="32" />
 		<Setter Property="VerticalAlignment" Value="Top" />
 		<Setter Property="HorizontalAlignment" Value="Right" />
 		<Setter Property="Margin" Value="16" />
+	</Style>
+
+	<!-- Toolbar -->
+	<Style Selector="styles|ColorZone.Toolbar">
+		<Setter Property="Height" Value="56" />
+		<Setter Property="Padding" Value="12" />
+		<Setter Property="Mode" Value="PrimaryMid" />
+	</Style>
+	
+	<Style Selector="Line.Toolbar">
+		<Setter Property="StartPoint" Value="0,-3" />
+		<Setter Property="EndPoint" Value="0,35" />
+		<Setter Property="StrokeThickness" Value="2" />
+		<Setter Property="Stroke" Value="Green" />
+		<Setter Property="Margin" Value="10, 0" />
+	</Style>
+	
+	<Style Selector="ToggleButton.Toolbar">
+		<Setter Property="Width" Value="32" />
+		<Setter Property="Height" Value="32" />
+		<Setter Property="Padding" Value="4" />
+	</Style>
+
+	<Style Selector="styles|FloatingButton.Toolbar">
+		<Setter Property="Width" Value="32" />
+		<Setter Property="Height" Value="32" />
+		<Setter Property="Padding" Value="4" />
+	</Style>
+	
+	<Style Selector="avalonia|MaterialIcon.Toolbar">
+		<Setter Property="Width" Value="24" />
+		<Setter Property="Height" Value="24" />
+	</Style>
+
+	<Style Selector="StackPanel.Toolbar">
+		<Setter Property="Margin" Value="100, 0, 0, 0" />
 	</Style>
 	
 </Styles>

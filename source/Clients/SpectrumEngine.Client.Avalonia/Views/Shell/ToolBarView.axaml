@@ -9,40 +9,44 @@
 
 	<Grid>
 
-		<styles:ColorZone Height="56" Padding="12" Mode="PrimaryMid">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
+		<styles:ColorZone Classes="Toolbar">
+			<Grid ColumnDefinitions="Auto, *">
 
-				<ToggleButton Classes="Flat TransparentBack" Width="32" Height="32" Padding="4" Command="{Binding OpenMenuCmd}">
-					<avalonia:MaterialIcon Kind="Menu" Width="24" Height="24" />
+				<ToggleButton Classes="Flat TransparentBack Toolbar" Command="{Binding OpenMenuCmd}">
+					<avalonia:MaterialIcon Kind="Menu" Classes="Toolbar" />
 				</ToggleButton>
 
-				<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Title}" Classes="Headline6"/>
+				<StackPanel Classes="Toolbar" Orientation="Horizontal" Grid.Column="1" IsVisible="{Binding IsExecutionToolsVisible}">
+					<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionStartButtonTooltip}">
+						<avalonia:MaterialIcon Kind="PlayBox" Classes="Toolbar" />
+					</Button>
+					<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionPauseButtonTooltip}">
+						<avalonia:MaterialIcon Kind="Pause" Classes="Toolbar" />
+					</Button>
+					<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionStopButtonTooltip}">
+						<avalonia:MaterialIcon Kind="Stop" Classes="Toolbar" />
+					</Button>
+					
+					<Line Classes="Toolbar"/>
+					<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionResetButtonTooltip}">
+						<avalonia:MaterialIcon Kind="Restart" Classes="Toolbar" />
+					</Button>
+					
+					<Line Classes="Toolbar"/>
+					<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionDebugButtonTooltip}">
+						<avalonia:MaterialIcon Kind="MotionPlayOutline" Classes="Toolbar"/>
+					</Button>
+					<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionDebugStepIntoButtonTooltip}">
+						<avalonia:MaterialIcon Kind="DebugStepInto" Classes="Toolbar"/>
+					</Button>
+					<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionDebugStepOverButtonTooltip}">
+						<avalonia:MaterialIcon Kind="DebugStepOver" Classes="Toolbar"/>
+					</Button>
+					<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionDebugStepOutButtonTooltip}">
+						<avalonia:MaterialIcon Kind="DebugStepOut" Classes="Toolbar"/>
+					</Button>
 
-
-
-
-
-				<!--<Menu Grid.Column="1">
-						<MenuItem Header="File" Height="32" >
-							<MenuItem Header="Exit" Click="MenuItem_Click" />
-						</MenuItem>
-						<MenuItem Header="Machine" Height="32" Padding="20,0" HorizontalAlignment="Left" >
-							<MenuItem Header="Start"  Command="{Binding StartCommand, Mode=OneWay}" />
-							<MenuItem Header="Pause" Command="{Binding PauseCommand, Mode=OneWay}"/>
-							<MenuItem Header="Stop" Command="{Binding StopCommand, Mode=OneWay}" />
-							<Separator />
-							<MenuItem Header="Restart" Command="{Binding RestartCommand, Mode=OneWay}" />
-							<Separator />
-							<MenuItem Header="Debug" Command="{Binding StartDebugCommand, Mode=OneWay}" />
-							<MenuItem Header="Step Into" Command="{Binding StepIntoCommand, Mode=OneWay}" />
-							<MenuItem Header="Step Over" Command="{Binding StepOverCommand, Mode=OneWay}" />
-							<MenuItem Header="Step Out" Command="{Binding StepOutCommand, Mode=OneWay}" />
-						</MenuItem>
-					</Menu>-->
+				</StackPanel>
 				
 			</Grid>
 		</styles:ColorZone>

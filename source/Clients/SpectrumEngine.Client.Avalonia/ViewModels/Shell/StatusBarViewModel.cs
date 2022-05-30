@@ -6,10 +6,10 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
     {
         public StatusBarViewModel()
         {
-            Title = string.Empty;
+            Slot1 = string.Empty;
         }
 
         [Reactive]
-        public string? Title { get; set; }
+        public string? Slot1 { get; set; }
     }
 }

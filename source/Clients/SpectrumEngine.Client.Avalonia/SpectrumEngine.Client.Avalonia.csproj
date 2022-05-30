@@ -4,7 +4,8 @@
     <Nullable>enable</Nullable>
     <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
     <TrimMode>copyused</TrimMode>
-    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>	  
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>	  
   </PropertyGroup>
   <ItemGroup>
     <None Remove="I18n\Strings_en.xaml" />
@@ -46,6 +47,12 @@
     <ProjectReference Include="..\..\SpectrumEngine.Emu\SpectrumEngine.Emu.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Controls\SpectrumDisplayControl.axam.cs">
+      <DependentUpon>SpectrumDisplayControl_.axaml_</DependentUpon>
+    </Compile>
+    <Compile Update="Views\EmulatorView.axaml.cs">
+      <DependentUpon>EmulatorView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Shell\MenuView.axaml.cs">
       <DependentUpon>MenuView.axaml</DependentUpon>
     </Compile>

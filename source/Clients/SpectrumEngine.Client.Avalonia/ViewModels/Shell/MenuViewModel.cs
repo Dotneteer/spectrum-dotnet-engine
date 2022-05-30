@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System;
 using SpectrumEngine.Client.Avalonia.Services;
 using Splat;
+using System.Linq;
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 {
@@ -21,13 +22,17 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 
         private readonly IApplicationService applicationService;
 
+        public MenuViewModel() : this(null) { }
+
         public MenuViewModel(IApplicationService? applicationService = null)
         {
             this.applicationService = applicationService ?? Locator.Current.GetRequiredService<IApplicationService>();
 
             Title = string.Empty;
             MenuItems = CreateMenuItems();
-            this.WhenAny(x => x.SelectedMenuItem, x => x.Value).Subscribe(OnSelectedMenuItem);
+            this.WhenAnyValue(x => x.SelectedMenuItem).Subscribe(OnSelectedMenuItem);
+
+            SelectedMenuItem = MenuItems.First();
         }
 
         [Reactive]
@@ -53,7 +58,9 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
             {
                 case MenuItem.Emulator:
                     // TODO: implement
-                    applicationService.IsBusy = !applicationService.IsBusy;
+                    MainWindow.ToolBar.Value.IsExecutionToolsVisible = true;
+                    MainWindow.IsMenuOpened = false;
+                    MainWindow.Router.NavigateAndReset.Execute(new EmulatorViewViewModel());
                     break;
                 case MenuItem.Exit:
                     applicationService.ShutdownApplication();

@@ -23,7 +23,7 @@ namespace SpectrumEngine.Client.Avalonia
             Locator.CurrentMutable.RegisterLazySingleton<IApplicationService>(() => new ApplicationService());
 
             // Views
-            Locator.CurrentMutable.Register(() => new FirstView(), typeof(IViewFor<FirstViewModel>));
+            Locator.CurrentMutable.Register(() => new EmulatorView(), typeof(IViewFor<EmulatorViewViewModel>));
 
             return appBuilder;
         }

@@ -11,5 +11,10 @@
 
 		<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Title}" Classes="Headline6"/>
 
+		<!--
+		<TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineFrames}" ></TextBlock>
+		<TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineControllerState}" ></TextBlock>
+		-->
+		
 	</Grid>
 </UserControl>
