@@ -7,8 +7,11 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
+using SpectrumEngine.Client.Avalonia.Extensions;
+using SpectrumEngine.Client.Avalonia.Keyboards;
 using SpectrumEngine.Client.Avalonia.Services;
 using SpectrumEngine.Emu;
+using Splat;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -26,16 +29,25 @@ namespace SpectrumEngine.Client.Avalonia.Controls
                 obj => obj.MachineController,
                 (obj, value) => obj.MachineController = value);
 
+        /// <summary>
+        /// Defines the <see cref="KeyboardProviderManager"/> property.
+        /// </summary>
+        public static readonly DirectProperty<SpectrumDisplayControl, IKeyboardProviderManager?> KeyboardProviderManagerProperty =
+            AvaloniaProperty.RegisterDirect<SpectrumDisplayControl, IKeyboardProviderManager?>(
+                nameof(KeyboardProviderManager),
+                obj => obj.KeyboardProviderManager,
+                (obj, value) => obj.KeyboardProviderManager = value);
+
         private WriteableBitmap? writeableBitmap;
         //private NAudioProvider? _audioProvider;
-
         private MachineController? machineController;
+        private IKeyboardProviderManager? keyboardProviderManager;
 
         public SpectrumDisplayControl()
         {
             Initialized += SpectrumDisplayControl_Initialized;
             KeyDown += SpectrumDisplayControl_KeyDown;
-            KeyUp += SpectrumDisplayControl_KeyUp;            
+            KeyUp += SpectrumDisplayControl_KeyUp;
         }
 
         /// <summary>
@@ -44,7 +56,16 @@ namespace SpectrumEngine.Client.Avalonia.Controls
         public MachineController? MachineController
         {
             get => machineController;
-            set { SetAndRaise(MachineControllerProperty, ref machineController, value); }
+            set => SetAndRaise(MachineControllerProperty, ref machineController, value);
+        }
+
+        /// <summary>
+        /// Get or set Keyboard provider manager
+        /// </summary>
+        public IKeyboardProviderManager? KeyboardProviderManager
+        {
+            get => keyboardProviderManager;
+            set => SetAndRaise(KeyboardProviderManagerProperty, ref keyboardProviderManager, value);
         }
 
         unsafe
@@ -70,7 +91,7 @@ namespace SpectrumEngine.Client.Avalonia.Controls
             using var frameBuffer = writeableBitmap.Lock();
             uint* pFrameBuffer = (uint*)frameBuffer.Address;
             var buffer = machineController.Machine.GetPixelBuffer();
-            
+
             var size = machineController.Machine.ScreenWidthInPixels * machineController.Machine.ScreenHeightInPixels;
             var offset = machineController.Machine.ScreenWidthInPixels;     // first line in Z80Machine buffer is discarted
 
@@ -108,18 +129,14 @@ namespace SpectrumEngine.Client.Avalonia.Controls
         /// </remarks>
         private void HandleKeyboardEvent(object? sender, KeyEventArgs e, bool isDown)
         {
-            if (machineController == null) return;
+            if (machineController == null || keyboardProviderManager == null) return;
 
-            var keyMapping = KeyMappings.DefaultMapping.FirstOrDefault(m => m.Input == e.Key);
-            if (keyMapping != null)
+            var keyMapping = keyboardProviderManager.MapKey(e.Key);
+            if (keyMapping.Any() && machineController.Machine is IZxSpectrum48Machine zxMachine)
             {
-                if (machineController.Machine is ZxSpectrum48Machine zxMachine)
+                foreach (var key in keyMapping)
                 {
-                    zxMachine.KeyboardDevice.SetStatus(keyMapping.Primary, isDown);
-                    if (keyMapping.Secondary != null)
-                    {
-                        zxMachine.KeyboardDevice.SetStatus(keyMapping.Secondary.Value, isDown);
-                    }
+                    zxMachine.KeyboardDevice.SetStatus(key, isDown);
                 }
             }
         }

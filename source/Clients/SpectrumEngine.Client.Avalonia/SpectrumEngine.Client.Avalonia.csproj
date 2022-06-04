@@ -47,9 +47,6 @@
     <ProjectReference Include="..\..\SpectrumEngine.Emu\SpectrumEngine.Emu.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Controls\SpectrumDisplayControl.axam.cs">
-      <DependentUpon>SpectrumDisplayControl_.axaml_</DependentUpon>
-    </Compile>
     <Compile Update="Views\EmulatorView.axaml.cs">
       <DependentUpon>EmulatorView.axaml</DependentUpon>
     </Compile>

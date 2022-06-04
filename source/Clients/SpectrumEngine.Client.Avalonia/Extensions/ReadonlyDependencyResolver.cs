@@ -17,6 +17,6 @@ namespace SpectrumEngine.Client.Avalonia.Extensions
         /// <param name="contract">A optional value which will retrieve only a object registered with the same contract.</param>
         /// <returns>The requested object, if found; <c>null</c> otherwise.</returns>
         public static T GetRequiredService<T>(this IReadonlyDependencyResolver resolver, string? contract = null) =>
-            resolver.GetService<T>() ?? throw new InvalidProgramException($"Service '{typeof(T)}' is not registered in Locator");
+            resolver.GetService<T>(contract) ?? throw new InvalidProgramException($"Service '{typeof(T)}' is not registered in Locator");
     }
 }

@@ -5,14 +5,17 @@
 		x:Class="SpectrumEngine.Client.Avalonia.Views.EmulatorView"
 		xmlns:vm="using:SpectrumEngine.Client.Avalonia.ViewModels"
 		xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls"
-		mc:Ignorable="d">
+		mc:Ignorable="d"
+		d:DesignWidth="800" d:DesignHeight="600">
 
 	<Design.DataContext>
 		<vm:EmulatorViewViewModel />
 	</Design.DataContext>
 
 	<Grid>
-		<controls:SpectrumDisplayControl MachineController="{Binding Machine}" d:DesignWidth="800" d:DesignHeight="600" />
+		<controls:SpectrumDisplayControl Focusable="True"
+										 MachineController="{Binding Machine}"
+										 KeyboardProviderManager="{Binding KeyboardProvider}" />
 	</Grid>
 	
 </UserControl>

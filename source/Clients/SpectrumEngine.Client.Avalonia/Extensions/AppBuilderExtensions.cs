@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using ReactiveUI;
+using SpectrumEngine.Client.Avalonia.Keyboards;
 using SpectrumEngine.Client.Avalonia.Services;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Client.Avalonia.ViewModels.Shell;
@@ -18,6 +19,11 @@ namespace SpectrumEngine.Client.Avalonia
             Locator.CurrentMutable.RegisterLazySingleton<IMenu>(() => new MenuViewModel());
             Locator.CurrentMutable.RegisterLazySingleton<IStatusBar>(() => new StatusBarViewModel());
             Locator.CurrentMutable.RegisterLazySingleton<IWindow>(() => new WindowViewModel());
+
+            // keyboards
+            Locator.CurrentMutable.Register<IKeyboardProviderManager>(() => new KeyboardProviderManager());
+            Locator.CurrentMutable.Register<IKeyboardProvider, ZxSpectrum48Provider>(Keyboard.ZxSpectrum48.ToString());
+
 
             // services
             Locator.CurrentMutable.RegisterLazySingleton<IApplicationService>(() => new ApplicationService());
