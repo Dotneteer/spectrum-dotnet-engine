@@ -86,7 +86,7 @@ public partial class SpectrumDisplayControl : UserControl
         
             // --- Display the new screen frame
             var bitmap = new WriteableBitmap(
-                new PixelSize(machine.ScreenWidthInPixels, machine.ScreenHeightInPixels),
+                new PixelSize(machine.ScreenWidthInPixels * _zoomFactor, machine.ScreenHeightInPixels * _zoomFactor),
                 new Vector(96, 96),
                 PixelFormat.Bgra8888,
                 AlphaFormat.Opaque);
@@ -101,11 +101,19 @@ public partial class SpectrumDisplayControl : UserControl
                 var offset = width;
                 for (var y = 0; y < height; y++)
                 {
-                    for (var x = 0; x < width; x++)
+                    var rowStart = offset;
+                    for (var rowRepeat = 0; rowRepeat < _zoomFactor; rowRepeat++)
                     {
-                        *(uint*)pBackBuffer = buffer[offset];
-                        offset++;
-                        pBackBuffer += 4;
+                        offset = rowStart;
+                        for (var x = 0; x < width; x++)
+                        {
+                            for (var colRepeat = 0; colRepeat < _zoomFactor; colRepeat++)
+                            {
+                                *(uint*)pBackBuffer = buffer[offset];
+                                pBackBuffer += 4;
+                            }
+                            offset++;
+                        }
                     }
                 }
             }
