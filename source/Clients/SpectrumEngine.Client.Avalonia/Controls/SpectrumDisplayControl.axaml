@@ -12,18 +12,18 @@
              EffectiveViewportChanged="OnViewportChanged">
     
     <Design.DataContext>
-        <vm:DisplayViewModel x:Name="ViewModel" />
+        <vm:DisplayViewModel />
     </Design.DataContext>
-    <Grid 
-        Name="Screen"
+    
+    <Grid
         Width="{Binding ScreenWidth}" d:Width="600"
         Height="{Binding ScreenHeight}" d:Height="400"
-        HorizontalAlignment="Center" 
-        VerticalAlignment="Center" 
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
         Background="{Binding Background}" d:Background="#ffdbc10e">
-        <Image Name="Display"  
+        <Image Name="Display"
                UseLayoutRounding="True"
-               HorizontalAlignment="Stretch" 
+               HorizontalAlignment="Stretch"
                VerticalAlignment="Stretch"
                RenderOptions.BitmapInterpolationMode="LowQuality"
                Stretch="Fill" />

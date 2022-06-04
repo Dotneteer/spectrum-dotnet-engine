@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using SpectrumEngine.Client.Avalonia.Styles;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Client.Avalonia.Views;
 
@@ -11,6 +12,7 @@ namespace SpectrumEngine.Client.Avalonia
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
+            LoadTheme();
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -24,6 +26,11 @@ namespace SpectrumEngine.Client.Avalonia
             }
 
             base.OnFrameworkInitializationCompleted();
+        }
+        
+        private void LoadTheme()
+        {
+            Styles.Add(new DarkTheme());
         }
     }
 }

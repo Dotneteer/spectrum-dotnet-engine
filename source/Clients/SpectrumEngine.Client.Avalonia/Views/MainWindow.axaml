@@ -8,18 +8,35 @@
         x:Class="SpectrumEngine.Client.Avalonia.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="SpectrumEngine - ZX Spectrum 48K Emulator"
+        Background="{DynamicResource AppBackground}"
         DataContextChanged="OnDataContextChanged">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
+    <Window.Styles>
+        <StyleInclude Source="/Styles/Themes/Styles.axaml" />
+    </Window.Styles>
+    
     <Grid>
         <DockPanel>
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="File">
                     <MenuItem Header="Exit" Click="MenuItem_OnClick" />
                     <MenuItem Header="About" />
+                </MenuItem>
+                <MenuItem Header="View">
+                    <MenuItem Header="Show Toolbar">
+                        <MenuItem.Icon>
+                            <CheckBox BorderThickness="0"
+                                      IsHitTestVisible="False"
+                                      IsChecked="True">
+                                Toggle _Me
+                            </CheckBox>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Show Status Bar"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Machine">
                     <MenuItem Header="Start" Command="{Binding Start}" />
@@ -36,6 +53,9 @@
             </Menu>
             <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineFrames}" ></TextBlock>
             <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineControllerState}" ></TextBlock>
+            <Grid DockPanel.Dock="Bottom">
+                <CheckBox Height="12" IsThreeState="True" Background="Yellow">Hello</CheckBox>
+            </Grid>
             <local:SpectrumDisplayControl x:Name="SpectrumDisplay" DockPanel.Dock="Bottom" DataContext="{Binding DisplayViewModel}" />
         </DockPanel>
     </Grid>

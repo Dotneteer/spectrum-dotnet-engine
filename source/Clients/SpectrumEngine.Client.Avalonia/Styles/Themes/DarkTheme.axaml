@@ -1,0 +1,18 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="SpectrumEngine.Client.Avalonia.Styles.DarkTheme">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+    <Styles.Resources>
+        <Color x:Key="DarkGray">#202020</Color>
+        <Color x:Key="MenuGray">#303030</Color>
+        <Color x:Key="TextGray">#c0c0c0</Color>
+        <SolidColorBrush x:Key="AppBackground" Color="{DynamicResource DarkGray}"/>
+        <SolidColorBrush x:Key="MenuText" Color="{DynamicResource TextGray}"/>
+        <SolidColorBrush x:Key="MenuBackground" Color="{DynamicResource MenuGray}"/>
+    </Styles.Resources>
+</Styles>
