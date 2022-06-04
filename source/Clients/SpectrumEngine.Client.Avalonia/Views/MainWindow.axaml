@@ -9,7 +9,9 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="SpectrumEngine - ZX Spectrum 48K Emulator"
         Background="{DynamicResource AppBackground}"
-        DataContextChanged="OnDataContextChanged">
+        DataContextChanged="OnDataContextChanged"
+        KeyUp="MainWindowOnKeyUp"
+        KeyDown="MainWindowOnKeyDown">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
@@ -19,8 +21,20 @@
         <StyleInclude Source="/Styles/Themes/Styles.axaml" />
     </Window.Styles>
     
+    <NativeMenu.Menu>
+        <NativeMenu>
+            <NativeMenuItem Header="File">
+                <NativeMenu>
+                    <NativeMenuItem Header="Open" Command="{Binding ToggleShowToolbar}"  />
+                </NativeMenu>
+            </NativeMenuItem>
+        </NativeMenu>
+    </NativeMenu.Menu>
+
     <Grid>
         <DockPanel>
+            
+            <!-- Use this menu on Windows -->
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="File">
                     <MenuItem Header="Exit" Click="MenuItem_OnClick" />
@@ -51,6 +65,7 @@
                     <MenuItem Header="Step Out" Command="{Binding StepOut}" />
                 </MenuItem>
             </Menu>
+            
             <local:CheckedIndicator DockPanel.Dock="Bottom" Width="100"/>
             <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineFrames}" ></TextBlock>
             <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineControllerState}" ></TextBlock>

@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Metadata;
+using Avalonia.Platform;
 using SpectrumEngine.Emu;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
@@ -13,11 +15,20 @@ public class MainWindowViewModel : ViewModelBase
     private int _machineFrames;
     private DisplayViewModel? _display;
     private ViewOptionsViewModel _viewOptionsViewModel;
+    private bool _useNativeMenu;
 
     public MainWindowViewModel()
     {
         _viewOptionsViewModel = new ViewOptionsViewModel();
+        var os = AvaloniaLocator.Current.GetService<IRuntimePlatform>()!.GetRuntimeInfo();
+        _useNativeMenu = os.OperatingSystem is OperatingSystemType.OSX or OperatingSystemType.Linux;
     }
+    
+    #region OS related properties
+
+    public bool UseNativeMenu => _useNativeMenu;
+    
+    #endregion
     
     #region Machine Controller related parts
     

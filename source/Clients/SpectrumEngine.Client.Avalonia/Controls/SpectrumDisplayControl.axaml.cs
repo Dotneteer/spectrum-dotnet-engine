@@ -128,9 +128,9 @@ public partial class SpectrumDisplayControl : UserControl
     /// This method maps a physical key to one or two ZX Spectrum keys and sets the key states through the keyboard
     /// device of the emulated machine.
     /// </remarks>
-    private void HandleKeyboardEvent(KeyEventArgs e, bool isPressed)
+    public bool HandleKeyboardEvent(KeyEventArgs e, bool isPressed)
     {
-        if (DataContext is not DisplayViewModel context || context.Machine == null) return;
+        if (DataContext is not DisplayViewModel context || context.Machine == null) return false;
         var keyMapping = KeyMappings.DefaultMapping.FirstOrDefault(m => m.Input == e.Key);
         if (keyMapping != null)
         {
@@ -142,7 +142,9 @@ public partial class SpectrumDisplayControl : UserControl
                     zxMachine.KeyboardDevice.SetStatus(keyMapping.Secondary.Value, isPressed);
                 }
             }
+            return true;
         }
+        return false;
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e)
@@ -169,9 +171,15 @@ public partial class SpectrumDisplayControl : UserControl
         _prevDataContext = DataContext;
     }
 
-    private void OnKeyDown(object? sender, KeyEventArgs e) => HandleKeyboardEvent(e, true);
+    private void OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        e.Handled = HandleKeyboardEvent(e, true);
+    }
 
-    private void OnKeyUp(object? sender, KeyEventArgs e) => HandleKeyboardEvent(e, false);
+    private void OnKeyUp(object? sender, KeyEventArgs e)
+    {
+        e.Handled = HandleKeyboardEvent(e, false);
+    }
 
     private void OnViewportChanged(object? sender, EffectiveViewportChangedEventArgs e)
     {

@@ -1,7 +1,8 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:SpectrumEngine.Client.Avalonia"
-             x:Class="SpectrumEngine.Client.Avalonia.App">
+             x:Class="SpectrumEngine.Client.Avalonia.App"
+             x:Name="SpectrumEngine">
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
