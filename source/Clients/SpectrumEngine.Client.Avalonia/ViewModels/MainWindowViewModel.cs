@@ -21,7 +21,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         _viewOptionsViewModel = new ViewOptionsViewModel();
         var os = AvaloniaLocator.Current.GetService<IRuntimePlatform>()!.GetRuntimeInfo();
-        _useNativeMenu = os.OperatingSystem is OperatingSystemType.OSX or OperatingSystemType.Linux;
+        _useNativeMenu = os.OperatingSystem is OperatingSystemType.OSX;
     }
     
     #region OS related properties

@@ -23,9 +23,28 @@
     
     <NativeMenu.Menu>
         <NativeMenu>
-            <NativeMenuItem Header="File">
+            <NativeMenuItem Header="View">
                 <NativeMenu>
-                    <NativeMenuItem Header="Open" Command="{Binding ToggleShowToolbar}"  />
+                    <NativeMenuItem Header="Show Toolbar" Command="{Binding ToggleShowToolbar}"
+                                    ToggleType="CheckBox"
+                                    IsChecked="{Binding ViewOptions.ShowToolbar}" />
+                    <NativeMenuItem Header="Show Status Bar" Command="{Binding ToggleShowStatusBar}"
+                                    ToggleType="CheckBox"
+                                    IsChecked="{Binding ViewOptions.ShowStatusBar}"/>
+                </NativeMenu>
+            </NativeMenuItem>
+            <NativeMenuItem Header="Machine">
+                <NativeMenu>
+                    <NativeMenuItem Header="Start" Command="{Binding Start} "/>
+                    <NativeMenuItem Header="Pause" Command="{Binding Pause} "/>
+                    <NativeMenuItem Header="Stop" Command="{Binding Stop} "/>
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="Restart" Command="{Binding Restart}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="Debug" Command="{Binding StartDebug}" />
+                    <NativeMenuItem Header="Step Into" Command="{Binding StepInto}" />
+                    <NativeMenuItem Header="Step Over" Command="{Binding StepOver}" />
+                    <NativeMenuItem Header="Step Out" Command="{Binding StepOut}" />
                 </NativeMenu>
             </NativeMenuItem>
         </NativeMenu>
@@ -35,7 +54,7 @@
         <DockPanel>
             
             <!-- Use this menu on Windows -->
-            <Menu DockPanel.Dock="Top">
+            <Menu IsVisible="{Binding !UseNativeMenu}" DockPanel.Dock="Top">
                 <MenuItem Header="File">
                     <MenuItem Header="Exit" Click="MenuItem_OnClick" />
                     <MenuItem Header="About" />
