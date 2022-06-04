@@ -8,5 +8,6 @@
 
     <Application.Styles>
         <FluentTheme Mode="Dark"/>
+        <StyleInclude Source="/Controls/CheckedIndicator.axaml"/>
     </Application.Styles>
 </Application>
