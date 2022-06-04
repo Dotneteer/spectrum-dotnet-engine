@@ -1,4 +1,4 @@
-﻿namespace SpectrumEngine.Client.Avalonia.Keyboards
+﻿namespace SpectrumEngine.Client.Avalonia.Providers
 {
     public enum Keyboard
     {

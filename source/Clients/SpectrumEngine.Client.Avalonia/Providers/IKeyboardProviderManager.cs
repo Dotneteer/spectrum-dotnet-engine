@@ -2,7 +2,7 @@
 using SpectrumEngine.Emu;
 using System.Collections.Generic;
 
-namespace SpectrumEngine.Client.Avalonia.Keyboards
+namespace SpectrumEngine.Client.Avalonia.Providers
 {
     /// <summary>
     /// Interface for manage emulator keyboards

@@ -1,6 +1,6 @@
 ﻿using ReactiveUI.Fody.Helpers;
 using SpectrumEngine.Client.Avalonia.Extensions;
-using SpectrumEngine.Client.Avalonia.Keyboards;
+using SpectrumEngine.Client.Avalonia.Providers;
 using SpectrumEngine.Emu;
 using Splat;
 

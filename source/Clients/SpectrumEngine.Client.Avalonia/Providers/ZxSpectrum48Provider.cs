@@ -3,7 +3,7 @@ using SpectrumEngine.Emu;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SpectrumEngine.Client.Avalonia.Keyboards
+namespace SpectrumEngine.Client.Avalonia.Providers
 {
     /// <summary>
     /// Class with spectrum 48 keyboard provider

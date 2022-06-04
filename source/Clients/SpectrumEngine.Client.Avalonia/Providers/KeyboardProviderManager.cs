@@ -4,7 +4,7 @@ using SpectrumEngine.Emu;
 using Splat;
 using System.Collections.Generic;
 
-namespace SpectrumEngine.Client.Avalonia.Keyboards
+namespace SpectrumEngine.Client.Avalonia.Providers
 {
     public class KeyboardProviderManager : IKeyboardProviderManager
     {
@@ -15,8 +15,8 @@ namespace SpectrumEngine.Client.Avalonia.Keyboards
             currentKeyboard = defaultKeyboard ?? CreateKeyboard(Keyboard.ZxSpectrum48);
         }
 
-        public Keyboard Keyboard 
-        { 
+        public Keyboard Keyboard
+        {
             get => currentKeyboard.Keyboard;
             set
             {

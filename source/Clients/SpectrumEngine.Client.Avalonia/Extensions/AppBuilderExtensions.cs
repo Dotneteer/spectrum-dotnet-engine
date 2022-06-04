@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 using ReactiveUI;
-using SpectrumEngine.Client.Avalonia.Keyboards;
+using SpectrumEngine.Client.Avalonia.Providers;
 using SpectrumEngine.Client.Avalonia.Services;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Client.Avalonia.ViewModels.Shell;
