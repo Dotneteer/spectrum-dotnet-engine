@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.ToolBarUserControl"
+             Background="{DynamicResource ToolbarGray}">
+    <UserControl.Resources>
+        <Color x:Key="IconPlayColor">LimeGreen</Color>
+        <Color x:Key="IconPauseColor">LightBlue</Color>
+        <Color x:Key="IconStopColor">Red</Color>
+        <SolidColorBrush x:Key="IconPlayBrush" Color="{DynamicResource IconPlayColor}"/>
+        <SolidColorBrush x:Key="IconPauseBrush" Color="{DynamicResource IconPauseColor}"/>
+        <SolidColorBrush x:Key="IconStopBrush" Color="{DynamicResource IconStopColor}"/>
+
+    </UserControl.Resources>
+    <Border Padding="2">
+        <StackPanel Orientation="Horizontal">
+            <controls:IconButton
+                IsEnabled="True"
+                Path="{DynamicResource IconPlay}"
+                Fill="{DynamicResource IconPlayBrush}"
+                Hint="Start" />
+            <controls:IconButton
+                IsEnabled="True"
+                Path="{DynamicResource IconPause}"
+                Fill="{DynamicResource IconPauseBrush}"
+                Hint="Pause" />
+            <controls:IconButton
+                IsEnabled="True"
+                Path="{DynamicResource IconStop}"
+                Fill="{DynamicResource IconStopBrush}"
+                Hint="Stop" />
+            <controls:IconButton
+                IsEnabled="True"
+                Path="{DynamicResource IconRestart}"
+                Fill="{DynamicResource IconPlayBrush}"
+                Hint="Stop" />
+        </StackPanel>
+    </Border>
+</UserControl>

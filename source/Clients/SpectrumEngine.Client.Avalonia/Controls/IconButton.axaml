@@ -1,0 +1,44 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
+    <Design.PreviewWith>
+        <controls:IconButton Path="{DynamicResource IconPlay}" Hint="Startkkk"/>
+    </Design.PreviewWith>
+
+    <Style Selector="controls|IconButton">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid 
+                    VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch" 
+                    IsEnabled="{TemplateBinding IsEnabled}"
+                    Background="{TemplateBinding Background}">
+                    <Border
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}"
+                        Margin="{TemplateBinding Margin}">
+                        <Path
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Stretch="Uniform"
+                            Fill="{TemplateBinding Fill}"
+                            Data="{TemplateBinding Path}" />
+                    </Border>
+                    <Border x:Name="HitTest" 
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="Transparent"/>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    
+    <Style Selector="controls|IconButton:disabled /template/ Path">
+        <Setter Property="Fill" Value="{DynamicResource IconButtonDisabledBrush}"/>
+    </Style>
+   
+    <Style Selector="controls|IconButton:pointerover /template/ Border">
+        <Setter Property="Background" Value="{DynamicResource IconButtonPointedBrush}"/>
+    </Style>
+   
+</Styles>

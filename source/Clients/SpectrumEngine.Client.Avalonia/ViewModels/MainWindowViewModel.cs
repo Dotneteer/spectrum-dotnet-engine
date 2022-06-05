@@ -15,19 +15,24 @@ public class MainWindowViewModel : ViewModelBase
     private int _machineFrames;
     private DisplayViewModel? _display;
     private ViewOptionsViewModel _viewOptionsViewModel;
-    private bool _useNativeMenu;
 
     public MainWindowViewModel()
     {
         _viewOptionsViewModel = new ViewOptionsViewModel();
         var os = AvaloniaLocator.Current.GetService<IRuntimePlatform>()!.GetRuntimeInfo();
-        _useNativeMenu = os.OperatingSystem is OperatingSystemType.OSX;
+        UseNativeMenu = os.OperatingSystem is OperatingSystemType.OSX;
+
+        ViewOptions = new ViewOptionsViewModel
+        {
+            ShowToolbar = true,
+            ShowStatusBar = true
+        };
     }
     
     #region OS related properties
 
-    public bool UseNativeMenu => _useNativeMenu;
-    
+    public bool UseNativeMenu { get; }
+
     #endregion
     
     #region Machine Controller related parts

@@ -7,8 +7,17 @@
         <local:ViewLocator/>
     </Application.DataTemplates>
 
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Assets/ToolbarImages/IconResources.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+    
     <Application.Styles>
         <FluentTheme Mode="Dark"/>
         <StyleInclude Source="/Controls/CheckedIndicator.axaml"/>
+        <StyleInclude Source="/Controls/IconButton.axaml"/>
     </Application.Styles>
 </Application>

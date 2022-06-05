@@ -85,12 +85,12 @@
                 </MenuItem>
             </Menu>
             
-            <local:CheckedIndicator DockPanel.Dock="Bottom" Width="100"/>
-            <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineFrames}" ></TextBlock>
-            <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineControllerState}" ></TextBlock>
-            <Grid DockPanel.Dock="Bottom">
-                <CheckBox IsEnabled="False" IsChecked="True" IsThreeState="True">Hello</CheckBox>
-            </Grid>
+            <local:ToolBarUserControl DockPanel.Dock="Top"
+                IsVisible="{Binding ViewOptions.ShowToolbar}" />
+            <local:StatusBarUserControl DockPanel.Dock="Bottom" 
+                IsVisible="{Binding ViewOptions.ShowStatusBar}"/>
+            <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineFrames}" />
+            <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineControllerState}" />
             <local:SpectrumDisplayControl x:Name="SpectrumDisplay" DockPanel.Dock="Bottom" DataContext="{Binding Display}" />
         </DockPanel>
     </Grid>
