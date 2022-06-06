@@ -9,6 +9,7 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="SpectrumEngine - ZX Spectrum 48K Emulator"
         Background="{DynamicResource AppBackground}"
+        WindowState="FullScreen"
         DataContextChanged="OnDataContextChanged"
         KeyUp="MainWindowOnKeyUp"
         KeyDown="MainWindowOnKeyDown">
@@ -25,6 +26,10 @@
         <NativeMenu>
             <NativeMenuItem Header="View">
                 <NativeMenu>
+                    <NativeMenuItem Header="Show Menu Bar" Command="{Binding ToggleShowMenu}"
+                                    ToggleType="CheckBox"
+                                    IsChecked="{Binding ViewOptions.ShowMenu}" />
+                    <NativeMenuItemSeparator />
                     <NativeMenuItem Header="Show Toolbar" Command="{Binding ToggleShowToolbar}"
                                     ToggleType="CheckBox"
                                     IsChecked="{Binding ViewOptions.ShowToolbar}" />
@@ -54,7 +59,7 @@
         <DockPanel>
             
             <!-- Use this menu on Windows -->
-            <Menu DockPanel.Dock="Top">
+            <Menu DockPanel.Dock="Top" IsVisible="{Binding ViewOptions.ShowMenu}">
                 <MenuItem Header="File">
                     <MenuItem Header="Exit" Click="MenuItem_OnClick" />
                     <MenuItem Header="About" />

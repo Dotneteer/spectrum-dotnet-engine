@@ -25,7 +25,8 @@ public class MainWindowViewModel : ViewModelBase
         ViewOptions = new ViewOptionsViewModel
         {
             ShowToolbar = true,
-            ShowStatusBar = true
+            ShowStatusBar = true,
+            ShowMenu = !UseNativeMenu
         };
     }
     
@@ -229,6 +230,8 @@ public class MainWindowViewModel : ViewModelBase
     public void ToggleShowToolbar() => ViewOptions.ShowToolbar = !ViewOptions.ShowToolbar;
 
     public void ToggleShowStatusBar() => ViewOptions.ShowStatusBar = !ViewOptions.ShowStatusBar;
+
+    public void ToggleShowMenu() => ViewOptions.ShowMenu = !ViewOptions.ShowMenu;
 
     #endregion
 }
