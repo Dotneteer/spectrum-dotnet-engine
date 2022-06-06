@@ -7,8 +7,12 @@ using SpectrumEngine.Client.Avalonia.Views;
 
 namespace SpectrumEngine.Client.Avalonia
 {
-    public partial class App : Application
+    public class App : Application
     {
+#pragma warning disable CS8618
+        public static MainWindowViewModel AppViewModel;
+#pragma warning restore CS8618
+        
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
@@ -19,9 +23,10 @@ namespace SpectrumEngine.Client.Avalonia
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
+                AppViewModel = new MainWindowViewModel();
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = new MainWindowViewModel(),
+                    DataContext = AppViewModel,
                 };
             }
 

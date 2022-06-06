@@ -9,6 +9,7 @@ public partial class ToolBarUserControl : UserControl
     public ToolBarUserControl()
     {
         InitializeComponent();
+        DataContext = App.AppViewModel;
     }
 
     private void InitializeComponent()

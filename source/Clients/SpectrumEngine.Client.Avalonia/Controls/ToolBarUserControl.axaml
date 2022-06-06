@@ -3,13 +3,21 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
+             xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.ToolBarUserControl"
              Background="{DynamicResource ToolbarGray}">
+    
+    <Design.DataContext>
+        <viewModels:MainWindowViewModel/>
+    </Design.DataContext>
+    
     <UserControl.Resources>
+        <Color x:Key="IconDefaultColor">White</Color>
         <Color x:Key="IconPlayColor">LimeGreen</Color>
         <Color x:Key="IconPauseColor">LightBlue</Color>
         <Color x:Key="IconStopColor">Red</Color>
+        <SolidColorBrush x:Key="IconDefaultBrush" Color="{DynamicResource IconDefaultColor}"/>
         <SolidColorBrush x:Key="IconPlayBrush" Color="{DynamicResource IconPlayColor}"/>
         <SolidColorBrush x:Key="IconPauseBrush" Color="{DynamicResource IconPauseColor}"/>
         <SolidColorBrush x:Key="IconStopBrush" Color="{DynamicResource IconStopColor}"/>
@@ -37,6 +45,51 @@
                 Path="{DynamicResource IconRestart}"
                 Fill="{DynamicResource IconPlayBrush}"
                 Hint="Stop" />
+            <controls:IconButton
+                IsEnabled="True"
+                Path="{DynamicResource IconStartDebug}"
+                Fill="{DynamicResource IconPlayBrush}"
+                Hint="Stop" />
+            <controls:IconButton
+                IsEnabled="True"
+                Path="{DynamicResource IconStepInto}"
+                Fill="{DynamicResource IconPauseBrush}"
+                Hint="Pause" />
+            <controls:IconButton
+                IsEnabled="True"
+                Path="{DynamicResource IconStepOver}"
+                Fill="{DynamicResource IconPauseBrush}"
+                Hint="Pause" />
+            <controls:IconButton
+                IsEnabled="True"
+                Path="{DynamicResource IconStepOut}"
+                Fill="{DynamicResource IconPauseBrush}"
+                Hint="Pause" />
+            <controls:IconButton
+                IsEnabled="True"
+                Path="{DynamicResource IconKeyboard}"
+                Fill="{DynamicResource IconDefaultBrush}"
+                Hint="Pause" />
+            <controls:IconButton
+                IsEnabled="True"
+                Path="{DynamicResource IconMute}"
+                Fill="{DynamicResource IconDefaultBrush}"
+                Hint="Pause" />
+            <controls:IconButton
+                IsEnabled="True"
+                Path="{DynamicResource IconUnmute}"
+                Fill="{DynamicResource IconDefaultBrush}"
+                Hint="Pause" />
+            <controls:IconButton
+                IsEnabled="True"
+                Path="{DynamicResource IconFastLoad}"
+                Fill="{DynamicResource IconDefaultBrush}"
+                Hint="Pause" />
+            <controls:IconButton
+                IsEnabled="True"
+                Path="{DynamicResource IconRewind}"
+                Fill="{DynamicResource IconDefaultBrush}"
+                Hint="Pause" />
         </StackPanel>
     </Border>
 </UserControl>

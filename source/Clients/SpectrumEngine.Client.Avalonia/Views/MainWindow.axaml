@@ -49,12 +49,12 @@
             </NativeMenuItem>
         </NativeMenu>
     </NativeMenu.Menu>
-
+    
     <Grid>
         <DockPanel>
             
             <!-- Use this menu on Windows -->
-            <Menu IsVisible="{Binding !UseNativeMenu}" DockPanel.Dock="Top">
+            <Menu DockPanel.Dock="Top">
                 <MenuItem Header="File">
                     <MenuItem Header="Exit" Click="MenuItem_OnClick" />
                     <MenuItem Header="About" />
