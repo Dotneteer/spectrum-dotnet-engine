@@ -4,8 +4,8 @@ public class ViewOptionsViewModel : ViewModelBase
 {
     private bool _showToolbar;
     private bool _showStatusBar;
-    private bool _showMenu;
     private bool _isMuted;
+    private bool _showKeyboard; 
 
     public bool ShowToolbar
     {
@@ -19,12 +19,12 @@ public class ViewOptionsViewModel : ViewModelBase
         set => SetProperty(ref _showStatusBar, value);
     }
 
-    public bool ShowMenu
+    public bool ShowKeyboard
     {
-        get => _showMenu;
-        set => SetProperty(ref _showMenu, value);
+        get => _showKeyboard;
+        set => SetProperty(ref _showKeyboard, value);
     }
-    
+
     public bool IsMuted
     {
         get => _isMuted;

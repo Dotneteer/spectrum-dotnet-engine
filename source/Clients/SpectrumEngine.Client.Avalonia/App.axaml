@@ -19,7 +19,7 @@
         <FluentTheme Mode="Dark"/>
         <StyleInclude Source="/Controls/CheckedIndicator.axaml"/>
         <StyleInclude Source="/Controls/IconButton.axaml"/>
+        <StyleInclude Source="/Controls/IconToggleButton.axaml"/>
         <StyleInclude Source="/Controls/IconButtonSeparator.axaml"/>
-        
     </Application.Styles>
 </Application>

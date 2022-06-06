@@ -26,9 +26,6 @@
         <NativeMenu>
             <NativeMenuItem Header="View">
                 <NativeMenu>
-                    <NativeMenuItem Header="Show Menu Bar" Command="{Binding ToggleShowMenu}"
-                                    ToggleType="CheckBox"
-                                    IsChecked="{Binding ViewOptions.ShowMenu}" />
                     <NativeMenuItemSeparator />
                     <NativeMenuItem Header="Show Toolbar" Command="{Binding ToggleShowToolbar}"
                                     ToggleType="CheckBox"
@@ -36,6 +33,10 @@
                     <NativeMenuItem Header="Show Status Bar" Command="{Binding ToggleShowStatusBar}"
                                     ToggleType="CheckBox"
                                     IsChecked="{Binding ViewOptions.ShowStatusBar}"/>
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="Show Keyboard" Command="{Binding ToggleShowKeyboard}"
+                                    ToggleType="CheckBox"
+                                    IsChecked="{Binding ViewOptions.ShowKeyboard, Mode=TwoWay}"/>
                     <NativeMenuItemSeparator />
                     <NativeMenuItem Header="Mute Sound" Command="{Binding ToggleMuted}"
                                     ToggleType="CheckBox"
@@ -63,7 +64,7 @@
         <DockPanel>
             
             <!-- Use this menu on Windows -->
-            <Menu DockPanel.Dock="Top" IsVisible="{Binding ViewOptions.ShowMenu}">
+            <Menu DockPanel.Dock="Top" IsVisible="{Binding !UseNativeMenu}">
                 <MenuItem Header="File">
                     <MenuItem Header="Exit" Click="MenuItem_OnClick" />
                     <MenuItem Header="About" />

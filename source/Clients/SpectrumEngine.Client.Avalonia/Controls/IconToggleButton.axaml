@@ -2,10 +2,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
     <Design.PreviewWith>
-        <controls:IconButton Path="{DynamicResource IconPlay}" Hint="Start"/>
+        <controls:IconToggleButton />
     </Design.PreviewWith>
 
-    <Style Selector="controls|IconButton">
+    <Style Selector="controls|IconToggleButton">
         <!-- Set Defaults -->
         <Setter Property="Template">
             <ControlTemplate>
@@ -14,32 +14,23 @@
                     HorizontalAlignment="Stretch" 
                     IsEnabled="{TemplateBinding IsEnabled}"
                     Background="{TemplateBinding Background}">
-                    <Button x:Name="Button"
+                    <ToggleButton 
+                        x:Name="Button"
+                        IsChecked="{TemplateBinding IsChecked}"
                         Background="{TemplateBinding Background}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         Padding="{TemplateBinding Padding}"
                         Margin="{TemplateBinding Margin}"
                         Width="{TemplateBinding Width}"
-                        Height="{TemplateBinding Height}"
-                        Command="{TemplateBinding Command}"
-                        CommandParameter="{TemplateBinding CommandParameter}">
+                        Height="{TemplateBinding Height}">
                         <Path
                             HorizontalAlignment="Center" VerticalAlignment="Center"
                             Stretch="Uniform"
                             Fill="{TemplateBinding Fill}"
                             Data="{TemplateBinding Path}" />
-                    </Button>
+                    </ToggleButton>
                 </Grid>
             </ControlTemplate>
         </Setter>
-    </Style>
-    
-    <Style Selector="Button:disabled Path">
-        <Setter Property="Fill" Value="{DynamicResource IconButtonDisabledBrush}"/>
-    </Style>
-
-    <Style Selector="Button:disabled /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{TemplateBinding Background}" />
-        <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" />
     </Style>
 </Styles>

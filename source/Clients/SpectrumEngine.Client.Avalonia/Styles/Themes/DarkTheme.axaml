@@ -13,7 +13,7 @@
         <Color x:Key="TextGray">#c0c0c0</Color>
         <Color x:Key="ToolbarGray">#383838</Color>
         <Color x:Key="IconButtonPointedColor">#80808080</Color>
-        <Color x:Key="IconButtonDisabledColor">#808080</Color>
+        <Color x:Key="IconButtonDisabledColor">#a0a0a0</Color>
         <Color x:Key="IconButtonSeparatorColor">#808080</Color>
         
         <SolidColorBrush x:Key="AppBackground" Color="{DynamicResource DarkGray}"/>
