@@ -14,6 +14,7 @@
         <Color x:Key="ToolbarGray">#383838</Color>
         <Color x:Key="IconButtonPointedColor">#80808080</Color>
         <Color x:Key="IconButtonDisabledColor">#808080</Color>
+        <Color x:Key="IconButtonSeparatorColor">#808080</Color>
         
         <SolidColorBrush x:Key="AppBackground" Color="{DynamicResource DarkGray}"/>
         <SolidColorBrush x:Key="MenuText" Color="{DynamicResource TextGray}"/>
@@ -21,6 +22,7 @@
         <SolidColorBrush x:Key="ToolbarBackground" Color="{DynamicResource ToolbarGray}"/>
         <SolidColorBrush x:Key="IconButtonPointedBrush" Color="{DynamicResource IconButtonPointedColor}"/>
         <SolidColorBrush x:Key="IconButtonDisabledBrush" Color="{DynamicResource IconButtonDisabledColor}"/>
+        <SolidColorBrush x:Key="IconButtonSeparatorBrush" Color="{DynamicResource IconButtonSeparatorColor}"/>
 
     </Styles.Resources>
 </Styles>

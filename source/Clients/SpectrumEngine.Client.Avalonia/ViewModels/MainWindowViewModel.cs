@@ -26,13 +26,14 @@ public class MainWindowViewModel : ViewModelBase
         {
             ShowToolbar = true,
             ShowStatusBar = true,
-            ShowMenu = !UseNativeMenu
+            ShowMenu = !UseNativeMenu,
+            IsMuted = false
         };
     }
     
     #region OS related properties
 
-    public bool UseNativeMenu { get; }
+    private bool UseNativeMenu { get; }
 
     #endregion
     
@@ -232,6 +233,8 @@ public class MainWindowViewModel : ViewModelBase
     public void ToggleShowStatusBar() => ViewOptions.ShowStatusBar = !ViewOptions.ShowStatusBar;
 
     public void ToggleShowMenu() => ViewOptions.ShowMenu = !ViewOptions.ShowMenu;
+
+    public void ToggleMuted() => ViewOptions.IsMuted = !ViewOptions.IsMuted;
 
     #endregion
 }

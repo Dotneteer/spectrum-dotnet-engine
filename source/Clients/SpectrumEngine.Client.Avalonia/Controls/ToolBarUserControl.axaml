@@ -29,6 +29,7 @@
                 IsEnabled="True"
                 Path="{DynamicResource IconPlay}"
                 Fill="{DynamicResource IconPlayBrush}"
+                Command="{Binding Start}"
                 Hint="Start" />
             <controls:IconButton
                 IsEnabled="True"
@@ -45,6 +46,7 @@
                 Path="{DynamicResource IconRestart}"
                 Fill="{DynamicResource IconPlayBrush}"
                 Hint="Stop" />
+            <controls:IconButtonSeparator />
             <controls:IconButton
                 IsEnabled="True"
                 Path="{DynamicResource IconStartDebug}"
@@ -65,21 +67,24 @@
                 Path="{DynamicResource IconStepOut}"
                 Fill="{DynamicResource IconPauseBrush}"
                 Hint="Pause" />
+            <controls:IconButtonSeparator />
             <controls:IconButton
                 IsEnabled="True"
                 Path="{DynamicResource IconKeyboard}"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Hint="Pause" />
+            <controls:IconButtonSeparator />
             <controls:IconButton
-                IsEnabled="True"
+                IsVisible="{Binding !ViewOptions.IsMuted}"
                 Path="{DynamicResource IconMute}"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Hint="Pause" />
             <controls:IconButton
-                IsEnabled="True"
+                IsVisible="{Binding ViewOptions.IsMuted}"
                 Path="{DynamicResource IconUnmute}"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Hint="Pause" />
+            <controls:IconButtonSeparator />
             <controls:IconButton
                 IsEnabled="True"
                 Path="{DynamicResource IconFastLoad}"

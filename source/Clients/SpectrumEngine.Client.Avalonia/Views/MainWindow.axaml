@@ -36,6 +36,10 @@
                     <NativeMenuItem Header="Show Status Bar" Command="{Binding ToggleShowStatusBar}"
                                     ToggleType="CheckBox"
                                     IsChecked="{Binding ViewOptions.ShowStatusBar}"/>
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="Mute Sound" Command="{Binding ToggleMuted}"
+                                    ToggleType="CheckBox"
+                                    IsChecked="{Binding ViewOptions.IsMuted}"/>
                 </NativeMenu>
             </NativeMenuItem>
             <NativeMenuItem Header="Machine">
@@ -73,6 +77,12 @@
                     <MenuItem Header="Show Status Bar" Command="{Binding ToggleShowStatusBar}">
                         <MenuItem.Icon>
                             <local:CheckedIndicator IsChecked="{Binding ViewOptions.ShowStatusBar}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="Mute Sound" Command="{Binding ToggleMuted}">
+                        <MenuItem.Icon>
+                            <local:CheckedIndicator IsChecked="{Binding ViewOptions.IsMuted}" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
