@@ -1,4 +1,5 @@
 ﻿using Avalonia.Input;
+using SpectrumEngine.Client.Avalonia.Models;
 using SpectrumEngine.Emu;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,11 @@ namespace SpectrumEngine.Client.Avalonia.Providers
             keyMapping = CreateKeyMapping();
         }
 
-        public Keyboard Keyboard => Keyboard.ZxSpectrum48;
+        public Machine Machine => Machine.ZxSpectrum48;
 
         public IEnumerable<SpectrumKeyCode> MapKey(Key key) => keyMapping.ContainsKey(key) ? keyMapping[key] : Enumerable.Empty<SpectrumKeyCode>();
 
-        private IDictionary<Key, IEnumerable<SpectrumKeyCode>> CreateKeyMapping()
+        private static IDictionary<Key, IEnumerable<SpectrumKeyCode>> CreateKeyMapping()
         {
             return new Dictionary<Key, IEnumerable<SpectrumKeyCode>>
             {

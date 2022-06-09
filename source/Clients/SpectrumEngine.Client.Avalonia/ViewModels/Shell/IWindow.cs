@@ -6,9 +6,9 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 {
     public interface IWindow : IScreen
     {
-        Lazy<IToolBar> ToolBar { get; }
-        Lazy<IStatusBar> StatusBar { get; }
-        Lazy<IMenu> Menu { get; }
+        Lazy<IMainToolBar> ToolBar { get; }
+        Lazy<IMainStatusBar> StatusBar { get; }
+        Lazy<IMainMenu> Menu { get; }
 
         string Title { get; set; }
 

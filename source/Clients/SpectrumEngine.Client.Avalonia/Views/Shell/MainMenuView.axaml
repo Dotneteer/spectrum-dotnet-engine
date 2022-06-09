@@ -2,14 +2,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 x:Class="SpectrumEngine.Client.Avalonia.Views.Shell.MenuView"
+			 x:Class="SpectrumEngine.Client.Avalonia.Views.Shell.MainMenuView"
 			 xmlns:vm="using:SpectrumEngine.Client.Avalonia.ViewModels.Shell"
 			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
 			 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800">
 
 	<Design.DataContext>
-		<vm:MenuViewModel/>
+		<vm:MainMenuViewModel/>
 	</Design.DataContext>
 	
 	<Grid>

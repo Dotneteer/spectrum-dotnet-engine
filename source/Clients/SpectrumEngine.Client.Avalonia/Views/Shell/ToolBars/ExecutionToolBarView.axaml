@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 x:Class="SpectrumEngine.Client.Avalonia.Views.Shell.ToolBars.ExecutionToolBarView"
+			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+			 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800">
+
+		<StackPanel Classes="Toolbar" Orientation="Horizontal">
+			<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionStartButtonTooltip}" Command="{Binding StartCmd}">
+				<avalonia:MaterialIcon Kind="PlayBox" Classes="Toolbar" />
+			</Button>
+			<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionPauseButtonTooltip}" Command="{Binding PauseCmd}">
+				<avalonia:MaterialIcon Kind="Pause" Classes="Toolbar" />
+			</Button>
+			<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionStopButtonTooltip}" Command="{Binding StopCmd}">
+				<avalonia:MaterialIcon Kind="Stop" Classes="Toolbar" />
+			</Button>
+					
+			<Line Classes="Toolbar"/>
+			<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionResetButtonTooltip}" Command="{Binding ResetCmd}">
+				<avalonia:MaterialIcon Kind="Restart" Classes="Toolbar" />
+			</Button>
+					
+			<Line Classes="Toolbar"/>
+			<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionDebugButtonTooltip}" Command="{Binding DebugCmd}">
+				<avalonia:MaterialIcon Kind="MotionPlayOutline" Classes="Toolbar"/>
+			</Button>
+			<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionDebugStepIntoButtonTooltip}" Command="{Binding DebugStepIntoCmd}">
+				<avalonia:MaterialIcon Kind="DebugStepInto" Classes="Toolbar"/>
+			</Button>
+			<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionDebugStepOverButtonTooltip}" Command="{Binding DebugStepOverCmd}">
+				<avalonia:MaterialIcon Kind="DebugStepOver" Classes="Toolbar"/>
+			</Button>
+			<Button Classes="Flat" ToolTip.Tip="{DynamicResource ToolbarExecutionDebugStepOutButtonTooltip}" Command="{Binding DebugStepOutCmd}">
+				<avalonia:MaterialIcon Kind="DebugStepOut" Classes="Toolbar"/>
+			</Button>
+
+		</StackPanel>
+</UserControl>

@@ -19,14 +19,13 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
         {
             this.applicationService = applicationService ?? Locator.Current.GetRequiredService<IApplicationService>();
 
-            ToolBar = new Lazy<IToolBar>(() => Locator.Current.GetRequiredService<IToolBar>());
-            StatusBar = new Lazy<IStatusBar>(() => Locator.Current.GetRequiredService<IStatusBar>());
-            Menu = new Lazy<IMenu>(() => Locator.Current.GetRequiredService<IMenu>());
+            ToolBar = new Lazy<IMainToolBar>(() => Locator.Current.GetRequiredService<IMainToolBar>());
+            StatusBar = new Lazy<IMainStatusBar>(() => Locator.Current.GetRequiredService<IMainStatusBar>());
+            Menu = new Lazy<IMainMenu>(() => Locator.Current.GetRequiredService<IMainMenu>());
 
             this.applicationService.Application.SetCurrentLanguage(System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
 
             Router = new RoutingState();
-            Router.NavigateAndReset.Execute(new EmulatorViewViewModel());
 
             Icon = new WindowIcon(new AssetLoader().Open(new Uri(this.applicationService.Application.FirstResource<string>("WindowIcon"))));
             Title = this.applicationService.Application.FirstResource<string>("WindowTitle");
@@ -36,9 +35,9 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
             this.applicationService.IsBusyChange.Subscribe(value => IsBusy = value);            
         }
 
-        public Lazy<IToolBar> ToolBar { get; }
-        public Lazy<IStatusBar> StatusBar { get; }
-        public Lazy<IMenu> Menu { get; }
+        public Lazy<IMainToolBar> ToolBar { get; }
+        public Lazy<IMainStatusBar> StatusBar { get; }
+        public Lazy<IMainMenu> Menu { get; }
 
         public RoutingState Router { get; }
 

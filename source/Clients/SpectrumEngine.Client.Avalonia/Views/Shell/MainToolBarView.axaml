@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 x:Class="SpectrumEngine.Client.Avalonia.Views.Shell.MainToolBarView"
+			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+			 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800">
+
+	<Grid>
+
+		<styles:ColorZone Classes="Toolbar">
+			<Grid ColumnDefinitions="Auto, *">
+
+				<ToggleButton Classes="Flat TransparentBack Toolbar" Command="{Binding OpenMenuCmd}">
+					<avalonia:MaterialIcon Kind="Menu" Classes="Toolbar" />
+				</ToggleButton>
+
+				<!-- toolbar execution tools-->
+				<ContentControl Grid.Row="0" Content="{Binding ExecutionToolbar.Value}" Grid.Column="1" IsVisible="{Binding IsExecutionToolsVisible}" />
+				
+			</Grid>
+		</styles:ColorZone>
+
+	</Grid>
+</UserControl>

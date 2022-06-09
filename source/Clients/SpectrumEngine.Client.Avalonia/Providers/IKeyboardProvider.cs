@@ -1,4 +1,5 @@
 ﻿using Avalonia.Input;
+using SpectrumEngine.Client.Avalonia.Models;
 using SpectrumEngine.Emu;
 using System.Collections.Generic;
 
@@ -11,9 +12,9 @@ namespace SpectrumEngine.Client.Avalonia.Providers
     public interface IKeyboardProvider
     {
         /// <summary>
-        /// Get keyboard type
+        /// Get emulator machine keyboard
         /// </summary>
-        Keyboard Keyboard { get; }
+        Machine Machine { get; }
 
         /// <summary>
         /// Get emulator machine keys from keyboard key

@@ -15,7 +15,7 @@
 	<Grid>
 		<controls:SpectrumDisplayControl Focusable="True"
 										 MachineController="{Binding Machine}"
-										 KeyboardProviderManager="{Binding KeyboardProvider}" />
+										 KeyboardProvider="{Binding KeyboardProvider}" />
 	</Grid>
 	
 </UserControl>

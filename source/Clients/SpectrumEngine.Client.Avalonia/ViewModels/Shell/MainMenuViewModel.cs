@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 {
-    public class MenuViewModel : ViewModelBase, IMenu
+    public class MainMenuViewModel : ViewModelBase, IMainMenu
     {
         public enum MenuItem
         {
@@ -22,9 +22,9 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 
         private readonly IApplicationService applicationService;
 
-        public MenuViewModel() : this(null) { }
+        public MainMenuViewModel() : this(null) { }
 
-        public MenuViewModel(IApplicationService? applicationService = null)
+        public MainMenuViewModel(IApplicationService? applicationService = null)
         {
             this.applicationService = applicationService ?? Locator.Current.GetRequiredService<IApplicationService>();
 
@@ -57,7 +57,6 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
             switch ((MenuItem)selectedItem.Id)
             {
                 case MenuItem.Emulator:
-                    // TODO: implement
                     MainWindow.ToolBar.Value.IsExecutionToolsVisible = true;
                     MainWindow.IsMenuOpened = false;
                     MainWindow.Router.NavigateAndReset.Execute(new EmulatorViewViewModel());

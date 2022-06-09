@@ -1,20 +1,14 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
-using SpectrumEngine.Client.Avalonia.Extensions;
 using SpectrumEngine.Client.Avalonia.Providers;
-using SpectrumEngine.Client.Avalonia.Services;
 using SpectrumEngine.Emu;
-using Splat;
 using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace SpectrumEngine.Client.Avalonia.Controls
 {
@@ -30,18 +24,18 @@ namespace SpectrumEngine.Client.Avalonia.Controls
                 (obj, value) => obj.MachineController = value);
 
         /// <summary>
-        /// Defines the <see cref="KeyboardProviderManager"/> property.
+        /// Defines the <see cref="KeyboardProvider"/> property.
         /// </summary>
-        public static readonly DirectProperty<SpectrumDisplayControl, IKeyboardProviderManager?> KeyboardProviderManagerProperty =
-            AvaloniaProperty.RegisterDirect<SpectrumDisplayControl, IKeyboardProviderManager?>(
-                nameof(KeyboardProviderManager),
-                obj => obj.KeyboardProviderManager,
-                (obj, value) => obj.KeyboardProviderManager = value);
+        public static readonly DirectProperty<SpectrumDisplayControl, IKeyboardProvider?> KeyboardProviderProperty =
+            AvaloniaProperty.RegisterDirect<SpectrumDisplayControl, IKeyboardProvider?>(
+                nameof(KeyboardProvider),
+                obj => obj.KeyboardProvider,
+                (obj, value) => obj.KeyboardProvider = value);
 
         private WriteableBitmap? writeableBitmap;
         //private NAudioProvider? _audioProvider;
         private MachineController? machineController;
-        private IKeyboardProviderManager? keyboardProviderManager;
+        private IKeyboardProvider? keyboardProvider;
 
         public SpectrumDisplayControl()
         {
@@ -60,12 +54,12 @@ namespace SpectrumEngine.Client.Avalonia.Controls
         }
 
         /// <summary>
-        /// Get or set Keyboard provider manager
+        /// Get or set Keyboard provider
         /// </summary>
-        public IKeyboardProviderManager? KeyboardProviderManager
+        public IKeyboardProvider? KeyboardProvider
         {
-            get => keyboardProviderManager;
-            set => SetAndRaise(KeyboardProviderManagerProperty, ref keyboardProviderManager, value);
+            get => keyboardProvider;
+            set => SetAndRaise(KeyboardProviderProperty, ref keyboardProvider, value);
         }
 
         unsafe
@@ -127,11 +121,11 @@ namespace SpectrumEngine.Client.Avalonia.Controls
         /// This method maps a physical key to one or two ZX Spectrum keys and sets the key states through the keyboard
         /// device of the emulated machine.
         /// </remarks>
-        private void HandleKeyboardEvent(object? sender, KeyEventArgs e, bool isDown)
+        private void HandleKeyboardEvent(object? _, KeyEventArgs e, bool isDown)
         {
-            if (machineController == null || keyboardProviderManager == null) return;
+            if (machineController == null || keyboardProvider == null) return;
 
-            var keyMapping = keyboardProviderManager.MapKey(e.Key);
+            var keyMapping = keyboardProvider.MapKey(e.Key);
             if (keyMapping.Any() && machineController.Machine is IZxSpectrum48Machine zxMachine)
             {
                 foreach (var key in keyMapping)

@@ -1,6 +1,6 @@
 ﻿namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell
 {
-    public interface IStatusBar
+    public interface IMainStatusBar
     {
         string? Slot1 { get; set; }
     }

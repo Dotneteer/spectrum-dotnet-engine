@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace SpectrumEngine.Client.Avalonia.Views.Shell
 {
-    public partial class StatusBarView : UserControl
+    public partial class MainStatusBarView : UserControl
     {
-        public StatusBarView()
+        public MainStatusBarView()
         {
             InitializeComponent();
         }
