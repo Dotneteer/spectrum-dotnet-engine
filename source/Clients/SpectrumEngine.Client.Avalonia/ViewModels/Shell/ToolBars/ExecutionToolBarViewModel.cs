@@ -44,18 +44,19 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels.Shell.ToolBars
         private void InitializeCommands()
         {
             StartCmd = ReactiveCommand.Create(() => this.emulatorService.MachineController?.Start(),
-                this.WhenAnyValue(x => x.MachineControllerState).Select(item => item == MachineControllerState.Stopped || item == MachineControllerState.Paused));
+                this.WhenAnyValue(x => x.MachineControllerState).Select(item => item != MachineControllerState.Running));
 
             PauseCmd = ReactiveCommand.CreateFromTask(() => this.emulatorService.MachineController?.Pause() ?? Task.CompletedTask,
                 this.WhenAnyValue(x => x.MachineControllerState).Select(item => item == MachineControllerState.Running));
 
             StopCmd = ReactiveCommand.CreateFromTask(() => this.emulatorService.MachineController?.Stop() ?? Task.CompletedTask,
-                this.WhenAnyValue(x => x.MachineControllerState).Select(item => item == MachineControllerState.Running));
+                this.WhenAnyValue(x => x.MachineControllerState).Select(item => item == MachineControllerState.Running || item == MachineControllerState.Paused));
 
-            ResetCmd = ReactiveCommand.CreateFromTask(() => this.emulatorService.MachineController?.Restart() ?? Task.CompletedTask);
+            ResetCmd = ReactiveCommand.CreateFromTask(() => this.emulatorService.MachineController?.Restart() ?? Task.CompletedTask,
+                this.WhenAnyValue(x => x.MachineControllerState).Select(item => item == MachineControllerState.Running || item == MachineControllerState.Paused));
 
             DebugCmd = ReactiveCommand.Create(() => this.emulatorService.MachineController?.StartDebug(),
-                this.WhenAnyValue(x => x.MachineControllerState).Select(item => item == MachineControllerState.Stopped));
+                this.WhenAnyValue(x => x.MachineControllerState).Select(item => item != MachineControllerState.Running));
 
             DebugStepIntoCmd = ReactiveCommand.Create(() => this.emulatorService.MachineController?.StepInto(),
                 this.WhenAnyValue(x => x.MachineControllerState).Select(item => item == MachineControllerState.Paused));
