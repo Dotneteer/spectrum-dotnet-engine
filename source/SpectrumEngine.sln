@@ -7,11 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpectrumEngine.Emu", "Spect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpectrumEngine.Emu.Test", "SpectrumEngine.Emu.Test\SpectrumEngine.Emu.Test.csproj", "{384FEA62-F593-4BDC-B65B-6C5C16F4614E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{5AC4876F-F504-42C5-BA90-724398690E9F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpectrumEngine.Client.Wpf", "Clients\SpectrumEngine.Client.Wpf\SpectrumEngine.Client.Wpf.csproj", "{25A2AC3A-F64D-4A2F-A3BC-E4F3DCE15165}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpectrumEngine.Client.Avalonia", "Clients\SpectrumEngine.Client.Avalonia\SpectrumEngine.Client.Avalonia.csproj", "{A88F54CC-72DF-4D68-9789-28FBB85197B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpectrumEngine.Client.Avalonia", "SpectrumEngine.Client.Avalonia\SpectrumEngine.Client.Avalonia.csproj", "{7BAF9727-B2CC-4619-93A9-4809E4524528}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,14 +23,10 @@ Global
 		{384FEA62-F593-4BDC-B65B-6C5C16F4614E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{384FEA62-F593-4BDC-B65B-6C5C16F4614E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{384FEA62-F593-4BDC-B65B-6C5C16F4614E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{25A2AC3A-F64D-4A2F-A3BC-E4F3DCE15165}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{25A2AC3A-F64D-4A2F-A3BC-E4F3DCE15165}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{25A2AC3A-F64D-4A2F-A3BC-E4F3DCE15165}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{25A2AC3A-F64D-4A2F-A3BC-E4F3DCE15165}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A88F54CC-72DF-4D68-9789-28FBB85197B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A88F54CC-72DF-4D68-9789-28FBB85197B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A88F54CC-72DF-4D68-9789-28FBB85197B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A88F54CC-72DF-4D68-9789-28FBB85197B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BAF9727-B2CC-4619-93A9-4809E4524528}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BAF9727-B2CC-4619-93A9-4809E4524528}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BAF9727-B2CC-4619-93A9-4809E4524528}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BAF9727-B2CC-4619-93A9-4809E4524528}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,7 +35,5 @@ Global
 		SolutionGuid = {ED7679A8-E807-4371-BC72-4F0295DFE0B4}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{25A2AC3A-F64D-4A2F-A3BC-E4F3DCE15165} = {5AC4876F-F504-42C5-BA90-724398690E9F}
-		{A88F54CC-72DF-4D68-9789-28FBB85197B5} = {5AC4876F-F504-42C5-BA90-724398690E9F}
 	EndGlobalSection
 EndGlobal

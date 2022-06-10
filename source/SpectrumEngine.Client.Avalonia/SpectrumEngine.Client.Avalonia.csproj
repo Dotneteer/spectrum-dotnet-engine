@@ -14,9 +14,9 @@
       <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <ItemGroup>
-        <Folder Include="Models\" />
         <AvaloniaResource Include="Assets\**" />
         <None Remove=".gitignore" />
+        <None Remove="FodyWeavers.xsd" />
     </ItemGroup>
     <ItemGroup>
         <!--This helps with theme dll-s trimming.
@@ -34,6 +34,6 @@
         <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\SpectrumEngine.Emu\SpectrumEngine.Emu.csproj" />
+      <ProjectReference Include="..\SpectrumEngine.Emu\SpectrumEngine.Emu.csproj" />
     </ItemGroup>
 </Project>
