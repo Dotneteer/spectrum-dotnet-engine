@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
              xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="60"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.ToolBarUserControl"
              Background="{DynamicResource ToolbarGray}">
     
@@ -67,10 +67,11 @@
                 Command="{Binding StepOut}"
                 Hint="Pause" />
             <controls:IconButtonSeparator />
-            <controls:IconToggleButton
+            <controls:IconButton
                 IsChecked="{Binding ViewOptions.ShowKeyboard, Mode=TwoWay}"
                 Path="{DynamicResource IconKeyboard}"
                 Fill="{DynamicResource IconDefaultBrush}"
+                Command="{Binding ToggleShowKeyboard}"
                 Hint="Pause" />
             <controls:IconButtonSeparator />
             <controls:IconButton

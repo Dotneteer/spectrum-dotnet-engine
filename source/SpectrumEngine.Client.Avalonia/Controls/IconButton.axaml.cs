@@ -22,11 +22,17 @@ public class IconButton : TemplatedControl
     public static readonly StyledProperty<object?> CommandParameterProperty = 
         AvaloniaProperty.Register<IconButton, object?>(nameof(CommandParameter));
     
+    public static readonly StyledProperty<bool> CanToggleProperty =
+        AvaloniaProperty.Register<IconButton, bool>(nameof(CanToggle));
+    
+    public static readonly StyledProperty<bool> IsCheckedProperty =
+        AvaloniaProperty.Register<IconButton, bool>(nameof(IsChecked));
+    
     public IconButton()
     {
-        Width = 32;
-        Height = 32;
-        Padding = new Thickness(6);
+        Width = 36;
+        Height = 36;
+        Padding = new Thickness(8);
         Margin = new Thickness(0);
         Background = new SolidColorBrush(Colors.Transparent);
     }
@@ -59,5 +65,17 @@ public class IconButton : TemplatedControl
     {
         get => GetValue(CommandParameterProperty);
         set => SetValue(CommandParameterProperty, value);
+    }
+
+    public bool CanToggle
+    {
+        get => GetValue(CanToggleProperty);
+        set => SetValue(CanToggleProperty, value);
+    }
+    
+    public bool IsChecked
+    {
+        get => GetValue(IsCheckedProperty);
+        set => SetValue(IsCheckedProperty, value);
     }
 }

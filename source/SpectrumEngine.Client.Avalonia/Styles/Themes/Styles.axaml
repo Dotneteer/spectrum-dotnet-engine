@@ -3,12 +3,4 @@
     <Style Selector="Menu">
         <Setter Property="Background" Value="{DynamicResource MenuBackground}" />
     </Style>
-
-  <!-- Checked Normal State -->
-  <Style Selector="CheckBox:checked /template/ Path#CheckGlyph">
-    <Setter Property="Fill" Value="{DynamicResource CheckBoxCheckGlyphForegroundChecked}" />
-    <Setter Property="Data" Value="M1507 31L438 1101L-119 543L-29 453L438 919L1417 -59L1507 31Z" />
-    <Setter Property="Width" Value="7" />
-    <Setter Property="Opacity" Value="1" />
-  </Style>
 </Styles>

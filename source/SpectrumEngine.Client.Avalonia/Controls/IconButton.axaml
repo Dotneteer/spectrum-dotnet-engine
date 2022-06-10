@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
     <Design.PreviewWith>
-        <controls:IconButton Path="{DynamicResource IconPlay}" Hint="Start"/>
+        <controls:IconButton Path="{DynamicResource IconStop}" Height="36" Width="36" Hint="Start"/>
     </Design.PreviewWith>
 
     <Style Selector="controls|IconButton">
@@ -10,25 +10,34 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid 
-                    VerticalAlignment="Stretch"
-                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Left" 
                     IsEnabled="{TemplateBinding IsEnabled}"
                     Background="{TemplateBinding Background}">
+                    <Border
+                        BorderBrush="{TemplateBinding IsChecked, Converter={StaticResource IconButtonBorderBrushConverter}}"
+                        BorderThickness="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
                     <Button x:Name="Button"
-                        Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        Padding="{TemplateBinding Padding}"
-                        Margin="{TemplateBinding Margin}"
-                        Width="{TemplateBinding Width}"
-                        Height="{TemplateBinding Height}"
-                        Command="{TemplateBinding Command}"
-                        CommandParameter="{TemplateBinding CommandParameter}">
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Padding="{TemplateBinding Padding}"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}"
+                            Command="{TemplateBinding Command}"
+                            CommandParameter="{TemplateBinding CommandParameter}">
                         <Path
-                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Margin="{TemplateBinding Margin}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
                             Stretch="Uniform"
                             Fill="{TemplateBinding Fill}"
                             Data="{TemplateBinding Path}" />
                     </Button>
+                    </Border>
                 </Grid>
             </ControlTemplate>
         </Setter>

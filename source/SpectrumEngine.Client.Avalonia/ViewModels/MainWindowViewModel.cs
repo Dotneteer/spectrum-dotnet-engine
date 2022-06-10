@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Metadata;
 using Avalonia.Platform;
 using SpectrumEngine.Emu;
@@ -21,6 +22,7 @@ public class MainWindowViewModel : ViewModelBase
         _viewOptionsViewModel = new ViewOptionsViewModel();
         var os = AvaloniaLocator.Current.GetService<IRuntimePlatform>()!.GetRuntimeInfo();
         UseNativeMenu = os.OperatingSystem is OperatingSystemType.OSX;
+        InitialWindowState = UseNativeMenu ? WindowState.FullScreen : WindowState.Maximized;
 
         ViewOptions = new ViewOptionsViewModel
         {
@@ -34,6 +36,8 @@ public class MainWindowViewModel : ViewModelBase
     #region OS related properties
 
     public bool UseNativeMenu { get; }
+
+    public WindowState InitialWindowState { get; }
 
     #endregion
     

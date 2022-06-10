@@ -16,7 +16,6 @@ namespace SpectrumEngine.Client.Avalonia.Controls;
 public partial class SpectrumDisplayControl : UserControl
 {
     private object? _prevDataContext;
-    private Rect? _effectiveViewport;
     private int _zoomFactor = 1;
 
     public SpectrumDisplayControl()
@@ -38,13 +37,12 @@ public partial class SpectrumDisplayControl : UserControl
     /// </remarks>
     private void ResizeScreen()
     {
-        if (DataContext is not DisplayViewModel context || context.Machine == null || _effectiveViewport == null)
+        if (DataContext is not DisplayViewModel context || context.Machine == null)
         {
             return;
         }
-
-        var horZoom = (int)(_effectiveViewport.Value.Width / context.Machine!.ScreenWidthInPixels);
-        var vertZoom = (int)(_effectiveViewport.Value.Height / context.Machine!.ScreenHeightInPixels);
+        var horZoom = (int)(Bounds.Width / context.Machine!.ScreenWidthInPixels);
+        var vertZoom = (int)(Bounds.Height / context.Machine!.ScreenHeightInPixels);
         _zoomFactor = context.ZoomFactor = Math.Max(1, Math.Min(horZoom, vertZoom));
         Display.Width = context.ScreenWidth = _zoomFactor * context.Machine!.ScreenWidthInPixels;
         Display.Height = context.ScreenHeight = _zoomFactor * context.Machine!.ScreenHeightInPixels;
@@ -183,7 +181,6 @@ public partial class SpectrumDisplayControl : UserControl
 
     private void OnViewportChanged(object? sender, EffectiveViewportChangedEventArgs e)
     {
-        _effectiveViewport = e.EffectiveViewport;
         ResizeScreen();
     }
 }
