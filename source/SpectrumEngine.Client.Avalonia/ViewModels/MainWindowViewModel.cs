@@ -15,7 +15,7 @@ public class MainWindowViewModel : ViewModelBase
     private MachineControllerState _mstate;
     private int _machineFrames;
     private DisplayViewModel? _display;
-    private ViewOptionsViewModel _viewOptionsViewModel;
+    private readonly ViewOptionsViewModel _viewOptionsViewModel;
 
     public MainWindowViewModel()
     {
@@ -61,6 +61,7 @@ public class MainWindowViewModel : ViewModelBase
         _machineFrames = 0;
         _mc.StateChanged += OnStateChanged;
         _mc.FrameCompleted += OnFrameCompleted;
+        OnStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
 
         // --- Update view model properties
         Display = new DisplayViewModel(_mc);
@@ -229,7 +230,7 @@ public class MainWindowViewModel : ViewModelBase
     public ViewOptionsViewModel ViewOptions
     {
         get => _viewOptionsViewModel;
-        set => SetProperty(ref _viewOptionsViewModel, value);
+        private init => SetProperty(ref _viewOptionsViewModel, value);
     }
 
     public void ToggleShowToolbar() => ViewOptions.ShowToolbar = !ViewOptions.ShowToolbar;

@@ -16,7 +16,7 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels
             return this.RaiseAndSetIfChanged(ref backingField, newValue, propertyName);
         }
 
-        protected void RaisePropertyChanged(string name)
+        public void RaisePropertyChanged(string name)
         {
             ((IReactiveObject) this).RaisePropertyChanged(name);
         }

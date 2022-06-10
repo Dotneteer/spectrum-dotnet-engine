@@ -1,8 +1,12 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+﻿<!--
+    This control represents the image that displays the ZX Spectrum screen
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:SpectrumEngine.Client.Avalonia.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.SpectrumDisplayControl"
              Focusable="True"
@@ -15,17 +19,19 @@
         <vm:DisplayViewModel />
     </Design.DataContext>
     
+    <!-- ReSharper disable once MarkupAttributeTypo -->
     <Grid
         Width="{Binding ScreenWidth}" d:Width="600"
         Height="{Binding ScreenHeight}" d:Height="400"
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
-        Background="{Binding Background}" d:Background="#ffdbc10e">
+        Background="{DynamicResource DisplayBackgroundBrush}">
         <Image Name="Display"
                UseLayoutRounding="True"
                HorizontalAlignment="Stretch"
                VerticalAlignment="Stretch"
                RenderOptions.BitmapInterpolationMode="LowQuality"
                Stretch="Fill" />
+        <controls:MachineStatusOverlay /> 
     </Grid>
 </UserControl>

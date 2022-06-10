@@ -5,9 +5,10 @@
 /// </summary>
 public class MachineController
 {
-    private CancellationTokenSource? _tokenSource = null;
-    private Task? _machineTask = null;
+    private CancellationTokenSource? _tokenSource;
+    private Task? _machineTask;
     private MachineControllerState _machineState;
+    private bool _isDebugging;
 
     /// <summary>
     /// Initializes the controller to manage the specified machine.
@@ -20,6 +21,7 @@ public class MachineController
     {
         Machine = machine ?? throw new ArgumentNullException(nameof(machine));
         Context = machine.ExecutionContext;
+        _isDebugging = false;
     }
 
     /// <summary>
@@ -30,7 +32,7 @@ public class MachineController
     /// <summary>
     /// The execution context of the controlled machine
     /// </summary>
-    public ExecutionContext Context { get; }
+    private ExecutionContext Context { get; }
 
     /// <summary>
     /// Get the current state of the machine controller.
@@ -38,17 +40,21 @@ public class MachineController
     public MachineControllerState State
     {
         get => _machineState;
-        private set
+        set
         {
-            if (_machineState != value)
-            {
-                var oldState = _machineState; ;
-                _machineState = value;
-                StateChanged?.Invoke(this, (oldState, _machineState));
-            }
+            if (_machineState == value) return;
+            
+            var oldState = _machineState;
+            _machineState = value;
+            StateChanged?.Invoke(this, (oldState, _machineState));
         }
     }
 
+    /// <summary>
+    /// Indicates if the machine runs in debug mode
+    /// </summary>
+    public bool IsDebugging => _isDebugging;
+    
     /// <summary>
     /// This event fires when the state of the controller changes.
     /// </summary>
@@ -63,13 +69,21 @@ public class MachineController
     /// <summary>
     /// Start the machine in normal mode.
     /// </summary>
-    public void Start() => Run();
+    public void Start()
+    {
+        _isDebugging = false;
+        Run();
+    }
 
     /// <summary>
     /// Start the machine in debug mode.
     /// </summary>
-    public void StartDebug() => Run(LoopTerminationMode.DebugEvent, DebugStepMode.StopAtBreakpoint);
-
+    public void StartDebug()
+    {
+        _isDebugging = true;
+        Run(LoopTerminationMode.DebugEvent, DebugStepMode.StopAtBreakpoint);
+    }
+    
     /// <summary>
     /// Pause the running machine.
     /// </summary>
@@ -91,6 +105,8 @@ public class MachineController
         {
             throw new InvalidOperationException("The machine is not running");
         }
+
+        _isDebugging = false;
         await FinishExecutionLoop(MachineControllerState.Stopping, MachineControllerState.Stopped);
     }
 
@@ -107,17 +123,29 @@ public class MachineController
     /// <summary>
     /// Starts the machine in step-into mode.
     /// </summary>
-    public void StepInto() => Run(LoopTerminationMode.DebugEvent, DebugStepMode.StepInto);
+    public void StepInto()
+    {
+        _isDebugging = true;
+        Run(LoopTerminationMode.DebugEvent, DebugStepMode.StepInto);
+    }
 
     /// <summary>
     /// Starts the machine in step-over mode.
     /// </summary>
-    public void StepOver() => Run(LoopTerminationMode.DebugEvent, DebugStepMode.StepOver);
+    public void StepOver()
+    {
+        _isDebugging = true;
+        Run(LoopTerminationMode.DebugEvent, DebugStepMode.StepOver);
+    }
 
     /// <summary>
     /// Starts the machine in step-out mode.
     /// </summary>
-    public void StepOut() => Run(LoopTerminationMode.DebugEvent, DebugStepMode.StepOut);
+    public void StepOut()
+    {
+        _isDebugging = true;
+        Run(LoopTerminationMode.DebugEvent, DebugStepMode.StepOut);
+    }
 
     public async Task RunToTerminationPoint(int? terminationPartition, ushort? terminationPoint)
     {
@@ -202,7 +230,7 @@ public class MachineController
     /// <exception cref="InvalidOperationException">
     /// The machine controller is in an invalid state
     /// </exception>
-    public async Task FinishExecutionLoop(
+    private async Task FinishExecutionLoop(
         MachineControllerState beforeState,
         MachineControllerState afterState)
     {
@@ -216,7 +244,7 @@ public class MachineController
     /// Completes the current execution loop of the machine
     /// </summary>
     /// <returns></returns>
-    public async Task CompleteExecutionLoop()
+    private async Task CompleteExecutionLoop()
     {
         if (_machineTask != null)
         {

@@ -1,3 +1,6 @@
+<!--
+    This control represents the status bar of the application
+-->
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -5,6 +8,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.StatusBarUserControl"
              Height="32"
-             Background="Blue">
+             Background="{DynamicResource StatusBarBackgroundBrush}">
     Welcome to Avalonia!
 </UserControl>

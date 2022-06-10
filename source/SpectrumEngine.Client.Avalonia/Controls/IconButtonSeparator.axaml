@@ -1,7 +1,10 @@
+<!--
+    This control represents a vertical separator between two IconButton instances
+-->
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls"
-        >
+>
     <Design.PreviewWith>
         <controls:IconButtonSeparator Height="20" />
     </Design.PreviewWith>

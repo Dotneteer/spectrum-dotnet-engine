@@ -13,6 +13,9 @@ using SpectrumEngine.Emu;
 
 namespace SpectrumEngine.Client.Avalonia.Controls;
 
+/// <summary>
+/// This control represents the image that displays the ZX Spectrum screen
+/// </summary>
 public partial class SpectrumDisplayControl : UserControl
 {
     private object? _prevDataContext;
@@ -27,7 +30,6 @@ public partial class SpectrumDisplayControl : UserControl
     /// Gets the current view model in the data context
     /// </summary>
     private DisplayViewModel? Vm => DataContext as DisplayViewModel;
-
   
     /// <summary>
     /// Change the view model properties when the user control is resized.
@@ -51,23 +53,35 @@ public partial class SpectrumDisplayControl : UserControl
     /// <summary>
     /// Respond to the machine controller's state changes
     /// </summary>
-    private void Controller_StateChanged(object? sender, (MachineControllerState OldState, MachineControllerState NewState) e)
+    private void OnControllerStateChanged(object? sender, 
+        (MachineControllerState OldState, MachineControllerState NewState) e)
     {
-        // switch (e.NewState)
-        // {
-        //     case MachineControllerState.Running:
-        //         _audioProvider?.PlaySound();
-        //         break;
-        //     case MachineControllerState.Paused:
-        //         _audioProvider?.PauseSound();
-        //         break;
-        //     case MachineControllerState.Stopped:
-        //         _audioProvider?.KillSound();
-        //         break;
-        // }
+        if (Vm?.Controller == null) return;
+        
+        Vm.IsDebugging = Vm.Controller.IsDebugging;
+        Vm.RaisePropertyChanged(nameof(Vm.Controller));
+
+        switch (e.NewState)
+        {
+            case MachineControllerState.None:
+                Vm.OverlayMessage = "Start the machine";
+                break;
+            case MachineControllerState.Running:
+                Vm.OverlayMessage = Vm.IsDebugging ? "Debug mode" : "Running";
+                // _audioProvider?.PlaySound();
+                break;
+            case MachineControllerState.Paused:
+                Vm.OverlayMessage = "Paused";
+                // _audioProvider?.PauseSound();
+                break;
+            case MachineControllerState.Stopped:
+                Vm.OverlayMessage = "Stopped";
+                // _audioProvider?.KillSound();
+                break;
+        }
     }
 
-    private void Controller_FrameCompleted(object? sender, bool e)
+    private void OnControllerFrameCompleted(object? sender, bool e)
     {
         // --- Use the Dispatcher to render the screen
         Dispatcher.UIThread.InvokeAsync(() =>
@@ -151,20 +165,23 @@ public partial class SpectrumDisplayControl : UserControl
         var oldVm = _prevDataContext as DisplayViewModel;
         if (oldVm?.Controller != null)
         {
-            oldVm.Controller.FrameCompleted -= Controller_FrameCompleted;
-            oldVm.Controller.StateChanged -= Controller_StateChanged;
+            oldVm.Controller.FrameCompleted -= OnControllerFrameCompleted;
+            oldVm.Controller.StateChanged -= OnControllerStateChanged;
         }
 
         // --- Setup the events of the new controller
         var newVm = DataContext as DisplayViewModel;
         if (newVm?.Controller != null)
         {
-            newVm.Controller.FrameCompleted += Controller_FrameCompleted;
-            newVm.Controller.StateChanged += Controller_StateChanged;
+            newVm.Controller.FrameCompleted += OnControllerFrameCompleted;
+            newVm.Controller.StateChanged += OnControllerStateChanged;
             if (newVm.Machine is ZxSpectrum48Machine zxMachine)
             {
+                // TODO: Add samples to the sound stream
                 //_audioProvider = new(zxMachine.BeeperDevice);
             }
+            
+            OnControllerStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
         }
         _prevDataContext = DataContext;
     }

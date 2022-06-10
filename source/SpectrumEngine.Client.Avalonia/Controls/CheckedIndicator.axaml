@@ -1,10 +1,22 @@
-﻿<Styles xmlns="https://github.com/avaloniaui"
+﻿<!--
+    This control is a simple checkmark we use within a menu item to sign its checked state.
+ 
+    This is how we use it within the "Show Toolbar" menu item:
+      
+        <MenuItem Header="Show Toolbar" Command="{Binding ToggleShowToolbar}">
+            <MenuItem.Icon>
+                <local:CheckedIndicator IsChecked="{Binding ViewOptions.ShowToolbar}" />
+            </MenuItem.Icon>
+        </MenuItem>
+ -->
+<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
     <Design.PreviewWith>
         <controls:CheckedIndicator IsChecked="True"/>
     </Design.PreviewWith>
 
+    <!-- The control template definition -->
     <Style Selector="controls|CheckedIndicator">
         <!-- Set Defaults -->
         <Setter Property="Template">
@@ -21,6 +33,7 @@
         </Setter>
     </Style>
     
+    <!-- Displays the "checked" icon when IsCheck is True -->
     <Style Selector="controls|CheckedIndicator[IsChecked=True] /template/ Path#CheckPath">
         <Setter Property="Fill" Value="white" />
         <Setter Property="Data" Value="M1507 31L438 1101L-119 543L-29 453L438 919L1417 -59L1507 31Z" />

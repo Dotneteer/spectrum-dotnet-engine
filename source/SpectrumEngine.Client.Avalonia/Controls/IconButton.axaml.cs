@@ -5,6 +5,9 @@ using Avalonia.Media;
 
 namespace SpectrumEngine.Client.Avalonia.Controls;
 
+/// <summary>
+/// This control represents a button with a single icon definid via the Path property
+/// </summary>
 public class IconButton : TemplatedControl
 {
     public static readonly StyledProperty<Brush> FillProperty = 
@@ -22,9 +25,6 @@ public class IconButton : TemplatedControl
     public static readonly StyledProperty<object?> CommandParameterProperty = 
         AvaloniaProperty.Register<IconButton, object?>(nameof(CommandParameter));
     
-    public static readonly StyledProperty<bool> CanToggleProperty =
-        AvaloniaProperty.Register<IconButton, bool>(nameof(CanToggle));
-    
     public static readonly StyledProperty<bool> IsCheckedProperty =
         AvaloniaProperty.Register<IconButton, bool>(nameof(IsChecked));
     
@@ -37,42 +37,54 @@ public class IconButton : TemplatedControl
         Background = new SolidColorBrush(Colors.Transparent);
     }
 
+    /// <summary>
+    /// Fill brush for the button icon
+    /// </summary>
     public Brush Fill
     {
         get => GetValue(FillProperty);
         set => SetValue(FillProperty, value);
     }
 
+    /// <summary>
+    /// The path property of the vector icon
+    /// </summary>
     public Geometry Path
     {
         get => GetValue(PathProperty);
         set => SetValue(PathProperty, value);
     }
 
+    /// <summary>
+    /// Hint to use with the icon button (not used yet)
+    /// </summary>
     public string Hint
     {
         get => GetValue(HintProperty);
         set => SetValue(HintProperty, value);
     }
 
+    /// <summary>
+    /// Command to execute when the button has been clicked
+    /// </summary>
     public ICommand? Command
     {
         get => GetValue(CommandProperty);
         set => SetValue(CommandProperty, value);
     }
 
+    /// <summary>
+    /// Parameter of the command to execute
+    /// </summary>
     public object? CommandParameter
     {
         get => GetValue(CommandParameterProperty);
         set => SetValue(CommandParameterProperty, value);
     }
 
-    public bool CanToggle
-    {
-        get => GetValue(CanToggleProperty);
-        set => SetValue(CanToggleProperty, value);
-    }
-    
+    /// <summary>
+    /// Indicates if the button is checked
+    /// </summary>
     public bool IsChecked
     {
         get => GetValue(IsCheckedProperty);

@@ -1,8 +1,11 @@
+<!--
+    This control represents a button with a single icon definid via the Path property
+-->
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
     <Design.PreviewWith>
-        <controls:IconButton Path="{DynamicResource IconStop}" Height="36" Width="36" Hint="Start"/>
+        <controls:IconButton Path="{DynamicResource IconStop}" Height="36" Width="36" />
     </Design.PreviewWith>
 
     <Style Selector="controls|IconButton">

@@ -8,7 +8,8 @@ public class DisplayViewModel: ViewModelBase
     private int _screenWidth;
     private int _screenHeight;
     private int _zoomFactor;
-    private Brush? _background;
+    private bool _isDebugging;
+    private string? _overlayMessage;
 
     // ReSharper disable once UnusedMember.Global
     public DisplayViewModel()
@@ -21,13 +22,29 @@ public class DisplayViewModel: ViewModelBase
         Machine = controller.Machine;
         ScreenWidth = 800;
         ScreenHeight = 400;
-        Background = new SolidColorBrush(Color.FromArgb(0xff, 0xdb, 0xc1, 0x0e));
     }
 
     public MachineController? Controller { get; }
 
     public IZ80Machine? Machine { get; }
 
+    /// <summary>
+    /// Indicates if the machine runs in debug mode
+    /// </summary>
+    public bool IsDebugging
+    {
+        get => _isDebugging;
+        set => SetProperty(ref _isDebugging, value);
+    }
+
+    /// <summary>
+    /// The machine status overlay to display
+    /// </summary>
+    public string? OverlayMessage
+    {
+        get => _overlayMessage;
+        set => SetProperty(ref _overlayMessage, value);
+    }
     public int ZoomFactor
     {
         get => _zoomFactor;
@@ -44,11 +61,5 @@ public class DisplayViewModel: ViewModelBase
     {
         get => _screenHeight;
         set => SetProperty(ref _screenHeight, value);
-    }
-
-    public Brush? Background
-    {
-        get => _background;
-        set => SetProperty(ref _background, value);
     }
 }

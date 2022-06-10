@@ -3,4 +3,5 @@
                     xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls">
     
     <controls:IconButtonBorderBrushConverter x:Key="IconButtonBorderBrushConverter" /> 
+    <controls:MachineStateOverlayVisibilityConverter x:Key="MachineStateOverlayVisibilityConverter" />
 </ResourceDictionary>

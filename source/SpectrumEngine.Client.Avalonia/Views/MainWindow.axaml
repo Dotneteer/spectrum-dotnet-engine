@@ -1,3 +1,6 @@
+<!--
+    This control represents the application's main screen
+-->
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:SpectrumEngine.Client.Avalonia.ViewModels"
@@ -22,6 +25,9 @@
         <StyleInclude Source="/Styles/Themes/Styles.axaml" />
     </Window.Styles>
     
+    <!--
+        On MacOSX, display the native menu, which is a mirror of the inline menu used for Windows and Linux
+    -->
     <NativeMenu.Menu>
         <NativeMenu>
             <NativeMenuItem Header="View">
@@ -106,13 +112,14 @@
                     <MenuItem Header="Step Out" Command="{Binding StepOut}" />
                 </MenuItem>
             </Menu>
-            
+
+
             <local:ToolBarUserControl DockPanel.Dock="Top"
                 IsVisible="{Binding ViewOptions.ShowToolbar}" />
             <local:StatusBarUserControl DockPanel.Dock="Bottom" 
                 IsVisible="{Binding ViewOptions.ShowStatusBar}"/>
             <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineFrames}" />
-            <TextBlock DockPanel.Dock="Bottom" Text="{Binding MachineControllerState}" />
+            
             <local:SpectrumDisplayControl x:Name="SpectrumDisplay" DataContext="{Binding Display}" />
         </DockPanel>
     </Grid>
