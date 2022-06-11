@@ -24,7 +24,7 @@ namespace SpectrumEngine.Client.Avalonia.Views
 
         private void OnDataContextChanged(object? sender, EventArgs e)
         {
-            Vm?.SetMachineController(new MachineController(new ZxSpectrum48Machine()));
+            Vm?.Machine.SetMachineController(new MachineController(new ZxSpectrum48Machine()));
         }
 
         private void MainWindowOnKeyUp(object? sender, KeyEventArgs e)

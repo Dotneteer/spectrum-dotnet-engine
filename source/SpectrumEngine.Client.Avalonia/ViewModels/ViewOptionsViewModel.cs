@@ -30,4 +30,14 @@ public class ViewOptionsViewModel : ViewModelBase
         get => _isMuted;
         set => SetProperty(ref _isMuted, value);
     }
+    
+    public void ToggleShowToolbar() => ShowToolbar = !ShowToolbar;
+
+    public void ToggleShowStatusBar() => ShowStatusBar = !ShowStatusBar;
+
+    public void ToggleShowKeyboard() => ShowKeyboard = !ShowKeyboard;
+
+    public void ToggleMuted() => IsMuted = !IsMuted;
+
+
 }
