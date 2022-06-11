@@ -71,7 +71,7 @@
                 Hint="Pause" />
             <controls:IconButtonSeparator />
             <controls:IconButton
-                IsChecked="{Binding ViewOptions.ShowKeyboard, Mode=TwoWay}"
+                IsChecked="{Binding ViewOptions.ShowKeyboard}"
                 Path="{DynamicResource IconKeyboard}"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Command="{Binding ToggleShowKeyboard}"
@@ -91,9 +91,10 @@
                 Hint="Pause" />
             <controls:IconButtonSeparator />
             <controls:IconButton
-                IsEnabled="True"
+                IsChecked="{Binding AllowFastLoad}"
                 Path="{DynamicResource IconFastLoad}"
                 Fill="{DynamicResource IconDefaultBrush}"
+                Command="{Binding ToggleFastLoad}"
                 Hint="Pause" />
             <controls:IconButton
                 IsEnabled="True"

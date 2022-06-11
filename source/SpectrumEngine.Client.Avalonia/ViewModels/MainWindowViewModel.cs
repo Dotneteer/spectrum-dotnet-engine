@@ -14,6 +14,7 @@ public class MainWindowViewModel : ViewModelBase
     private MachineController? _mc;
     private MachineControllerState _mstate;
     private int _machineFrames;
+    private bool _allowFastLoad;
     private DisplayViewModel? _display;
     private readonly ViewOptionsViewModel _viewOptionsViewModel;
 
@@ -94,6 +95,15 @@ public class MainWindowViewModel : ViewModelBase
         set => SetProperty(ref _mstate, value);
     }
 
+    /// <summary>
+    /// Indicates if fast load from tape is allowed
+    /// </summary>
+    public bool AllowFastLoad
+    {
+        get => _allowFastLoad;
+        set => SetProperty(ref _allowFastLoad, value);
+    }
+    
     /// <summary>
     /// Execute the Start command
     /// </summary>
@@ -240,6 +250,27 @@ public class MainWindowViewModel : ViewModelBase
     public void ToggleShowKeyboard() => ViewOptions.ShowKeyboard = !ViewOptions.ShowKeyboard;
 
     public void ToggleMuted() => ViewOptions.IsMuted = !ViewOptions.IsMuted;
+
+    #endregion
+    
+    #region Tape related parts
+    
+    public void ToggleFastLoad() => AllowFastLoad = !AllowFastLoad;
+
+    public async Task SetTapeFile()
+    {
+        if (App.AppWindow == null) return;
+        
+        var dlg = new OpenFileDialog();
+        dlg.Filters!.Add(new FileDialogFilter() { Name = "TZX Files", Extensions = { "tzx" } });
+        dlg.Filters!.Add(new FileDialogFilter() { Name = "TAP Files", Extensions = { "tap" } });
+        dlg.Filters.Add(new FileDialogFilter() { Name = "All Files", Extensions = { "*" } });
+        dlg.AllowMultiple = true;
+        var result = await dlg.ShowAsync(App.AppWindow);
+        if (result != null)
+        {
+        }
+    }
 
     #endregion
 }

@@ -13,6 +13,8 @@ namespace SpectrumEngine.Client.Avalonia
         public static MainWindowViewModel AppViewModel;
 #pragma warning restore CS8618
         
+        public static MainWindow? AppWindow { get; private set; }
+        
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
@@ -24,7 +26,7 @@ namespace SpectrumEngine.Client.Avalonia
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 AppViewModel = new MainWindowViewModel();
-                desktop.MainWindow = new MainWindow
+                desktop.MainWindow = AppWindow = new MainWindow
                 {
                     DataContext = AppViewModel,
                 };
