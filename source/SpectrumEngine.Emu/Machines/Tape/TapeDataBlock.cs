@@ -49,5 +49,7 @@ public class TapeDataBlock
     /// Length of the pilot tone
     /// </summary>
     public ushort PilotToneLength { get; set; }
+    
+    
 }
 
