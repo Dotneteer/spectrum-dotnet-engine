@@ -1,0 +1,54 @@
+<!--
+    This control represents a button with a single icon defined via the Path property
+-->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
+    <Design.PreviewWith>
+        <controls:IconButton Path="{DynamicResource IconStop}" Height="36" Width="36" />
+    </Design.PreviewWith>
+
+    <Style Selector="controls|IconButton">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border
+                    IsEnabled="{TemplateBinding IsEnabled}"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding IsChecked, Converter={StaticResource IconButtonBorderBrushConverter}}"
+                    BorderThickness="1"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+                    <Button 
+                        x:Name="Button"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}"
+                        Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}"
+                        Command="{TemplateBinding Command}"
+                        CommandParameter="{TemplateBinding CommandParameter}">
+                        <Path
+                            Margin="{TemplateBinding Margin}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Stretch="Uniform"
+                            Fill="{TemplateBinding Fill}"
+                            Data="{TemplateBinding Path}" />
+                    </Button>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    
+    <Style Selector="Button:disabled Path">
+        <Setter Property="Fill" Value="{DynamicResource IconButtonDisabledBrush}"/>
+    </Style>
+
+    <Style Selector="Button:disabled /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{TemplateBinding Background}" />
+        <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" />
+    </Style>
+</Styles>

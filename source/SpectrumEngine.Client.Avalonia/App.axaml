@@ -1,0 +1,29 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:SpectrumEngine.Client.Avalonia"
+             x:Class="SpectrumEngine.Client.Avalonia.App"
+             x:Name="SpectrumEngine">
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Assets/AppResources.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Assets/ToolbarImages/IconResources.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+    
+    <Application.Styles>
+        <FluentTheme Mode="Dark"/>
+        <StyleInclude Source="/Controls/CheckedIndicator.axaml"/>
+        <StyleInclude Source="/Controls/IconButton.axaml"/>
+        <StyleInclude Source="/Controls/IconButtonSeparator.axaml"/>
+        <StyleInclude Source="/Controls/PlainIcon.axaml"/>
+        <StyleInclude Source="/Controls/StatusLabel.axaml"/>
+    </Application.Styles>
+</Application>

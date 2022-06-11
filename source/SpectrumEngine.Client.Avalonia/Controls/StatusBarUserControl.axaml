@@ -1,0 +1,38 @@
+<!--
+    This control represents the status bar of the application
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
+             xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.StatusBarUserControl"
+             
+             Background="{DynamicResource StatusBarBackgroundBrush}"
+             VerticalAlignment="Center"
+             Padding="12,4">
+    <Design.DataContext>
+        <viewModels:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Panel Grid.Column="0" HorizontalAlignment="Left">
+            <controls:StatusLabel
+                Path="{DynamicResource IconVm}"
+                Text="{Binding MachineFrames}" />
+            <!-- <StackPanel Orientation="Horizontal"> -->
+            <!--     <controls:PlainIcon Path="{DynamicResource IconVm}"/> -->
+            <!--     <TextBlock Text="{Binding MachineFrames}" VerticalAlignment="Center"></TextBlock> -->
+            <!-- </StackPanel> -->
+        </Panel>
+        <Panel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <controls:PlainIcon Path="{DynamicResource IconVm}"/>
+        </Panel>
+    </Grid>
+</UserControl>

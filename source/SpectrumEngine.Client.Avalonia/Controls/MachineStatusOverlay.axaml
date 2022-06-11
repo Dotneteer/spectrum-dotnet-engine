@@ -1,0 +1,27 @@
+﻿<!--
+    This control represents the machine status
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.MachineStatusOverlay"
+             IsVisible="{Binding}">
+    <Design.DataContext>
+        <viewModels:DisplayViewModel />
+    </Design.DataContext>
+
+    <Border 
+        IsVisible="{Binding Controller, Converter={StaticResource MachineStateOverlayVisibilityConverter}}"
+        Margin="12"
+        Padding="16,8"
+        Opacity="0.9"
+        VerticalAlignment="Top"
+        HorizontalAlignment="Left"
+        BorderThickness="1"
+        Background="{DynamicResource MachineStatusOverlayBackgroundBrush}">
+        <TextBlock Foreground="{DynamicResource MachineStatusOverlayForegroundBrush}" Text="{Binding OverlayMessage}"></TextBlock>
+    </Border>
+</UserControl>

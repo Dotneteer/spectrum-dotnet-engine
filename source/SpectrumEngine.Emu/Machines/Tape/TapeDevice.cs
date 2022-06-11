@@ -36,7 +36,9 @@ public sealed class TapeDevice: ITapeDevice
     const ulong TOO_LONG_PAUSE = 10_500_000;
 
     // --- Signs that we reached the end of the tape
+#pragma warning disable CS0649
     private bool _tapeEof;
+#pragma warning restore CS0649
 
     // --- The tact when detecting the last MIC bit
     private ulong _tapeLastMicBitTact;

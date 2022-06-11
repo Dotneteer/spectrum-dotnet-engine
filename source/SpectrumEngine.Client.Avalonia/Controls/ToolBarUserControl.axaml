@@ -1,0 +1,106 @@
+<!--
+    This control represents the application's toolbar
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
+             xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="60"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.ToolBarUserControl"
+             Background="{DynamicResource ToolbarGray}">
+    
+    <Design.DataContext>
+        <viewModels:MainWindowViewModel/>
+    </Design.DataContext>
+    
+    <UserControl.Resources>
+        <Color x:Key="IconDefaultColor">White</Color>
+        <Color x:Key="IconPlayColor">LimeGreen</Color>
+        <Color x:Key="IconPauseColor">LightBlue</Color>
+        <Color x:Key="IconStopColor">Red</Color>
+        <SolidColorBrush x:Key="IconDefaultBrush" Color="{DynamicResource IconDefaultColor}"/>
+        <SolidColorBrush x:Key="IconPlayBrush" Color="{DynamicResource IconPlayColor}"/>
+        <SolidColorBrush x:Key="IconPauseBrush" Color="{DynamicResource IconPauseColor}"/>
+        <SolidColorBrush x:Key="IconStopBrush" Color="{DynamicResource IconStopColor}"/>
+
+    </UserControl.Resources>
+    <Border Padding="2">
+        <StackPanel Orientation="Horizontal">
+            <controls:IconButton
+                Path="{DynamicResource IconPlay}"
+                Fill="{DynamicResource IconPlayBrush}"
+                Command="{Binding Start}"
+                Hint="Start" />
+            <controls:IconButton
+                Path="{DynamicResource IconPause}"
+                Fill="{DynamicResource IconPauseBrush}"
+                Command="{Binding Pause}"
+                Hint="Pause" />
+            <controls:IconButton
+                Path="{DynamicResource IconStop}"
+                Fill="{DynamicResource IconStopBrush}"
+                Command="{Binding Stop}"
+                Hint="Stop" />
+            <controls:IconButton
+                Path="{DynamicResource IconRestart}"
+                Fill="{DynamicResource IconPlayBrush}"
+                Command="{Binding Restart}"
+                Hint="Stop" />
+            <controls:IconButtonSeparator />
+            <controls:IconButton
+                Path="{DynamicResource IconStartDebug}"
+                Fill="{DynamicResource IconPlayBrush}"
+                Command="{Binding StartDebug}"
+                Hint="Stop" />
+            <controls:IconButton
+                Path="{DynamicResource IconStepInto}"
+                Fill="{DynamicResource IconPauseBrush}"
+                Command="{Binding StepInto}"
+                Hint="Pause" />
+            <controls:IconButton
+                Path="{DynamicResource IconStepOver}"
+                Fill="{DynamicResource IconPauseBrush}"
+                Command="{Binding StepOver}"
+                Hint="Pause" />
+            <controls:IconButton
+                Path="{DynamicResource IconStepOut}"
+                Fill="{DynamicResource IconPauseBrush}"
+                Command="{Binding StepOut}"
+                Hint="Pause" />
+            <controls:IconButtonSeparator />
+            <controls:IconButton
+                IsChecked="{Binding ViewOptions.ShowKeyboard}"
+                Path="{DynamicResource IconKeyboard}"
+                Fill="{DynamicResource IconDefaultBrush}"
+                Command="{Binding ToggleShowKeyboard}"
+                Hint="Pause" />
+            <controls:IconButtonSeparator />
+            <controls:IconButton
+                IsVisible="{Binding !ViewOptions.IsMuted}"
+                Path="{DynamicResource IconMute}"
+                Fill="{DynamicResource IconDefaultBrush}"
+                Command="{Binding ToggleMuted}"
+                Hint="Pause" />
+            <controls:IconButton
+                IsVisible="{Binding ViewOptions.IsMuted}"
+                Path="{DynamicResource IconUnmute}"
+                Fill="{DynamicResource IconDefaultBrush}"
+                Command="{Binding ToggleMuted}"
+                Hint="Pause" />
+            <controls:IconButtonSeparator />
+            <controls:IconButton
+                IsChecked="{Binding AllowFastLoad}"
+                Path="{DynamicResource IconFastLoad}"
+                Fill="{DynamicResource IconDefaultBrush}"
+                Command="{Binding ToggleFastLoad}"
+                Hint="Pause" />
+            <controls:IconButton
+                IsEnabled="True"
+                Path="{DynamicResource IconRewind}"
+                Fill="{DynamicResource IconDefaultBrush}"
+                Hint="Pause" />
+        </StackPanel>
+    </Border>
+</UserControl>

@@ -1,0 +1,28 @@
+﻿<!--
+    This control represents a label in the status bar
+-->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
+    <Design.PreviewWith>
+        <controls:StatusLabel />
+    </Design.PreviewWith>
+
+    <Style Selector="controls|StatusLabel">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <StackPanel Orientation="Horizontal">
+                    <controls:PlainIcon
+                        Path="{TemplateBinding Path}"
+                        Fill="{TemplateBinding Fill}"/>
+                    <TextBlock 
+                        Text="{TemplateBinding Text}" 
+                        Padding="8,0"
+                        VerticalAlignment="Center">
+                    </TextBlock>
+                </StackPanel>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

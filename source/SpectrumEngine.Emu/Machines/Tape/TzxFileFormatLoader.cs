@@ -123,24 +123,24 @@ public abstract class Tzx3ByteBlockBase : TzxBlockBase
     /// <summary>
     /// Lenght of block data
     /// </summary>
-    public byte[] DataLength { get; set; }
+    public byte[]? DataLength { get; set; }
 
     /// <summary>
     /// Block Data
     /// </summary>
-    public byte[] Data { get; set; }
+    public byte[]? Data { get; set; }
 
     /// <summary>
     /// Override this method to check the content of the block
     /// </summary>
-    public override bool IsValid => GetLength() == Data.Length;
+    public override bool IsValid => GetLength() == Data?.Length;
 
     /// <summary>
     /// Calculates data length
     /// </summary>
     protected int GetLength()
     {
-        return DataLength[0] + (DataLength[1] << 8) + (DataLength[2] << 16);
+        return DataLength![0] + (DataLength[1] << 8) + (DataLength[2] << 16);
     }
 }
 
@@ -213,7 +213,7 @@ public class TzxArchiveInfoBlock : Tzx3ByteBlockBase
     /// <summary>
     /// List of text strings
     /// </summary>
-    public TzxText[] TextStrings { get; set; }
+    public TzxText[]? TextStrings { get; set; }
 
     /// <summary>
     /// The ID of the block
@@ -245,6 +245,7 @@ public class TzxArchiveInfoBlock : Tzx3ByteBlockBase
     {
         writer.Write(Length);
         writer.Write(StringCount);
+        if (TextStrings == null) return;
         foreach (var text in TextStrings)
         {
             text.WriteTo(writer);
@@ -315,7 +316,7 @@ public class TzxCallSequenceBlock : TzxBlockBase
     /// <summary>
     /// Group name bytes
     /// </summary>
-    public ushort[] BlockOffsets { get; set; }
+    public ushort[]? BlockOffsets { get; set; }
 
     /// <summary>
     /// The ID of the block
@@ -339,6 +340,7 @@ public class TzxCallSequenceBlock : TzxBlockBase
     public override void WriteTo(BinaryWriter writer)
     {
         writer.Write(NumberOfCalls);
+        if (BlockOffsets == null) return;
         WriteWords(writer, BlockOffsets);
     }
 }
@@ -351,12 +353,12 @@ public class TzxCustomInfoBlock : Tzx3ByteBlockBase
     /// <summary>
     /// Identification string (in ASCII)
     /// </summary>
-    public byte[] Id { get; set; }
+    public byte[]? Id { get; set; }
 
     /// <summary>
     /// String representation of the ID
     /// </summary>
-    public string IdText => ToAsciiString(Id);
+    public string IdText => ToAsciiString(Id!);
 
     /// <summary>
     /// Length of the custom info
@@ -366,7 +368,7 @@ public class TzxCustomInfoBlock : Tzx3ByteBlockBase
     /// <summary>
     /// Custom information
     /// </summary>
-    public byte[] CustomInfo { get; set; }
+    public byte[]? CustomInfo { get; set; }
 
     /// <summary>
     /// The ID of the block
@@ -390,9 +392,9 @@ public class TzxCustomInfoBlock : Tzx3ByteBlockBase
     /// <param name="writer">Stream to write the block to</param>
     public override void WriteTo(BinaryWriter writer)
     {
-        writer.Write(Id);
+        writer.Write(Id!);
         writer.Write(Length);
-        writer.Write(CustomInfo);
+        writer.Write(CustomInfo!);
     }
 }
 
@@ -414,7 +416,7 @@ public class TzxCswRecordingBlock : TzxBlockBase
     /// <summary>
     /// Sampling rate
     /// </summary>
-    public byte[] SamplingRate { get; set; }
+    public byte[]? SamplingRate { get; set; }
 
     /// <summary>
     /// Compression type
@@ -432,7 +434,7 @@ public class TzxCswRecordingBlock : TzxBlockBase
     /// <summary>
     /// CSW data, encoded according to the CSW file format specification
     /// </summary>
-    public byte[] Data { get; set; }
+    public byte[]? Data { get; set; }
 
     /// <summary>
     /// The ID of the block
@@ -463,16 +465,16 @@ public class TzxCswRecordingBlock : TzxBlockBase
     {
         writer.Write(BlockLength);
         writer.Write(PauseAfter);
-        writer.Write(SamplingRate);
+        writer.Write(SamplingRate!);
         writer.Write(CompressionType);
         writer.Write(PulseCount);
-        writer.Write(Data);
+        writer.Write(Data!);
     }
 
     /// <summary>
     /// Override this method to check the content of the block
     /// </summary>
-    public override bool IsValid => BlockLength == 4 + 3 + 1 + 4 + Data.Length;
+    public override bool IsValid => BlockLength == 4 + 3 + 1 + 4 + Data!.Length;
 }
 
 /// <summary>
@@ -517,8 +519,8 @@ public class TzxDirectRecordingBlock : Tzx3ByteBlockBase
         writer.Write(TactsPerSample);
         writer.Write(PauseAfter);
         writer.Write(LastByteUsedBits);
-        writer.Write(DataLength);
-        writer.Write(Data);
+        writer.Write(DataLength!);
+        writer.Write(Data!);
     }
 }
 
@@ -593,7 +595,7 @@ public class TzxGeneralizedBlock : TzxBlockBase
     /// <remarks>
     /// This field is present only if Totp > 0
     /// </remarks>
-    public TzxSymDef[] PilotSymDef { get; set; }
+    public TzxSymDef[]? PilotSymDef { get; set; }
 
     /// <summary>
     /// Pilot and sync data stream
@@ -601,7 +603,7 @@ public class TzxGeneralizedBlock : TzxBlockBase
     /// <remarks>
     /// This field is present only if Totd > 0
     /// </remarks>
-    public TzxPrle[] PilotStream { get; set; }
+    public TzxPrle[]? PilotStream { get; set; }
 
     /// <summary>
     /// Data symbols definition table
@@ -609,7 +611,7 @@ public class TzxGeneralizedBlock : TzxBlockBase
     /// <remarks>
     /// This field is present only if Totp > 0
     /// </remarks>
-    public TzxSymDef[] DataSymDef { get; set; }
+    public TzxSymDef[]? DataSymDef { get; set; }
 
     /// <summary>
     /// Data stream
@@ -617,7 +619,7 @@ public class TzxGeneralizedBlock : TzxBlockBase
     /// <remarks>
     /// This field is present only if Totd > 0
     /// </remarks>
-    public TzxPrle[] DataStream { get; set; }
+    public TzxPrle[]? DataStream { get; set; }
 
     /// <summary>
     /// The ID of the block
@@ -686,23 +688,23 @@ public class TzxGeneralizedBlock : TzxBlockBase
         writer.Write(Asd);
         for (var i = 0; i < Asp; i++)
         {
-            PilotSymDef[i].WriteTo(writer);
+            PilotSymDef![i].WriteTo(writer);
         }
 
         for (var i = 0; i < Totp; i++)
         {
-            writer.Write(PilotStream[i].Symbol);
+            writer.Write(PilotStream![i].Symbol);
             writer.Write(PilotStream[i].Repetitions);
         }
 
         for (var i = 0; i < Asd; i++)
         {
-            DataSymDef[i].WriteTo(writer);
+            DataSymDef![i].WriteTo(writer);
         }
 
         for (var i = 0; i < Totd; i++)
         {
-            writer.Write(DataStream[i].Symbol);
+            writer.Write(DataStream![i].Symbol);
             writer.Write(DataStream[i].Repetitions);
         }
     }
@@ -725,7 +727,7 @@ public class TzxGlueBlock : TzxBlockBase
     /// <remarks>
     /// Just skip these 9 bytes and you will end up on the next ID.
     /// </remarks>
-    public byte[] Glue { get; set; }
+    public byte[]? Glue { get; set; }
 
     /// <summary>
     /// The ID of the block
@@ -747,7 +749,7 @@ public class TzxGlueBlock : TzxBlockBase
     /// <param name="writer">Stream to write the block to</param>
     public override void WriteTo(BinaryWriter writer)
     {
-        writer.Write(Glue);
+        writer.Write(Glue!);
     }
 }
 
@@ -776,12 +778,12 @@ public class TzxGroupStartBlock : TzxBlockBase
     /// <summary>
     /// Group name bytes
     /// </summary>
-    public byte[] Chars { get; set; }
+    public byte[]? Chars { get; set; }
 
     /// <summary>
     /// Gets the group name
     /// </summary>
-    public string GroupName => ToAsciiString(Chars);
+    public string GroupName => ToAsciiString(Chars!);
 
     /// <summary>
     /// The ID of the block
@@ -805,7 +807,7 @@ public class TzxGroupStartBlock : TzxBlockBase
     public override void WriteTo(BinaryWriter writer)
     {
         writer.Write(Length);
-        writer.Write(Chars);
+        writer.Write(Chars!);
     }
 }
 
@@ -822,7 +824,7 @@ public class TzxHardwareInfoBlock : TzxBlockBase
     /// <summary>
     /// List of machines and hardware
     /// </summary>
-    public TzxHwInfo[] HwInfo { get; set; }
+    public TzxHwInfo[]? HwInfo { get; set; }
 
     /// <summary>
     /// The ID of the block
@@ -852,6 +854,7 @@ public class TzxHardwareInfoBlock : TzxBlockBase
     public override void WriteTo(BinaryWriter writer)
     {
         writer.Write(HwCount);
+        if (HwInfo == null) return;
         foreach (var hw in HwInfo)
         {
             hw.WriteTo(writer);
@@ -1034,12 +1037,12 @@ public class TzxMessageBlock: TzxBlockBase
     /// <summary>
     /// The description bytes
     /// </summary>
-    public byte[] Message;
+    public byte[]? Message;
 
     /// <summary>
     /// The string form of description
     /// </summary>
-    public string MessageText => ToAsciiString(Message);
+    public string MessageText => ToAsciiString(Message!);
 
     /// <summary>
     /// The ID of the block
@@ -1065,7 +1068,7 @@ public class TzxMessageBlock: TzxBlockBase
     {
         writer.Write(Time);
         writer.Write(MessageLength);
-        writer.Write(Message);
+        writer.Write(Message!);
     }
 }
 
@@ -1082,7 +1085,7 @@ public class TzxPulseSequenceBlock : TzxBlockBase
     /// <summary>
     /// Lenght of block data
     /// </summary>
-    public ushort[] PulseLengths { get; set; }
+    public ushort[]? PulseLengths { get; set; }
 
     /// <summary>
     /// The ID of the block
@@ -1106,13 +1109,13 @@ public class TzxPulseSequenceBlock : TzxBlockBase
     public override void WriteTo(BinaryWriter writer)
     {
         writer.Write(PulseCount);
-        WriteWords(writer, PulseLengths);
+        WriteWords(writer, PulseLengths!);
     }
 
     /// <summary>
     /// Override this method to check the content of the block
     /// </summary>
-    public override bool IsValid => PulseCount == PulseLengths.Length;
+    public override bool IsValid => PulseCount == PulseLengths!.Length;
 }
 
 /// <summary>
@@ -1164,8 +1167,8 @@ public class TzxPureBlock : Tzx3ByteBlockBase
         writer.Write(OneBitPulseLength);
         writer.Write(LastByteUsedBits);
         writer.Write(PauseAfter);
-        writer.Write(DataLength);
-        writer.Write(Data);
+        writer.Write(DataLength!);
+        writer.Write(Data!);
     }
 }
 
@@ -1241,7 +1244,7 @@ public class TzxSelectBlock : TzxBlockBase
     /// <summary>
     /// List of selections
     /// </summary>
-    public TzxSelect[] Selections { get; set; }
+    public TzxSelect[]? Selections { get; set; }
 
     /// <summary>
     /// The ID of the block
@@ -1271,6 +1274,7 @@ public class TzxSelectBlock : TzxBlockBase
     {
         writer.Write(Length);
         writer.Write(SelectionCount);
+        if (Selections == null) return;
         foreach (var selection in Selections)
         {
             selection.WriteTo(writer);
@@ -1400,7 +1404,7 @@ public class TzxStandardSpeedBlock : TzxBlockBase
     /// <summary>
     /// Block Data
     /// </summary>
-    public byte[] Data { get; set; }
+    public byte[]? Data { get; set; }
 
     /// <summary>
     /// The ID of the block
@@ -1427,7 +1431,7 @@ public class TzxStandardSpeedBlock : TzxBlockBase
         writer.Write((byte) BlockId);
         writer.Write(PauseAfter);
         writer.Write(DataLength);
-        writer.Write(Data, 0, DataLength);
+        writer.Write(Data!, 0, DataLength);
     }
 }
 
@@ -1490,12 +1494,12 @@ public class TzxTextDescriptionBlock: TzxBlockBase
     /// <summary>
     /// The description bytes
     /// </summary>
-    public byte[] Description;
+    public byte[]? Description;
 
     /// <summary>
     /// The string form of description
     /// </summary>
-    public string DescriptionText => ToAsciiString(Description);
+    public string DescriptionText => ToAsciiString(Description!);
 
     /// <summary>
     /// The ID of the block
@@ -1519,7 +1523,7 @@ public class TzxTextDescriptionBlock: TzxBlockBase
     public override void WriteTo(BinaryWriter writer)
     {
         writer.Write(DescriptionLength);
-        writer.Write(Description);
+        writer.Write(Description!);
     }
 }
 
@@ -1611,8 +1615,8 @@ public class TzxTurboSpeedBlock : Tzx3ByteBlockBase
         writer.Write(PilotToneLength);
         writer.Write(LastByteUsedBits);
         writer.Write(PauseAfter);
-        writer.Write(DataLength);
-        writer.Write(Data);
+        writer.Write(DataLength!);
+        writer.Write(Data!);
     }
 
 }
@@ -1704,12 +1708,12 @@ public class TzxText
     /// <summary>
     /// The description bytes
     /// </summary>
-    public byte[] TextBytes;
+    public byte[]? TextBytes;
 
     /// <summary>
     /// The string form of description
     /// </summary>
-    public string Text => TzxBlockBase.ToAsciiString(TextBytes);
+    public string Text => TzxBlockBase.ToAsciiString(TextBytes!);
 
     /// <summary>
     /// Reads the content of the block from the specified binary stream.
@@ -1730,7 +1734,7 @@ public class TzxText
     {
         writer.Write(Type);
         writer.Write(Length);
-        writer.Write(TextBytes);
+        writer.Write(TextBytes!);
     }
 }
 
@@ -1827,12 +1831,12 @@ public class TzxSelect
     /// <summary>
     /// The description bytes
     /// </summary>
-    public byte[] Description;
+    public byte[]? Description;
 
     /// <summary>
     /// The string form of description
     /// </summary>
-    public string DescriptionText => TzxBlockBase.ToAsciiString(Description);
+    public string DescriptionText => TzxBlockBase.ToAsciiString(Description!);
 
     public TzxSelect(byte length)
     {
@@ -1858,7 +1862,7 @@ public class TzxSelect
     {
         writer.Write(BlockOffset);
         writer.Write(DescriptionLength);
-        writer.Write(Description);
+        writer.Write(Description!);
     }
 }
 
