@@ -97,9 +97,10 @@
                 Command="{Binding Machine.ToggleFastLoad}"
                 Hint="Pause" />
             <controls:IconButton
-                IsEnabled="True"
+                IsEnabled="{Binding !Machine.TapeMode, Converter={StaticResource TapeModeVisibilityConverter}}"
                 Path="{DynamicResource IconRewind}"
                 Fill="{DynamicResource IconDefaultBrush}"
+                Command="{Binding Machine.Rewind}"
                 Hint="Pause" />
         </StackPanel>
     </Border>

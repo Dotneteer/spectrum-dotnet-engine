@@ -6,4 +6,6 @@ namespace SpectrumEngine.Emu;
 public static class MachinePropNames
 {
     public const string TapeMode = "TapeMode";
+    public const string TapeData = "TapeData";
+    public const string RewindRequested = "RewindRequested";
 }

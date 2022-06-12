@@ -5,7 +5,7 @@ namespace SpectrumEngine.Emu;
 /// <summary>
 /// This class implements the ZX Spectrum screen device.
 /// </summary>
-public sealed class ScreenDevice : IScreenDevice
+public sealed class ScreenDevice : IScreenDevice, IDisposable
 {
     // --- These are the default memory contention values we use
     private static byte[] DefaultContentionValues = new byte[] { 6, 5, 4, 3, 2, 1, 0, 0 };
@@ -148,6 +148,13 @@ public sealed class ScreenDevice : IScreenDevice
         Machine = machine;
         _configuration = ZxSpectrum48ScreenConfiguration;
         _flashFlag = false;
+    }
+
+    /// <summary>
+    /// Release resources
+    /// </summary>
+    public void Dispose()
+    {
     }
 
     /// <summary>

@@ -3,8 +3,18 @@
 /// <summary>
 /// This class implements the ZX Spectrum tape device.
 /// </summary>
-public sealed class TapeDevice: ITapeDevice
+public sealed class TapeDevice: ITapeDevice, IDisposable
 {
+    /// <summary>
+    /// Pilot pulses in the header blcok 
+    /// </summary>
+    const int HEADER_PILOT_COUNT = 8063;
+
+    /// <summary>
+    /// Pilot pulses in the data block 
+    /// </summary>
+    const int  DATA_PILOT_COUNT = 3223;
+    
     /// <summary>
     /// This value is the LD_START address of the ZX Spectrum ROM. This routine checks the tape input for a pilot 
     /// pulse. When we reach this address, a LOAD operation has just been started.
@@ -37,6 +47,9 @@ public sealed class TapeDevice: ITapeDevice
 
     // --- The current tape mode
     private TapeMode _tapeMode;
+
+    // --- The tape blocks to play
+    private List<TapeDataBlock>? _blocks;
     
     // --- Signs that we reached the end of the tape
     private bool _tapeEof;
@@ -46,7 +59,40 @@ public sealed class TapeDevice: ITapeDevice
 
     // --- The last MIC bit value
     private bool _tapeLastMicBit;
+    
+    // --- The index of the block to read
+    private int _currentBlockIndex;
 
+    // --- The current phase of playing a tape block
+    private PlayPhase _playPhase;
+
+    // --- The CPU tact when the tape load started
+    private ulong _tapeStartTact;
+
+    // --- End tact of the current pilot
+    private ulong _tapePilotEndPos;
+
+    // --- End tact of the SYNC1 pulse
+    private ulong _tapeSync1EndPos;
+    
+    // --- End tact of the SYNC2 pulse
+    private ulong _tapeSync2EndPos;
+
+    // --- Start tact of the current bit
+    private ulong _tapeBitStartPos;
+    
+    // --- Length of the current bit pulse
+    private ulong _tapePulseBitLength;
+    
+    // --- Bit mask of the current bit beign read
+    private int _tapeBitMask;
+
+    // --- Tape termination tact
+    private ulong _tapeTermEndPos;
+    
+    // --- Tape pause position
+    private ulong _tapePauseEndPos;
+    
     /// <summary>
     /// Initialize the tape device and assign it to its host machine.
     /// </summary>
@@ -54,8 +100,18 @@ public sealed class TapeDevice: ITapeDevice
     public TapeDevice(IZxSpectrum48Machine machine)
     {
         Machine = machine;
+        Machine.MachinePropertyChanged += OnMachinePropertiesChanged;
+        _currentBlockIndex = -1;
     }
 
+    /// <summary>
+    /// Release resources
+    /// </summary>
+    public void Dispose()
+    {
+        Machine.MachinePropertyChanged -= OnMachinePropertiesChanged;
+    }
+    
     /// <summary>
     /// Get the current operation mode of the tape device.
     /// </summary>
@@ -150,6 +206,32 @@ public sealed class TapeDevice: ITapeDevice
     /// </summary>
     public bool GetTapeEarBit()
     {
+        // --- Calculate the current position
+        var pos = Machine.Tacts - _tapeStartTact;
+        var block = _blocks![_currentBlockIndex];
+        
+        // --- PILOT or SYNC phase?
+        if (_playPhase is PlayPhase.Pilot or PlayPhase.Sync)
+        {
+            // --- Generate appropriate pilot or sync EAR bit
+            if (pos <= _tapePilotEndPos) {
+                // --- Alternating pilot pulses
+                return pos / block.PilotPulseLength % 2 != 0;
+            }
+            
+            // --- Test SYNC1 position
+            if (pos <= _tapeSync1EndPos) {
+                // --- Turn to SYNC phase
+                _playPhase = PlayPhase.Sync;
+                return false; // => Low EAR bit
+            }
+
+            // --- Test SYNC_2 position
+            if (pos <= _tapeSync2EndPos) {
+                _playPhase = PlayPhase.Sync;
+                return true; // => High EAR bit
+            }
+        }
         // TODO: Implement this method
         return false;
     }
@@ -164,20 +246,15 @@ public sealed class TapeDevice: ITapeDevice
     }
 
     /// <summary>
-    /// Sets the data to be loaded from the tape when emulating a LOAD
-    /// </summary>
-    /// <param name="dataBlocks">List of data blocks to play</param>
-    public void SetTapeData(IEnumerable<TapeDataBlock> dataBlocks)
-    {
-        // TODO: Implement this method
-    }
-
-    /// <summary>
     /// Rewinds the tape, sets the first block as the beginning to play
     /// </summary>
     public void RewindTape()
     {
-        // TODO: Implement this method
+        if (TapeMode == TapeMode.Passive)
+        {
+            _currentBlockIndex = -1;
+            _tapeEof = false;
+        }
     }
 
     /// <summary>
@@ -185,7 +262,35 @@ public sealed class TapeDevice: ITapeDevice
     /// </summary>
     private void NextTapeBlock()
     {
-        // TODO
+        // --- No next block situations
+        if (_tapeEof) return;
+        if (_blocks == null)
+        {
+            _tapeEof = true;
+            return;
+        }
+        if (_currentBlockIndex >= _blocks.Count)
+        {
+            _tapeEof = true;
+            return;
+        }
+        
+        // --- Current block completed?
+        if (_playPhase == PlayPhase.Completed)
+        {
+            return;
+        }
+        
+        // --- Ok, we have a current block to play
+        var block = _blocks[++_currentBlockIndex];
+        _playPhase = PlayPhase.Pilot;
+        _tapeStartTact = Machine.Tacts;
+        _tapePilotEndPos = block.PilotPulseLength * ((block.Data[0] & 0x80) != 0
+            ? (ulong)DATA_PILOT_COUNT
+            : HEADER_PILOT_COUNT);
+        _tapeSync1EndPos = _tapePilotEndPos + block.Sync1PulseLength;
+        _tapeSync2EndPos = _tapeSync1EndPos + block.Sync2PulseLength;
+        _tapeBitMask = 0x80;
     }
 
     /// <summary>
@@ -194,5 +299,30 @@ public sealed class TapeDevice: ITapeDevice
     private void FastLoad()
     {
 
+    }
+
+    /// <summary>
+    /// Respond to the tape data changes and rewind requests
+    /// </summary>
+    private void OnMachinePropertiesChanged(object? sender, (string key, object? value) args)
+    {
+        switch (args.key)
+        {
+            case MachinePropNames.TapeData:
+                if (args.value is List<TapeDataBlock> blocks)
+                {
+                    _blocks = blocks;
+                    _currentBlockIndex = -1;
+                    _tapeEof = false;
+                }       
+                break;
+            case MachinePropNames.RewindRequested:
+                if (args.value is true)
+                {
+                    // TODO: Implement the rewind operation
+                    Machine.SetMachineProperty(MachinePropNames.RewindRequested, null);
+                }
+                break;
+        }
     }
 }

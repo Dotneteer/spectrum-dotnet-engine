@@ -27,12 +27,6 @@ public interface ITapeDevice: IGenericDevice<IZxSpectrum48Machine>
     void ProcessMicBit(bool micBit);
 
     /// <summary>
-    /// Sets the data to be loaded from the tape when emulating a LOAD
-    /// </summary>
-    /// <param name="dataBlocks">List of data blocks to play</param>
-    void SetTapeData(IEnumerable<TapeDataBlock> dataBlocks);
-
-    /// <summary>
     /// Rewinds the tape, sets the first block as the beginning to play
     /// </summary>
     void RewindTape();

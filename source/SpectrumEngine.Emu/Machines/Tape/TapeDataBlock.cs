@@ -44,12 +44,7 @@ public class TapeDataBlock
     /// Lenght of ther end sync pulse
     /// </summary>
     public ushort EndSyncPulseLenght { get; set; } = 947;
-    
-    /// <summary>
-    /// Length of the pilot tone
-    /// </summary>
-    public ushort PilotToneLength { get; set; }
-    
+  
     
 }
 

@@ -75,6 +75,10 @@
                         Header="Set Tape File"
                         IsEnabled="{Binding !Machine.TapeMode, Converter={StaticResource TapeModeVisibilityConverter}}"
                         Command="{Binding Machine.SetTapeFile}" />
+                    <NativeMenuItem
+                        Header="Rewind Tape"
+                        IsEnabled="{Binding !Machine.TapeMode, Converter={StaticResource TapeModeVisibilityConverter}}"
+                        Command="{Binding Machine.Rewind}" />
                 </NativeMenu>
             </NativeMenuItem>
         </NativeMenu>
@@ -130,11 +134,13 @@
                             <local:CheckedIndicator IsChecked="{Binding Machine.AllowFastLoad}" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="Set Tape File" Command="{Binding Machine.SetTapeFile}">
-                    </MenuItem>
+                    <MenuItem Header="Set Tape File" Command="{Binding Machine.SetTapeFile}" />
+                    <MenuItem
+                        Header="Rewind Tape"
+                        IsEnabled="{Binding !Machine.TapeMode, Converter={StaticResource TapeModeVisibilityConverter}}"
+                        Command="{Binding Machine.Rewind}" />
                 </MenuItem>
             </Menu>
-
 
             <local:ToolBarUserControl DockPanel.Dock="Top"
                 IsVisible="{Binding ViewOptions.ShowToolbar}" />

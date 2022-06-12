@@ -35,6 +35,10 @@ public class TapReader
                 var tapBlock = new TapeDataBlock();
                 var length = _reader.ReadUInt16();
                 tapBlock.Data = _reader.ReadBytes(length);
+                if (tapBlock.Data.Length != length)
+                {
+                    throw new InvalidOperationException("Error when reading data block");
+                }
                 DataBlocks.Add(tapBlock);
             }
             return true;

@@ -1,6 +1,11 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Metadata;
+using SkiaSharp;
 using SpectrumEngine.Emu;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
@@ -95,7 +100,7 @@ public class MachineViewModel: ViewModelBase
     public TapeMode TapeMode
     {
         get => _tapeMode;
-        set => SetProperty(ref _tapeMode, value);
+        private set => SetProperty(ref _tapeMode, value);
     }
     
     /// <summary>
@@ -235,15 +240,76 @@ public class MachineViewModel: ViewModelBase
     public async Task SetTapeFile()
     {
         if (App.AppWindow == null) return;
-        
+
+        // --- Allow the user to select a tape file
         var dlg = new OpenFileDialog();
-        dlg.Filters!.Add(new FileDialogFilter() { Name = "TZX Files", Extensions = { "tzx" } });
         dlg.Filters!.Add(new FileDialogFilter() { Name = "TAP Files", Extensions = { "tap" } });
+        dlg.Filters.Add(new FileDialogFilter() { Name = "TZX Files", Extensions = { "tzx" } });
+        
+        // --- BUG: Avalonia 0.10.15 does not allow "*" filter an MacOSX
         dlg.Filters.Add(new FileDialogFilter() { Name = "All Files", Extensions = { "*" } });
         dlg.AllowMultiple = true;
         var result = await dlg.ShowAsync(App.AppWindow);
+
+        // --- Check for selected tape file
         if (result != null)
         {
+            // --- Read tape data
+            var reader = new BinaryReader(File.OpenRead(result[0]));
+            
+            // --- Try as TZX
+            var tzxReader = new TzxReader(reader);
+            var readerFound = false;
+            try
+            {
+                readerFound = tzxReader.ReadContent();
+            }
+            catch (Exception)
+            {
+                // --- This exception is intentionally ingnored
+            }
+
+            if (readerFound)
+            {
+                // --- This is a .TZX format
+                var dataBlocks = tzxReader.DataBlocks.Select(b => b.GetDataBlock()).Where(b => b != null).ToList();
+                _mc?.Machine.SetMachineProperty(MachinePropNames.TapeData, dataBlocks);
+                return;
+            }
+
+            // --- Let's assume .TAP tap format
+            reader.BaseStream.Seek(0, SeekOrigin.Begin);
+            var tapReader = new TapReader(reader);
+            try
+            {
+                readerFound = tapReader.ReadContent();
+                if (readerFound)
+                {
+                    // --- This is a .TAP format
+                    var dataBlocks = tapReader.DataBlocks.ToList();
+                    _mc?.Machine.SetMachineProperty(MachinePropNames.TapeData, dataBlocks);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Could not read tape file");
+                }
+            }
+            catch (Exception ex)
+            {
+                // --- Perhaps wrong file format
+                _mc?.Machine.SetMachineProperty(MachinePropNames.TapeData, null);
+                var msgBox = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxStandardWindow("Error",
+                    $"Cannot parse the contents of the specified file as a valid TZX or TAP file ({ex.Message})");
+                await msgBox.Show();
+            }
         }
+    }
+
+    /// <summary>
+    /// Send a request to the machine to rewind the tape
+    /// </summary>
+    public void Rewind()
+    {
+        _mc?.Machine.SetMachineProperty(MachinePropNames.RewindRequested, true);
     }
 }
