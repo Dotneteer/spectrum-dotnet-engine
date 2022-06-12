@@ -1,4 +1,6 @@
-﻿namespace SpectrumEngine.Emu;
+﻿using System.Diagnostics;
+
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class implements the ZX Spectrum tape device.
@@ -82,7 +84,9 @@ public sealed class TapeDevice: ITapeDevice, IDisposable
     private ulong _tapeBitStartPos;
     
     // --- Length of the current bit pulse
-    private ulong _tapePulseBitLength;
+    private ulong _tapeBitPulseLen;
+
+    private int _dataIndex;
     
     // --- Bit mask of the current bit beign read
     private int _tapeBitMask;
@@ -216,7 +220,7 @@ public sealed class TapeDevice: ITapeDevice, IDisposable
             // --- Generate appropriate pilot or sync EAR bit
             if (pos <= _tapePilotEndPos) {
                 // --- Alternating pilot pulses
-                return pos / block.PilotPulseLength % 2 != 0;
+                return pos / block.PilotPulseLength % 2 == 0;
             }
             
             // --- Test SYNC1 position
@@ -231,9 +235,79 @@ public sealed class TapeDevice: ITapeDevice, IDisposable
                 _playPhase = PlayPhase.Sync;
                 return true; // => High EAR bit
             }
+            
+            // --- Now, we're ready to change to Data phase
+            _playPhase = PlayPhase.Data;
+            _tapeBitStartPos = _tapeSync2EndPos;
+
+            // --- Select the bit pulse length of the first bit of the data byte
+            _tapeBitPulseLen = (block.Data[_dataIndex] & _tapeBitMask) != 0
+                ? block.OneBitPulseLength
+                : block.ZeroBitPulseLength;
         }
-        // TODO: Implement this method
-        return false;
+        
+        // --- Data phase?
+        if (_playPhase == PlayPhase.Data) {
+            // --- Generate current bit pulse
+            var bitPos = pos - _tapeBitStartPos;
+            
+            // --- First pulse?
+            if (bitPos < _tapeBitPulseLen) {
+                return false; // => Low EAR bit
+            }
+            if (bitPos < _tapeBitPulseLen * 2) {
+                return true; // => High EAR bit
+            }
+
+            // --- Move to the next bit
+            _tapeBitMask >>= 1;
+            if (_tapeBitMask == 0) {
+                // --- Move to the next byte
+                _tapeBitMask = 0x80;
+                _dataIndex++;
+            }
+
+            // --- Do we have more bits to play?
+            if (_dataIndex < block.Data.Length) {
+                // --- Prepare to the next bit
+                _tapeBitStartPos += 2 * _tapeBitPulseLen;
+
+                // --- Select the bit pulse length of the next bit
+                _tapeBitPulseLen = (block.Data[_dataIndex] & _tapeBitMask) != 0
+                    ? block.OneBitPulseLength
+                    : block.ZeroBitPulseLength;
+
+                // --- We're in the first pulse of the next bit
+                return false; // => Low EAR bit
+            }
+
+            // --- We've played all data bytes, let's send the terminating pulse
+            _playPhase = PlayPhase.TermSync;
+
+            // --- Prepare to the terminating sync
+            _tapeTermEndPos = _tapeBitStartPos + 2 * _tapeBitPulseLen + block.EndSyncPulseLenght;
+            return false;
+        }
+
+        // --- Termination sync?
+        if (_playPhase == PlayPhase.TermSync) {
+            if (pos < _tapeTermEndPos) {
+                return false; // => Low EAR bit
+            }
+
+            // --- We terminated the data, it's pause time 
+            _playPhase = PlayPhase.Pause;
+            _tapePauseEndPos = _tapeTermEndPos + (ulong)(Machine.BaseClockFrequency * Machine.ClockMultiplier);
+            return true; // => High EAR bit
+        }
+
+        // --- Completion? Move to the next block
+        if (pos > _tapePauseEndPos) {
+            NextTapeBlock();
+        }
+
+        // --- Return with a high bit
+        return true;
     }
 
     /// <summary>
@@ -269,7 +343,7 @@ public sealed class TapeDevice: ITapeDevice, IDisposable
             _tapeEof = true;
             return;
         }
-        if (_currentBlockIndex >= _blocks.Count)
+        if (_currentBlockIndex >= _blocks.Count - 1)
         {
             _tapeEof = true;
             return;
@@ -290,6 +364,7 @@ public sealed class TapeDevice: ITapeDevice, IDisposable
             : HEADER_PILOT_COUNT);
         _tapeSync1EndPos = _tapePilotEndPos + block.Sync1PulseLength;
         _tapeSync2EndPos = _tapeSync1EndPos + block.Sync2PulseLength;
+        _dataIndex = 0;
         _tapeBitMask = 0x80;
     }
 

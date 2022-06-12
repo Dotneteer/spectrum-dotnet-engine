@@ -1,4 +1,6 @@
-﻿namespace SpectrumEngine.Emu;
+﻿using System.Diagnostics;
+
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class is intended to be a reusable base class for emulators using the Z80 CPU.
