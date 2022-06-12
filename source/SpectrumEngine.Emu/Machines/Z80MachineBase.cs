@@ -14,6 +14,9 @@ public abstract class Z80MachineBase :
     // --- This flag indicates that the last machine frame has been completed.
     private bool _frameCompleted;
 
+    // --- Store machine-specific properties here
+    private readonly Dictionary<string, object> _machineProps = new(StringComparer.InvariantCultureIgnoreCase);
+    
     /// <summary>
     /// The folder where the ROM files are stored
     /// </summary>
@@ -24,6 +27,44 @@ public abstract class Z80MachineBase :
     /// </summary>
     public ExecutionContext ExecutionContext { get; } = new();
 
+    /// <summary>
+    /// Gets the value of the machine property with the specified key
+    /// </summary>
+    /// <param name="key">Machine property key</param>
+    /// <returns>Value of the property, if found; otherwise, null</returns>
+    public object? GetMachineProperty(string key)
+        => _machineProps.TryGetValue(key, out var value) ? value : null;
+
+    /// <summary>
+    /// Sets the value of the specified machine property
+    /// </summary>
+    /// <param name="key">Machine property key</param>
+    /// <param name="value">Machine property value</param>
+    public void SetMachineProperty(string key, object? value)
+    {
+        if (value == null)
+        {
+            if (!_machineProps.ContainsKey(key)) return;
+            
+            _machineProps.Remove(key);
+            MachinePropertyChanged?.Invoke(this, (key, null));
+        }
+        else
+        {
+            if (_machineProps.TryGetValue(key, out var oldValue))
+            {
+                if (oldValue == value) return;
+            }
+            _machineProps[key] = value;
+            MachinePropertyChanged?.Invoke(this, (key, value));
+        }
+    }
+
+    /// <summary>
+    /// This event fires when the state of a machine property changes.
+    /// </summary>
+    public event EventHandler<(string propertyName, object? newValue)>? MachinePropertyChanged;
+    
     /// <summary>
     /// Get the duration of a machine frame in milliseconds.
     /// </summary>
@@ -68,14 +109,6 @@ public abstract class Z80MachineBase :
     }
 
     /// <summary>
-    /// Emulates turning on a machine (after it has been turned off).
-    /// </summary>
-    public override void HardReset()
-    {
-        base.HardReset();
-    }
-
-    /// <summary>
     /// This method emulates resetting a machine with a hardware reset button.
     /// </summary>
     public override void Reset()
@@ -99,7 +132,7 @@ public abstract class Z80MachineBase :
     /// <exception cref="InvalidOperationException">
     /// The ROM cannot be loaded from the named resource.
     /// </exception>
-    public static byte[] LoadRomFromResource(string romName, int page = -1)
+    protected static byte[] LoadRomFromResource(string romName, int page = -1)
     {
         var resourceName = page == -1 ? romName : $"{romName}-{page}";
         var currentAsm = typeof(Z80MachineBase).Assembly;
@@ -112,6 +145,7 @@ public abstract class Z80MachineBase :
         using var stream = new StreamReader(resMan).BaseStream;
         stream.Seek(0, SeekOrigin.Begin);
         var bytes = new byte[stream.Length];
+        // ReSharper disable once MustUseReturnValue
         stream.Read(bytes, 0, bytes.Length);
         return bytes;
     }
@@ -153,7 +187,7 @@ public abstract class Z80MachineBase :
     /// <summary>
     /// The multiplier for the pixel height (defaults to 1)
     /// </summary>
-    public abstract int VerticalPixelRation { get; }
+    public abstract int VerticalPixelRatio { get; }
 
     /// <summary>
     /// Gets the buffer that stores the rendered pixels

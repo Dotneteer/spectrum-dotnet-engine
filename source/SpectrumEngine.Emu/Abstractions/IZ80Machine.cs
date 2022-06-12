@@ -12,6 +12,25 @@ public interface IZ80Machine : IZ80Cpu
     ExecutionContext ExecutionContext { get; }
 
     /// <summary>
+    /// Gets the value of the machine property with the specified key
+    /// </summary>
+    /// <param name="key">Machine property key</param>
+    /// <returns>Value of the property, if found; otherwise, null</returns>
+    object? GetMachineProperty(string key);
+
+    /// <summary>
+    /// Sets the value of the specified machine property
+    /// </summary>
+    /// <param name="key">Machine property key</param>
+    /// <param name="value">Machine property value</param>
+    void SetMachineProperty(string key, object? value);
+    
+    /// <summary>
+    /// This event fires when the state of a machine property changes.
+    /// </summary>
+    event EventHandler<(string propertyName, object? newValue)>? MachinePropertyChanged;
+
+    /// <summary>
     /// Get the duration of a machine frame in milliseconds.
     /// </summary>
     double FrameTimeInMs { get; }
@@ -67,7 +86,7 @@ public interface IZ80Machine : IZ80Cpu
     /// <summary>
     /// The multiplier for the pixel height (defaults to 1)
     /// </summary>
-    int VerticalPixelRation { get; }
+    int VerticalPixelRatio { get; }
 
     /// <summary>
     /// Gets the buffer that stores the rendered pixels

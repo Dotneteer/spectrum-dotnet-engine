@@ -35,10 +35,11 @@ public sealed class TapeDevice: ITapeDevice
     /// </summary>
     const ulong TOO_LONG_PAUSE = 10_500_000;
 
+    // --- The current tape mode
+    private TapeMode _tapeMode;
+    
     // --- Signs that we reached the end of the tape
-#pragma warning disable CS0649
     private bool _tapeEof;
-#pragma warning restore CS0649
 
     // --- The tact when detecting the last MIC bit
     private ulong _tapeLastMicBitTact;
@@ -58,7 +59,16 @@ public sealed class TapeDevice: ITapeDevice
     /// <summary>
     /// Get the current operation mode of the tape device.
     /// </summary>
-    public TapeMode TapeMode { get; private set; }
+    public TapeMode TapeMode
+    {
+        get => _tapeMode;
+        private set
+        {
+            if (_tapeMode == value) return;
+            _tapeMode = value;
+            Machine.SetMachineProperty(MachinePropNames.TapeMode, value);
+        }
+    }
 
     /// <summary>
     /// Get the machine that hosts the device.

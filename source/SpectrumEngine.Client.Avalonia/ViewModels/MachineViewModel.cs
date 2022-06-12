@@ -17,6 +17,7 @@ public class MachineViewModel: ViewModelBase
     private MachineControllerState _mstate;
     private int _machineFrames;
     private bool _allowFastLoad;
+    private TapeMode _tapeMode;
 
     /// <summary>
     /// Bind this view model to its parent
@@ -38,6 +39,7 @@ public class MachineViewModel: ViewModelBase
         {
             _mc.StateChanged -= OnStateChanged;
             _mc.FrameCompleted -= OnFrameCompleted;
+            _mc.Machine.MachinePropertyChanged -= OnMachinePropertyChanged;
         }
 
         // --- Set up the new controller and handle the state changes
@@ -45,6 +47,7 @@ public class MachineViewModel: ViewModelBase
         _machineFrames = 0;
         _mc.StateChanged += OnStateChanged;
         _mc.FrameCompleted += OnFrameCompleted;
+        _mc.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
         OnStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
 
         // --- Update view model properties
@@ -67,6 +70,14 @@ public class MachineViewModel: ViewModelBase
         {
             if (completed) MachineFrames++;
         }
+
+        void OnMachinePropertyChanged(object? sender, (string key, object? value) args)
+        {
+            if (args.key == MachinePropNames.TapeMode && args.value is TapeMode tapeMode)
+            {
+                TapeMode = tapeMode;
+            }
+        }
     }
 
     /// <summary>
@@ -78,6 +89,15 @@ public class MachineViewModel: ViewModelBase
         set => SetProperty(ref _mstate, value);
     }
 
+    /// <summary>
+    /// The current tape mode
+    /// </summary>
+    public TapeMode TapeMode
+    {
+        get => _tapeMode;
+        set => SetProperty(ref _tapeMode, value);
+    }
+    
     /// <summary>
     /// Indicates if fast load from tape is allowed
     /// </summary>

@@ -4,4 +4,5 @@
     
     <controls:IconButtonBorderBrushConverter x:Key="IconButtonBorderBrushConverter" /> 
     <controls:MachineStateOverlayVisibilityConverter x:Key="MachineStateOverlayVisibilityConverter" />
+    <controls:TapeModeVisibilityConverter x:Key="TapeModeVisibilityConverter" />
 </ResourceDictionary>

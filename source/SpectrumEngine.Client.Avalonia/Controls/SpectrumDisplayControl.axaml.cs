@@ -133,6 +133,27 @@ public partial class SpectrumDisplayControl : UserControl
         });
     }
 
+    private void OnMachinePropertyChanged(object? sender, (string key, object? value) args)
+    {
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (args.key != MachinePropNames.TapeMode || args.value is not TapeMode tapeMode) return;
+            if (Vm?.Controller == null) return;
+            
+            switch (tapeMode)
+            {
+                case TapeMode.Load:
+                    Vm.OverlayMessage = "LOAD mode";
+                    break;
+                        
+                case TapeMode.Save:
+                    Vm.OverlayMessage = "SAVE mode";
+                    break;
+            }
+            Vm?.RaisePropertyChanged(nameof(Vm.Controller));
+        });
+    }
+    
     /// <summary>
     /// Handle the keyboard event
     /// </summary>
@@ -167,6 +188,7 @@ public partial class SpectrumDisplayControl : UserControl
         {
             oldVm.Controller.FrameCompleted -= OnControllerFrameCompleted;
             oldVm.Controller.StateChanged -= OnControllerStateChanged;
+            oldVm.Controller.Machine.MachinePropertyChanged -= OnMachinePropertyChanged;
         }
 
         // --- Setup the events of the new controller
@@ -175,6 +197,7 @@ public partial class SpectrumDisplayControl : UserControl
         {
             newVm.Controller.FrameCompleted += OnControllerFrameCompleted;
             newVm.Controller.StateChanged += OnControllerStateChanged;
+            newVm.Controller.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
             if (newVm.Machine is ZxSpectrum48Machine zxMachine)
             {
                 // TODO: Add samples to the sound stream

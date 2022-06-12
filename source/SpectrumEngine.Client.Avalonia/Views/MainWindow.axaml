@@ -73,6 +73,7 @@
                         IsChecked="{Binding Machine.AllowFastLoad}" />
                     <NativeMenuItem
                         Header="Set Tape File"
+                        IsEnabled="{Binding !Machine.TapeMode, Converter={StaticResource TapeModeVisibilityConverter}}"
                         Command="{Binding Machine.SetTapeFile}" />
                 </NativeMenu>
             </NativeMenuItem>

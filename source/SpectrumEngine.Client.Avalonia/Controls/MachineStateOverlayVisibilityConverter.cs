@@ -10,8 +10,19 @@ namespace SpectrumEngine.Client.Avalonia.Controls;
 /// </summary>
 public class MachineStateOverlayVisibilityConverter : IValueConverter
 {
-    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        => value is MachineController mc && (mc.State != MachineControllerState.Running || mc.IsDebugging);
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is MachineController mc)
+        {
+            if (mc.State != MachineControllerState.Running || mc.IsDebugging)
+            {
+                return true;
+            }
+            var tapeMode = mc.Machine.GetMachineProperty(MachinePropNames.TapeMode);
+            return tapeMode is TapeMode tp && tp != TapeMode.Passive && mc.State == MachineControllerState.Running;
+        }
+        return value;
+    }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {

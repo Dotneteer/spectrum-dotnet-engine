@@ -48,7 +48,8 @@ public sealed class ZxSpectrum48Machine :
         BaseClockFrequency = 3_500_000;
         ClockMultiplier = 1;
         DelayedAddressBus = true;
-
+        SetMachineProperty(MachinePropNames.TapeMode, TapeMode.Passive);
+        
         // --- Create and initialize devices
         KeyboardDevice = new KeyboardDevice(this);
         ScreenDevice = new ScreenDevice(this);
@@ -269,7 +270,7 @@ public sealed class ZxSpectrum48Machine :
     public override byte DoReadPort(ushort address)
     {
         return (address & 0x0001) == 0 
-            ? ReadPort0xFE(address)
+            ? ReadPort0Xfe(address)
             : FloatingBusDevice.ReadFloatingPort();
     }
 
@@ -313,7 +314,7 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     /// <param name="address">Port address</param>
     /// <returns>Byte value read from the generic port</returns>
-    private byte ReadPort0xFE(ushort address)
+    private byte ReadPort0Xfe(ushort address)
     {
         var portValue = KeyboardDevice.GetKeyLineStatus(address);
         bool earBit;
@@ -483,7 +484,7 @@ public sealed class ZxSpectrum48Machine :
     /// <summary>
     /// The multiplier for the pixel height (defaults to 1)
     /// </summary>
-    public override int VerticalPixelRation => 1;
+    public override int VerticalPixelRatio => 1;
 
     /// <summary>
     /// Gets the buffer that stores the rendered pixels
