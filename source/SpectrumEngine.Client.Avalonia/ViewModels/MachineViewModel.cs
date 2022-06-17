@@ -1,11 +1,9 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Metadata;
-using SkiaSharp;
 using SpectrumEngine.Emu;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
@@ -115,11 +113,25 @@ public class MachineViewModel: ViewModelBase
             _mc?.Machine.SetMachineProperty(MachinePropNames.FastLoad, value);
         }
     }
+
+    /// <summary>
+    /// Raised when a machine command has been executed
+    /// </summary>
+    public EventHandler? CommandExecuted;
+
+    private void RaiseCommandExecuted()
+    {
+        CommandExecuted?.Invoke(this, EventArgs.Empty);
+    }
     
     /// <summary>
     /// Execute the Start command
     /// </summary>
-    public void Start() => _mc?.Start();
+    public void Start()
+    {
+        _mc?.Start();
+        RaiseCommandExecuted();
+    }
 
     /// <summary>
     /// Enable/disable the Start command
@@ -133,7 +145,11 @@ public class MachineViewModel: ViewModelBase
     /// <summary>
     /// Execute the Pause command
     /// </summary>
-    public Task Pause() => _mc!.Pause();
+    public Task Pause()
+    {
+        RaiseCommandExecuted();
+        return _mc!.Pause();
+    }
 
     /// <summary>
     /// Enable/disable the Pause command
@@ -147,7 +163,11 @@ public class MachineViewModel: ViewModelBase
     /// <summary>
     /// Execute the Stop command
     /// </summary>
-    public Task Stop() => _mc!.Stop();
+    public Task Stop()
+    {
+        RaiseCommandExecuted();
+        return _mc!.Stop();
+    }
 
     /// <summary>
     /// Enable/disable the Stop command
@@ -162,7 +182,11 @@ public class MachineViewModel: ViewModelBase
     /// <summary>
     /// Execute the Restart command
     /// </summary>
-    public Task Restart() => _mc!.Restart();
+    public Task Restart()
+    {
+        RaiseCommandExecuted();
+        return _mc!.Restart();
+    }
 
     /// <summary>
     /// Enable/disable the Restart command
@@ -177,7 +201,11 @@ public class MachineViewModel: ViewModelBase
     /// <summary>
     /// Execute the StartDebug command
     /// </summary>
-    public void StartDebug() => _mc!.StartDebug();
+    public void StartDebug()
+    {
+        RaiseCommandExecuted();
+        _mc!.StartDebug();
+    }
 
     /// <summary>
     /// Enable/disable the StartDebug command
@@ -191,7 +219,11 @@ public class MachineViewModel: ViewModelBase
     /// <summary>
     /// Execute the StepInto command
     /// </summary>
-    public void StepInto() => _mc!.StepInto();
+    public void StepInto()
+    {
+        _mc!.StepInto();
+        RaiseCommandExecuted();
+    }
 
     /// <summary>
     /// Enable/disable the StepInto command
@@ -205,7 +237,11 @@ public class MachineViewModel: ViewModelBase
     /// <summary>
     /// Execute the StepOver command
     /// </summary>
-    public void StepOver() => _mc!.StepOver();
+    public void StepOver()
+    {
+        _mc!.StepOver();
+        RaiseCommandExecuted();
+    }
 
     /// <summary>
     /// Enable/disable the StepOver command
@@ -219,7 +255,11 @@ public class MachineViewModel: ViewModelBase
     /// <summary>
     /// Execute the StepOut command
     /// </summary>
-    public void StepOut() => _mc!.StepOut();
+    public void StepOut()
+    {
+        _mc!.StepOut();
+        RaiseCommandExecuted();
+    }
 
     /// <summary>
     /// Enable/disable the StepOut command
@@ -306,6 +346,7 @@ public class MachineViewModel: ViewModelBase
                     $"Cannot parse the contents of the specified file as a valid TZX or TAP file ({ex.Message})");
                 await msgBox.Show();
             }
+            RaiseCommandExecuted();
         }
     }
 
@@ -315,5 +356,6 @@ public class MachineViewModel: ViewModelBase
     public void Rewind()
     {
         _mc?.Machine.SetMachineProperty(MachinePropNames.RewindRequested, true);
+        RaiseCommandExecuted();
     }
 }

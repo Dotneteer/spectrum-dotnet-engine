@@ -19,6 +19,7 @@ public class MainWindowViewModel : ViewModelBase
             ShowKeyboard = false,
             IsMuted = false
         };
+        Preferences = new PreferencesViewModel();
     }
     
     /// <summary>
@@ -44,6 +45,10 @@ public class MainWindowViewModel : ViewModelBase
         get => _display;
         set => SetProperty(ref _display, value);
     }
-
-
+    
+    /// <summary>
+    /// Application preferences
+    /// </summary>
+    public PreferencesViewModel Preferences { get; }
+    
 }

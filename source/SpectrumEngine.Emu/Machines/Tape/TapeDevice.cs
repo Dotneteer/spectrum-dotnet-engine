@@ -1,4 +1,6 @@
-﻿namespace SpectrumEngine.Emu;
+﻿using System.Text;
+
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class implements the ZX Spectrum tape device.
@@ -15,6 +17,11 @@ public sealed class TapeDevice: ITapeDevice
     /// </summary>
     private const int  DATA_PILOT_COUNT = 3223;
     
+    /// <summary>
+    /// Minimum number of pilot pulses before SYNC1 (while saving)
+    /// </summary>
+    private const int MIN_PILOT_PULSE_COUNT = 3000;
+
     /// <summary>
     /// This value is the LD_START address of the ZX Spectrum ROM. This routine checks the tape input for a pilot 
     /// pulse. When we reach this address, a LOAD operation has just been started.
@@ -45,6 +52,16 @@ public sealed class TapeDevice: ITapeDevice
     /// </summary>
     private const ulong TOO_LONG_PAUSE = 10_500_000;
 
+    /// <summary>
+    /// The width tolerance of save pulses
+    /// </summary>
+    private const int SAVE_PULSE_TOLERANCE = 24;
+
+    /// <summary>
+    /// Lenght of the data buffer to allocate for the SAVE operation
+    /// </summary>
+    private const int DATA_BUFFER_LENGTH = 0x1_0000;
+
     // --- The current tape mode
     private TapeMode _tapeMode;
 
@@ -54,12 +71,6 @@ public sealed class TapeDevice: ITapeDevice
     // --- Signs that we reached the end of the tape
     private bool _tapeEof;
 
-    // --- The tact when detecting the last MIC bit
-    private ulong _tapeLastMicBitTact;
-
-    // --- The last MIC bit value
-    private bool _tapeLastMicBit;
-    
     // --- The index of the block to read
     private int _currentBlockIndex;
 
@@ -84,6 +95,7 @@ public sealed class TapeDevice: ITapeDevice
     // --- Length of the current bit pulse
     private ulong _tapeBitPulseLen;
 
+    // --- Index of byte to load within the current data block
     private int _dataIndex;
     
     // --- Bit mask of the current bit beign read
@@ -94,6 +106,39 @@ public sealed class TapeDevice: ITapeDevice
     
     // --- Tape pause position
     private ulong _tapePauseEndPos;
+
+    // --- Object that knows how to save the tape information
+    private ITapeSaver? _tapeSaver;
+    
+    // --- The tact when detecting the last MIC bit
+    private ulong _tapeLastMicBitTact;
+
+    // --- The last MIC bit value
+    private bool _tapeLastMicBit;
+
+    // --- Current save phase
+    private SavePhase _savePhase;
+
+    // --- Pilot pulse counter used during a SAVE operation
+    private int _pilotPulseCount;
+
+    // --- Value of the last data pulse detected
+    private MicPulseType _prevDataPulse;
+
+    // --- Offset of the last bit being saved
+    private int _bitOffset;
+    
+    // --- Data byte being saved
+    private byte _dataByte;
+    
+    // --- Length of data being saved
+    private int _dataLength;
+    
+    // --- Buffer collecting the date saved
+    private byte[] _dataBuffer = Array.Empty<byte>();
+
+    // --- Number of data blocks beign saved
+    private int _dataBlockCount;
     
     /// <summary>
     /// Initialize the tape device and assign it to its host machine.
@@ -322,8 +367,158 @@ public sealed class TapeDevice: ITapeDevice
     /// <param name="micBit">MIC bit to process</param>
     public void ProcessMicBit(bool micBit)
     {
-        // TODO: Implement this method
-    }
+        if (_tapeMode != TapeMode.Save || _tapeLastMicBit == micBit)
+        {
+            return;
+        }
+
+        var length = Machine.Tacts - _tapeLastMicBitTact;
+
+            // --- Classify the pulse by its width
+            var pulse = MicPulseType.None;
+            if (length is >= TapeDataBlock.BIT_0_PL - SAVE_PULSE_TOLERANCE 
+                and <= TapeDataBlock.BIT_0_PL + SAVE_PULSE_TOLERANCE)
+            {
+                pulse = MicPulseType.Bit0;
+            }
+            else if (length is >= TapeDataBlock.BIT_1_PL - SAVE_PULSE_TOLERANCE 
+                and <= TapeDataBlock.BIT_1_PL + SAVE_PULSE_TOLERANCE)
+            {
+                pulse = MicPulseType.Bit1;
+            }
+            if (length is >= TapeDataBlock.PILOT_PL - SAVE_PULSE_TOLERANCE
+                and <= TapeDataBlock.PILOT_PL + SAVE_PULSE_TOLERANCE)
+            {
+                pulse = MicPulseType.Pilot;
+            }
+            else if (length is >= TapeDataBlock.SYNC_1_PL - SAVE_PULSE_TOLERANCE
+                and <= TapeDataBlock.SYNC_1_PL + SAVE_PULSE_TOLERANCE)
+            {
+                pulse = MicPulseType.Sync1;
+            }
+            else if (length is >= TapeDataBlock.SYNC_2_PL - SAVE_PULSE_TOLERANCE
+                and <= TapeDataBlock.SYNC_2_PL + SAVE_PULSE_TOLERANCE)
+            {
+                pulse = MicPulseType.Sync2;
+            }
+            else if (length is >= TapeDataBlock.TERM_SYNC - SAVE_PULSE_TOLERANCE
+                and <= TapeDataBlock.TERM_SYNC + SAVE_PULSE_TOLERANCE)
+            {
+                pulse = MicPulseType.TermSync;
+            }
+            else if (length < TapeDataBlock.SYNC_1_PL - SAVE_PULSE_TOLERANCE)
+            {
+                pulse = MicPulseType.TooShort;
+            }
+            else if (length > TapeDataBlock.PILOT_PL + 2 * SAVE_PULSE_TOLERANCE)
+            {
+                pulse = MicPulseType.TooLong;
+            }
+
+            _tapeLastMicBit = micBit;
+            _tapeLastMicBitTact = Machine.Tacts;
+
+            // --- Lets process the pulse according to the current SAVE phase and pulse width
+            var nextPhase = SavePhase.Error;
+            switch (_savePhase)
+            {
+                case SavePhase.None:
+                    if (pulse == MicPulseType.TooShort || pulse == MicPulseType.TooLong)
+                    {
+                        nextPhase = SavePhase.None;
+                    }
+                    else if (pulse == MicPulseType.Pilot)
+                    {
+                        _pilotPulseCount = 1;
+                        nextPhase = SavePhase.Pilot;
+                    }
+                    break;
+                case SavePhase.Pilot:
+                    if (pulse == MicPulseType.Pilot)
+                    {
+                        _pilotPulseCount++;
+                        nextPhase = SavePhase.Pilot;
+                    }
+                    else if (pulse == MicPulseType.Sync1 && _pilotPulseCount >= MIN_PILOT_PULSE_COUNT)
+                    {
+                        nextPhase = SavePhase.Sync1;
+                    }
+                    break;
+                case SavePhase.Sync1:
+                    if (pulse == MicPulseType.Sync2)
+                    {
+                        nextPhase = SavePhase.Sync2;
+                    }
+                    break;
+                case SavePhase.Sync2:
+                    if (pulse == MicPulseType.Bit0 || pulse == MicPulseType.Bit1)
+                    {
+                        // --- Next pulse starts data, prepare for receiving it
+                        _prevDataPulse = pulse;
+                        nextPhase = SavePhase.Data;
+                        _bitOffset = 0;
+                        _dataByte = 0;
+                        _dataLength = 0;
+                        _dataBuffer = new byte[DATA_BUFFER_LENGTH];
+                    }
+                    break;
+                case SavePhase.Data:
+                    if (pulse == MicPulseType.Bit0 || pulse == MicPulseType.Bit1)
+                    {
+                        if (_prevDataPulse == MicPulseType.None)
+                        {
+                            // --- We are waiting for the second half of the bit pulse
+                            _prevDataPulse = pulse;
+                            nextPhase = SavePhase.Data;
+                        }
+                        else if (_prevDataPulse == pulse)
+                        {
+                            // --- We received a full valid bit pulse
+                            nextPhase = SavePhase.Data;
+                            _prevDataPulse = MicPulseType.None;
+
+                            // --- Add this bit to the received data
+                            _bitOffset++;
+                            _dataByte = (byte)(_dataByte * 2 + (pulse == MicPulseType.Bit0 ? 0 : 1));
+                            if (_bitOffset == 8)
+                            {
+                                // --- We received a full byte
+                                _dataBuffer[_dataLength++] = _dataByte;
+                                _dataByte = 0;
+                                _bitOffset = 0;
+                            }
+                        }
+                    }
+                    else if (pulse == MicPulseType.TermSync)
+                    {
+                        // --- We received the terminating pulse, the datablock has been completed
+                        nextPhase = SavePhase.None;
+                        _dataBlockCount++;
+
+                        // --- Create and save the data block
+                        var dataBlock = new TzxStandardSpeedBlock
+                        {
+                            Data = _dataBuffer,
+                            DataLength = (ushort) _dataLength
+                        };
+
+                        // --- If this is the first data block, extract the name from the header
+                        if (_dataBlockCount == 1 && _dataLength == 0x13)
+                        {
+                            // --- It's a header!
+                            var sb = new StringBuilder(16);
+                            for (var i = 2; i <= 11; i++)
+                            {
+                                sb.Append((char) _dataBuffer[i]);
+                            }
+                            var name = sb.ToString().TrimEnd();
+                            _tapeSaver?.SetName(name);
+                        }
+                        _tapeSaver?.SaveTapeBlock(dataBlock);
+                    }
+                    break;
+            }
+            _savePhase = nextPhase;    }
 
     /// <summary>
     /// Moves to the next tape block to play
@@ -471,6 +666,13 @@ public sealed class TapeDevice: ITapeDevice
     {
         switch (args.key)
         {
+            case MachinePropNames.TapeSaver:
+                if (args.value is ITapeSaver tapeSaver)
+                {
+                    _tapeSaver = tapeSaver;
+                }
+                break;
+            
             case MachinePropNames.TapeData:
                 if (args.value is List<TapeDataBlock> blocks)
                 {

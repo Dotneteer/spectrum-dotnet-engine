@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace SpectrumEngine.Emu;
+﻿namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class is intended to be a reusable base class for emulators using the Z80 CPU.
@@ -22,7 +20,7 @@ public abstract class Z80MachineBase :
     /// <summary>
     /// The folder where the ROM files are stored
     /// </summary>
-    public const string ROM_RESOURCE_FOLDER = "Roms";
+    private const string ROM_RESOURCE_FOLDER = "Roms";
 
     /// <summary>
     /// This property stores the execution context where the emulated machine runs its execution loop.
