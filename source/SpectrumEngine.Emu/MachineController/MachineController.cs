@@ -179,6 +179,7 @@ public class MachineController
         Context.TerminationPartition = terminationPartition;
         Context.TerminationPoint = terminationPoint;
         Context.Cancelled = false;
+        
         State = MachineControllerState.Running;
         _machineTask = Task.Run(async () =>
         {

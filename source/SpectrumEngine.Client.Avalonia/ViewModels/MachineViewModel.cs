@@ -109,7 +109,11 @@ public class MachineViewModel: ViewModelBase
     public bool AllowFastLoad
     {
         get => _allowFastLoad;
-        set => SetProperty(ref _allowFastLoad, value);
+        set
+        {
+            SetProperty(ref _allowFastLoad, value);
+            _mc?.Machine.SetMachineProperty(MachinePropNames.FastLoad, value);
+        }
     }
     
     /// <summary>

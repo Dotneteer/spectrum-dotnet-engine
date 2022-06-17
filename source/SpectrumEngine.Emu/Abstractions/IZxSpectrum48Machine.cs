@@ -66,10 +66,5 @@ public interface IZxSpectrum48Machine : IZ80Machine
     /// Indicates if the currently selected ROM is the ZX Spectrum 48 ROM
     /// </summary>
     bool IsSpectrum48RomSelected { get; }
-
-    /// <summary>
-    /// Indicates that the machine can use the FAST LOAD mode
-    /// </summary>
-    bool UseFastLoad { get; }
 }
 

@@ -1,51 +1,49 @@
-﻿using System.Diagnostics;
-
-namespace SpectrumEngine.Emu;
+﻿namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class implements the ZX Spectrum tape device.
 /// </summary>
-public sealed class TapeDevice: ITapeDevice, IDisposable
+public sealed class TapeDevice: ITapeDevice
 {
     /// <summary>
     /// Pilot pulses in the header blcok 
     /// </summary>
-    const int HEADER_PILOT_COUNT = 8063;
+    private const int HEADER_PILOT_COUNT = 8063;
 
     /// <summary>
     /// Pilot pulses in the data block 
     /// </summary>
-    const int  DATA_PILOT_COUNT = 3223;
+    private const int  DATA_PILOT_COUNT = 3223;
     
     /// <summary>
     /// This value is the LD_START address of the ZX Spectrum ROM. This routine checks the tape input for a pilot 
     /// pulse. When we reach this address, a LOAD operation has just been started.
     /// </summary>
-    const ushort TAPE_LOAD_BYTES_ROUTINE = 0x056C;
+    private const ushort TAPE_LOAD_BYTES_ROUTINE = 0x056C;
 
     /// <summary>
     /// This value is the address in the ZX Spectrum ROM at which the LOAD routine tests if the tape header is
     /// correct. The address points to a RET NZ instruction that returns in case of an incorrect header. We use this
     /// address to emulate an error in fast tape mode.
     /// </summary>
-    const ushort TAPE_LOAD_BYTES_INVALID_HEADER_ROUTINE = 0x05B6;
+    private const ushort TAPE_LOAD_BYTES_INVALID_HEADER_ROUTINE = 0x05B6;
 
     /// <summary>
     /// This value is the address in the ZX Spectrum ROM at which the LOAD routine returns after successfully loading
     /// a tape block.
     /// </summary>
-    const ushort TAPE_LOAD_BYTES_RESUME = 0x05E2;
+    private const ushort TAPE_LOAD_BYTES_RESUME = 0x05E2;
 
     /// <summary>
     /// This value is the address of the SA-BYTES routine in the ZX Spectrum ROM, which indicates that a SAVE
     /// operation has just been started.
     /// </summary>
-    const ushort TAPE_SAVE_BYTES_ROUTINE = 0x04C2;
+    private const ushort TAPE_SAVE_BYTES_ROUTINE = 0x04C2;
 
     /// <summary>
     /// Represents the minimum length of a too long pause in CPU tacts
     /// </summary>
-    const ulong TOO_LONG_PAUSE = 10_500_000;
+    private const ulong TOO_LONG_PAUSE = 10_500_000;
 
     // --- The current tape mode
     private TapeMode _tapeMode;
@@ -105,7 +103,7 @@ public sealed class TapeDevice: ITapeDevice, IDisposable
     {
         Machine = machine;
         Machine.MachinePropertyChanged += OnMachinePropertiesChanged;
-        _currentBlockIndex = -1;
+        Reset();
     }
 
     /// <summary>
@@ -140,7 +138,10 @@ public sealed class TapeDevice: ITapeDevice, IDisposable
     /// </summary>
     public void Reset()
     {
-        // TODO: Implement this method
+        _tapeMode = TapeMode.Passive;
+        _currentBlockIndex = -1;
+        _tapeEof = false;
+        _playPhase = PlayPhase.None;
     }
 
     /// <summary>
@@ -156,32 +157,37 @@ public sealed class TapeDevice: ITapeDevice, IDisposable
                 // --- Not in ZX Spectrum 48 ROM, nothing to do
                 return;
             }
-            if (Machine.Regs.PC == TAPE_LOAD_BYTES_ROUTINE)
+            switch (Machine.Regs.PC)
             {
-                // --- We just entered into the LOAD routine
-                TapeMode = TapeMode.Load;
-                NextTapeBlock();
-                if (Machine.UseFastLoad)
+                case TAPE_LOAD_BYTES_ROUTINE:
                 {
+                    // --- We just entered into the LOAD routine
+                    TapeMode = TapeMode.Load;
+                    NextTapeBlock();
+                
+                    // --- Do we allow fast loading mode?
+                    var allowFastLoad = Machine.GetMachineProperty(MachinePropNames.FastLoad);
+                    if (allowFastLoad is not true) return;
+                
                     // --- Emulate loading the current block in fast mode.
                     FastLoad();
                     TapeMode = TapeMode.Passive;
+                    return;
                 }
-                return;
+                
+                case TAPE_SAVE_BYTES_ROUTINE:
+                    // --- Turn on SAVE mode
+                    TapeMode = TapeMode.Save;
+                    _tapeLastMicBitTact = Machine.Tacts;
+                    _tapeLastMicBit = true;
+                    //tapeSavePhase = SP_NONE;
+                    //tapePilotPulseCount = 0;
+                    //tapeDataBlockCount = 0;
+                    //tapePrevDataPulse = 0;
+                    //tapeSaveDataLen = 0;
+                    break;
             }
 
-            if (Machine.Regs.PC == TAPE_SAVE_BYTES_ROUTINE)
-            {
-                // --- Turn on SAVE mode
-                TapeMode = TapeMode.Save;
-                _tapeLastMicBitTact = Machine.Tacts;
-                _tapeLastMicBit = true;
-                //tapeSavePhase = SP_NONE;
-                //tapePilotPulseCount = 0;
-                //tapeDataBlockCount = 0;
-                //tapePrevDataPulse = 0;
-                //tapeSaveDataLen = 0;
-            }
             return;
         }
 
@@ -320,18 +326,6 @@ public sealed class TapeDevice: ITapeDevice, IDisposable
     }
 
     /// <summary>
-    /// Rewinds the tape, sets the first block as the beginning to play
-    /// </summary>
-    public void RewindTape()
-    {
-        if (TapeMode == TapeMode.Passive)
-        {
-            _currentBlockIndex = -1;
-            _tapeEof = false;
-        }
-    }
-
-    /// <summary>
     /// Moves to the next tape block to play
     /// </summary>
     private void NextTapeBlock()
@@ -373,7 +367,101 @@ public sealed class TapeDevice: ITapeDevice, IDisposable
     /// </summary>
     private void FastLoad()
     {
+        // --- Stop playing if no more blocks
+        if (_tapeEof)
+        {
+            return;
+        }
 
+        var block = _blocks![_currentBlockIndex];
+        var dataIndex = 0;
+        var regs = Machine.Regs;
+
+        // -- Move AF' to AF
+        regs.AF = regs._AF_;
+
+        // -- Check if it is a VERIFY
+        var isVerify = (regs.AF & 0xff01) == 0xff00;
+
+        // --- At this point IX contains the address to load the data, 
+        // --- DE shows the #of bytes to load. A contains 0x00 for header, 
+        // --- 0xFF for data block
+        if (block.Data[dataIndex] != regs.A)
+        {
+            // --- This block has a different type we're expecting
+            regs.A ^= regs.L;
+            // --- Reset Z and C
+            regs.F &= 0xbe;
+            regs.PC = TAPE_LOAD_BYTES_INVALID_HEADER_ROUTINE;
+            NextTapeBlock();
+            return;
+        }
+
+        // --- It is time to load the block
+        regs.H = regs.A;
+
+        // --- Skip the header byte
+        dataIndex++;
+        while (regs.DE > 0)
+        {
+            regs.L = block.Data[dataIndex];
+            if (isVerify)
+            {
+                // -- VERIFY operation
+                if (Machine.DoReadMemory(regs.IX) != regs.L)
+                {
+                    // --- We read a different byte, it's an error
+                    // --- Reset Z and C
+                    regs.F &= 0xbe;
+                    regs.PC = TAPE_LOAD_BYTES_INVALID_HEADER_ROUTINE;
+                    return;
+                }
+            }
+
+            // --- Store the loaded byte
+            Machine.DoWriteMemory(regs.IX, regs.L);
+
+            // --- Calculate the checksum
+            regs.H ^= regs.L;
+
+            // --- Increment the data pointers
+            dataIndex++;
+            regs.IX++;
+
+            // --- Decrement byte count
+            regs.DE--;
+        }
+
+        // --- Check the end of the data stream
+        if (dataIndex > block.Data.Length - 1)
+        {
+            // --- Read over the expected length
+            // --- Reset Carry to sign error
+            regs.F &= 0xfe;
+        }
+        else
+        {
+            // --- Verify checksum
+            if (block.Data[dataIndex] != regs.H)
+            {
+                // --- Wrong checksum
+                // --- Reset Carry to sign error
+                regs.F &= 0xfe;
+            }
+            else
+            {
+                // --- Block read successfully, set Carry
+                regs.F |= Z80Cpu.FlagsSetMask.C;
+            }
+        }
+
+        regs.PC = TAPE_LOAD_BYTES_RESUME;
+
+        // --- Sign completion of this block
+        _playPhase = PlayPhase.Pause;
+
+        // --- Imitate, we're over the pause period
+        _tapePauseEndPos = 0;
     }
 
     /// <summary>
@@ -391,10 +479,13 @@ public sealed class TapeDevice: ITapeDevice, IDisposable
                     _tapeEof = false;
                 }       
                 break;
+            
             case MachinePropNames.RewindRequested:
                 if (args.value is true)
                 {
-                    // TODO: Implement the rewind operation
+                    _currentBlockIndex = -1;
+                    _tapeEof = false;
+                    _playPhase = PlayPhase.None;
                     Machine.SetMachineProperty(MachinePropNames.RewindRequested, null);
                 }
                 break;

@@ -29,11 +29,6 @@ public sealed class ExecutionContext
     public ushort? TerminationPoint { get; set; }
 
     /// <summary>
-    /// Custom properties that a particular machine can define for an execution context.
-    /// </summary>
-    public readonly Dictionary<string, object> ContextProperties = new();
-
-    /// <summary>
     /// This property describes the termination reason of the last machine execution loop. It returns null if the
     /// execution loop has not been started at least once.
     /// </summary>

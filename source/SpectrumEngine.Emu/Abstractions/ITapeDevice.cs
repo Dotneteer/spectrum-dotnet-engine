@@ -25,11 +25,6 @@ public interface ITapeDevice: IGenericDevice<IZxSpectrum48Machine>
     /// </summary>
     /// <param name="micBit">MIC bit to process</param>
     void ProcessMicBit(bool micBit);
-
-    /// <summary>
-    /// Rewinds the tape, sets the first block as the beginning to play
-    /// </summary>
-    void RewindTape();
 }
 
 /// <summary>
