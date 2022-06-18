@@ -7,11 +7,6 @@ namespace SpectrumEngine.Emu;
 public interface ITapeSaver
 {
     /// <summary>
-    /// Creates a tape file with the specified name
-    /// </summary>
-    void CreateTapeFile();
-
-    /// <summary>
     /// This method sets the name of the file according to the 
     /// Spectrum SAVE HEADER information
     /// </summary>
@@ -23,10 +18,4 @@ public interface ITapeSaver
     /// </summary>
     /// <param name="block">Tape block to save</param>
     void SaveTapeBlock(TzxStandardSpeedBlock block);
-
-    /// <summary>
-    /// The tape provider can finalize the tape when all 
-    /// TZX blocks are written.
-    /// </summary>
-    void FinalizeTapeFile();
 }

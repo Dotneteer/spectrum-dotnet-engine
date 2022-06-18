@@ -5,12 +5,12 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels;
 /// </summary>
 public class PreferencesViewModel: ViewModelBase
 {
-    private string _saveFolder;
+    private string? _saveFolder;
 
     /// <summary>
     /// The folder to persist files resulting from SAVE operations
     /// </summary>
-    public string SaveFolder
+    public string? SaveFolder
     {
         get => _saveFolder;
         set => SetProperty(ref _saveFolder, value);
