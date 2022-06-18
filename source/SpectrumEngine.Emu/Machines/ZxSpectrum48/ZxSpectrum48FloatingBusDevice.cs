@@ -3,7 +3,7 @@
 /// <summary>
 /// This class implements the ZX Spectrum 48 floating bus device.
 /// </summary>
-public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice, IDisposable
+public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice
 {
     /// <summary>
     /// Initialize the floating port device and assign it to its host machine.
@@ -31,7 +31,7 @@ public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice, IDisposa
     /// </summary>
     public void Reset()
     {
-        // TODO: Implement this method
+        // --- Intentionally empty
     }
 
     /// <summary>
@@ -40,8 +40,21 @@ public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice, IDisposa
     /// <returns></returns>
     public byte ReadFloatingPort()
     {
-        // TODO: Implement reading from the floating bus
-        return 0xff;
+        var screen = Machine.ScreenDevice;
+        var renderingTact = screen.RenderingTactTable[Machine.CurrentFrameTact - 5];
+        switch (renderingTact.Phase)
+        {
+            case RenderingPhase.BorderFetchPixel:
+            case RenderingPhase.DisplayB1FetchB2:
+            case RenderingPhase.DisplayB2FetchB1:
+                return Machine.DoReadMemory((ushort)(screen.MemoryScreenOffset + renderingTact.PixelAddress));
+            case RenderingPhase.BorderFetchAttr:
+            case RenderingPhase.DisplayB1FetchA2:
+            case RenderingPhase.DisplayB2FetchA1:
+                return Machine.DoReadMemory((ushort)(screen.MemoryScreenOffset + renderingTact.AttributeAddress));
+            default:
+                return 0xff;
+        }
     }
 }
 

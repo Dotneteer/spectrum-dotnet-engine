@@ -1416,7 +1416,7 @@ public class TzxStandardSpeedBlock : TzxBlockBase
     /// </summary>
     /// <returns>Data block, if the TZX block represents one; otherwise, null</returns>
     public override TapeDataBlock GetDataBlock()
-        => new TapeDataBlock { Data = Data! };
+        => new() { Data = Data! };
 
     /// <summary>
     /// Reads the content of the block from the specified binary stream.
@@ -1589,6 +1589,13 @@ public class TzxTurboSpeedBlock : Tzx3ByteBlockBase
     /// The ID of the block
     /// </summary>
     public override int BlockId => 0x11;
+
+    /// <summary>
+    /// Returns the data block this TZX block represents
+    /// </summary>
+    /// <returns>Data block, if the TZX block represents one; otherwise, null</returns>
+    public override TapeDataBlock GetDataBlock()
+        => new() { Data = Data! };
 
     /// <summary>
     /// Reads the content of the block from the specified binary stream.

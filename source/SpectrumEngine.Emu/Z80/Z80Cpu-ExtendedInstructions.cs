@@ -1,4 +1,5 @@
-﻿namespace SpectrumEngine.Emu;
+﻿// ReSharper disable InconsistentNaming
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class implements the emulation of the Z80 CPU.
@@ -159,7 +160,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void Neg()
     {
-        byte tmp = Regs.A;
+        var tmp = Regs.A;
         Regs.A = 0;
         Sub8(tmp);
     }
@@ -638,7 +639,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void Rrd()
     {
-        byte tmp = ReadMemory(Regs.HL);
+        var tmp = ReadMemory(Regs.HL);
         TactPlus4(Regs.HL);
         WriteMemory(Regs.HL, (byte)((Regs.A << 4) | (tmp >> 4)));
         Regs.A = (byte)((Regs.A & 0xf0) | (tmp & 0x0f));
@@ -738,7 +739,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void Rld()
     {
-        byte tmp = ReadMemory(Regs.HL);
+        var tmp = ReadMemory(Regs.HL);
         TactPlus4(Regs.HL);
         WriteMemory(Regs.HL, (byte)((tmp << 4) | (Regs.A & 0x0f)));
         Regs.A = (byte)((Regs.A & 0xf0) | (tmp >> 4));
@@ -910,7 +911,7 @@ public partial class Z80Cpu
     {
         ushort tmp = FetchCodeByte();
         tmp += (ushort)(FetchCodeByte() << 8);
-        byte val = ReadMemory(tmp);
+        var val = ReadMemory(tmp);
         tmp += 1;
         Regs.WZ = tmp;
         Regs.SP = (ushort)((ReadMemory(tmp) << 8) + val);
@@ -953,7 +954,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void Ldi()
     {
-        byte tmp = ReadMemory(Regs.HL);
+        var tmp = ReadMemory(Regs.HL);
         Regs.BC--;
         WriteMemory(Regs.DE, tmp);
         TactPlus2(Regs.DE);
@@ -987,8 +988,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void Cpi()
     {
-        byte value = ReadMemory(Regs.HL);
-        byte tmp = (byte)(Regs.A - value);
+        var value = ReadMemory(Regs.HL);
+        var tmp = (byte)(Regs.A - value);
         var lookup =
         ((Regs.A & 0x08) >> 3) |
           ((value & 0x08) >> 2) |
@@ -999,7 +1000,7 @@ public partial class Z80Cpu
         Regs.F = (byte)
         ((Regs.F & FlagsSetMask.C) |
         (Regs.BC != 0 ? (FlagsSetMask.PV | FlagsSetMask.N) : FlagsSetMask.N) |
-          s_HalfCarrySubFlags![lookup] |
+          s_HalfCarrySubFlags[lookup] |
         (tmp != 0 ? 0 : FlagsSetMask.Z) |
           (tmp & FlagsSetMask.S));
         if ((Regs.F & FlagsSetMask.H) != 0)
@@ -1035,12 +1036,12 @@ public partial class Z80Cpu
     private void Ini()
     {
         TactPlus1(Regs.IR);
-        byte tmp = ReadPort(Regs.BC);
+        var tmp = ReadPort(Regs.BC);
         WriteMemory(Regs.HL, tmp);
         Regs.WZ = (ushort)(Regs.BC + 1);
         Regs.B--;
         Regs.HL++;
-        byte tmp2 = (byte)(tmp + Regs.C + 1);
+        var tmp2 = (byte)(tmp + Regs.C + 1);
         Regs.F = (byte)
             (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
             (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
@@ -1073,12 +1074,12 @@ public partial class Z80Cpu
     private void Outi()
     {
         TactPlus1(Regs.IR);
-        byte tmp = ReadMemory(Regs.HL);
+        var tmp = ReadMemory(Regs.HL);
         Regs.B--;
-        Regs.WZ = (byte)(Regs.BC + 1);
+        Regs.WZ = (ushort)(Regs.BC + 1);
         WritePort(Regs.BC, tmp);
         Regs.HL++;
-        byte tmp2 = (byte)(tmp + Regs.L);
+        var tmp2 = (byte)(tmp + Regs.L);
         Regs.F = (byte)
             (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
             (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
@@ -1107,7 +1108,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void Ldd()
     {
-        byte tmp = ReadMemory(Regs.HL);
+        var tmp = ReadMemory(Regs.HL);
         Regs.BC--;
         WriteMemory(Regs.DE, tmp);
         TactPlus2(Regs.DE);
@@ -1141,8 +1142,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void Cpd()
     {
-        byte value = ReadMemory(Regs.HL);
-        byte tmp = (byte)(Regs.A - value);
+        var value = ReadMemory(Regs.HL);
+        var tmp = (byte)(Regs.A - value);
         var lookup =
         ((Regs.A & 0x08) >> 3) |
           ((value & 0x08) >> 2) |
@@ -1152,8 +1153,8 @@ public partial class Z80Cpu
         Regs.BC--;
         Regs.F = (byte)
         ((Regs.F & FlagsSetMask.C) |
-        (Regs.BC != 0 ? (FlagsSetMask.PV | FlagsSetMask.N) : FlagsSetMask.N) |
-          s_HalfCarrySubFlags![lookup] |
+        (Regs.BC != 0 ? FlagsSetMask.PV | FlagsSetMask.N : FlagsSetMask.N) |
+          s_HalfCarrySubFlags[lookup] |
         (tmp != 0 ? 0 : FlagsSetMask.Z) |
           (tmp & FlagsSetMask.S));
         if ((Regs.F & FlagsSetMask.H) != 0)
@@ -1188,12 +1189,12 @@ public partial class Z80Cpu
     private void Ind()
     {
         TactPlus1(Regs.IR);
-        byte tmp = ReadPort(Regs.BC);
+        var tmp = ReadPort(Regs.BC);
         WriteMemory(Regs.HL, tmp);
         Regs.WZ = (ushort)(Regs.BC - 1);
         Regs.B--;
         Regs.HL--;
-        byte tmp2 = (byte)(tmp + Regs.C - 1);
+        var tmp2 = (byte)(tmp + Regs.C - 1);
         Regs.F = (byte)
             (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
             (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
@@ -1226,12 +1227,12 @@ public partial class Z80Cpu
     private void Outd()
     {
         TactPlus1(Regs.IR);
-        byte tmp = ReadMemory(Regs.HL);
+        var tmp = ReadMemory(Regs.HL);
         Regs.B--;
-        Regs.WZ = (byte)(Regs.BC - 1);
+        Regs.WZ = (ushort)(Regs.BC - 1);
         WritePort(Regs.BC, tmp);
         Regs.HL--;
-        byte tmp2 = (byte)(tmp + Regs.L);
+        var tmp2 = (byte)(tmp + Regs.L);
         Regs.F = (byte)
             (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
             (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
@@ -1265,7 +1266,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void Ldir()
     {
-        byte tmp = ReadMemory(Regs.HL);
+        var tmp = ReadMemory(Regs.HL);
         WriteMemory(Regs.DE, tmp);
         TactPlus2(Regs.DE);
         Regs.BC--;
@@ -1311,8 +1312,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void Cpir()
     {
-        byte value = ReadMemory(Regs.HL);
-        byte tmp = (byte)(Regs.A - value);
+        var value = ReadMemory(Regs.HL);
+        var tmp = (byte)(Regs.A - value);
         var lookup =
         ((Regs.A & 0x08) >> 3) |
           ((value & 0x08) >> 2) |
@@ -1321,8 +1322,8 @@ public partial class Z80Cpu
         Regs.BC--;
         Regs.F = (byte)
         ((Regs.F & FlagsSetMask.C) |
-        (Regs.BC != 0 ? (FlagsSetMask.PV | FlagsSetMask.N) : FlagsSetMask.N) |
-          s_HalfCarrySubFlags![lookup] |
+        (Regs.BC != 0 ? FlagsSetMask.PV | FlagsSetMask.N : FlagsSetMask.N) |
+          s_HalfCarrySubFlags[lookup] |
         (tmp != 0 ? 0 : FlagsSetMask.Z) |
           (tmp & FlagsSetMask.S));
         if ((Regs.F & FlagsSetMask.H) != 0)
@@ -1373,11 +1374,11 @@ public partial class Z80Cpu
     private void Inir()
     {
         TactPlus1(Regs.IR);
-        byte tmp = ReadPort(Regs.BC);
+        var tmp = ReadPort(Regs.BC);
         WriteMemory(Regs.HL, tmp);
         Regs.WZ = (ushort)(Regs.BC + 1);
         Regs.B--;
-        byte tmp2 = (byte)(tmp + Regs.C + 1);
+        var tmp2 = (byte)(tmp + Regs.C + 1);
         Regs.F = (byte)
             (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
             (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
@@ -1420,12 +1421,12 @@ public partial class Z80Cpu
     private void Otir()
     {
         TactPlus1(Regs.IR);
-        byte tmp = ReadMemory(Regs.HL);
+        var tmp = ReadMemory(Regs.HL);
         Regs.B--;
         Regs.WZ = (byte)(Regs.BC + 1);
         WritePort(Regs.BC, tmp);
         Regs.HL++;
-        byte tmp2 = (byte)(tmp + Regs.L);
+        var tmp2 = (byte)(tmp + Regs.L);
         Regs.F = (byte)
             (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
             (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
@@ -1464,7 +1465,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void Lddr()
     {
-        byte tmp = ReadMemory(Regs.HL);
+        var tmp = ReadMemory(Regs.HL);
         WriteMemory(Regs.DE, tmp);
         TactPlus2(Regs.DE);
         Regs.BC--;
@@ -1509,8 +1510,8 @@ public partial class Z80Cpu
     /// </remarks>
     private void Cpdr()
     {
-        byte value = ReadMemory(Regs.HL);
-        byte tmp = (byte)(Regs.A - value);
+        var value = ReadMemory(Regs.HL);
+        var tmp = (byte)(Regs.A - value);
         var lookup =
         ((Regs.A & 0x08) >> 3) |
           ((value & 0x08) >> 2) |
@@ -1519,8 +1520,8 @@ public partial class Z80Cpu
         Regs.BC--;
         Regs.F = (byte)
         ((Regs.F & FlagsSetMask.C) |
-        (Regs.BC != 0 ? (FlagsSetMask.PV | FlagsSetMask.N) : FlagsSetMask.N) |
-          s_HalfCarrySubFlags![lookup] |
+        (Regs.BC != 0 ? FlagsSetMask.PV | FlagsSetMask.N : FlagsSetMask.N) |
+          s_HalfCarrySubFlags[lookup] |
         (tmp != 0 ? 0 : FlagsSetMask.Z) |
           (tmp & FlagsSetMask.S));
         if ((Regs.F & FlagsSetMask.H) != 0)
@@ -1570,11 +1571,11 @@ public partial class Z80Cpu
     private void Indr()
     {
         TactPlus1(Regs.IR);
-        byte tmp = ReadPort(Regs.BC);
+        var tmp = ReadPort(Regs.BC);
         WriteMemory(Regs.HL, tmp);
         Regs.WZ = (ushort)(Regs.BC - 1);
         Regs.B--;
-        byte tmp2 = (byte)(tmp + Regs.C - 1);
+        var tmp2 = (byte)(tmp + Regs.C - 1);
         Regs.F = (byte)
             (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
             (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
@@ -1618,12 +1619,12 @@ public partial class Z80Cpu
     private void Otdr()
     {
         TactPlus1(Regs.IR);
-        byte tmp = ReadMemory(Regs.HL);
+        var tmp = ReadMemory(Regs.HL);
         Regs.B--;
         Regs.WZ = (byte)(Regs.BC - 1);
         WritePort(Regs.BC, tmp);
         Regs.HL--;
-        byte tmp2 = (byte)(tmp + Regs.L);
+        var tmp2 = (byte)(tmp + Regs.L);
         Regs.F = (byte)
             (((tmp & 0x80) != 0 ? FlagsSetMask.N : 0) |
             (tmp2 < tmp ? FlagsSetMask.H | FlagsSetMask.C : 0) |
