@@ -12,7 +12,7 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="SpectrumEngine - ZX Spectrum 48K Emulator"
         Background="{DynamicResource AppBackground}"
-        WindowState="{Binding InitialWindowState, Mode=OneTime}"
+        WindowState="{Binding Environment.InitialWindowState, Mode=OneTime}"
         DataContextChanged="OnDataContextChanged"
         KeyUp="MainWindowOnKeyUp"
         KeyDown="MainWindowOnKeyDown">
@@ -34,46 +34,51 @@
                 <NativeMenu>
                     <NativeMenuItemSeparator />
                     <NativeMenuItem
-                        Header="Show Toolbar" Command="{Binding ToggleShowToolbar}"
+                        Header="Show Toolbar" Command="{Binding ViewOptions.ToggleShowToolbar}"
                         ToggleType="CheckBox"
                         IsChecked="{Binding ViewOptions.ShowToolbar}" />
                     <NativeMenuItem
-                        Header="Show Status Bar" Command="{Binding ToggleShowStatusBar}"
+                        Header="Show Status Bar" Command="{Binding ViewOptions.ToggleShowStatusBar}"
                         ToggleType="CheckBox"
                         IsChecked="{Binding ViewOptions.ShowStatusBar}"/>
                     <NativeMenuItemSeparator />
                     <NativeMenuItem
-                        Header="Show Keyboard" Command="{Binding ToggleShowKeyboard}"
+                        Header="Show Keyboard" Command="{Binding ViewOptions.ToggleShowKeyboard}"
                         ToggleType="CheckBox"
                         IsChecked="{Binding ViewOptions.ShowKeyboard, Mode=TwoWay}"/>
                     <NativeMenuItemSeparator />
                     <NativeMenuItem 
-                        Header="Mute Sound" Command="{Binding ToggleMuted}"
+                        Header="Mute Sound" Command="{Binding ViewOptions.ToggleMuted}"
                         ToggleType="CheckBox"
                         IsChecked="{Binding ViewOptions.IsMuted}"/>
                 </NativeMenu>
             </NativeMenuItem>
             <NativeMenuItem Header="Machine">
                 <NativeMenu>
-                    <NativeMenuItem Header="Start" Command="{Binding Start} "/>
-                    <NativeMenuItem Header="Pause" Command="{Binding Pause} "/>
-                    <NativeMenuItem Header="Stop" Command="{Binding Stop} "/>
+                    <NativeMenuItem Header="Start" Command="{Binding Machine.Start} "/>
+                    <NativeMenuItem Header="Pause" Command="{Binding Machine.Pause} "/>
+                    <NativeMenuItem Header="Stop" Command="{Binding Machine.Stop} "/>
                     <NativeMenuItemSeparator />
-                    <NativeMenuItem Header="Restart" Command="{Binding Restart}" />
+                    <NativeMenuItem Header="Restart" Command="{Binding Machine.Restart}" />
                     <NativeMenuItemSeparator />
-                    <NativeMenuItem Header="Debug" Command="{Binding StartDebug}" />
-                    <NativeMenuItem Header="Step Into" Command="{Binding StepInto}" />
-                    <NativeMenuItem Header="Step Over" Command="{Binding StepOver}" />
-                    <NativeMenuItem Header="Step Out" Command="{Binding StepOut}" />
+                    <NativeMenuItem Header="Debug" Command="{Binding Machine.StartDebug}" />
+                    <NativeMenuItem Header="Step Into" Command="{Binding Machine.StepInto}" />
+                    <NativeMenuItem Header="Step Over" Command="{Binding Machine.StepOver}" />
+                    <NativeMenuItem Header="Step Out" Command="{Binding Machine.StepOut}" />
                     <NativeMenuItemSeparator />
                     <NativeMenuItem
                         Header="Fast Load"
-                        Command="{Binding ToggleFastLoad}"
+                        Command="{Binding Machine.ToggleFastLoad}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding AllowFastLoad}" />
+                        IsChecked="{Binding Machine.AllowFastLoad}" />
                     <NativeMenuItem
                         Header="Set Tape File"
-                        Command="{Binding SetTapeFile}" />
+                        IsEnabled="{Binding !Machine.TapeMode, Converter={StaticResource TapeModeVisibilityConverter}}"
+                        Command="{Binding Machine.SetTapeFile}" />
+                    <NativeMenuItem
+                        Header="Rewind Tape"
+                        IsEnabled="{Binding !Machine.TapeMode, Converter={StaticResource TapeModeVisibilityConverter}}"
+                        Command="{Binding Machine.Rewind}" />
                 </NativeMenu>
             </NativeMenuItem>
         </NativeMenu>
@@ -83,63 +88,67 @@
         <DockPanel>
             
             <!-- Use this menu on Windows -->
-            <Menu DockPanel.Dock="Top" IsVisible="{Binding !UseNativeMenu}">
+            <Menu DockPanel.Dock="Top" IsVisible="{Binding !Environment.UseNativeMenu}">
                 <MenuItem Header="File">
                     <MenuItem Header="Exit" Click="MenuItem_OnClick" />
                     <MenuItem Header="About" />
                 </MenuItem>
                 <MenuItem Header="View">
-                    <MenuItem Header="Show Toolbar" Command="{Binding ToggleShowToolbar}">
+                    <MenuItem Header="Show Toolbar" Command="{Binding ViewOptions.ToggleShowToolbar}">
                         <MenuItem.Icon>
                             <local:CheckedIndicator IsChecked="{Binding ViewOptions.ShowToolbar}" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="Show Status Bar" Command="{Binding ToggleShowStatusBar}">
+                    <MenuItem Header="Show Status Bar" Command="{Binding ViewOptions.ToggleShowStatusBar}">
                         <MenuItem.Icon>
                             <local:CheckedIndicator IsChecked="{Binding ViewOptions.ShowStatusBar}" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
-                    <MenuItem Header="Show Keyboard" Command="{Binding ToggleShowKeyboard}" >
+                    <MenuItem Header="Show Keyboard" Command="{Binding ViewOptions.ToggleShowKeyboard}" >
                         <MenuItem.Icon>
                             <local:CheckedIndicator IsChecked="{Binding ViewOptions.ShowKeyboard, Mode=TwoWay}" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
-                    <MenuItem Header="Mute Sound" Command="{Binding ToggleMuted}">
+                    <MenuItem Header="Mute Sound" Command="{Binding ViewOptions.ToggleMuted}">
                         <MenuItem.Icon>
                             <local:CheckedIndicator IsChecked="{Binding ViewOptions.IsMuted}" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Machine">
-                    <MenuItem Header="Start" Command="{Binding Start}" />
-                    <MenuItem Header="Pause" Command="{Binding Pause}" />
-                    <MenuItem Header="Stop" Command="{Binding Stop}" />
+                    <MenuItem Header="Start" Command="{Binding Machine.Start}" />
+                    <MenuItem Header="Pause" Command="{Binding Machine.Pause}" />
+                    <MenuItem Header="Stop" Command="{Binding Machine.Stop}" />
                     <Separator />
-                    <MenuItem Header="Restart" Command="{Binding Restart}" />
+                    <MenuItem Header="Restart" Command="{Binding Machine.Restart}" />
                     <Separator />
-                    <MenuItem Header="Debug" Command="{Binding StartDebug}" />
-                    <MenuItem Header="Step Into" Command="{Binding StepInto}" />
-                    <MenuItem Header="Step Over" Command="{Binding StepOver}" />
-                    <MenuItem Header="Step Out" Command="{Binding StepOut}" />
+                    <MenuItem Header="Debug" Command="{Binding Machine.StartDebug}" />
+                    <MenuItem Header="Step Into" Command="{Binding Machine.StepInto}" />
+                    <MenuItem Header="Step Over" Command="{Binding Machine.StepOver}" />
+                    <MenuItem Header="Step Out" Command="{Binding Machine.StepOut}" />
                     <Separator />
-                    <MenuItem Header="Fast Load" Command="{Binding ToggleFastLoad}">
+                    <MenuItem Header="Fast Load" Command="{Binding Machine.ToggleFastLoad}">
                         <MenuItem.Icon>
-                            <local:CheckedIndicator IsChecked="{Binding AllowFastLoad}" />
+                            <local:CheckedIndicator IsChecked="{Binding Machine.AllowFastLoad}" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="Set Tape File" Command="{Binding SetTapeFile}">
-                    </MenuItem>
+                    <MenuItem Header="Set Tape File" Command="{Binding Machine.SetTapeFile}" />
+                    <MenuItem
+                        Header="Rewind Tape"
+                        IsEnabled="{Binding !Machine.TapeMode, Converter={StaticResource TapeModeVisibilityConverter}}"
+                        Command="{Binding Machine.Rewind}" />
                 </MenuItem>
             </Menu>
-
 
             <local:ToolBarUserControl DockPanel.Dock="Top"
                 IsVisible="{Binding ViewOptions.ShowToolbar}" />
             <local:StatusBarUserControl DockPanel.Dock="Bottom" 
                 IsVisible="{Binding ViewOptions.ShowStatusBar}"/>
-            <local:SpectrumDisplayControl x:Name="SpectrumDisplay" DataContext="{Binding Display}" />
+            <local:SpectrumDisplayControl 
+                x:Name="SpectrumDisplay"
+                DataContext="{Binding Display}" />
         </DockPanel>
     </Grid>
 

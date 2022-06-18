@@ -3,7 +3,7 @@
 /// <summary>
 /// This class implements the ZX Spectrum keyboard device.
 /// </summary>
-public sealed class KeyboardDevice: IKeyboardDevice
+public sealed class KeyboardDevice: IKeyboardDevice, IDisposable
 {
     /// <summary>
     /// This field stores the status bits of keys. Each byte in the array represents an address line from A8 to A15, 
@@ -19,6 +19,13 @@ public sealed class KeyboardDevice: IKeyboardDevice
     public KeyboardDevice(IZxSpectrum48Machine machine)
     {
         Machine = machine;
+    }
+
+    /// <summary>
+    /// Release resources
+    /// </summary>
+    public void Dispose()
+    {
     }
 
     /// <summary>

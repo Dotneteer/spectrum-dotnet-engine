@@ -3,7 +3,7 @@
 /// <summary>
 /// This class implements the ZX Spectrum beeper device.
 /// </summary>
-public sealed class BeeperDevice : IBeeperDevice
+public sealed class BeeperDevice : IBeeperDevice, IDisposable
 {
     private const int GATE = 100_000;
 
@@ -20,6 +20,13 @@ public sealed class BeeperDevice : IBeeperDevice
     public BeeperDevice(IZxSpectrum48Machine machine)
     {
         Machine = machine;
+    }
+
+    /// <summary>
+    /// Release resources
+    /// </summary>
+    public void Dispose()
+    {
     }
 
     /// <summary>

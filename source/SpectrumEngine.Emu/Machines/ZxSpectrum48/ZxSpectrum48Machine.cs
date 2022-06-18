@@ -48,7 +48,7 @@ public sealed class ZxSpectrum48Machine :
         BaseClockFrequency = 3_500_000;
         ClockMultiplier = 1;
         DelayedAddressBus = true;
-
+        
         // --- Create and initialize devices
         KeyboardDevice = new KeyboardDevice(this);
         ScreenDevice = new ScreenDevice(this);
@@ -105,11 +105,6 @@ public sealed class ZxSpectrum48Machine :
     public bool IsSpectrum48RomSelected => true;
 
     /// <summary>
-    /// Indicates that the machine can use the FAST LOAD mode
-    /// </summary>
-    public bool UseFastLoad { get; set; }
-
-    /// <summary>
     /// Emulates turning on a machine (after it has been turned off).
     /// </summary>
     public override void HardReset()
@@ -136,6 +131,10 @@ public sealed class ZxSpectrum48Machine :
         BeeperDevice.SetAudioSampleRate(AUDIO_SAMPLE_RATE);
         FloatingBusDevice.Reset();
         TapeDevice.Reset();
+        
+        // --- Set default property values
+        SetMachineProperty(MachinePropNames.TapeMode, TapeMode.Passive);
+        SetMachineProperty(MachinePropNames.RewindRequested, null);
 
         // --- Unknown clock multiplier in the previous frame
         _oldClockMultiplier = -1;
@@ -269,7 +268,7 @@ public sealed class ZxSpectrum48Machine :
     public override byte DoReadPort(ushort address)
     {
         return (address & 0x0001) == 0 
-            ? ReadPort0xFE(address)
+            ? ReadPort0Xfe(address)
             : FloatingBusDevice.ReadFloatingPort();
     }
 
@@ -313,23 +312,21 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     /// <param name="address">Port address</param>
     /// <returns>Byte value read from the generic port</returns>
-    private byte ReadPort0xFE(ushort address)
+    private byte ReadPort0Xfe(ushort address)
     {
         var portValue = KeyboardDevice.GetKeyLineStatus(address);
-        bool earBit;
-        bool bit4Sensed;
 
         // --- Check for LOAD mode
         if (TapeDevice.TapeMode == TapeMode.Load)
         {
-            earBit = TapeDevice.GetTapeEarBit();
+            var earBit = TapeDevice.GetTapeEarBit();
             BeeperDevice.SetEarBit(earBit);
             portValue = (byte)((portValue & 0xbf) | (earBit ? 0x40 : 0));
         }
         else
         {
             // --- Handle analog EAR bit
-            bit4Sensed = _portBit4LastValue;
+            var bit4Sensed = _portBit4LastValue;
             if (!bit4Sensed)
             {
                 // --- Changed later to 1 from 0 than to 0 from 1?
@@ -366,8 +363,8 @@ public sealed class ZxSpectrum48Machine :
     /// <summary>
     /// Wites the specified data byte to the ZX Spectrum generic output port.
     /// </summary>
-    /// <param name="address">Port address</param>
     /// <param name="value">Data byte to write</param>
+    // ReSharper disable once InconsistentNaming
     private void WritePort0xFE(byte value)
     {
         // --- Extract bthe border color
@@ -418,21 +415,21 @@ public sealed class ZxSpectrum48Machine :
             if (lowbit)
             {
                 // --- Low bit set, C:1, C:1, C:1, C:1
-                applyContentionDelay();
+                ApplyContentionDelay();
                 TactPlus1();
-                applyContentionDelay();
+                ApplyContentionDelay();
                 TactPlus1();
-                applyContentionDelay();
+                ApplyContentionDelay();
                 TactPlus1();
-                applyContentionDelay();
+                ApplyContentionDelay();
                 TactPlus1();
             }
             else
             {
                 // --- Low bit reset, C:1, C:3
-                applyContentionDelay();
+                ApplyContentionDelay();
                 TactPlus1();
-                applyContentionDelay();
+                ApplyContentionDelay();
                 TactPlus3();
             }
         }
@@ -446,17 +443,17 @@ public sealed class ZxSpectrum48Machine :
             else
             {
                 // --- Low bit reset, C:1, C:3
-                applyContentionDelay();
+                ApplyContentionDelay();
                 TactPlus1();
-                applyContentionDelay();
+                ApplyContentionDelay();
                 TactPlus3();
             }
         }
 
         // --- Apply I/O contention
-        void applyContentionDelay()
+        void ApplyContentionDelay()
         {
-            var delay = GetContentionValue((int)CurrentFrameTact / ClockMultiplier);
+            var delay = GetContentionValue(CurrentFrameTact / ClockMultiplier);
             TactPlusN(delay);
         }
     }
@@ -483,7 +480,7 @@ public sealed class ZxSpectrum48Machine :
     /// <summary>
     /// The multiplier for the pixel height (defaults to 1)
     /// </summary>
-    public override int VerticalPixelRation => 1;
+    public override int VerticalPixelRatio => 1;
 
     /// <summary>
     /// Gets the buffer that stores the rendered pixels

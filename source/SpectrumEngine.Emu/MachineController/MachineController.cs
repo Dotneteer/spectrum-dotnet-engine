@@ -8,7 +8,6 @@ public class MachineController
     private CancellationTokenSource? _tokenSource;
     private Task? _machineTask;
     private MachineControllerState _machineState;
-    private bool _isDebugging;
 
     /// <summary>
     /// Initializes the controller to manage the specified machine.
@@ -21,7 +20,7 @@ public class MachineController
     {
         Machine = machine ?? throw new ArgumentNullException(nameof(machine));
         Context = machine.ExecutionContext;
-        _isDebugging = false;
+        IsDebugging = false;
     }
 
     /// <summary>
@@ -40,7 +39,7 @@ public class MachineController
     public MachineControllerState State
     {
         get => _machineState;
-        set
+        private set
         {
             if (_machineState == value) return;
             
@@ -53,8 +52,8 @@ public class MachineController
     /// <summary>
     /// Indicates if the machine runs in debug mode
     /// </summary>
-    public bool IsDebugging => _isDebugging;
-    
+    public bool IsDebugging { get; private set; }
+
     /// <summary>
     /// This event fires when the state of the controller changes.
     /// </summary>
@@ -71,7 +70,7 @@ public class MachineController
     /// </summary>
     public void Start()
     {
-        _isDebugging = false;
+        IsDebugging = false;
         Run();
     }
 
@@ -80,7 +79,7 @@ public class MachineController
     /// </summary>
     public void StartDebug()
     {
-        _isDebugging = true;
+        IsDebugging = true;
         Run(LoopTerminationMode.DebugEvent, DebugStepMode.StopAtBreakpoint);
     }
     
@@ -106,7 +105,7 @@ public class MachineController
             throw new InvalidOperationException("The machine is not running");
         }
 
-        _isDebugging = false;
+        IsDebugging = false;
         await FinishExecutionLoop(MachineControllerState.Stopping, MachineControllerState.Stopped);
     }
 
@@ -125,7 +124,7 @@ public class MachineController
     /// </summary>
     public void StepInto()
     {
-        _isDebugging = true;
+        IsDebugging = true;
         Run(LoopTerminationMode.DebugEvent, DebugStepMode.StepInto);
     }
 
@@ -134,7 +133,7 @@ public class MachineController
     /// </summary>
     public void StepOver()
     {
-        _isDebugging = true;
+        IsDebugging = true;
         Run(LoopTerminationMode.DebugEvent, DebugStepMode.StepOver);
     }
 
@@ -143,7 +142,7 @@ public class MachineController
     /// </summary>
     public void StepOut()
     {
-        _isDebugging = true;
+        IsDebugging = true;
         Run(LoopTerminationMode.DebugEvent, DebugStepMode.StepOut);
     }
 
@@ -180,6 +179,7 @@ public class MachineController
         Context.TerminationPartition = terminationPartition;
         Context.TerminationPoint = terminationPoint;
         Context.Cancelled = false;
+        
         State = MachineControllerState.Running;
         _machineTask = Task.Run(async () =>
         {

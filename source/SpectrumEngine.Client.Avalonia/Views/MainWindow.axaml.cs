@@ -2,6 +2,7 @@ using System;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using SpectrumEngine.Client.Avalonia.Providers;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 // ReSharper disable UnusedParameter.Local
@@ -24,7 +25,16 @@ namespace SpectrumEngine.Client.Avalonia.Views
 
         private void OnDataContextChanged(object? sender, EventArgs e)
         {
-            Vm?.SetMachineController(new MachineController(new ZxSpectrum48Machine()));
+            if (Vm == null) return;
+
+            var machine = new ZxSpectrum48Machine();
+            machine.SetMachineProperty(MachinePropNames.TapeSaver, new DefaultTapeSaver());
+            var controller = new MachineController(machine);
+            Vm.Machine.SetMachineController(controller);
+            Vm.Machine.CommandExecuted += (s, args) =>
+            {
+                FocusManager.Instance?.Focus(SpectrumDisplay);
+            };
         }
 
         private void MainWindowOnKeyUp(object? sender, KeyEventArgs e)

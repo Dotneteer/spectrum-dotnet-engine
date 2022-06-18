@@ -3,7 +3,7 @@
 /// <summary>
 /// This class implements the ZX Spectrum 48 floating bus device.
 /// </summary>
-public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice
+public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice, IDisposable
 {
     /// <summary>
     /// Initialize the floating port device and assign it to its host machine.
@@ -12,6 +12,13 @@ public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice
     public ZxSpectrum48FloatingBusDevice(IZxSpectrum48Machine machine)
     {
         Machine = machine;
+    }
+
+    /// <summary>
+    /// Release resources
+    /// </summary>
+    public void Dispose()
+    {
     }
 
     /// <summary>
@@ -36,6 +43,5 @@ public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice
         // TODO: Implement reading from the floating bus
         return 0xff;
     }
-
 }
 
