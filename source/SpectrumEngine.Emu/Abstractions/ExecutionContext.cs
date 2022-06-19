@@ -8,7 +8,7 @@ public sealed class ExecutionContext
     /// <summary>
     /// This property defines how the machine's execution loop completes.
     /// </summary>
-    public LoopTerminationMode LoopTerminationMode { get; set; }
+    public FrameTerminationMode FrameTerminationMode { get; set; }
 
     /// <summary>
     /// This property defines how the machine execution loop should handle the debug mode.
@@ -32,7 +32,7 @@ public sealed class ExecutionContext
     /// This property describes the termination reason of the last machine execution loop. It returns null if the
     /// execution loop has not been started at least once.
     /// </summary>
-    public LoopTerminationMode? LastTerminationReason { get; set; }
+    public FrameTerminationMode? LastTerminationReason { get; set; }
 
     /// <summary>
     /// Has the last execution loop cancelled?

@@ -12,7 +12,6 @@ public abstract class Z80MachineBase :
     private ulong _nextFrameStartTact;
 
     // --- This flag indicates that the last machine frame has been completed.
-    private bool _frameCompleted;
 
     // --- Store machine-specific properties here
     private readonly Dictionary<string, object> _machineProps = new(StringComparer.InvariantCultureIgnoreCase);
@@ -82,12 +81,12 @@ public abstract class Z80MachineBase :
     /// <summary>
     /// This flag indicates that the last machine frame has been completed.
     /// </summary>
-    public bool FrameCompleted { get => _frameCompleted; set => _frameCompleted = value; }
+    private bool FrameCompleted { get; set; }
 
     /// <summary>
     /// Shows the number of frame tacts that overflow to the subsequent machine frame.
     /// </summary>
-    public int FrameOverflow { get; set; }
+    private int FrameOverflow { get; set; }
 
     /// <summary>
     /// Set the number of tacts in a machine frame.
@@ -162,9 +161,9 @@ public abstract class Z80MachineBase :
     /// <returns>
     /// The value indicates the termination reason of the loop. 
     /// </returns>
-    public virtual LoopTerminationMode ExecuteMachineLoop()
+    public virtual FrameTerminationMode ExecuteMachineFrame()
     {
-        return ExecutionContext.LoopTerminationMode == LoopTerminationMode.Normal
+        return ExecutionContext.FrameTerminationMode == FrameTerminationMode.Normal
             ? ExecuteMachineLoopWithNoDebug()
             : ExecuteMachineLoopWithDebug();
     }
@@ -180,16 +179,6 @@ public abstract class Z80MachineBase :
     public abstract int ScreenHeightInPixels { get; }
 
     /// <summary>
-    /// The multiplier for the pixel width (defaults to 1)
-    /// </summary>
-    public abstract int HorizontalPixelRatio { get; }
-
-    /// <summary>
-    /// The multiplier for the pixel height (defaults to 1)
-    /// </summary>
-    public abstract int VerticalPixelRatio { get; }
-
-    /// <summary>
     /// Gets the buffer that stores the rendered pixels
     /// </summary>
     public abstract uint[] GetPixelBuffer();
@@ -200,7 +189,7 @@ public abstract class Z80MachineBase :
     /// <returns>
     /// The value indicates the termination reason of the loop. 
     /// </returns>
-    private LoopTerminationMode ExecuteMachineLoopWithNoDebug()
+    private FrameTerminationMode ExecuteMachineLoopWithNoDebug()
     {
         // --- Sign that the loop execution is in progress
         ExecutionContext.LastTerminationReason = null;
@@ -210,7 +199,7 @@ public abstract class Z80MachineBase :
         do
         {
             // --- Test if the machine frame has just been completed.
-            if (_frameCompleted)
+            if (FrameCompleted)
             {
                 var currentFrameStart = Tacts - (ulong)FrameOverflow;
 
@@ -225,7 +214,7 @@ public abstract class Z80MachineBase :
 
                 // --- Allow a machine to handle frame initialization
                 OnInitNewFrame(clockMultiplierChanged);
-                _frameCompleted = false;
+                FrameCompleted = false;
 
                 // --- Calculate the start tact of the next machine frame
                 _nextFrameStartTact = currentFrameStart + (ulong)(TactsInFrame * ClockMultiplier);
@@ -250,14 +239,14 @@ public abstract class Z80MachineBase :
             // --- Allow the machine to do additional tasks after the completed CPU instruction
             AfterInstructionExecuted();
 
-            _frameCompleted = Tacts >= _nextFrameStartTact;
-        } while (!_frameCompleted);
+            FrameCompleted = Tacts >= _nextFrameStartTact;
+        } while (!FrameCompleted);
 
         // --- Calculate the overflow, we need this value in the next frame
         FrameOverflow = (int)(Tacts - _nextFrameStartTact);
 
         // --- Done
-        return (ExecutionContext.LastTerminationReason = LoopTerminationMode.Normal).Value;
+        return (ExecutionContext.LastTerminationReason = FrameTerminationMode.Normal).Value;
     }
 
     /// <summary>
@@ -266,7 +255,7 @@ public abstract class Z80MachineBase :
     /// <returns>
     /// The value indicates the termination reason of the loop. 
     /// </returns>
-    private LoopTerminationMode ExecuteMachineLoopWithDebug()
+    private FrameTerminationMode ExecuteMachineLoopWithDebug()
     {
         // --- Sign that the loop execution is in progress
         ExecutionContext.LastTerminationReason = null;
@@ -293,7 +282,7 @@ public abstract class Z80MachineBase :
         do
         {
             // --- Test if the machine frame has just been completed.
-            if (_frameCompleted)
+            if (FrameCompleted)
             {
                 var currentFrameStart = Tacts - (ulong)FrameOverflow;
 
@@ -308,7 +297,7 @@ public abstract class Z80MachineBase :
 
                 // --- Allow a machine to handle frame initialization
                 OnInitNewFrame(clockMultiplierChanged);
-                _frameCompleted = false;
+                FrameCompleted = false;
 
                 // --- Calculate the start tact of the next machine frame
                 _nextFrameStartTact = currentFrameStart + (ulong)(TactsInFrame * ClockMultiplier);
@@ -337,7 +326,7 @@ public abstract class Z80MachineBase :
             if (TestTerminationPoint())
             {
                 // --- The machine reached the termination point
-                return (ExecutionContext.LastTerminationReason = LoopTerminationMode.UntilExecutionPoint).Value;
+                return (ExecutionContext.LastTerminationReason = FrameTerminationMode.UntilExecutionPoint).Value;
             }
 
             // --- Test if the execution reached a breakpoint
@@ -350,14 +339,14 @@ public abstract class Z80MachineBase :
                 return ExecutionContext.LastTerminationReason.Value;
             }
 
-            _frameCompleted = Tacts >= _nextFrameStartTact;
-        } while (!_frameCompleted);
+            FrameCompleted = Tacts >= _nextFrameStartTact;
+        } while (!FrameCompleted);
 
         // --- Calculate the overflow, we need this value in the next frame
         FrameOverflow = (int)(Tacts - _nextFrameStartTact);
 
         // --- Done
-        return (ExecutionContext.LastTerminationReason = LoopTerminationMode.Normal).Value;
+        return (ExecutionContext.LastTerminationReason = FrameTerminationMode.Normal).Value;
     }
 
     /// <summary>
@@ -378,7 +367,7 @@ public abstract class Z80MachineBase :
     /// By default, this method checks if the PC equals the execution context's TerminationPoint value. 
     /// </remarks>
     protected virtual bool TestTerminationPoint() 
-        => ExecutionContext.LoopTerminationMode == LoopTerminationMode.UntilExecutionPoint && 
+        => ExecutionContext.FrameTerminationMode == FrameTerminationMode.UntilExecutionPoint && 
            Regs.PC == ExecutionContext.TerminationPoint;
 
     /// <summary>

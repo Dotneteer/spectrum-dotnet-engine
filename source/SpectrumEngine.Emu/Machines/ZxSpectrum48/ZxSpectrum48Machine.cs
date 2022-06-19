@@ -473,16 +473,6 @@ public sealed class ZxSpectrum48Machine :
     public override int ScreenHeightInPixels => ScreenDevice.ScreenLines;
 
     /// <summary>
-    /// The multiplier for the pixel width (defaults to 1)
-    /// </summary>
-    public override int HorizontalPixelRatio => 1;
-
-    /// <summary>
-    /// The multiplier for the pixel height (defaults to 1)
-    /// </summary>
-    public override int VerticalPixelRatio => 1;
-
-    /// <summary>
     /// Gets the buffer that stores the rendered pixels
     /// </summary>
     public override uint[] GetPixelBuffer() => ScreenDevice.GetPixelBuffer();

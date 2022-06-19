@@ -80,7 +80,7 @@ public class MachineController
     public void StartDebug()
     {
         IsDebugging = true;
-        Run(LoopTerminationMode.DebugEvent, DebugStepMode.StopAtBreakpoint);
+        Run(FrameTerminationMode.DebugEvent, DebugStepMode.StopAtBreakpoint);
     }
     
     /// <summary>
@@ -125,7 +125,7 @@ public class MachineController
     public void StepInto()
     {
         IsDebugging = true;
-        Run(LoopTerminationMode.DebugEvent, DebugStepMode.StepInto);
+        Run(FrameTerminationMode.DebugEvent, DebugStepMode.StepInto);
     }
 
     /// <summary>
@@ -134,7 +134,7 @@ public class MachineController
     public void StepOver()
     {
         IsDebugging = true;
-        Run(LoopTerminationMode.DebugEvent, DebugStepMode.StepOver);
+        Run(FrameTerminationMode.DebugEvent, DebugStepMode.StepOver);
     }
 
     /// <summary>
@@ -143,12 +143,12 @@ public class MachineController
     public void StepOut()
     {
         IsDebugging = true;
-        Run(LoopTerminationMode.DebugEvent, DebugStepMode.StepOut);
+        Run(FrameTerminationMode.DebugEvent, DebugStepMode.StepOut);
     }
 
     public async Task RunToTerminationPoint(int? terminationPartition, ushort? terminationPoint)
     {
-        Run(LoopTerminationMode.UntilExecutionPoint, DebugStepMode.NoDebug, terminationPartition, terminationPoint);
+        Run(FrameTerminationMode.UntilExecutionPoint, DebugStepMode.NoDebug, terminationPartition, terminationPoint);
         await CompleteExecutionLoop();
         if (!Context.Cancelled)
         {
@@ -160,7 +160,7 @@ public class MachineController
     /// Run the machine loop until cancelled
     /// </summary>
     private void Run(
-        LoopTerminationMode terminationMode = LoopTerminationMode.Normal,
+        FrameTerminationMode terminationMode = FrameTerminationMode.Normal,
         DebugStepMode debugStepMode = DebugStepMode.NoDebug,
         int? terminationPartition = null,
         ushort? terminationPoint = null)
@@ -174,7 +174,7 @@ public class MachineController
             // --- First start (after stop), reset the machine
             Machine.Reset();
         }
-        Context.LoopTerminationMode = terminationMode;
+        Context.FrameTerminationMode = terminationMode;
         Context.DebugStepMode = debugStepMode;
         Context.TerminationPartition = terminationPartition;
         Context.TerminationPoint = terminationPoint;
@@ -190,9 +190,9 @@ public class MachineController
             var completedFrames = 0;
             do
             {
-                var termination = Machine.ExecuteMachineLoop();
-                FrameCompleted?.Invoke(this, termination == LoopTerminationMode.Normal);
-                if (termination != LoopTerminationMode.Normal || token.IsCancellationRequested)
+                var termination = Machine.ExecuteMachineFrame();
+                FrameCompleted?.Invoke(this, termination == FrameTerminationMode.Normal);
+                if (termination != FrameTerminationMode.Normal || token.IsCancellationRequested)
                 {
                     Context.Cancelled = token.IsCancellationRequested;
                     return;

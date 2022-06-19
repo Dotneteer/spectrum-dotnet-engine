@@ -39,10 +39,10 @@ public class ZxSpectrum48MachineTests
         // --- Act
         for (var i = 0; i < 100; i++)
         {
-            var result = m.ExecuteMachineLoop();
+            var result = m.ExecuteMachineFrame();
 
             // --- Assert
-            result.ShouldBe(LoopTerminationMode.Normal);
+            result.ShouldBe(FrameTerminationMode.Normal);
         }
     }
 }
