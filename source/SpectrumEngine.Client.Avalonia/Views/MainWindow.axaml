@@ -66,7 +66,6 @@
                     <NativeMenuItem Header="Step Over" Command="{Binding Machine.StepOver}" />
                     <NativeMenuItem Header="Step Out" Command="{Binding Machine.StepOut}" />
                     <NativeMenuItemSeparator />
-                    <NativeMenuItemSeparator />
                     <NativeMenuItem Header="Clock Multiplier">
                         <NativeMenu>
                             <NativeMenuItem
@@ -193,6 +192,99 @@
                     <MenuItem Header="Step Into" Command="{Binding Machine.StepInto}" />
                     <MenuItem Header="Step Over" Command="{Binding Machine.StepOver}" />
                     <MenuItem Header="Step Out" Command="{Binding Machine.StepOut}" />
+                    <Separator />
+                    <MenuItem Header="Clock Multiplier">
+                        <MenuItem
+                            Header="Normal Frequency"
+                            Command="{Binding Machine.SetClockMultiplier}"
+                            CommandParameter="1">
+                            <MenuItem.Icon>
+                                <local:CheckedIndicator 
+                                    IsChecked="{Binding Machine.ClockMultiplier, Converter={StaticResource ClockMultiplierConverter}, ConverterParameter=1}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Header="2x Clock Frequency"
+                            Command="{Binding Machine.SetClockMultiplier}"
+                            CommandParameter="2">
+                            <MenuItem.Icon>
+                                <local:CheckedIndicator 
+                                    IsChecked="{Binding Machine.ClockMultiplier, Converter={StaticResource ClockMultiplierConverter}, ConverterParameter=2}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Header="4x Clock Frequency"
+                            Command="{Binding Machine.SetClockMultiplier}"
+                            CommandParameter="4">
+                            <MenuItem.Icon>
+                                <local:CheckedIndicator 
+                                    IsChecked="{Binding Machine.ClockMultiplier, Converter={StaticResource ClockMultiplierConverter}, ConverterParameter=4}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Header="8x Clock Frequency"
+                            Command="{Binding Machine.SetClockMultiplier}"
+                            CommandParameter="8">
+                            <MenuItem.Icon>
+                                <local:CheckedIndicator 
+                                    IsChecked="{Binding Machine.ClockMultiplier, Converter={StaticResource ClockMultiplierConverter}, ConverterParameter=8}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Header="10x Clock Frequency"
+                            Command="{Binding Machine.SetClockMultiplier}"
+                            CommandParameter="10">
+                            <MenuItem.Icon>
+                                <local:CheckedIndicator 
+                                    IsChecked="{Binding Machine.ClockMultiplier, Converter={StaticResource ClockMultiplierConverter}, ConverterParameter=10}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Header="12x Clock Frequency"
+                            Command="{Binding Machine.SetClockMultiplier}"
+                            CommandParameter="12">
+                            <MenuItem.Icon>
+                                <local:CheckedIndicator 
+                                    IsChecked="{Binding Machine.ClockMultiplier, Converter={StaticResource ClockMultiplierConverter}, ConverterParameter=12}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Header="16x Clock Frequency"
+                            Command="{Binding Machine.SetClockMultiplier}"
+                            CommandParameter="16">
+                            <MenuItem.Icon>
+                                <local:CheckedIndicator 
+                                    IsChecked="{Binding Machine.ClockMultiplier, Converter={StaticResource ClockMultiplierConverter}, ConverterParameter=16}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Header="20x Clock Frequency"
+                            Command="{Binding Machine.SetClockMultiplier}"
+                            CommandParameter="20">
+                            <MenuItem.Icon>
+                                <local:CheckedIndicator 
+                                    IsChecked="{Binding Machine.ClockMultiplier, Converter={StaticResource ClockMultiplierConverter}, ConverterParameter=20}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Header="24x Clock Frequency"
+                            Command="{Binding Machine.SetClockMultiplier}"
+                            CommandParameter="24">
+                            <MenuItem.Icon>
+                                <local:CheckedIndicator 
+                                    IsChecked="{Binding Machine.ClockMultiplier, Converter={StaticResource ClockMultiplierConverter}, ConverterParameter=24}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Header="32x Clock Frequency"
+                            Command="{Binding Machine.SetClockMultiplier}"
+                            CommandParameter="32">
+                            <MenuItem.Icon>
+                                <local:CheckedIndicator 
+                                    IsChecked="{Binding Machine.ClockMultiplier, Converter={StaticResource ClockMultiplierConverter}, ConverterParameter=32}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
                     <Separator />
                     <MenuItem Header="Fast Load" Command="{Binding Machine.ToggleFastLoad}">
                         <MenuItem.Icon>
