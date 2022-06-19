@@ -153,12 +153,49 @@ If bit 3 of the value read back is 0, key R is pressed.
 
 ## The Beeper
 
-ZX spectrum has a built-in speaker bound to a single output port bit and alternating that bit value with a particular frequency will generate a sound through the speaker. You can set the beeper bit value through bit 4 of the data sent to any port with sm even address.
+ZX spectrum has a built-in speaker bound to a single output port bit and alternating that bit value with a particular frequency will generate a sound through the speaker. You can set the beeper bit value through bit 4 of the data sent to any port with an even address. The alternation of low and high output values will produce the sound. Though this single-bit sound does not seem powerful, many games produce incredible sound effects leveraging the beeper bit, and some of them create sound using the IM 2 interrupt mode.
 
 ## The Tape
 
-*TBD*
+The ZX Spectrum 48K uses a tape cassette to store programs and data. Writing Bit 3 of any even port number sets the tape signal level when saving data to a tape. If the tape recorder is in record mode, the alteration of low and high levels creates an analog signal on the tape that later can be read back. The hardware can detect tape signal levels (provided the tape device is playing a tape) by reading Bit 6 from an even input port.
+
+The operating system of the ZX Spectrum uses a relatively simple format to save and load data blocks. The cassette routines in the ROM can save a series of data bytes to the tape and read them back reliably, assuming the tape stores the information without errors. (This format saves a checksum at the end of the byte stream so it can detect potential tape errors.)
+
+The operating system uses two such tape blocks to manage data. The first block is a header (19 bytes) that tells the operating system how to handle the second block, containing the actual data. You can learn more about the tape format here: https://sinclair.wiki.zxnet.co.uk/wiki/Spectrum_tape_interface
+
+From the emulation point of view, the essential information is the structure of a single data block, which is the key to understanding how the operating system knows valuable data from random noise on the tape.
+
+The cassette routines use pulses with a particular length to ensure that it interprets tape signals correctly. Each pulse contains two parts:
+- A segment with a low signal level (the tape signal level results in a 0 bit)
+- Another segment with a high signal level (the tape signal level results in a 1 bit)
+
+The cassette routines use predefined pulse lengths given in clock signal lengths.
+
+A single data block contains this set of pulses:
+- *Pilot pulses* allow the operating system to detect that a data block is being played back from the tape. Each pilot pulse is 2168 T-States (clock count) long, with a 1084 T-states of low and 1084 T-States high signal level. The header block uses an 8063-pulse pilot signal to mark the beginning of the block, while a data block creates only 3223.
+- A single *Sync pulse* follows the pilot pulses. The low-signal part is  667 T-states long, while the high-signal part takes 735 T-states.
+- Each bit of the byte stream to save uses a single pulse that follow each other. A zero bit has a symmetric pulse with an 855-T-States low-signal half and a high-signal half with the same length. A bit with a value of 1 uses the same structure with 1710 T-states for each pulse-half.
+- The block is terminated with a *Term pulse*. Though its name suggests it is a pulse with two halves, the termination is just a 947 T-states long low-level signal. Its sole purpose is to provide a termination for the very last bit pulse of the data block. (As the second half of the last bit-pulse has a high signal value, it must be terminated with a low signal to find the end of the pulse.)
+
+When loading from tape, the ROM routine starts with finding the beginning of a data block and reading pulses while measuring their length. When it finds 256 adjacent pulses with the approximate length of a pilot pulse (2168 T-states), it considers that the current signal represents the pilot block.
+
+The routine goes on by finding the low segment of the sync pulse (667 T-states), then the adjacent high segment (735 T-states). The successful sync pulse detection means that the following pulses are data bytes.
+
+When loading a data block, the cassette routine knows the number of bytes to read in advance. It loops while all bits are read. Reading the pulses, it can recognize bit values from pulse length. The tape routine stops with a tape error when the arriving pulse cannot be a bit (it is either too short or too long).
+
+The very last byte of the data block is a checksum (the values of previous bytes XOR-red). The ROM routine uses this value to check the integrity of the data block.
+
 
 ## The Floating Bus
 
-*TBD*
+The floating bus effect in ZX Spectrum 48K results from a frugal hardware design. Normally, when the Z80 CPU reads an unmapped I/O port (any odd port number), it is expected to read the value of $FF. In this case, there is no hardware to provide value (and the data bus is isolated with proper tree-state buffers resulting in a high impedance state).
+
+However, the ZX Spectrum hardware uses only resistors for separating data lines, so an unmapped port does not produce a high impedance state of data lines. These resistors (470 Ohm) were enough to allow the data lines to be driven adequately by devices on each side of the bus without causing any inputs or outputs to be shorted low or high.
+
+This hardware design produces an interesting effect: when the ULA reads data from the RAM to generate the screen, the last read data bytes remain on the data bus. Reading from an unmapped port returns the data byte read by the ULA.
+
+Though the CPU also reads from the RAM (for example, when fetching the next instruction), the ULA has priority, and the CPU must wait while the ULA read completes. So, when the CPU executes an I/O read operation, it will detect the ULA byte read while the same I/O read operation is executed.
+
+The information that remains on the data bus after the ULA read may be the value of a pixel byte (8 adjacent pixels) or an attribute byte value. Knowing the timing of the ULA and the CPU allows you to read values from an unmapped port (for example, port $ff) and test these values to find when the ULA reaches rendering a particular row in the screen.
+
+Many ZX Spectrum 48K games use the floating bus feature to implement nice visual effects, like "writing" to the left and right border stripes and others.

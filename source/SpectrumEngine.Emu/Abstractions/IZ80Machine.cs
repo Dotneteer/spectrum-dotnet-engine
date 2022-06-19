@@ -51,22 +51,12 @@ public interface IZ80Machine : IZ80Cpu
     void Configure();
 
     /// <summary>
-    /// Executes the machine loop using the current execution context.
+    /// Executes the machine frame using the current execution context.
     /// </summary>
     /// <returns>
     /// The value indicates the termination reason of the loop. 
     /// </returns>
-    LoopTerminationMode ExecuteMachineLoop();
-
-    /// <summary>
-    /// This flag indicates that the last machine frame has been completed.
-    /// </summary>
-    bool FrameCompleted { get; set; }
-
-    /// <summary>
-    /// Shows the number of frame tacts that overflow to the subsequent machine frame.
-    /// </summary>
-    int FrameOverflow { get; set; }
+    FrameTerminationMode ExecuteMachineFrame();
 
     /// <summary>
     /// Width of the screen in native machine screen pixels
@@ -77,16 +67,6 @@ public interface IZ80Machine : IZ80Cpu
     /// Height of the screen in native machine screen pixels
     /// </summary>
     int ScreenHeightInPixels { get; }
-
-    /// <summary>
-    /// The multiplier for the pixel width (defaults to 1)
-    /// </summary>
-    int HorizontalPixelRatio { get; }
-
-    /// <summary>
-    /// The multiplier for the pixel height (defaults to 1)
-    /// </summary>
-    int VerticalPixelRatio { get; }
 
     /// <summary>
     /// Gets the buffer that stores the rendered pixels
