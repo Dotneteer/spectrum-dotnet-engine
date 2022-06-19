@@ -21,6 +21,7 @@ public class MachineViewModel: ViewModelBase
     private int _machineFrames;
     private bool _allowFastLoad;
     private TapeMode _tapeMode;
+    private int _clockMultiplier;
 
     /// <summary>
     /// Bind this view model to its parent
@@ -51,6 +52,7 @@ public class MachineViewModel: ViewModelBase
         _mc.StateChanged += OnStateChanged;
         _mc.FrameCompleted += OnFrameCompleted;
         _mc.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
+        ClockMultiplier = _mc.Machine.TargetClockMultiplier;
         OnStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
 
         // --- Update view model properties
@@ -114,6 +116,14 @@ public class MachineViewModel: ViewModelBase
         }
     }
 
+    /// <summary>
+    /// The current clock multiplier
+    /// </summary>
+    public int ClockMultiplier
+    {
+        get => _clockMultiplier;
+        set => SetProperty(ref _clockMultiplier, value);
+    }
     /// <summary>
     /// Raised when a machine command has been executed
     /// </summary>
@@ -357,5 +367,17 @@ public class MachineViewModel: ViewModelBase
     {
         _mc?.Machine.SetMachineProperty(MachinePropNames.RewindRequested, true);
         RaiseCommandExecuted();
+    }
+
+    /// <summary>
+    /// Sets the clock multiplier to the specified value
+    /// </summary>
+    /// <param name="arg"></param>
+    public void SetClockMultiplier(object? arg)
+    {
+        if (arg is not string stringValue || !int.TryParse(stringValue, out var intValue)) return;
+        
+        _mc!.Machine.TargetClockMultiplier = intValue;
+        ClockMultiplier = intValue;
     }
 }
