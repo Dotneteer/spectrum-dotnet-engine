@@ -50,7 +50,7 @@ public sealed class TapeDevice: ITapeDevice
     /// <summary>
     /// Represents the minimum length of a too long pause in CPU tacts
     /// </summary>
-    private const ulong TOO_LONG_PAUSE = 10_500_000;
+    private const ulong TOO_LONG_PAUSE = 3_500_000;
 
     /// <summary>
     /// The width tolerance of save pulses
@@ -225,11 +225,11 @@ public sealed class TapeDevice: ITapeDevice
                     TapeMode = TapeMode.Save;
                     _tapeLastMicBitTact = Machine.Tacts;
                     _tapeLastMicBit = true;
-                    //tapeSavePhase = SP_NONE;
-                    //tapePilotPulseCount = 0;
-                    //tapeDataBlockCount = 0;
-                    //tapePrevDataPulse = 0;
-                    //tapeSaveDataLen = 0;
+                    _savePhase = SavePhase.None;
+                    _pilotPulseCount = 0;
+                    _dataBlockCount = 0;
+                    _prevDataPulse = MicPulseType.None;
+                    _dataLength = 0;
                     break;
             }
 
@@ -346,9 +346,9 @@ public sealed class TapeDevice: ITapeDevice
                 return false; // => Low EAR bit
             }
 
-            // --- We terminated the data, it's pause time 
+            // --- We terminated the data, it's pause time (1 second)
             _playPhase = PlayPhase.Pause;
-            _tapePauseEndPos = _tapeTermEndPos + (ulong)(Machine.BaseClockFrequency * Machine.ClockMultiplier);
+            _tapePauseEndPos = _tapeTermEndPos + (ulong)Machine.BaseClockFrequency;
             return true; // => High EAR bit
         }
 
