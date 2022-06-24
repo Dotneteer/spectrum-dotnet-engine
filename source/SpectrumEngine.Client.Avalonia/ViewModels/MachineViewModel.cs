@@ -18,9 +18,9 @@ public class MachineViewModel: ViewModelBase
     private readonly MainWindowViewModel _parentVm;
     private MachineController? _mc;
     private MachineControllerState _mstate;
-    private int _machineFrames;
     private bool _allowFastLoad;
     private TapeMode _tapeMode;
+    private FrameStats _frameStats = new FrameStats(); 
 
     /// <summary>
     /// Bind this view model to its parent
@@ -47,7 +47,6 @@ public class MachineViewModel: ViewModelBase
 
         // --- Set up the new controller and handle the state changes
         _mc = controller;
-        _machineFrames = 0;
         _mc.StateChanged += OnStateChanged;
         _mc.FrameCompleted += OnFrameCompleted;
         _mc.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
@@ -60,18 +59,21 @@ public class MachineViewModel: ViewModelBase
         {
             // --- Refresh command states whenever the controller state changes
             MachineControllerState = e.NewState;
-            
-            // --- Reset frame counter on a start/restart
-            if (e.OldState is MachineControllerState.None or MachineControllerState.Stopped 
-                && e.NewState is MachineControllerState.Running)
-            {
-                MachineFrames = 0;
-            } 
         }
 
         void OnFrameCompleted(object? sender, bool completed)
         {
-            if (completed) MachineFrames++;
+            if (!completed) return;
+            
+            var lastStats = _mc.FrameStats;
+            FrameStats = new FrameStats
+            {
+                FrameCount = lastStats.FrameCount,
+                LastCpuFrameTimeInMs = lastStats.LastCpuFrameTimeInMs,
+                AvgCpuFrameTimeInMs = lastStats.AvgCpuFrameTimeInMs,
+                LastFrameTimeInMs = lastStats.LastFrameTimeInMs,
+                AvgFrameTimeInMs = lastStats.AvgFrameTimeInMs
+            };
         }
 
         void OnMachinePropertyChanged(object? sender, (string key, object? value) args)
@@ -83,6 +85,12 @@ public class MachineViewModel: ViewModelBase
         }
     }
 
+    public FrameStats FrameStats
+    {
+        get => _frameStats;
+        set => SetProperty(ref _frameStats, value);
+    }
+    
     /// <summary>
     /// Get or set the controller state
     /// </summary>
@@ -270,15 +278,6 @@ public class MachineViewModel: ViewModelBase
     private bool CanStepOut(object? parameter)
         => _mc != null && MachineControllerState == MachineControllerState.Paused;
     
-    /// <summary>
-    /// Get or set the machine frames completed
-    /// </summary>
-    public int MachineFrames
-    {
-        get => _machineFrames;
-        set => SetProperty(ref _machineFrames, value);
-    }
-
     public void ToggleFastLoad() => AllowFastLoad = !AllowFastLoad;
 
     public async Task SetTapeFile()
