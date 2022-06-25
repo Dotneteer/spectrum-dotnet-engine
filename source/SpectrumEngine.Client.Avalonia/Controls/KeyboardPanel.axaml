@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.KeyboardPanel">
+    <Border Background="{DynamicResource KeyboardBackgroundBrush}" Padding="16">
+        <Viewbox Stretch="Uniform" Padding="16">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                    <controls:Sp48Key />
+                </StackPanel>
+            </Grid>
+        </Viewbox>
+    </Border>
+</UserControl>

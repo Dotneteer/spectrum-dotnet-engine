@@ -40,5 +40,6 @@
         <SolidColorBrush x:Key="MachineStatusOverlayBackgroundBrush" Color="{DynamicResource MachineStatusOverlayBackgroundColor}"/>
         <SolidColorBrush x:Key="MachineStatusOverlayForegroundBrush" Color="{DynamicResource MachineStatusOverlayForegroundColor}"/>
         <SolidColorBrush x:Key="SplitterBackgroundBrush" Color="{DynamicResource SplitterBackgroundColor}"/>
+        <SolidColorBrush x:Key="KeyboardBackgroundBrush" Color="{DynamicResource MenuGray}"/>
     </Styles.Resources>
 </Styles>

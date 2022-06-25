@@ -1,0 +1,27 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
+    <Design.PreviewWith>
+        <controls:Sp48Key />
+    </Design.PreviewWith>
+
+    <Style Selector="controls|Sp48Key">
+        <!-- Set Defaults -->
+        <Setter Property="Background" Value="gray" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border 
+                    Width="40" 
+                    Height="20" 
+                    BorderBrush="Red" 
+                    BorderThickness="1" 
+                    Background="{TemplateBinding Background}">
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    
+    <Style Selector="controls|Sp48Key /template/ Border:pointerover">
+        <Setter Property="Background" Value="{DynamicResource SplitterBackgroundBrush}" />
+    </Style>
+</Styles>
