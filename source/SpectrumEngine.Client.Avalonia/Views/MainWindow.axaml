@@ -303,9 +303,27 @@
                 IsVisible="{Binding ViewOptions.ShowToolbar}" />
             <local:StatusBarUserControl DockPanel.Dock="Bottom" 
                 IsVisible="{Binding ViewOptions.ShowStatusBar}"/>
-            <local:SpectrumDisplayControl 
-                x:Name="SpectrumDisplay"
-                DataContext="{Binding Display}" />
+            <Panel
+                x:Name="KeyboardPanel" 
+                IsVisible="{Binding ViewOptions.ShowKeyboard}" 
+                Height="40"
+                Background="#404040"
+                DockPanel.Dock="Bottom">
+            </Panel>
+            <Panel 
+                x:Name="SplitterPanel"
+                IsVisible="{Binding ViewOptions.ShowKeyboard}" 
+                Height="4" 
+                Cursor="SizeNorthSouth"
+                Background="Red" 
+                DockPanel.Dock="Bottom" 
+                Initialized="SplitterPanel_OnInitialized"
+                PointerPressed="InputElement_OnPointerPressed">
+                <Thumb />
+            </Panel>
+            <local:SpectrumDisplayControl
+                    x:Name="SpectrumDisplay"
+                    DataContext="{Binding Display}" />
         </DockPanel>
     </Grid>
 

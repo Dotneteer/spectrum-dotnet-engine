@@ -28,15 +28,6 @@ public class IconButton : TemplatedControl
     public static readonly StyledProperty<bool> IsCheckedProperty =
         AvaloniaProperty.Register<IconButton, bool>(nameof(IsChecked));
     
-    public IconButton()
-    {
-        Width = 36;
-        Height = 36;
-        Padding = new Thickness(8);
-        Margin = new Thickness(0);
-        Background = new SolidColorBrush(Colors.Transparent);
-    }
-
     /// <summary>
     /// Fill brush for the button icon
     /// </summary>

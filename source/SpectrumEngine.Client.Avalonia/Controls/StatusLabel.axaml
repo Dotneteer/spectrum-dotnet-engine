@@ -10,6 +10,7 @@
 
     <Style Selector="controls|StatusLabel">
         <!-- Set Defaults -->
+        <Setter Property="Padding" Value="8,0" />
         <Setter Property="Template">
             <ControlTemplate>
                 <StackPanel Orientation="Horizontal">

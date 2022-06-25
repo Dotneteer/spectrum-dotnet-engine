@@ -223,5 +223,14 @@ public partial class SpectrumDisplayControl : UserControl
     {
         ResizeScreen();
     }
+
+    protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+    {
+        if (change.Property == BoundsProperty)
+        {
+            ResizeScreen();
+        }
+        base.OnPropertyChanged(change);
+    }
 }
 

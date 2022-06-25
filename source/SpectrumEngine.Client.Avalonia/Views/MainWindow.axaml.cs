@@ -46,5 +46,15 @@ namespace SpectrumEngine.Client.Avalonia.Views
         {
             e.Handled = SpectrumDisplay.HandleKeyboardEvent(e, true);
         }
+
+        private void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            SplitterPanel.Height = SplitterPanel.Height > 4 ? 4 : 400;
+        }
+
+        private void SplitterPanel_OnInitialized(object? sender, EventArgs e)
+        {
+            
+        }
     }
 }

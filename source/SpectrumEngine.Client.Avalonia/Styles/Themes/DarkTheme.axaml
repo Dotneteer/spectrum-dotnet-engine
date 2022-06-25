@@ -15,6 +15,7 @@
         <Color x:Key="ToolbarGray">#383838</Color>
         
         <Color x:Key="StatusBarBackgroundColor">#007acc</Color>
+        <Color x:Key="SplitterBackgroundColor">#007acc</Color>
         <Color x:Key="StatusBarForegroundColor">White</Color>
         <Color x:Key="IconButtonPointedColor">#80808080</Color>
         <Color x:Key="IconButtonDisabledColor">#a0a0a0</Color>
@@ -38,5 +39,6 @@
         <SolidColorBrush x:Key="StatusBarForegroundBrush" Color="{DynamicResource StatusBarForegroundColor}"/>
         <SolidColorBrush x:Key="MachineStatusOverlayBackgroundBrush" Color="{DynamicResource MachineStatusOverlayBackgroundColor}"/>
         <SolidColorBrush x:Key="MachineStatusOverlayForegroundBrush" Color="{DynamicResource MachineStatusOverlayForegroundColor}"/>
+        <SolidColorBrush x:Key="SplitterBackgroundBrush" Color="{DynamicResource SplitterBackgroundColor}"/>
     </Styles.Resources>
 </Styles>
