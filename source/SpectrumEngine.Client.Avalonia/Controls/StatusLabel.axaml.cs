@@ -16,6 +16,14 @@ public class StatusLabel : TemplatedControl
     public static readonly StyledProperty<string> TextProperty = 
         AvaloniaProperty.Register<StatusLabel, string>(nameof(Text));
 
+    public static readonly StyledProperty<bool> ShowIconProperty = 
+        AvaloniaProperty.Register<StatusLabel, bool>(nameof(ShowIcon), true);
+
+    public StatusLabel()
+    {
+        Padding = Thickness.Parse("8,0");    
+    }
+    
     /// <summary>
     /// Fill brush for the button icon
     /// </summary>
@@ -41,5 +49,14 @@ public class StatusLabel : TemplatedControl
     {
         get => GetValue(TextProperty);
         set => SetValue(TextProperty, value);
+    }
+
+    /// <summary>
+    /// Indicates if icon is visible
+    /// </summary>
+    public bool ShowIcon
+    {
+        get => GetValue(ShowIconProperty);
+        set => SetValue(ShowIconProperty, value);
     }
 }
