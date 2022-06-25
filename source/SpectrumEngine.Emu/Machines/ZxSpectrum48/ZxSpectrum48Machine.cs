@@ -443,7 +443,6 @@ public sealed class ZxSpectrum48Machine :
             else
             {
                 // --- Low bit reset, C:1, C:3
-                ApplyContentionDelay();
                 TactPlus1();
                 ApplyContentionDelay();
                 TactPlus3();

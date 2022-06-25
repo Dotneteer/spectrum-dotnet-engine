@@ -144,7 +144,7 @@ public partial class Z80Cpu
     /// </summary>
     private void CallCore()
     {
-        TactPlus1(Regs.IR);
+        TactPlus1(Regs.PC);
         Regs.SP--;
         WriteMemory(Regs.SP, (byte)(Regs.PC >> 8));
         Regs.SP--;

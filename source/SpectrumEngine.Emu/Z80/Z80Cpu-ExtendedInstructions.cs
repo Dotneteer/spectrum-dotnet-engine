@@ -123,7 +123,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void SbcHLBC()
     {
-        TactPlus7(Regs.HL);
+        TactPlus7(Regs.IR);
         Sbc16(Regs.BC);
     }
 
@@ -259,7 +259,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void AdcHLBC()
     {
-        TactPlus7(Regs.HL);
+        TactPlus7(Regs.IR);
         Adc16(Regs.BC);
     }
 
@@ -363,7 +363,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void SbcHLDE()
     {
-        TactPlus7(Regs.HL);
+        TactPlus7(Regs.IR);
         Sbc16(Regs.DE);
     }
 
@@ -485,7 +485,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void AdcHLDE()
     {
-        TactPlus7(Regs.HL);
+        TactPlus7(Regs.IR);
         Adc16(Regs.DE);
     }
 
@@ -612,7 +612,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void SbcHLHL()
     {
-        TactPlus7(Regs.HL);
+        TactPlus7(Regs.IR);
         Sbc16(Regs.HL);
     }
 
@@ -711,7 +711,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void AdcHLHL()
     {
-        TactPlus7(Regs.HL);
+        TactPlus7(Regs.IR);
         Adc16(Regs.HL);
     }
 
@@ -810,7 +810,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void SbcHLSP()
     {
-        TactPlus7(Regs.HL);
+        TactPlus7(Regs.IR);
         Sbc16(Regs.SP);
     }
 
@@ -893,7 +893,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void AdcHLSP()
     {
-        TactPlus7(Regs.HL);
+        TactPlus7(Regs.IR);
         Adc16(Regs.SP);
     }
 
