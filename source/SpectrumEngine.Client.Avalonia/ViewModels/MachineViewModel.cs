@@ -18,8 +18,10 @@ public class MachineViewModel: ViewModelBase
     private readonly MainWindowViewModel _parentVm;
     private MachineController? _mc;
     private MachineControllerState _mstate;
+    private int _machineFrames;
     private bool _allowFastLoad;
     private TapeMode _tapeMode;
+    private int _clockMultiplier;
     private FrameStats _frameStats = new FrameStats(); 
 
     /// <summary>
@@ -47,9 +49,11 @@ public class MachineViewModel: ViewModelBase
 
         // --- Set up the new controller and handle the state changes
         _mc = controller;
+        _machineFrames = 0;
         _mc.StateChanged += OnStateChanged;
         _mc.FrameCompleted += OnFrameCompleted;
         _mc.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
+        ClockMultiplier = _mc.Machine.TargetClockMultiplier;
         OnStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
 
         // --- Update view model properties
@@ -59,21 +63,18 @@ public class MachineViewModel: ViewModelBase
         {
             // --- Refresh command states whenever the controller state changes
             MachineControllerState = e.NewState;
+            
+            // --- Reset frame counter on a start/restart
+            if (e.OldState is MachineControllerState.None or MachineControllerState.Stopped 
+                && e.NewState is MachineControllerState.Running)
+            {
+                MachineFrames = 0;
+            } 
         }
 
         void OnFrameCompleted(object? sender, bool completed)
         {
-            if (!completed) return;
-            
-            var lastStats = _mc.FrameStats;
-            FrameStats = new FrameStats
-            {
-                FrameCount = lastStats.FrameCount,
-                LastCpuFrameTimeInMs = lastStats.LastCpuFrameTimeInMs,
-                AvgCpuFrameTimeInMs = lastStats.AvgCpuFrameTimeInMs,
-                LastFrameTimeInMs = lastStats.LastFrameTimeInMs,
-                AvgFrameTimeInMs = lastStats.AvgFrameTimeInMs
-            };
+            if (completed) MachineFrames++;
         }
 
         void OnMachinePropertyChanged(object? sender, (string key, object? value) args)
@@ -85,12 +86,6 @@ public class MachineViewModel: ViewModelBase
         }
     }
 
-    public FrameStats FrameStats
-    {
-        get => _frameStats;
-        set => SetProperty(ref _frameStats, value);
-    }
-    
     /// <summary>
     /// Get or set the controller state
     /// </summary>
@@ -122,6 +117,14 @@ public class MachineViewModel: ViewModelBase
         }
     }
 
+    /// <summary>
+    /// The current clock multiplier
+    /// </summary>
+    public int ClockMultiplier
+    {
+        get => _clockMultiplier;
+        set => SetProperty(ref _clockMultiplier, value);
+    }
     /// <summary>
     /// Raised when a machine command has been executed
     /// </summary>
@@ -278,6 +281,15 @@ public class MachineViewModel: ViewModelBase
     private bool CanStepOut(object? parameter)
         => _mc != null && MachineControllerState == MachineControllerState.Paused;
     
+    /// <summary>
+    /// Get or set the machine frames completed
+    /// </summary>
+    public int MachineFrames
+    {
+        get => _machineFrames;
+        set => SetProperty(ref _machineFrames, value);
+    }
+
     public void ToggleFastLoad() => AllowFastLoad = !AllowFastLoad;
 
     public async Task SetTapeFile()
@@ -356,5 +368,17 @@ public class MachineViewModel: ViewModelBase
     {
         _mc?.Machine.SetMachineProperty(MachinePropNames.RewindRequested, true);
         RaiseCommandExecuted();
+    }
+
+    /// <summary>
+    /// Sets the clock multiplier to the specified value
+    /// </summary>
+    /// <param name="arg"></param>
+    public void SetClockMultiplier(object? arg)
+    {
+        if (arg is not string stringValue || !int.TryParse(stringValue, out var intValue)) return;
+        
+        _mc!.Machine.TargetClockMultiplier = intValue;
+        ClockMultiplier = intValue;
     }
 }
