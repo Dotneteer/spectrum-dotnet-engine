@@ -1,4 +1,5 @@
-﻿namespace SpectrumEngine.Emu;
+﻿// ReSharper disable InconsistentNaming
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class implements the emulation of the Z80 CPU.

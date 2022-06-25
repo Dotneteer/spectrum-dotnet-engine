@@ -276,7 +276,7 @@ public partial class Z80Cpu
         RemoveFromHaltedState();
 
         // --- Disable the maskable interrupt unless it is enabled again with the EI instruction.
-        Iff2 = false;
+        Iff1 = false;
         Iff2 = false;
 
         // --- Push the return address to the stack
