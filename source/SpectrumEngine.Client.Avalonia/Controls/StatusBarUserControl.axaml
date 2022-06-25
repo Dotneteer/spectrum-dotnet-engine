@@ -23,9 +23,21 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Panel Grid.Column="0" HorizontalAlignment="Left">
-            <controls:StatusLabel
-                Path="{DynamicResource IconVm}"
-                Text="{Binding Machine.MachineFrames}" />
+            <StackPanel Orientation="Horizontal">
+                <controls:StatusLabel
+                    Path="{DynamicResource IconVm}"
+                    Text="{Binding Machine.FrameStats.FrameCount}"
+                    Width="90"/>
+                <StackPanel Orientation="Horizontal" Width="200">
+                    <controls:StatusLabel
+                        Path="{DynamicResource IconDashboard}"
+                        Text="{Binding Machine.FrameStats.AvgCpuFrameTimeInMs, Converter={StaticResource FixedDecimalConverter}}" />
+                    <controls:StatusLabel ShowIcon="false" Text="/" Padding="0" />
+                    <controls:StatusLabel
+                        ShowIcon="false"
+                        Text="{Binding Machine.FrameStats.AvgFrameTimeInMs, Converter={StaticResource FixedDecimalConverter}}" />
+                </StackPanel>
+            </StackPanel>
         </Panel>
         <Panel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
             <controls:PlainIcon Path="{DynamicResource IconVm}"/>

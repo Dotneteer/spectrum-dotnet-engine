@@ -1,4 +1,6 @@
-﻿namespace SpectrumEngine.Emu;
+﻿using System.Diagnostics;
+
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class implements a machine controller that can operate an emulated machine invoking its execution loop.
@@ -8,6 +10,7 @@ public class MachineController
     private CancellationTokenSource? _tokenSource;
     private Task? _machineTask;
     private MachineControllerState _machineState;
+    private readonly FrameStats _frameStats = new FrameStats();
 
     /// <summary>
     /// Initializes the controller to manage the specified machine.
@@ -49,6 +52,11 @@ public class MachineController
         }
     }
 
+    /// <summary>
+    /// Represents the frame statistics of the last running frame
+    /// </summary>
+    public FrameStats FrameStats => _frameStats;
+    
     /// <summary>
     /// Indicates if the machine runs in debug mode
     /// </summary>
@@ -107,6 +115,11 @@ public class MachineController
 
         IsDebugging = false;
         await FinishExecutionLoop(MachineControllerState.Stopping, MachineControllerState.Stopped);
+        _frameStats.FrameCount = 0;
+        _frameStats.LastCpuFrameTimeInMs = 0.0;
+        _frameStats.AvgFrameTimeInMs = 0.0;
+        _frameStats.LastFrameTimeInMs = 0.0;
+        _frameStats.AvgFrameTimeInMs = 0.0;
     }
 
     /// <summary>
@@ -188,17 +201,36 @@ public class MachineController
             var token = _tokenSource.Token;
             var loopStartInTicks = DateTime.Now.Ticks;
             var completedFrames = 0;
+            var stopwatch = new Stopwatch();
             do
             {
+                // --- Run the machine frame and measure execution time
+                stopwatch.Restart();
                 var termination = Machine.ExecuteMachineFrame();
-                FrameCompleted?.Invoke(this, termination == FrameTerminationMode.Normal);
+                var cpuTime = stopwatch.ElapsedTicks;
+                var frameCompleted = termination == FrameTerminationMode.Normal;
+                FrameCompleted?.Invoke(this, frameCompleted);
+                var frameTime = stopwatch.ElapsedTicks;
+                if (frameCompleted)
+                {
+                    _frameStats.FrameCount++;
+                } 
+                _frameStats.LastCpuFrameTimeInMs = (double) cpuTime / Stopwatch.Frequency * 1000.0;
+                _frameStats.AvgCpuFrameTimeInMs = _frameStats.FrameCount == 0
+                    ? _frameStats.LastCpuFrameTimeInMs
+                    : (_frameStats.AvgCpuFrameTimeInMs * (_frameStats.FrameCount - 1) +
+                       _frameStats.LastCpuFrameTimeInMs) / _frameStats.FrameCount;
+                _frameStats.LastFrameTimeInMs = (double) frameTime / Stopwatch.Frequency * 1000.0;
+                _frameStats.AvgFrameTimeInMs = _frameStats.FrameCount == 0
+                    ? _frameStats.LastFrameTimeInMs
+                    : (_frameStats.AvgFrameTimeInMs * (_frameStats.FrameCount - 1) +
+                       _frameStats.LastFrameTimeInMs) / _frameStats.FrameCount;
+                
                 if (termination != FrameTerminationMode.Normal || token.IsCancellationRequested)
                 {
                     Context.Cancelled = token.IsCancellationRequested;
                     return;
                 }
-
-                // TODO: Implement after-cycle activities
 
                 // --- Calculate the time to wait before the next machine frame starts
                 completedFrames++;

@@ -14,11 +14,13 @@
             <ControlTemplate>
                 <StackPanel Orientation="Horizontal">
                     <controls:PlainIcon
+                        IsVisible="{TemplateBinding ShowIcon}"
                         Path="{TemplateBinding Path}"
                         Fill="{TemplateBinding Fill}"/>
                     <TextBlock 
-                        Text="{TemplateBinding Text}" 
-                        Padding="8,0"
+                        Text="{TemplateBinding Text}"
+                        Width="{TemplateBinding Width}"
+                        Padding="{TemplateBinding Padding}"
                         VerticalAlignment="Center">
                     </TextBlock>
                 </StackPanel>
