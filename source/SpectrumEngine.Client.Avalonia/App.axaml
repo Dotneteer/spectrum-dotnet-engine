@@ -26,6 +26,5 @@
         <StyleInclude Source="/Controls/PlainIcon.axaml"/>
         <StyleInclude Source="/Controls/SplitterPanel.axaml"/>
         <StyleInclude Source="/Controls/StatusLabel.axaml"/>
-        <StyleInclude Source="/Controls/Sp48Key.axaml"/>
     </Application.Styles>
 </Application>

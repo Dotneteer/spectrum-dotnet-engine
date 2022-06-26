@@ -1,27 +1,70 @@
-<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
-    <Design.PreviewWith>
-        <controls:Sp48Key />
-    </Design.PreviewWith>
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.Sp48Key">
+    <Design.DataContext>
+        <controls:SingleKeyControlSampleData />
+    </Design.DataContext>
 
-    <Style Selector="controls|Sp48Key">
-        <!-- Set Defaults -->
-        <Setter Property="Background" Value="gray" />
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border 
-                    Width="40" 
-                    Height="20" 
-                    BorderBrush="Red" 
-                    BorderThickness="1" 
-                    Background="{TemplateBinding Background}">
-                </Border>
-            </ControlTemplate>
-        </Setter>
-    </Style>
-    
-    <Style Selector="controls|Sp48Key /template/ Border:pointerover">
-        <Setter Property="Background" Value="{DynamicResource SplitterBackgroundBrush}" />
-    </Style>
-</Styles>
+    <UserControl.Styles>
+        <Style Selector="TextBlock.KeyLine">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="8" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Height" Value="11" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Margin" Value="-2,-2,-2,0" />
+            <Setter Property="Padding" Value="2" />
+        </Style>
+        <Style Selector="Border.KeyLine">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="CornerRadius" Value="2" />
+            <Setter Property="Padding" Value="2" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Margin" Value="6,0,0,0" />
+        </Style>
+        <Style Selector="Border.KeyLine:pointerover">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="Border.Pressed">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
+    </UserControl.Styles>
+    <Grid RowDefinitions="Auto, Auto, Auto, Auto">
+        <!-- Number key color row header -->
+        <Border 
+            Grid.Row="0"
+            Classes="KeyLine"
+            PointerPressed="OnNumericControlKeyMouseDown"
+            PointerReleased="OnMouseUp">
+            <TextBlock
+                Text="{Binding ColorKey}"
+                Classes="KeyLine"
+                Foreground="{Binding NumForeground}" 
+                IsVisible="{Binding NumericMode}" />
+        </Border>
+        
+        <!-- Extended key above -->
+        <Border 
+            Grid.Row="1"
+            Classes="KeyLine"
+            PointerPressed="OnExtKeyMouseDown" 
+            PointerReleased="OnMouseUp"
+            VerticalAlignment="Bottom">
+            <TextBlock Text="{Binding ExtKey}" Classes="KeyLine" Foreground="#51c351" />
+        </Border>
+
+        <!-- Extended key below -->
+        <Border 
+            Grid.Row="3"
+            Classes="KeyLine"    
+            PointerPressed="OnExtShiftKeyMouseDown" 
+            PointerReleased="OnMouseUp" >
+            <TextBlock Text="{Binding ExtShiftKey}" Classes="KeyLine" Foreground="#e04040"/>
+        </Border>
+    </Grid>
+</UserControl>
