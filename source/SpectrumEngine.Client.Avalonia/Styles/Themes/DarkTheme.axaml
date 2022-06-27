@@ -25,7 +25,8 @@
         <Color x:Key="MachineStatusOverlayBackgroundColor">#404040</Color>
         <Color x:Key="MachineStatusOverlayForegroundColor">LimeGreen</Color>
         
-        <Color x:Key="MainButtonTextColor">#FFF0F0F0</Color>
+        <Color x:Key="MainButtonTextColor">#F0F0F0</Color>
+        <Color x:Key="KeyBackgroundColor">#808080</Color>
         
         <SolidColorBrush x:Key="AppBackground" Color="{DynamicResource DarkGray}"/>
         <SolidColorBrush x:Key="MenuText" Color="{DynamicResource TextGray}"/>
@@ -46,6 +47,7 @@
         <SolidColorBrush x:Key="MainButtonTextBrush" Color="{StaticResource MainButtonTextColor}"/>
         <SolidColorBrush x:Key="KeyTextHighlightBrush" Color="{StaticResource HighlightColor}"/>
         <SolidColorBrush x:Key="KeyTextHighlightPressedBrush" Color="{StaticResource HighlightPressedColor}"/>
+        <SolidColorBrush x:Key="KeyBackgroundBrush" Color="{StaticResource KeyBackgroundColor}"/>
 
     </Styles.Resources>
 </Styles>

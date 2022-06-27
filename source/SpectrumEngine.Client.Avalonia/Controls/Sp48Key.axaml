@@ -20,6 +20,20 @@
             <Setter Property="Margin" Value="-2,-2,-2,0" />
             <Setter Property="Padding" Value="2" />
         </Style>
+        <Style Selector="TextBlock.KeywordLine">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#f0f0f0" />
+            <Setter Property="Height" Value="11" />
+        </Style>
+        <Style Selector="TextBlock.SymShiftLine">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#a00000" />
+            <Setter Property="Height" Value="11" />
+        </Style>
         <Style Selector="Border.KeyLine">
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="CornerRadius" Value="2" />
@@ -33,7 +47,43 @@
         <Style Selector="Border.Pressed">
             <Setter Property="Background" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
         </Style>
+        <Style Selector="Border.KeyButton">
+            <Setter Property="Background" Value="{DynamicResource KeyBackgroundColor}" />
+        </Style>
+        <Style Selector="Border.KeyButton:pointerover">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="Border.KeyButton.Pressed">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
+        <Style Selector="TextBlock.MainButton">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#f0f0f0" />
+        </Style>
+        <Style Selector="TextBlock.SymShift">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#a00000" />
+        </Style>
+        <Style Selector="TextBlock.NumShift">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#a00000" />
+        </Style>
+
+        <Style Selector="Border.SymShift:pointerover">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="Border.SymShift.Pressed">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
+
     </UserControl.Styles>
+    
     <Grid RowDefinitions="Auto, Auto, Auto, Auto">
         <!-- Number key color row header -->
         <Border 
@@ -65,6 +115,149 @@
             PointerPressed="OnExtShiftKeyMouseDown" 
             PointerReleased="OnMouseUp" >
             <TextBlock Text="{Binding ExtShiftKey}" Classes="KeyLine" Foreground="#e04040"/>
+        </Border>
+        
+        <!-- Simple key mode -->
+        <Border 
+            Grid.Row="2" 
+            Classes="KeyButton"
+            Width="{Binding ButtonWidth}"
+            Height="36" 
+            Padding="6,4"
+            HorizontalAlignment="Left" 
+            CornerRadius="4" 
+            IsVisible="{Binding SimpleMode}"
+            PointerPressed="OnMainKeyMouseDown" 
+            PointerReleased="OnMouseUp"
+            Cursor="Hand">
+            <Grid VerticalAlignment="Center">
+                <StackPanel
+                    IsVisible="{Binding !SymMode}"
+                    VerticalAlignment="Center" >
+                    <TextBlock
+                        Classes="KeywordLine"
+                        Text="{Binding Keyword}"
+                        TextAlignment="Center"
+                        Margin="0,2,0,0" 
+                        TextWrapping="WrapWithOverflow" />
+                    <TextBlock
+                        IsVisible="{Binding TwoLineMode}"
+                        Classes="KeywordLine"
+                        Text="{Binding Keyword2}"
+                        TextAlignment="Center" />
+                </StackPanel>
+                <StackPanel
+                    IsVisible="{Binding SymMode}"
+                    VerticalAlignment="Center">
+                    <TextBlock
+                        Classes="SymShiftLine"
+                        Text="{Binding Keyword}"
+                        TextAlignment="Center"
+                        Margin="0,2,0,0" />
+                    <TextBlock
+                        IsVisible="{Binding TwoLineMode}"
+                        Classes="SymShiftLine"
+                        Text="{Binding Keyword2}"
+                        TextAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- Normal key mode -->
+        <Border 
+            Grid.Row="2" 
+            Classes="KeyButton"
+            Width="76" 
+            Height="36" 
+            Padding="6,4"
+            HorizontalAlignment="Left" 
+            CornerRadius="4" 
+            IsVisible="{Binding !SimpleMode}" 
+            PointerPressed="OnMainKeyMouseDown"
+            PointerReleased="OnMouseUp"
+            Cursor="Hand">
+            <Grid ColumnDefinitions="1*,3*">
+                <TextBlock Text="{Binding MainKey}" Classes="MainButton"/>
+                <StackPanel Grid.Column="1" IsVisible="{Binding !NumericMode}">
+                    <Border
+                        Classes="SymShift"
+                        Padding="2" 
+                        Margin="-2" 
+                        HorizontalAlignment="Right" 
+                        CornerRadius="2" 
+                        ZIndex="-10" 
+                        PointerPressed="OnSymShiftKeyMouseDown"
+                        PointerReleased="OnMouseUp">
+                        <TextBlock 
+                            Classes="SymShift"
+                            Text="{Binding SShiftKey}"
+                            Margin="0"
+                            HorizontalAlignment="Right">
+                        </TextBlock>
+                    </Border>
+                    <TextBlock
+                        Classes="KeywordLine"
+                        Text="{Binding Keyword}"
+                        HorizontalAlignment="Right"
+                        Padding="0" 
+                        Margin="0,2,0,0" />
+                </StackPanel>
+                <StackPanel 
+                    Grid.Column="1" IsVisible="{Binding NumericMode}">
+                    <Border 
+                        Padding="2" 
+                        Margin="28,0,0,0" 
+                        HorizontalAlignment="Left" 
+                        CornerRadius="2"
+                        PointerPressed="OnGraphicsKeyMouseDown"
+                        PointerReleased="OnMouseUp">
+                        <Border Width="16" Height="16" HorizontalAlignment="Right" 
+                            BorderBrush="White" 
+                            BorderThickness="1"
+                            IsVisible="{Binding HasGraphics}">
+                        <Grid RowDefinitions="*,*" ColumnDefinitions="*,*">
+                            <Border 
+                                Grid.Row="0" 
+                                Grid.Column="1" 
+                                Background="White" 
+                                IsVisible="{Binding HasBit0}"
+                                VerticalAlignment="Stretch"
+                                HorizontalAlignment="Stretch" />
+                            <Border
+                                Grid.Row="0" 
+                                Grid.Column="0" 
+                                Background="White" 
+                                IsVisible="{Binding HasBit1}"/>
+                            <Border
+                                Grid.Row="1" 
+                                Grid.Column="1" 
+                                Background="White" 
+                                IsVisible="{Binding HasBit2}"/>
+                        </Grid>
+                    </Border>
+                    </Border>
+                    <Border
+                        Width="16" 
+                        Height="16" 
+                        HorizontalAlignment="Right" 
+                        BorderThickness="0"
+                        IsVisible="{Binding !HasGraphics}" />
+                    <Border 
+                        Padding="2" 
+                        Margin="8,-6,0,0" 
+                        HorizontalAlignment="Left" 
+                        CornerRadius="2"
+                        PointerPressed="OnSymShiftKeyMouseDown"
+                        PointerReleased="OnMouseUp">
+                        <TextBlock
+                            Classes="NumShift"
+                            Text="{Binding SShiftKey}"
+                            HorizontalAlignment="Left"
+                            Margin="-2,-6,0,-2" 
+                            Padding="2" />
+                    </Border>
+                </StackPanel>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

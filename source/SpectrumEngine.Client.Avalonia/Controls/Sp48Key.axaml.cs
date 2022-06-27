@@ -19,6 +19,9 @@ public partial class Sp48Key : UserControl
     public static readonly StyledProperty<string> KeywordProperty =
         AvaloniaProperty.Register<Sp48Key, string>(nameof(Keyword));
 
+    public static readonly StyledProperty<string> Keyword2Property =
+        AvaloniaProperty.Register<Sp48Key, string>(nameof(Keyword2));
+
     public static readonly StyledProperty<string> SShiftKeyProperty =
         AvaloniaProperty.Register<Sp48Key, string>(nameof(SShiftKey));
 
@@ -40,6 +43,9 @@ public partial class Sp48Key : UserControl
     public static readonly StyledProperty<bool> SymModeProperty =
         AvaloniaProperty.Register<Sp48Key, bool>(nameof(SymMode));
 
+    public static readonly StyledProperty<bool> TwoLineModeProperty =
+        AvaloniaProperty.Register<Sp48Key, bool>(nameof(TwoLineMode));
+
     public static readonly StyledProperty<double> ButtonWidthProperty =
         AvaloniaProperty.Register<Sp48Key, double>(nameof(ButtonWidth));
 
@@ -52,8 +58,14 @@ public partial class Sp48Key : UserControl
     public static readonly StyledProperty<bool> HasGraphicsProperty =
         AvaloniaProperty.Register<Sp48Key, bool>(nameof(HasGraphics));
 
-    public static readonly StyledProperty<int> GraphicsCodeProperty =
-        AvaloniaProperty.Register<Sp48Key, int>(nameof(GraphicsCode));
+    public static readonly StyledProperty<bool> HasBit0Property =
+        AvaloniaProperty.Register<Sp48Key, bool>(nameof(HasBit0));
+
+    public static readonly StyledProperty<bool> HasBit1Property =
+        AvaloniaProperty.Register<Sp48Key, bool>(nameof(HasBit1));
+
+    public static readonly StyledProperty<bool> HasBit2Property =
+        AvaloniaProperty.Register<Sp48Key, bool>(nameof(HasBit2));
 
     public SpectrumKeyCode Code
     {
@@ -71,6 +83,12 @@ public partial class Sp48Key : UserControl
     {
         get => GetValue(KeywordProperty);
         set => SetValue(KeywordProperty, value);
+    }
+
+    public string Keyword2
+    {
+        get => GetValue(Keyword2Property);
+        set => SetValue(Keyword2Property, value);
     }
 
     public string SShiftKey
@@ -115,6 +133,12 @@ public partial class Sp48Key : UserControl
         set => SetValue(SymModeProperty, value);
     }
 
+    public bool TwoLineMode
+    {
+        get => GetValue(TwoLineModeProperty);
+        set => SetValue(TwoLineModeProperty, value);
+    }
+
     public double ButtonWidth
     {
         get => GetValue(ButtonWidthProperty);
@@ -139,26 +163,23 @@ public partial class Sp48Key : UserControl
         set => SetValue(HasGraphicsProperty, value);
     }
 
-    public int GraphicsCode
+    public bool HasBit0
     {
-        get => GetValue(GraphicsCodeProperty);
-        set => SetValue(GraphicsCodeProperty, value);
+        get => GetValue(HasBit0Property);
+        set => SetValue(HasBit0Property, value);
     }
 
-    /// <summary>
-    /// Has the graphics Bit 0 set?
-    /// </summary>
-    public bool HasBit0 => (GraphicsCode & 0x01) != 0;
+    public bool HasBit1
+    {
+        get => GetValue(HasBit1Property);
+        set => SetValue(HasBit1Property, value);
+    }
 
-    /// <summary>
-    /// Has the graphics Bit 1 set?
-    /// </summary>
-    public bool HasBit1 => (GraphicsCode & 0x02) != 0;
-
-    /// <summary>
-    /// Has the graphics Bit 2 set?
-    /// </summary>
-    public bool HasBit2 => (GraphicsCode & 0x04) != 0;
+    public bool HasBit2
+    {
+        get => GetValue(HasBit2Property);
+        set => SetValue(HasBit2Property, value);
+    }
 
     public event EventHandler<PointerPressedEventArgs>? MainKeyClicked;
 
@@ -193,6 +214,7 @@ public partial class Sp48Key : UserControl
         if (sender is Control control)
         {
             e.Pointer.Capture(control);
+            control.Classes.Set("Pressed", true);
         }
 
         SecondaryCode = null;
@@ -204,6 +226,7 @@ public partial class Sp48Key : UserControl
         if (sender is Control control)
         {
             e.Pointer.Capture(control);
+            control.Classes.Set("Pressed", true);
         }
 
         SecondaryCode = null;
@@ -264,6 +287,7 @@ public partial class Sp48Key : UserControl
         if (sender is Control control)
         {
             e.Pointer.Capture(control);
+            control.Classes.Set("Pressed", true);
         }
 
         GraphicsControlKeyClicked?.Invoke(this, e);
@@ -291,6 +315,7 @@ public class SingleKeyControlSampleData
 {
     public string MainKey { get; set; } = "G";
     public string Keyword { get; set; } = "RETURN";
+    public string Keyword2 { get; set; } = "RETURN";
     public string SShiftKey { get; set; } = "@";
     public string ExtKey { get; set; } = "READ";
     public string ExtShiftKey { get; set; } = "CIRCLE";
@@ -302,6 +327,7 @@ public class SingleKeyControlSampleData
     public bool HasBit1 { get; set; } = true;
     public bool HasBit2 { get; set; } = true;
     public bool SymMode { get; set; } = false;
+    public bool TwoLineMode { get; set; } = false;
     public double ButtonWidth { get; set; } = 100.0;
     public string ColorKey { get; set; } = "BLUE";
     public SolidColorBrush NumForeground { get; set; } = new (Colors.Blue);

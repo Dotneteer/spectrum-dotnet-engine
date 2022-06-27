@@ -7,14 +7,7 @@
              x:Class="SpectrumEngine.Client.Avalonia.Controls.KeyboardPanel">
     <Border Background="{DynamicResource KeyboardBackgroundBrush}" Padding="16">
         <Viewbox Stretch="Uniform" Padding="16">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto">
                 <StackPanel Grid.Row="0" Orientation="Horizontal" x:Name="Row1" Margin="12,12,0,2">
                     <controls:Sp48Key 
                         Code="N1"
@@ -23,7 +16,9 @@
                         NumericMode="True"
                         ColorKey="BLUE" 
                         HasGraphics="true"
-                        GraphicsCode="1"
+                        HasBit0="True"
+                        HasBit1="False"
+                        HasBit2="False"
                         NumForeground="#4040FF"/>
                     <controls:Sp48Key 
                         Code="N2"
@@ -32,7 +27,9 @@
                         NumericMode="True" 
                         ColorKey="RED"
                         HasGraphics="true"
-                        GraphicsCode="2"
+                        HasBit0="False"
+                        HasBit1="True"
+                        HasBit2="False"
                         NumForeground="#D02020"/>
                     <controls:Sp48Key 
                         Code="N3"
@@ -41,7 +38,9 @@
                         NumericMode="True"
                         ColorKey="MAGENTA"
                         HasGraphics="true"
-                        GraphicsCode="3"
+                        HasBit0="True"
+                        HasBit1="True"
+                        HasBit2="False"
                         NumForeground="#C000C0"/>
                     <controls:Sp48Key 
                         Code="N4"
@@ -50,7 +49,9 @@
                         NumericMode="True"
                         ColorKey="GREEN"
                         HasGraphics="true"
-                        GraphicsCode="4"
+                        HasBit0="False"
+                        HasBit1="False"
+                        HasBit2="True"
                         NumForeground="#40A040"/>
                     <controls:Sp48Key 
                         Code="N5"
@@ -59,7 +60,9 @@
                         NumericMode="True"
                         ColorKey="CYAN"
                         HasGraphics="true"
-                        GraphicsCode="5"
+                        HasBit0="True"
+                        HasBit1="False"
+                        HasBit2="True"
                         NumForeground="#00C0C0"/>
                     <controls:Sp48Key 
                         Code="N6"
@@ -68,7 +71,9 @@
                         NumericMode="True"
                         ColorKey="YELLOW"
                         HasGraphics="true"
-                        GraphicsCode="6"
+                        HasBit0="False"
+                        HasBit1="True"
+                        HasBit2="True"
                         NumForeground="#C0C040"/>
                     <controls:Sp48Key 
                         Code="N7"
@@ -77,7 +82,9 @@
                         ExtKey="&#x25B2;" 
                         ExtShiftKey="ERASE" 
                         HasGraphics="true"
-                        GraphicsCode="7"
+                        HasBit0="True"
+                        HasBit1="True"
+                        HasBit2="True"
                         NumericMode="True"
                         ColorKey="WHITE"
                         NumForeground="#E0E0E0"/>
@@ -89,7 +96,9 @@
                         ExtKey="&#x25BA;" 
                         ExtShiftKey="POINT" 
                         HasGraphics="true"
-                        GraphicsCode="0"
+                        HasBit0="False"
+                        HasBit1="False"
+                        HasBit2="False"
                         NumericMode="True"
                         ColorKey="BR/FL (off)"
                         NumForeground="#808080" />
@@ -229,11 +238,20 @@
                     <controls:Sp48Key 
                         Code="SShift"
                         Margin="0,0,18,0"
-                        SimpleMode="True" Keyword="SYM   SHIFT" SymMode="True" ButtonWidth="60"/>
+                        SimpleMode="True" 
+                        Keyword="SYM"
+                        Keyword2="SHIFT"
+                        SymMode="True"
+                        TwoLineMode="True"
+                        ButtonWidth="60"/>
                     <controls:Sp48Key 
                         Code="Space"
                         Margin="0,0,18,0"
-                        SimpleMode="True" Keyword="BREAK         SPACE" ButtonWidth="96"/>
+                        SimpleMode="True"
+                        TwoLineMode="True"
+                        Keyword="BREAK" 
+                        Keyword2="SPACE"
+                        ButtonWidth="96"/>
                 </StackPanel>
             </Grid>
         </Viewbox>
