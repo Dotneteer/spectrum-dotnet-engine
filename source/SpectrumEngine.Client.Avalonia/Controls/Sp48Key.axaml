@@ -50,7 +50,7 @@
         <Style Selector="Border.KeyButton">
             <Setter Property="Background" Value="{DynamicResource KeyBackgroundColor}" />
         </Style>
-        <Style Selector="Border.KeyButton:pointerover">
+        <Style Selector="Border.KeyButton.MouseOver">
             <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
         </Style>
         <Style Selector="Border.KeyButton.Pressed">
@@ -75,7 +75,7 @@
             <Setter Property="Foreground" Value="#a00000" />
         </Style>
 
-        <Style Selector="Border.SymShift:pointerover">
+        <Style Selector="Border.SymShift.MouseOver">
             <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
         </Style>
         <Style Selector="Border.SymShift.Pressed">
@@ -172,7 +172,9 @@
             Padding="6,4"
             HorizontalAlignment="Left" 
             CornerRadius="4" 
-            IsVisible="{Binding !SimpleMode}" 
+            IsVisible="{Binding !SimpleMode}"
+            PointerEnter="OnMainPointerEnter"
+            PointerLeave="OnMainPointerLeave"
             PointerPressed="OnMainKeyMouseDown"
             PointerReleased="OnMouseUp"
             Cursor="Hand">
@@ -184,8 +186,10 @@
                         Padding="2" 
                         Margin="-2" 
                         HorizontalAlignment="Right" 
-                        CornerRadius="2" 
-                        ZIndex="-10" 
+                        CornerRadius="2"
+                        ZIndex="10"
+                        PointerEnter="OnSymPointerEnter"
+                        PointerLeave="OnSymPointerLeave"
                         PointerPressed="OnSymShiftKeyMouseDown"
                         PointerReleased="OnMouseUp">
                         <TextBlock 

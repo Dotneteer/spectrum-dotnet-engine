@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using SpectrumEngine.Emu;
@@ -215,6 +217,7 @@ public partial class Sp48Key : UserControl
         {
             e.Pointer.Capture(control);
             control.Classes.Set("Pressed", true);
+            e.Handled = true;
         }
 
         SecondaryCode = null;
@@ -227,6 +230,7 @@ public partial class Sp48Key : UserControl
         {
             e.Pointer.Capture(control);
             control.Classes.Set("Pressed", true);
+            e.Handled = true;
         }
 
         SecondaryCode = null;
@@ -239,6 +243,7 @@ public partial class Sp48Key : UserControl
         {
             e.Pointer.Capture(control);
             control.Classes.Set("Pressed", true);
+            e.Handled = true;
         }
 
         if (NumericMode)
@@ -258,6 +263,7 @@ public partial class Sp48Key : UserControl
         {
             e.Pointer.Capture(control);
             control.Classes.Set("Pressed", true);
+            e.Handled = true;
         }
 
         SecondaryCode = null;
@@ -273,6 +279,7 @@ public partial class Sp48Key : UserControl
         {
             e.Pointer.Capture(control);
             control.Classes.Set("Pressed", true);
+            e.Handled = true;
         }
 
         SecondaryCode = null;
@@ -288,6 +295,7 @@ public partial class Sp48Key : UserControl
         {
             e.Pointer.Capture(control);
             control.Classes.Set("Pressed", true);
+            e.Handled = true;
         }
 
         GraphicsControlKeyClicked?.Invoke(this, e);
@@ -302,9 +310,72 @@ public partial class Sp48Key : UserControl
         {
             e.Pointer.Capture(null);
             control.Classes.Set("Pressed", false);
+            control.GetLogicalChildren()
+                .OfType<Control>().ToList()
+                .ForEach(c =>
+                {
+                    c.Classes.Set("Pressed", false);
+                    c.Classes.Set("MouseOver", false);
+                });
+            e.Handled = true;
         }
         KeyReleased?.Invoke(this, e);
 
+    }
+
+    private void OnMainPointerEnter(object? sender, PointerEventArgs e)
+    {
+        if (sender is Control control)
+        {
+            control.Classes.Set("MouseOver", true);
+            e.Handled = true;
+        }
+    }
+
+    private void OnMainPointerLeave(object? sender, PointerEventArgs e)
+    {
+        if (sender is Control control)
+        {
+            control.Classes.Set("MouseOver", false);
+            e.Handled = true;
+        }
+    }
+
+    private void OnSymPointerEnter(object? sender, PointerEventArgs e)
+    {
+        if (sender is not Control control) return;
+        control.Classes.Set("MouseOver", true);
+        var parent = GetParent<Border>(control);
+        if (parent is Control parentControl)
+        {
+            parentControl.Classes.Set("MouseOver", false);
+        }
+        e.Handled = true;
+    }
+
+    private void OnSymPointerLeave(object? sender, PointerEventArgs e)
+    {
+        if (sender is not Control control) return;
+        control.Classes.Set("MouseOver", false);
+        var parent = GetParent<Border>(control);
+        if (parent is Control parentControl)
+        {
+            parentControl.Classes.Set("MouseOver", true);
+        }
+        e.Handled = true;
+    }
+
+    private T? GetParent<T>(Control? control)
+        where T: Control
+    {
+        object parent;
+        do
+        {
+            parent = control.GetLogicalParent();
+            if (parent is T t) return t;
+            control = parent as Control;
+        } while (parent != null);
+        return null;
     }
 }
 
