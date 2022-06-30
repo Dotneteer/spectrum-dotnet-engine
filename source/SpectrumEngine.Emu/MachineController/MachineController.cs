@@ -10,7 +10,6 @@ public class MachineController
     private CancellationTokenSource? _tokenSource;
     private Task? _machineTask;
     private MachineControllerState _machineState;
-    private readonly FrameStats _frameStats = new FrameStats();
 
     /// <summary>
     /// Initializes the controller to manage the specified machine.
@@ -55,8 +54,8 @@ public class MachineController
     /// <summary>
     /// Represents the frame statistics of the last running frame
     /// </summary>
-    public FrameStats FrameStats => _frameStats;
-    
+    public FrameStats FrameStats { get; } = new();
+
     /// <summary>
     /// Indicates if the machine runs in debug mode
     /// </summary>
@@ -115,11 +114,11 @@ public class MachineController
 
         IsDebugging = false;
         await FinishExecutionLoop(MachineControllerState.Stopping, MachineControllerState.Stopped);
-        _frameStats.FrameCount = 0;
-        _frameStats.LastCpuFrameTimeInMs = 0.0;
-        _frameStats.AvgFrameTimeInMs = 0.0;
-        _frameStats.LastFrameTimeInMs = 0.0;
-        _frameStats.AvgFrameTimeInMs = 0.0;
+        FrameStats.FrameCount = 0;
+        FrameStats.LastCpuFrameTimeInMs = 0.0;
+        FrameStats.AvgFrameTimeInMs = 0.0;
+        FrameStats.LastFrameTimeInMs = 0.0;
+        FrameStats.AvgFrameTimeInMs = 0.0;
     }
 
     /// <summary>
@@ -213,18 +212,18 @@ public class MachineController
                 var frameTime = stopwatch.ElapsedTicks;
                 if (frameCompleted)
                 {
-                    _frameStats.FrameCount++;
+                    FrameStats.FrameCount++;
                 } 
-                _frameStats.LastCpuFrameTimeInMs = (double) cpuTime / Stopwatch.Frequency * 1000.0;
-                _frameStats.AvgCpuFrameTimeInMs = _frameStats.FrameCount == 0
-                    ? _frameStats.LastCpuFrameTimeInMs
-                    : (_frameStats.AvgCpuFrameTimeInMs * (_frameStats.FrameCount - 1) +
-                       _frameStats.LastCpuFrameTimeInMs) / _frameStats.FrameCount;
-                _frameStats.LastFrameTimeInMs = (double) frameTime / Stopwatch.Frequency * 1000.0;
-                _frameStats.AvgFrameTimeInMs = _frameStats.FrameCount == 0
-                    ? _frameStats.LastFrameTimeInMs
-                    : (_frameStats.AvgFrameTimeInMs * (_frameStats.FrameCount - 1) +
-                       _frameStats.LastFrameTimeInMs) / _frameStats.FrameCount;
+                FrameStats.LastCpuFrameTimeInMs = (double) cpuTime / Stopwatch.Frequency * 1000.0;
+                FrameStats.AvgCpuFrameTimeInMs = FrameStats.FrameCount == 0
+                    ? FrameStats.LastCpuFrameTimeInMs
+                    : (FrameStats.AvgCpuFrameTimeInMs * (FrameStats.FrameCount - 1) +
+                       FrameStats.LastCpuFrameTimeInMs) / FrameStats.FrameCount;
+                FrameStats.LastFrameTimeInMs = (double) frameTime / Stopwatch.Frequency * 1000.0;
+                FrameStats.AvgFrameTimeInMs = FrameStats.FrameCount == 0
+                    ? FrameStats.LastFrameTimeInMs
+                    : (FrameStats.AvgFrameTimeInMs * (FrameStats.FrameCount - 1) +
+                       FrameStats.LastFrameTimeInMs) / FrameStats.FrameCount;
                 
                 if (termination != FrameTerminationMode.Normal || token.IsCancellationRequested)
                 {

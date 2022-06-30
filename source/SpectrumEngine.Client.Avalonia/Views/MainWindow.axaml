@@ -305,15 +305,8 @@
                 IsVisible="{Binding ViewOptions.ShowStatusBar}"/>
             <local:KeyboardPanel 
                 IsVisible="{Binding ViewOptions.ShowKeyboard}" 
-                Height="120"
+                Height="300"
                 DockPanel.Dock="Bottom" />
-            <!-- <Panel -->
-            <!--     x:Name="KeyboardPanel"  -->
-            <!--     IsVisible="{Binding ViewOptions.ShowKeyboard}"  -->
-            <!--     Height="120" -->
-            <!--     Background="#404040" -->
-            <!--     DockPanel.Dock="Bottom"> -->
-            <!-- </Panel> -->
             <local:SplitterPanel 
                 IsVisible="{Binding ViewOptions.ShowKeyboard}"
                 Orientation="Vertical"

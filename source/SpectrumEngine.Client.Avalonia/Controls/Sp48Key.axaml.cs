@@ -341,7 +341,7 @@ public partial class Sp48Key : UserControl
         }
     }
 
-    private void OnSymPointerEnter(object? sender, PointerEventArgs e)
+    private void OnNestedPointerEnter(object? sender, PointerEventArgs e)
     {
         if (sender is not Control control) return;
         control.Classes.Set("MouseOver", true);
@@ -353,7 +353,7 @@ public partial class Sp48Key : UserControl
         e.Handled = true;
     }
 
-    private void OnSymPointerLeave(object? sender, PointerEventArgs e)
+    private void OnNestedPointerLeave(object? sender, PointerEventArgs e)
     {
         if (sender is not Control control) return;
         control.Classes.Set("MouseOver", false);

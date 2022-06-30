@@ -12,9 +12,9 @@
     <UserControl.Styles>
         <Style Selector="TextBlock.KeyLine">
             <Setter Property="FontFamily" Value="Arial" />
-            <Setter Property="FontSize" Value="8" />
+            <Setter Property="FontSize" Value="10" />
             <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Height" Value="11" />
+            <Setter Property="Height" Value="13" />
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="Margin" Value="-2,-2,-2,0" />
@@ -68,18 +68,18 @@
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Foreground" Value="#a00000" />
         </Style>
+        <Style Selector="Border.Nested.MouseOver">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="Border.Nested.Pressed">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
+
         <Style Selector="TextBlock.NumShift">
             <Setter Property="FontFamily" Value="Arial" />
             <Setter Property="FontSize" Value="14" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Foreground" Value="#a00000" />
-        </Style>
-
-        <Style Selector="Border.SymShift.MouseOver">
-            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
-        </Style>
-        <Style Selector="Border.SymShift.Pressed">
-            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
         </Style>
 
     </UserControl.Styles>
@@ -182,20 +182,21 @@
                 <TextBlock Text="{Binding MainKey}" Classes="MainButton"/>
                 <StackPanel Grid.Column="1" IsVisible="{Binding !NumericMode}">
                     <Border
-                        Classes="SymShift"
+                        Classes="Nested"
                         Padding="2" 
                         Margin="-2" 
                         HorizontalAlignment="Right" 
                         CornerRadius="2"
                         ZIndex="10"
-                        PointerEnter="OnSymPointerEnter"
-                        PointerLeave="OnSymPointerLeave"
+                        PointerEnter="OnNestedPointerEnter"
+                        PointerLeave="OnNestedPointerLeave"
                         PointerPressed="OnSymShiftKeyMouseDown"
                         PointerReleased="OnMouseUp">
                         <TextBlock 
-                            Classes="SymShift"
+                            Classes="SymShiftLine"
                             Text="{Binding SShiftKey}"
                             Margin="0"
+                            Padding="8,0,0,0"
                             HorizontalAlignment="Right">
                         </TextBlock>
                     </Border>
@@ -209,13 +210,20 @@
                 <StackPanel 
                     Grid.Column="1" IsVisible="{Binding NumericMode}">
                     <Border 
-                        Padding="2" 
+                        Padding="2"
+                        Classes="Nested"
                         Margin="28,0,0,0" 
                         HorizontalAlignment="Left" 
                         CornerRadius="2"
+                        PointerEnter="OnNestedPointerEnter"
+                        PointerLeave="OnNestedPointerLeave"
                         PointerPressed="OnGraphicsKeyMouseDown"
                         PointerReleased="OnMouseUp">
-                        <Border Width="16" Height="16" HorizontalAlignment="Right" 
+                        <Border 
+                            Width="16" 
+                            Height="16" 
+                            HorizontalAlignment="Right"
+                            Background="Transparent"    
                             BorderBrush="White" 
                             BorderThickness="1"
                             IsVisible="{Binding HasGraphics}">
@@ -247,10 +255,13 @@
                         BorderThickness="0"
                         IsVisible="{Binding !HasGraphics}" />
                     <Border 
-                        Padding="2" 
+                        Padding="2"
+                        Classes="Nested"
                         Margin="8,-6,0,0" 
                         HorizontalAlignment="Left" 
                         CornerRadius="2"
+                        PointerEnter="OnNestedPointerEnter"
+                        PointerLeave="OnNestedPointerLeave"
                         PointerPressed="OnSymShiftKeyMouseDown"
                         PointerReleased="OnMouseUp">
                         <TextBlock
