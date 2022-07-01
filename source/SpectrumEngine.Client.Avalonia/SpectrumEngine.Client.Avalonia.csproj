@@ -41,5 +41,7 @@
     <ItemGroup>
       <EmbeddedResource Include="BassResources\bass64.dll" />
       <None Remove="bass.dll" />
+      <None Remove="BassResources\libbass.dylib" />
+      <EmbeddedResource Include="BassResources\libbass.dylib" />
     </ItemGroup>
 </Project>

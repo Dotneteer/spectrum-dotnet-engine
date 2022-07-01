@@ -19,17 +19,14 @@ namespace SpectrumEngine.Client.Avalonia
 
             var targetFolder = Path.GetDirectoryName(asm!.Location);
 
-            var envSuffix = "";
-            var targetFile = "bass.dll";
-            if (Environment.OSVersion.Platform is PlatformID.Win32S or PlatformID.Win32Windows or PlatformID.Win32NT)
+            var (bassResource, targetFile) = (Environment.Is64BitOperatingSystem 
+                ? "bass64.dll" : "bass32.dll", "bass.dll");
+            if (Environment.OSVersion.Platform is PlatformID.MacOSX or PlatformID.Unix)
             {
-                envSuffix = Environment.Is64BitOperatingSystem ? "64" : "32";
-            } 
-            else if (Environment.OSVersion.Platform is PlatformID.MacOSX)
-            {
-                envSuffix = Environment.Is64BitOperatingSystem ? "osx64" : "osx32";
-            }  
-            var bassDllName = $"{asm.GetName().Name}.BassResources.bass{envSuffix}.dll";
+                bassResource = targetFile = "libbass.dylib";
+            }
+
+            var bassDllName = $"{asm.GetName().Name}.BassResources.{bassResource}";
             var resStream = asm.GetManifestResourceStream(bassDllName);
             var targetName = Path.Combine(targetFolder!, targetFile);
             if (!File.Exists(targetName) && resStream != null)
