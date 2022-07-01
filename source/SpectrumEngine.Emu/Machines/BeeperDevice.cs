@@ -1,4 +1,6 @@
-﻿namespace SpectrumEngine.Emu;
+﻿using System.Collections.Concurrent;
+
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class implements the ZX Spectrum beeper device.
