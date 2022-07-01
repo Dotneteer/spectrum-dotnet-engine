@@ -7,6 +7,7 @@ using Avalonia.Layout;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
+using SpectrumEngine.Client.Avalonia.Providers;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 // ReSharper disable UnusedParameter.Local
@@ -20,10 +21,37 @@ public partial class SpectrumDisplayControl : UserControl
 {
     private object? _prevDataContext;
     private int _zoomFactor = 1;
+    private IAudioProvider? _audioProvider;
 
     public SpectrumDisplayControl()
     {
         InitializeComponent();
+    }
+
+    /// <summary>
+    /// Handle the keyboard event
+    /// </summary>
+    /// <remarks>
+    /// This method maps a physical key to one or two ZX Spectrum keys and sets the key states through the keyboard
+    /// device of the emulated machine.
+    /// </remarks>
+    public bool HandleKeyboardEvent(KeyEventArgs e, bool isPressed)
+    {
+        if (DataContext is not DisplayViewModel context || context.Machine == null) return false;
+        var keyMapping = KeyMappings.DefaultMapping.FirstOrDefault(m => m.Input == e.Key);
+        if (keyMapping != null)
+        {
+            if (context.Machine is ZxSpectrum48Machine zxMachine)
+            {
+                zxMachine.KeyboardDevice.SetStatus(keyMapping.Primary, isPressed);
+                if (keyMapping.Secondary != null)
+                {
+                    zxMachine.KeyboardDevice.SetStatus(keyMapping.Secondary.Value, isPressed);
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /// <summary>
@@ -53,8 +81,7 @@ public partial class SpectrumDisplayControl : UserControl
     /// <summary>
     /// Respond to the machine controller's state changes
     /// </summary>
-    private void OnControllerStateChanged(object? sender, 
-        (MachineControllerState OldState, MachineControllerState NewState) e)
+    private void OnControllerStateChanged(object? sender, (MachineControllerState OldState, MachineControllerState NewState) e)
     {
         if (Vm?.Controller == null) return;
         
@@ -68,67 +95,68 @@ public partial class SpectrumDisplayControl : UserControl
                 break;
             case MachineControllerState.Running:
                 Vm.OverlayMessage = Vm.IsDebugging ? "Debug mode" : "Running";
-                // _audioProvider?.PlaySound();
+                _audioProvider?.Play();
                 break;
             case MachineControllerState.Paused:
                 Vm.OverlayMessage = "Paused";
-                // _audioProvider?.PauseSound();
+                _audioProvider?.Pause();
                 break;
             case MachineControllerState.Stopped:
                 Vm.OverlayMessage = "Stopped";
-                // _audioProvider?.KillSound();
+                _audioProvider?.Stop();
                 break;
         }
     }
 
     private void OnControllerFrameCompleted(object? sender, bool e)
     {
-        // --- Use the Dispatcher to render the screen
-        Dispatcher.UIThread.InvokeAsync(() =>
+        var machine = (sender as MachineController)?.Machine;
+        if (machine == null) return;
+
+        // --- Add sound samples
+        var samples = (machine as ZxSpectrum48Machine)?.BeeperDevice?.GetAudioSamples();
+        if (samples != null)
         {
-            var machine = Vm?.Machine;
-            if (machine == null) return;
-        
-            // --- Set the next set of sound samples
-            //var samples = (Vm.Machine as ZxSpectrum48Machine)?.BeeperDevice?.GetAudioSamples();
-            // if (samples != null)
-            // {
-            //     // _audioProvider?.AddSoundFrame(samples);
-            // }
-        
-            // --- Display the new screen frame
-            var bitmap = new WriteableBitmap(
-                new PixelSize(machine.ScreenWidthInPixels * _zoomFactor, machine.ScreenHeightInPixels * _zoomFactor),
-                new Vector(96, 96),
-                PixelFormat.Bgra8888,
-                AlphaFormat.Opaque);
-            var width = machine.ScreenWidthInPixels;
-            var height = machine.ScreenHeightInPixels;
-            
-            using var bitmapBuffer = bitmap.Lock();
-            unsafe
+            _audioProvider?.AddSamples(samples);
+        }
+
+        // --- Display the new screen frame
+        var bitmap = new WriteableBitmap(
+            new PixelSize(machine.ScreenWidthInPixels * _zoomFactor, machine.ScreenHeightInPixels * _zoomFactor),
+            new Vector(96, 96),
+            PixelFormat.Bgra8888,
+            AlphaFormat.Opaque);
+        var width = machine.ScreenWidthInPixels;
+        var height = machine.ScreenHeightInPixels;
+
+        using var bitmapBuffer = bitmap.Lock();
+        unsafe
+        {
+            var buffer = machine.GetPixelBuffer();
+            var pBackBuffer = bitmapBuffer.Address;
+            var offset = width;
+            for (var y = 0; y < height; y++)
             {
-                var buffer = machine.GetPixelBuffer();
-                var pBackBuffer = bitmapBuffer.Address;
-                var offset = width;
-                for (var y = 0; y < height; y++)
+                var rowStart = offset;
+                for (var rowRepeat = 0; rowRepeat < _zoomFactor; rowRepeat++)
                 {
-                    var rowStart = offset;
-                    for (var rowRepeat = 0; rowRepeat < _zoomFactor; rowRepeat++)
+                    offset = rowStart;
+                    for (var x = 0; x < width; x++)
                     {
-                        offset = rowStart;
-                        for (var x = 0; x < width; x++)
+                        for (var colRepeat = 0; colRepeat < _zoomFactor; colRepeat++)
                         {
-                            for (var colRepeat = 0; colRepeat < _zoomFactor; colRepeat++)
-                            {
-                                *(uint*)pBackBuffer = buffer[offset];
-                                pBackBuffer += 4;
-                            }
-                            offset++;
+                            *(uint*)pBackBuffer = buffer[offset];
+                            pBackBuffer += 4;
                         }
+                        offset++;
                     }
                 }
             }
+        }
+
+        // --- Use the Dispatcher to render the screen        
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
             Display.Source = bitmap;
         });
     }
@@ -152,33 +180,7 @@ public partial class SpectrumDisplayControl : UserControl
             }
             Vm?.RaisePropertyChanged(nameof(Vm.Controller));
         });
-    }
-    
-    /// <summary>
-    /// Handle the keyboard event
-    /// </summary>
-    /// <remarks>
-    /// This method maps a physical key to one or two ZX Spectrum keys and sets the key states through the keyboard
-    /// device of the emulated machine.
-    /// </remarks>
-    public bool HandleKeyboardEvent(KeyEventArgs e, bool isPressed)
-    {
-        if (DataContext is not DisplayViewModel context || context.Machine == null) return false;
-        var keyMapping = KeyMappings.DefaultMapping.FirstOrDefault(m => m.Input == e.Key);
-        if (keyMapping != null)
-        {
-            if (context.Machine is ZxSpectrum48Machine zxMachine)
-            {
-                zxMachine.KeyboardDevice.SetStatus(keyMapping.Primary, isPressed);
-                if (keyMapping.Secondary != null)
-                {
-                    zxMachine.KeyboardDevice.SetStatus(keyMapping.Secondary.Value, isPressed);
-                }
-            }
-            return true;
-        }
-        return false;
-    }
+    }   
 
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
@@ -193,6 +195,7 @@ public partial class SpectrumDisplayControl : UserControl
 
         // --- Setup the events of the new controller
         var newVm = DataContext as DisplayViewModel;
+        
         if (newVm?.Controller != null)
         {
             newVm.Controller.FrameCompleted += OnControllerFrameCompleted;
@@ -200,8 +203,7 @@ public partial class SpectrumDisplayControl : UserControl
             newVm.Controller.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
             if (newVm.Machine is ZxSpectrum48Machine zxMachine)
             {
-                // TODO: Add samples to the sound stream
-                //_audioProvider = new(zxMachine.BeeperDevice);
+                _audioProvider = new BassAudioProvider(zxMachine.BeeperDevice);
             }
             
             OnControllerStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
