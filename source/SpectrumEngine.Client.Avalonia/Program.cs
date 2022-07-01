@@ -3,7 +3,6 @@ using System.IO;
 using System.Reflection;
 using Avalonia;
 using Avalonia.ReactiveUI;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SpectrumEngine.Client.Avalonia
 {
@@ -19,10 +18,20 @@ namespace SpectrumEngine.Client.Avalonia
             var asm = Assembly.GetEntryAssembly();
 
             var targetFolder = Path.GetDirectoryName(asm!.Location);
-            
-            var bassDllName = $"{asm.GetName().Name}.BassResources.bass.dll";
+
+            var envSuffix = "";
+            var targetFile = "bass.dll";
+            if (Environment.OSVersion.Platform is PlatformID.Win32S or PlatformID.Win32Windows or PlatformID.Win32NT)
+            {
+                envSuffix = Environment.Is64BitOperatingSystem ? "64" : "32";
+            } 
+            else if (Environment.OSVersion.Platform is PlatformID.MacOSX)
+            {
+                envSuffix = Environment.Is64BitOperatingSystem ? "osx64" : "osx32";
+            }  
+            var bassDllName = $"{asm.GetName().Name}.BassResources.bass{envSuffix}.dll";
             var resStream = asm.GetManifestResourceStream(bassDllName);
-            var targetName = Path.Combine(targetFolder!, "bass.dll");
+            var targetName = Path.Combine(targetFolder!, targetFile);
             if (!File.Exists(targetName) && resStream != null)
             {
                 resStream.Seek(0, SeekOrigin.Begin);
