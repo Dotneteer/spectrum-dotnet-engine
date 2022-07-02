@@ -1,0 +1,278 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.Sp48Key">
+    <Design.DataContext>
+        <controls:SingleKeyControlSampleData />
+    </Design.DataContext>
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock.KeyLine">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Height" Value="13" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Margin" Value="-2,-2,-2,0" />
+            <Setter Property="Padding" Value="2" />
+        </Style>
+        <Style Selector="TextBlock.KeywordLine">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#f0f0f0" />
+            <Setter Property="Height" Value="11" />
+        </Style>
+        <Style Selector="TextBlock.SymShiftLine">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#a00000" />
+            <Setter Property="Height" Value="11" />
+        </Style>
+        <Style Selector="Border.KeyLine">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="CornerRadius" Value="2" />
+            <Setter Property="Padding" Value="2" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Margin" Value="6,0,0,0" />
+        </Style>
+        <Style Selector="Border.KeyLine:pointerover">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="Border.Pressed">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
+        <Style Selector="Border.KeyButton">
+            <Setter Property="Background" Value="{DynamicResource KeyBackgroundColor}" />
+        </Style>
+        <Style Selector="Border.KeyButton.MouseOver">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="Border.KeyButton.Pressed">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
+        <Style Selector="TextBlock.MainButton">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#f0f0f0" />
+        </Style>
+        <Style Selector="TextBlock.SymShift">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#a00000" />
+        </Style>
+        <Style Selector="Border.Nested.MouseOver">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="Border.Nested.Pressed">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.NumShift">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#a00000" />
+        </Style>
+
+    </UserControl.Styles>
+    
+    <Grid RowDefinitions="Auto, Auto, Auto, Auto">
+        <!-- Number key color row header -->
+        <Border 
+            Grid.Row="0"
+            Classes="KeyLine"
+            PointerPressed="OnNumericControlKeyMouseDown"
+            PointerReleased="OnMouseUp">
+            <TextBlock
+                Text="{Binding ColorKey}"
+                Classes="KeyLine"
+                Foreground="{Binding NumForeground}" 
+                IsVisible="{Binding NumericMode}" />
+        </Border>
+        
+        <!-- Extended key above -->
+        <Border 
+            Grid.Row="1"
+            Classes="KeyLine"
+            PointerPressed="OnExtKeyMouseDown" 
+            PointerReleased="OnMouseUp"
+            VerticalAlignment="Bottom">
+            <TextBlock Text="{Binding ExtKey}" Classes="KeyLine" Foreground="#51c351" />
+        </Border>
+
+        <!-- Extended key below -->
+        <Border 
+            Grid.Row="3"
+            Classes="KeyLine"    
+            PointerPressed="OnExtShiftKeyMouseDown" 
+            PointerReleased="OnMouseUp" >
+            <TextBlock Text="{Binding ExtShiftKey}" Classes="KeyLine" Foreground="#e04040"/>
+        </Border>
+        
+        <!-- Simple key mode -->
+        <Border 
+            Grid.Row="2" 
+            Classes="KeyButton"
+            Width="{Binding ButtonWidth}"
+            Height="36" 
+            Padding="6,4"
+            HorizontalAlignment="Left" 
+            CornerRadius="4" 
+            IsVisible="{Binding SimpleMode}"
+            PointerPressed="OnMainKeyMouseDown" 
+            PointerReleased="OnMouseUp"
+            Cursor="Hand">
+            <Grid VerticalAlignment="Center">
+                <StackPanel
+                    IsVisible="{Binding !SymMode}"
+                    VerticalAlignment="Center" >
+                    <TextBlock
+                        Classes="KeywordLine"
+                        Text="{Binding Keyword}"
+                        TextAlignment="Center"
+                        Margin="0,2,0,0" 
+                        TextWrapping="WrapWithOverflow" />
+                    <TextBlock
+                        IsVisible="{Binding TwoLineMode}"
+                        Classes="KeywordLine"
+                        Text="{Binding Keyword2}"
+                        TextAlignment="Center" />
+                </StackPanel>
+                <StackPanel
+                    IsVisible="{Binding SymMode}"
+                    VerticalAlignment="Center">
+                    <TextBlock
+                        Classes="SymShiftLine"
+                        Text="{Binding Keyword}"
+                        TextAlignment="Center"
+                        Margin="0,2,0,0" />
+                    <TextBlock
+                        IsVisible="{Binding TwoLineMode}"
+                        Classes="SymShiftLine"
+                        Text="{Binding Keyword2}"
+                        TextAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- Normal key mode -->
+        <Border 
+            Grid.Row="2" 
+            Classes="KeyButton"
+            Width="76" 
+            Height="36" 
+            Padding="6,4"
+            HorizontalAlignment="Left" 
+            CornerRadius="4" 
+            IsVisible="{Binding !SimpleMode}"
+            PointerEnter="OnMainPointerEnter"
+            PointerLeave="OnMainPointerLeave"
+            PointerPressed="OnMainKeyMouseDown"
+            PointerReleased="OnMouseUp"
+            Cursor="Hand">
+            <Grid ColumnDefinitions="1*,3*">
+                <TextBlock Text="{Binding MainKey}" Classes="MainButton"/>
+                <StackPanel Grid.Column="1" IsVisible="{Binding !NumericMode}">
+                    <Border
+                        Classes="Nested"
+                        Padding="2" 
+                        Margin="-2" 
+                        HorizontalAlignment="Right" 
+                        CornerRadius="2"
+                        ZIndex="10"
+                        PointerEnter="OnNestedPointerEnter"
+                        PointerLeave="OnNestedPointerLeave"
+                        PointerPressed="OnSymShiftKeyMouseDown"
+                        PointerReleased="OnMouseUp">
+                        <TextBlock 
+                            Classes="SymShiftLine"
+                            Text="{Binding SShiftKey}"
+                            Margin="0"
+                            Padding="8,0,0,0"
+                            HorizontalAlignment="Right">
+                        </TextBlock>
+                    </Border>
+                    <TextBlock
+                        Classes="KeywordLine"
+                        Text="{Binding Keyword}"
+                        HorizontalAlignment="Right"
+                        Padding="0" 
+                        Margin="0,2,0,0" />
+                </StackPanel>
+                <StackPanel 
+                    Grid.Column="1" IsVisible="{Binding NumericMode}">
+                    <Border 
+                        Padding="2"
+                        Classes="Nested"
+                        Margin="28,0,0,0" 
+                        HorizontalAlignment="Left" 
+                        CornerRadius="2"
+                        PointerEnter="OnNestedPointerEnter"
+                        PointerLeave="OnNestedPointerLeave"
+                        PointerPressed="OnGraphicsKeyMouseDown"
+                        PointerReleased="OnMouseUp">
+                        <Border 
+                            Width="16" 
+                            Height="16" 
+                            HorizontalAlignment="Right"
+                            Background="Transparent"    
+                            BorderBrush="White" 
+                            BorderThickness="1"
+                            IsVisible="{Binding HasGraphics}">
+                        <Grid RowDefinitions="*,*" ColumnDefinitions="*,*">
+                            <Border 
+                                Grid.Row="0" 
+                                Grid.Column="1" 
+                                Background="White" 
+                                IsVisible="{Binding HasBit0}"
+                                VerticalAlignment="Stretch"
+                                HorizontalAlignment="Stretch" />
+                            <Border
+                                Grid.Row="0" 
+                                Grid.Column="0" 
+                                Background="White" 
+                                IsVisible="{Binding HasBit1}"/>
+                            <Border
+                                Grid.Row="1" 
+                                Grid.Column="1" 
+                                Background="White" 
+                                IsVisible="{Binding HasBit2}"/>
+                        </Grid>
+                    </Border>
+                    </Border>
+                    <Border
+                        Width="16" 
+                        Height="16" 
+                        HorizontalAlignment="Right" 
+                        BorderThickness="0"
+                        IsVisible="{Binding !HasGraphics}" />
+                    <Border 
+                        Padding="2"
+                        Classes="Nested"
+                        Margin="8,-6,0,0" 
+                        HorizontalAlignment="Left" 
+                        CornerRadius="2"
+                        PointerEnter="OnNestedPointerEnter"
+                        PointerLeave="OnNestedPointerLeave"
+                        PointerPressed="OnSymShiftKeyMouseDown"
+                        PointerReleased="OnMouseUp">
+                        <TextBlock
+                            Classes="NumShift"
+                            Text="{Binding SShiftKey}"
+                            HorizontalAlignment="Left"
+                            Margin="-2,-6,0,-2" 
+                            Padding="2" />
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

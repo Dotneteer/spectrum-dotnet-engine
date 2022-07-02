@@ -5,7 +5,7 @@ public class ViewOptionsViewModel : ViewModelBase
     private bool _showToolbar;
     private bool _showStatusBar;
     private bool _isMuted;
-    private bool _showKeyboard; 
+    private bool _showKeyboard;
 
     public bool ShowToolbar
     {
@@ -30,7 +30,7 @@ public class ViewOptionsViewModel : ViewModelBase
         get => _isMuted;
         set => SetProperty(ref _isMuted, value);
     }
-    
+
     public void ToggleShowToolbar() => ShowToolbar = !ShowToolbar;
 
     public void ToggleShowStatusBar() => ShowStatusBar = !ShowStatusBar;

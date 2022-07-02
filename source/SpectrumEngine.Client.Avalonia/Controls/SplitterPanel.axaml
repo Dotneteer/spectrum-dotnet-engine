@@ -1,0 +1,31 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
+    <Design.PreviewWith>
+        <Panel Width="120" Height="100">
+            <controls:SplitterPanel HorizontalAlignment="Stretch"/>
+        </Panel>
+    </Design.PreviewWith>
+
+    <Style Selector="controls|SplitterPanel">
+        <!-- Set Defaults -->
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="MinWidth" Value="4" />
+        <Setter Property="MinHeight" Value="4" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border 
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Background="{TemplateBinding Background}"
+                    />
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    
+    <Style Selector="controls|SplitterPanel /template/ Border:pointerover">
+        <Setter Property="Background" Value="{DynamicResource SplitterBackgroundBrush}"/>
+    </Style>
+</Styles>

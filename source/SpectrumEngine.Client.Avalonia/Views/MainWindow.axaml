@@ -154,7 +154,7 @@
             <!-- Use this menu on Windows -->
             <Menu DockPanel.Dock="Top" IsVisible="{Binding !Environment.UseNativeMenu}">
                 <MenuItem Header="File">
-                    <MenuItem Header="Exit" Click="MenuItem_OnClick" />
+                    <MenuItem Header="Exit" Click="OnClickClose" />
                     <MenuItem Header="About" />
                 </MenuItem>
                 <MenuItem Header="View">
@@ -303,9 +303,21 @@
                 IsVisible="{Binding ViewOptions.ShowToolbar}" />
             <local:StatusBarUserControl DockPanel.Dock="Bottom" 
                 IsVisible="{Binding ViewOptions.ShowStatusBar}"/>
-            <local:SpectrumDisplayControl 
-                x:Name="SpectrumDisplay"
-                DataContext="{Binding Display}" />
+            <local:KeyboardPanel 
+                IsVisible="{Binding ViewOptions.ShowKeyboard}"
+                Height="300"
+                DockPanel.Dock="Bottom" />
+            <local:SplitterPanel 
+                IsVisible="{Binding ViewOptions.ShowKeyboard}"
+                Orientation="Vertical"
+                ResizeNext="False"
+                NegateDelta="False"
+                PreviousMinSize="120"
+                NextMinSize="120"
+                DockPanel.Dock="Bottom"/>
+            <local:SpectrumDisplayControl
+                    x:Name="SpectrumDisplay"
+                    DataContext="{Binding Display}" />
         </DockPanel>
     </Grid>
 

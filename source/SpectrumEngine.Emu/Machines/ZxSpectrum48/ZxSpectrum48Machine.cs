@@ -35,6 +35,10 @@ public sealed class ZxSpectrum48Machine :
     // --- The clock multiplier value used in the previous machine frame;
     private int _oldClockMultiplier;
 
+    // --- Stores the key strokes to emulate
+    private readonly Queue<EmulatedKeyStroke> _emulatedKeyStrokes =
+        new Queue<EmulatedKeyStroke>();
+
     #endregion
 
     #region Initialization and Properties
@@ -111,6 +115,10 @@ public sealed class ZxSpectrum48Machine :
     {
         base.HardReset();
         Reset();
+        lock (_emulatedKeyStrokes)
+        {
+            _emulatedKeyStrokes.Clear();
+        }
     }
 
     /// <summary>
@@ -475,6 +483,102 @@ public sealed class ZxSpectrum48Machine :
     /// Gets the buffer that stores the rendered pixels
     /// </summary>
     public override uint[] GetPixelBuffer() => ScreenDevice.GetPixelBuffer();
+
+    /// <summary>
+    /// Set the status of the specified ZX Spectrum key.
+    /// </summary>
+    /// <param name="key">Key code</param>
+    /// <param name="isDown">Indicates if the key is pressed down.</param>
+    public override void SetKeyStatus(SpectrumKeyCode key, bool isDown)
+    {
+        KeyboardDevice.SetStatus(key, isDown);
+    }
+
+    /// <summary>
+    /// Emulates queued key strokes as if those were pressed by the user
+    /// </summary>
+    public override void EmulateKeyStroke()
+    {
+        // --- Exit, if no keystroke to emulate
+        lock (_emulatedKeyStrokes)
+        {
+            if (_emulatedKeyStrokes.Count == 0) return;
+        }
+
+        // --- Check the next keystroke
+        EmulatedKeyStroke keyStroke;
+        lock (_emulatedKeyStrokes)
+        {
+            keyStroke = _emulatedKeyStrokes.Peek();
+        }
+
+        // --- Time has not come
+        if (keyStroke.StartTact > Tacts) return;
+
+        if (keyStroke.EndTact < Tacts)
+        {
+            // --- End emulation of this very keystroke
+            KeyboardDevice.SetStatus(keyStroke.PrimaryCode, false);
+            if (keyStroke.SecondaryCode.HasValue)
+            {
+                KeyboardDevice.SetStatus(keyStroke.SecondaryCode.Value, false);
+            }
+            lock (_emulatedKeyStrokes)
+            {
+                _emulatedKeyStrokes.Dequeue();
+            }
+
+            return;
+        }
+
+        // --- Emulate this very keystroke, and leave it in the queue
+        KeyboardDevice.SetStatus(keyStroke.PrimaryCode, true);
+        if (keyStroke.SecondaryCode.HasValue)
+        {
+            KeyboardDevice.SetStatus(keyStroke.SecondaryCode.Value, true);
+        }
+    }
+
+    /// <summary>
+    /// Adds an emulated keypress to the queue of the provider.
+    /// </summary>
+    /// <param name="startFrame">Frame count to start the emulation</param>
+    /// <param name="frames">Number of frames to hold the emulation</param>
+    /// <param name="primary">Primary key code</param>
+    /// <param name="secondary">Optional secondary key code</param>
+    /// <remarks>The provider can play back emulated key strokes</remarks>
+    public override void QueueKeyPress(
+        int startFrame, 
+        int frames, 
+        SpectrumKeyCode primary, 
+        SpectrumKeyCode? secondary)
+    {
+        lock (_emulatedKeyStrokes)
+        {
+            var startTact = (ulong)startFrame * (ulong)TactsInFrame * (ulong)ClockMultiplier;
+            var endTact = startTact + (ulong)frames * (ulong)TactsInFrame * (ulong)ClockMultiplier;
+            var keypress = new EmulatedKeyStroke(startTact, endTact, primary, secondary);
+            if (_emulatedKeyStrokes.Count == 0)
+            {
+                _emulatedKeyStrokes.Enqueue(keypress);
+                return;
+            }
+
+            var last = _emulatedKeyStrokes.Peek();
+            if (last.PrimaryCode == keypress.PrimaryCode
+                && last.SecondaryCode == keypress.SecondaryCode)
+            {
+                // --- The same key has been clicked
+                if (keypress.StartTact >= last.StartTact && keypress.StartTact <= last.EndTact)
+                {
+                    // --- Old and new click ranges overlap, lengthen the old click
+                    last.EndTact = keypress.EndTact;
+                    return;
+                }
+            }
+            _emulatedKeyStrokes.Enqueue(keypress);
+        }
+    }
 
     #endregion
 

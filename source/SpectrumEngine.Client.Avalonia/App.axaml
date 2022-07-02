@@ -24,6 +24,7 @@
         <StyleInclude Source="/Controls/IconButton.axaml"/>
         <StyleInclude Source="/Controls/IconButtonSeparator.axaml"/>
         <StyleInclude Source="/Controls/PlainIcon.axaml"/>
+        <StyleInclude Source="/Controls/SplitterPanel.axaml"/>
         <StyleInclude Source="/Controls/StatusLabel.axaml"/>
     </Application.Styles>
 </Application>

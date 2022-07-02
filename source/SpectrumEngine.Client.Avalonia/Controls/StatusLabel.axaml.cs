@@ -19,11 +19,6 @@ public class StatusLabel : TemplatedControl
     public static readonly StyledProperty<bool> ShowIconProperty = 
         AvaloniaProperty.Register<StatusLabel, bool>(nameof(ShowIcon), true);
 
-    public StatusLabel()
-    {
-        Padding = Thickness.Parse("8,0");    
-    }
-    
     /// <summary>
     /// Fill brush for the button icon
     /// </summary>

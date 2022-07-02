@@ -39,19 +39,15 @@ public partial class SpectrumDisplayControl : UserControl
     {
         if (DataContext is not DisplayViewModel context || context.Machine == null) return false;
         var keyMapping = KeyMappings.DefaultMapping.FirstOrDefault(m => m.Input == e.Key);
-        if (keyMapping != null)
+        if (keyMapping == null) return false;
+        
+        // --- Apply the pressed key
+        context.Machine.SetKeyStatus(keyMapping.Primary, isPressed);
+        if (keyMapping.Secondary != null)
         {
-            if (context.Machine is ZxSpectrum48Machine zxMachine)
-            {
-                zxMachine.KeyboardDevice.SetStatus(keyMapping.Primary, isPressed);
-                if (keyMapping.Secondary != null)
-                {
-                    zxMachine.KeyboardDevice.SetStatus(keyMapping.Secondary.Value, isPressed);
-                }
-            }
-            return true;
+            context.Machine.SetKeyStatus(keyMapping.Secondary.Value, isPressed);
         }
-        return false;
+        return true;
     }
 
     /// <summary>
@@ -224,6 +220,15 @@ public partial class SpectrumDisplayControl : UserControl
     private void OnViewportChanged(object? sender, EffectiveViewportChangedEventArgs e)
     {
         ResizeScreen();
+    }
+
+    protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+    {
+        if (change.Property == BoundsProperty)
+        {
+            ResizeScreen();
+        }
+        base.OnPropertyChanged(change);
     }
 }
 

@@ -13,13 +13,6 @@ public class PlainIcon : TemplatedControl
     public static readonly StyledProperty<Geometry> PathProperty = 
         AvaloniaProperty.Register<PlainIcon, Geometry>(nameof(Path));
 
-    public PlainIcon()
-    {
-        Width = 24;
-        Height = 24;
-        Padding = new Thickness(4);
-    }
-
     /// <summary>
     /// Fill brush for the button icon
     /// </summary>
@@ -37,5 +30,4 @@ public class PlainIcon : TemplatedControl
         get => GetValue(PathProperty);
         set => SetValue(PathProperty, value);
     }
-
 }

@@ -1,0 +1,265 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
+             xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.KeyboardPanel">
+    
+    <Design.DataContext>
+        <viewModels:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Border Background="{DynamicResource KeyboardBackgroundBrush}" Padding="16">
+        <Viewbox Stretch="Uniform" Padding="16">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                <StackPanel Grid.Row="0" Orientation="Horizontal" x:Name="Row1" Margin="12,12,0,2">
+                    <controls:Sp48Key 
+                        Code="N1"
+                        Margin="0,0,18,0"
+                        MainKey="1" SShiftKey="!" ExtKey="EDIT" ExtShiftKey="DEF FN" 
+                        NumericMode="True"
+                        ColorKey="BLUE" 
+                        HasGraphics="true"
+                        HasBit0="True"
+                        HasBit1="False"
+                        HasBit2="False"
+                        NumForeground="#4040FF"/>
+                    <controls:Sp48Key 
+                        Code="N2"
+                        Margin="0,0,18,0"
+                        MainKey="2" SShiftKey="@" ExtKey="CAPS LOCK" ExtShiftKey="FN" 
+                        NumericMode="True" 
+                        ColorKey="RED"
+                        HasGraphics="true"
+                        HasBit0="False"
+                        HasBit1="True"
+                        HasBit2="False"
+                        NumForeground="#D02020"/>
+                    <controls:Sp48Key 
+                        Code="N3"
+                        Margin="0,0,18,0"
+                        MainKey="3" SShiftKey="#" ExtKey="TRUE VIDEO" ExtShiftKey="LINE" 
+                        NumericMode="True"
+                        ColorKey="MAGENTA"
+                        HasGraphics="true"
+                        HasBit0="True"
+                        HasBit1="True"
+                        HasBit2="False"
+                        NumForeground="#C000C0"/>
+                    <controls:Sp48Key 
+                        Code="N4"
+                        Margin="0,0,18,0"
+                        MainKey="4" SShiftKey="$" ExtKey="INV VIDEO" ExtShiftKey="OPEN #" 
+                        NumericMode="True"
+                        ColorKey="GREEN"
+                        HasGraphics="true"
+                        HasBit0="False"
+                        HasBit1="False"
+                        HasBit2="True"
+                        NumForeground="#40A040"/>
+                    <controls:Sp48Key 
+                        Code="N5"
+                        Margin="0,0,18,0"
+                        MainKey="5" SShiftKey="%" ExtKey="&#x25C4;" ExtShiftKey="CLOSE #" 
+                        NumericMode="True"
+                        ColorKey="CYAN"
+                        HasGraphics="true"
+                        HasBit0="True"
+                        HasBit1="False"
+                        HasBit2="True"
+                        NumForeground="#00C0C0"/>
+                    <controls:Sp48Key 
+                        Code="N6"
+                        Margin="0,0,18,0"
+                        MainKey="6" SShiftKey="&amp;" ExtKey="&#x25BC;" ExtShiftKey="MOVE" 
+                        NumericMode="True"
+                        ColorKey="YELLOW"
+                        HasGraphics="true"
+                        HasBit0="False"
+                        HasBit1="True"
+                        HasBit2="True"
+                        NumForeground="#C0C040"/>
+                    <controls:Sp48Key 
+                        Code="N7"
+                        Margin="0,0,18,0"
+                        MainKey="7" SShiftKey="'" 
+                        ExtKey="&#x25B2;" 
+                        ExtShiftKey="ERASE" 
+                        HasGraphics="true"
+                        HasBit0="True"
+                        HasBit1="True"
+                        HasBit2="True"
+                        NumericMode="True"
+                        ColorKey="WHITE"
+                        NumForeground="#E0E0E0"/>
+                    <controls:Sp48Key 
+                        Code="N8"
+                        Margin="0,0,18,0"
+                        MainKey="8" 
+                        SShiftKey="(" 
+                        ExtKey="&#x25BA;" 
+                        ExtShiftKey="POINT" 
+                        HasGraphics="true"
+                        HasBit0="False"
+                        HasBit1="False"
+                        HasBit2="False"
+                        NumericMode="True"
+                        ColorKey="BR/FL (off)"
+                        NumForeground="#808080" />
+                    <controls:Sp48Key 
+                        Code="N9"
+                        Margin="0,0,18,0"
+                        MainKey="9" SShiftKey=")" ExtKey="GRAPHICS" ExtShiftKey="CAT" 
+                        NumericMode="True"
+                        ColorKey="BR/FL (on)"
+                        NumForeground="#808080" />
+                    <controls:Sp48Key 
+                        Code="N0"
+                        Margin="0,0,18,0"
+                        MainKey="0" SShiftKey="_" ExtKey="DELETE" ExtShiftKey="FORMAT" 
+                        NumericMode="True"
+                        ColorKey="BLACK"
+                        NumForeground="Black"
+                        NumBackground="{DynamicResource MainButtonTextBrush}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" x:Name="Row2" Margin="48,0,0,2">
+                    <controls:Sp48Key 
+                        Code="Q"
+                        Margin="0,0,18,0"
+                        MainKey="Q" Keyword="PLOT" SShiftKey="&lt;=" ExtKey="SIN" ExtShiftKey="ASN" />
+                    <controls:Sp48Key 
+                        Code="W"
+                        Margin="0,0,18,0"
+                        MainKey="W" Keyword="DRAW" SShiftKey="&lt;&gt;" ExtKey="COS" ExtShiftKey="ACS" />
+                    <controls:Sp48Key 
+                        Code="E"
+                        Margin="0,0,18,0"
+                        MainKey="E" Keyword="REM" SShiftKey="&gt;=" ExtKey="TAN" ExtShiftKey="ATN" />
+                    <controls:Sp48Key 
+                        Code="R"
+                        Margin="0,0,18,0"
+                        MainKey="R" Keyword="RUN" SShiftKey="&lt;" ExtKey="INT" ExtShiftKey="VERIFY" />
+                    <controls:Sp48Key 
+                        Code="T"
+                        Margin="0,0,18,0"
+                        MainKey="T" Keyword="RAND" SShiftKey="&gt;" ExtKey="RND" ExtShiftKey="MERGE" />
+                    <controls:Sp48Key 
+                        Code="Y"
+                        Margin="0,0,18,0"
+                        MainKey="Y" Keyword="RETURN" SShiftKey="AND" ExtKey="STR$" ExtShiftKey="[" />
+                    <controls:Sp48Key 
+                        Code="U"
+                        Margin="0,0,18,0"
+                        MainKey="U" Keyword="IF" SShiftKey="OR" ExtKey="CHR$" ExtShiftKey="]" />
+                    <controls:Sp48Key 
+                        Code="I"
+                        Margin="0,0,18,0"
+                        MainKey="I" Keyword="INPUT" SShiftKey="AT" ExtKey="CODE" ExtShiftKey="IN" />
+                    <controls:Sp48Key 
+                        Code="O"
+                        Margin="0,0,18,0"
+                        MainKey="O" Keyword="POKE" SShiftKey=";" ExtKey="PEEK" ExtShiftKey="OUT" />
+                    <controls:Sp48Key 
+                        Code="P"
+                        Margin="0,0,18,0"
+                        MainKey="P" Keyword="PRINT" SShiftKey="&quot;" ExtKey="TAB" ExtShiftKey="(C)" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" x:Name="Row3" Margin="84,0,0,2">
+                    <controls:Sp48Key 
+                        Code="A"
+                        Margin="0,0,18,0"
+                        MainKey="A" Keyword="NEW" SShiftKey="STOP" ExtKey="READ" ExtShiftKey="~" />
+                    <controls:Sp48Key 
+                        Code="S"
+                        Margin="0,0,18,0"
+                        MainKey="S" Keyword="SAVE" SShiftKey="NOT" ExtKey="RESTORE" ExtShiftKey="|" />
+                    <controls:Sp48Key 
+                        Code="D"
+                        Margin="0,0,18,0"
+                        MainKey="D" Keyword="DIM" SShiftKey="STEP" ExtKey="DATA" ExtShiftKey="\" />
+                    <controls:Sp48Key 
+                        Code="F"
+                        Margin="0,0,18,0"
+                        MainKey="F" Keyword="FOR" SShiftKey="TO" ExtKey="SGN" ExtShiftKey="{}{" />
+                    <controls:Sp48Key 
+                        Code="G"
+                        Margin="0,0,18,0"
+                        MainKey="G" Keyword="GOTO" SShiftKey="THEN" ExtKey="ABS" ExtShiftKey="}" />
+                    <controls:Sp48Key 
+                        Code="H"
+                        Margin="0,0,18,0"
+                        MainKey="H" Keyword="GOSUB" SShiftKey="&#x2191;" ExtKey="SQR" ExtShiftKey="CIRCLE" />
+                    <controls:Sp48Key 
+                        Code="J"
+                        Margin="0,0,18,0"
+                        MainKey="J" Keyword="LOAD" SShiftKey="-" ExtKey="VAL" ExtShiftKey="VAL$" />
+                    <controls:Sp48Key 
+                        Code="K"
+                        Margin="0,0,18,0"
+                        MainKey="K" Keyword="LIST" SShiftKey="+" ExtKey="LEN" ExtShiftKey="SCREEN$" />
+                    <controls:Sp48Key 
+                        Code="L"
+                        Margin="0,0,18,0"
+                        MainKey="L" Keyword="LET" SShiftKey="=" ExtKey="USR" ExtShiftKey="ATTR" />
+                    <controls:Sp48Key 
+                        Code="Enter"
+                        Margin="0,0,18,0"
+                        SimpleMode="True" Keyword="ENTER" ButtonWidth="60"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal" x:Name="Row4" Margin="12,0,0,2">
+                    <controls:Sp48Key 
+                        Code="CShift"
+                        Margin="0,0,18,0"
+                        SimpleMode="True" Keyword="CAPS SHIFT" ButtonWidth="96"/>
+                    <controls:Sp48Key 
+                        Code="Z"
+                        Margin="0,0,18,0"
+                        MainKey="Z" Keyword="COPY" SShiftKey=":" ExtKey="LN" ExtShiftKey="BEEP" />
+                    <controls:Sp48Key 
+                        Code="X"
+                        Margin="0,0,18,0"
+                        MainKey="X" Keyword="CLEAR" SShiftKey="&#x00A3;" ExtKey="EXP" ExtShiftKey="INK" />
+                    <controls:Sp48Key 
+                        Code="C"
+                        Margin="0,0,18,0"
+                        MainKey="C" Keyword="CONT" SShiftKey="?" ExtKey="LPRINT" ExtShiftKey="PAPER" />
+                    <controls:Sp48Key 
+                        Code="V"
+                        Margin="0,0,18,0"
+                        MainKey="V" Keyword="CLS" SShiftKey="/" ExtKey="LLIST" ExtShiftKey="FLASH" />
+                    <controls:Sp48Key 
+                        Code="B"
+                        Margin="0,0,18,0"
+                        MainKey="B" Keyword="BORDER" SShiftKey="*" ExtKey="BIN" ExtShiftKey="BRIGHT" />
+                    <controls:Sp48Key 
+                        Code="N"
+                        Margin="0,0,18,0"
+                        MainKey="N" Keyword="NEXT" SShiftKey="," ExtKey="INKEY$" ExtShiftKey="OVER" />
+                    <controls:Sp48Key 
+                        Code ="M"
+                        Margin="0,0,18,0"
+                        MainKey="M" Keyword="PAUSE" SShiftKey="." ExtKey="PI" ExtShiftKey="INVERSE" />
+                    <controls:Sp48Key 
+                        Code="SShift"
+                        Margin="0,0,18,0"
+                        SimpleMode="True" 
+                        Keyword="SYM"
+                        Keyword2="SHIFT"
+                        SymMode="True"
+                        TwoLineMode="True"
+                        ButtonWidth="60"/>
+                    <controls:Sp48Key 
+                        Code="Space"
+                        Margin="0,0,18,0"
+                        SimpleMode="True"
+                        TwoLineMode="True"
+                        Keyword="BREAK" 
+                        Keyword2="SPACE"
+                        ButtonWidth="96"/>
+                </StackPanel>
+            </Grid>
+        </Viewbox>
+    </Border>
+</UserControl>
