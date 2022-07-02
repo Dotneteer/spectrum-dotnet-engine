@@ -81,9 +81,9 @@ public interface IZ80Machine : IZ80Cpu
     void SetKeyStatus(SpectrumKeyCode key, bool isDown);
 
     /// <summary>
-    /// Emulates queued key strokes as if those were pressed by the user
+    /// Emulates queued keystrokes as if those were pressed by the user
     /// </summary>
-    void EmulateKeyStroke();
+    void EmulateKeystroke();
 
     /// <summary>
     /// Adds an emulated keypress to the queue of the provider.

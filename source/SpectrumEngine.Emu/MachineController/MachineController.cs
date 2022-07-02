@@ -162,7 +162,7 @@ public class MachineController
     {
         Run(FrameTerminationMode.UntilExecutionPoint, DebugStepMode.NoDebug, terminationPartition, terminationPoint);
         await CompleteExecutionLoop();
-        if (!Context.Cancelled)
+        if (!Context.Canceled)
         {
             State = MachineControllerState.Paused;
         }
@@ -190,7 +190,7 @@ public class MachineController
         Context.DebugStepMode = debugStepMode;
         Context.TerminationPartition = terminationPartition;
         Context.TerminationPoint = terminationPoint;
-        Context.Cancelled = false;
+        Context.Canceled = false;
         
         State = MachineControllerState.Running;
         _machineTask = Task.Run(async () =>
@@ -227,7 +227,7 @@ public class MachineController
                 
                 if (termination != FrameTerminationMode.Normal || token.IsCancellationRequested)
                 {
-                    Context.Cancelled = token.IsCancellationRequested;
+                    Context.Canceled = token.IsCancellationRequested;
                     return;
                 }
 
