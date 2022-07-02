@@ -13,6 +13,7 @@ public partial class KeyboardPanel : UserControl
 {
     // --- Stores the last pressed secondary button's key code
     private SpectrumKeyCode? _lastSecondary;
+    private int _lastPressFrame;
     
     public KeyboardPanel()
     {
@@ -72,40 +73,57 @@ public partial class KeyboardPanel : UserControl
         
         _lastSecondary = SpectrumKeyCode.SShift;
         SetKeyStatus(true, key.Code, _lastSecondary);
+        e.Handled = true;
     }
 
     private void OnExtKeyClicked(object? sender, PointerPressedEventArgs e)
     {
         if (sender is not Sp48Key key) return;
+        if (!WaitForNextKeyPress(9)) return;
+        
         QueueKey(0, 2, SpectrumKeyCode.CShift, SpectrumKeyCode.SShift);
         QueueKey(3, 2, key.Code, 
             e.GetCurrentPoint(this).Properties.IsLeftButtonPressed ? null : SpectrumKeyCode.CShift);
+        e.Handled = true;
     }
 
     private void OnExtShiftKeyClicked(object? sender, PointerPressedEventArgs e)
     {
         if (sender is not Sp48Key key) return;
+        if (!WaitForNextKeyPress(9)) return;
+
         QueueKey(0, 2, SpectrumKeyCode.CShift, SpectrumKeyCode.SShift);
         QueueKey(3, 2, key.Code, SpectrumKeyCode.SShift);
+        e.Handled = true;
     }
 
     private void OnNumericControlKeyClicked(object? sender, PointerPressedEventArgs e)
     {
         if (sender is not Sp48Key key) return;
-        
+        if (!WaitForNextKeyPress(9)) return;
+
         QueueKey(0, 2, SpectrumKeyCode.CShift, SpectrumKeyCode.SShift);
         QueueKey(3, 2, key.Code, 
             e.GetCurrentPoint(this).Properties.IsLeftButtonPressed ? null : SpectrumKeyCode.CShift);
+        e.Handled = true;
     }
 
     private void OnGraphicsControlKeyClicked(object? sender, PointerPressedEventArgs e)
     {
+        if (sender is not Sp48Key key) return;
+        if (!WaitForNextKeyPress(12)) return;
+        
+        QueueKey(0, 2, SpectrumKeyCode.N9, SpectrumKeyCode.CShift);
+        QueueKey(3, 2, key.Code, 
+            e.GetCurrentPoint(this).Properties.IsLeftButtonPressed ? null : SpectrumKeyCode.CShift);
+        QueueKey(6, 2, SpectrumKeyCode.N9, SpectrumKeyCode.CShift);
     }
 
     private void OnKeyReleased(object? sender, PointerReleasedEventArgs e)
     {
         if (sender is not Sp48Key key) return;
         SetKeyStatus(false, key.Code, _lastSecondary);
+        e.Handled = true;
     }
 
     /// <summary>
@@ -124,6 +142,7 @@ public partial class KeyboardPanel : UserControl
         {
             machine.SetKeyStatus(secondary.Value, down);
         }
+        if (down) _lastPressFrame = machine.Frames;
     }
 
     /// <summary>
@@ -136,6 +155,19 @@ public partial class KeyboardPanel : UserControl
     private void QueueKey(int relativeStart, int frames, SpectrumKeyCode primary, SpectrumKeyCode? secondary)
     {
         var machine = Vm?.Display?.Machine;
-        machine?.QueueKeyPress(machine.Frames + relativeStart, frames, primary, secondary);
+        if (machine == null) return;
+        machine.QueueKeyPress(machine.Frames + relativeStart, frames, primary, secondary);
+        _lastPressFrame = machine.Frames;
+    }
+
+    /// <summary>
+    /// Waits the specified number of frames before allows a new key press
+    /// </summary>
+    /// <param name="frames">Number of frames to wait</param>
+    /// <returns>True, if the next keypress is allowed; otherwise, false.</returns>
+    private bool WaitForNextKeyPress(int frames)
+    {
+        var machine = Vm?.Display?.Machine;
+        return machine != null && machine.Frames > _lastPressFrame + frames * machine.ClockMultiplier;
     }
 }
