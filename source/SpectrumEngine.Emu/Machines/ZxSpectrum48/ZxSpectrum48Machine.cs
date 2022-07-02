@@ -497,7 +497,7 @@ public sealed class ZxSpectrum48Machine :
     /// <summary>
     /// Emulates queued key strokes as if those were pressed by the user
     /// </summary>
-    public override void EmulateKeyStroke()
+    public override void EmulateKeystroke()
     {
         // --- Exit, if no keystroke to emulate
         lock (_emulatedKeyStrokes)

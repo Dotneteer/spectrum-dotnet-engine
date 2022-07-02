@@ -37,5 +37,5 @@ public sealed class ExecutionContext
     /// <summary>
     /// Has the last execution loop cancelled?
     /// </summary>
-    public bool Cancelled { get; set; }
+    public bool Canceled { get; set; }
 }

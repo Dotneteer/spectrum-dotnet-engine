@@ -193,7 +193,7 @@ public abstract class Z80MachineBase :
     /// <summary>
     /// Emulates queued key strokes as if those were pressed by the user
     /// </summary>
-    public abstract void EmulateKeyStroke();
+    public abstract void EmulateKeystroke();
 
     /// <summary>
     /// Adds an emulated keypress to the queue of the provider.
@@ -242,7 +242,7 @@ public abstract class Z80MachineBase :
                 _nextFrameStartTact = currentFrameStart + (ulong)(TactsInFrame * ClockMultiplier);
                 
                 // --- Emulate a keystroke, if any has been queued at all
-                EmulateKeyStroke();
+                EmulateKeystroke();
             }
 
             // --- Set the interrupt signal, if required so
