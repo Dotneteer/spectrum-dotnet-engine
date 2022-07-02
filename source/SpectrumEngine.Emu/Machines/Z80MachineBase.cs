@@ -184,6 +184,28 @@ public abstract class Z80MachineBase :
     public abstract uint[] GetPixelBuffer();
 
     /// <summary>
+    /// Set the status of the specified ZX Spectrum key.
+    /// </summary>
+    /// <param name="key">Key code</param>
+    /// <param name="isDown">Indicates if the key is pressed down.</param>
+    public abstract void SetKeyStatus(SpectrumKeyCode key, bool isDown);
+
+    /// <summary>
+    /// Emulates queued key strokes as if those were pressed by the user
+    /// </summary>
+    public abstract void EmulateKeyStroke();
+
+    /// <summary>
+    /// Adds an emulated keypress to the queue of the provider.
+    /// </summary>
+    /// <param name="startFrame">Frame count to start the emulation</param>
+    /// <param name="frames">Number of frames to hold the emulation</param>
+    /// <param name="primary">Primary key code</param>
+    /// <param name="secondary">Optional secondary key code</param>
+    /// <remarks>The provider can play back emulated key strokes</remarks>
+    public abstract void QueueKeyPress(int startFrame, int frames, SpectrumKeyCode primary, SpectrumKeyCode? secondary);
+
+    /// <summary>
     /// Executes the machine loop using the current execution context.
     /// </summary>
     /// <returns>
@@ -218,6 +240,9 @@ public abstract class Z80MachineBase :
 
                 // --- Calculate the start tact of the next machine frame
                 _nextFrameStartTact = currentFrameStart + (ulong)(TactsInFrame * ClockMultiplier);
+                
+                // --- Emulate a keystroke, if any has been queued at all
+                EmulateKeyStroke();
             }
 
             // --- Set the interrupt signal, if required so

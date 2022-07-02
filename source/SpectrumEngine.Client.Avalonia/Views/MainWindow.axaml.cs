@@ -16,7 +16,7 @@ namespace SpectrumEngine.Client.Avalonia.Views
             InitializeComponent();
         }
 
-        private void MenuItem_OnClick(object? sender, RoutedEventArgs e)
+        private void OnClickClose(object? sender, RoutedEventArgs e)
         {
             Close();
         }

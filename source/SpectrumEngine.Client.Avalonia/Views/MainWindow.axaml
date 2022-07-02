@@ -154,7 +154,7 @@
             <!-- Use this menu on Windows -->
             <Menu DockPanel.Dock="Top" IsVisible="{Binding !Environment.UseNativeMenu}">
                 <MenuItem Header="File">
-                    <MenuItem Header="Exit" Click="MenuItem_OnClick" />
+                    <MenuItem Header="Exit" Click="OnClickClose" />
                     <MenuItem Header="About" />
                 </MenuItem>
                 <MenuItem Header="View">
@@ -304,7 +304,7 @@
             <local:StatusBarUserControl DockPanel.Dock="Bottom" 
                 IsVisible="{Binding ViewOptions.ShowStatusBar}"/>
             <local:KeyboardPanel 
-                IsVisible="{Binding ViewOptions.ShowKeyboard}" 
+                IsVisible="{Binding ViewOptions.ShowKeyboard}"
                 Height="300"
                 DockPanel.Dock="Bottom" />
             <local:SplitterPanel 

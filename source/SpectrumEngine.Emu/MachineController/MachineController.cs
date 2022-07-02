@@ -181,7 +181,7 @@ public class MachineController
         {
             throw new InvalidOperationException("The machine is already running");
         }
-        if (State == MachineControllerState.None || State == MachineControllerState.Stopped)
+        if (State is MachineControllerState.None or MachineControllerState.Stopped)
         {
             // --- First start (after stop), reset the machine
             Machine.Reset();

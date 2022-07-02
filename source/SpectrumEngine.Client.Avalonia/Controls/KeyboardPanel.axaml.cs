@@ -4,11 +4,16 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
+using SpectrumEngine.Client.Avalonia.ViewModels;
+using SpectrumEngine.Emu;
 
 namespace SpectrumEngine.Client.Avalonia.Controls;
 
 public partial class KeyboardPanel : UserControl
 {
+    // --- Stores the last pressed secondary button's key code
+    private SpectrumKeyCode? _lastSecondary;
+    
     public KeyboardPanel()
     {
         InitializeComponent();
@@ -18,6 +23,8 @@ public partial class KeyboardPanel : UserControl
     {
         AvaloniaXamlLoader.Load(this);
     }
+
+    private MainWindowViewModel? Vm => DataContext as MainWindowViewModel; 
 
     protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
     {
@@ -52,22 +59,43 @@ public partial class KeyboardPanel : UserControl
 
     private void OnMainKeyClicked(object? sender, PointerPressedEventArgs e)
     {
+        if (sender is not Sp48Key key) return;
+        
+        _lastSecondary = key.SecondaryCode 
+            ?? (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed ? null : SpectrumKeyCode.CShift);
+        SetKeyStatus(true, key.Code, _lastSecondary);
     }
 
     private void OnSymShiftKeyClicked(object? sender, PointerPressedEventArgs e)
     {
+        if (sender is not Sp48Key key) return;
+        
+        _lastSecondary = SpectrumKeyCode.SShift;
+        SetKeyStatus(true, key.Code, _lastSecondary);
     }
 
     private void OnExtKeyClicked(object? sender, PointerPressedEventArgs e)
     {
+        if (sender is not Sp48Key key) return;
+        QueueKey(0, 2, SpectrumKeyCode.CShift, SpectrumKeyCode.SShift);
+        QueueKey(3, 2, key.Code, 
+            e.GetCurrentPoint(this).Properties.IsLeftButtonPressed ? null : SpectrumKeyCode.CShift);
     }
 
     private void OnExtShiftKeyClicked(object? sender, PointerPressedEventArgs e)
     {
+        if (sender is not Sp48Key key) return;
+        QueueKey(0, 2, SpectrumKeyCode.CShift, SpectrumKeyCode.SShift);
+        QueueKey(3, 2, key.Code, SpectrumKeyCode.SShift);
     }
 
     private void OnNumericControlKeyClicked(object? sender, PointerPressedEventArgs e)
     {
+        if (sender is not Sp48Key key) return;
+        
+        QueueKey(0, 2, SpectrumKeyCode.CShift, SpectrumKeyCode.SShift);
+        QueueKey(3, 2, key.Code, 
+            e.GetCurrentPoint(this).Properties.IsLeftButtonPressed ? null : SpectrumKeyCode.CShift);
     }
 
     private void OnGraphicsControlKeyClicked(object? sender, PointerPressedEventArgs e)
@@ -76,5 +104,38 @@ public partial class KeyboardPanel : UserControl
 
     private void OnKeyReleased(object? sender, PointerReleasedEventArgs e)
     {
+        if (sender is not Sp48Key key) return;
+        SetKeyStatus(false, key.Code, _lastSecondary);
+    }
+
+    /// <summary>
+    /// Emulates pressing down or releasing a primary and an optional secondary key
+    /// </summary>
+    /// <param name="down">Is the key pressed down?</param>
+    /// <param name="primary">Primary key code</param>
+    /// <param name="secondary">Optional secondary key code</param>
+    private void SetKeyStatus(bool down, SpectrumKeyCode primary, SpectrumKeyCode? secondary)
+    {
+        var machine = Vm?.Display?.Machine;
+        if (machine == null) return;
+        
+        machine.SetKeyStatus(primary, down);
+        if (secondary.HasValue)
+        {
+            machine.SetKeyStatus(secondary.Value, down);
+        }
+    }
+
+    /// <summary>
+    /// Queues an emulated key press
+    /// </summary>
+    /// <param name="relativeStart">Realtive start (in frames) from the current frame</param>
+    /// <param name="frames">Number of frames to keep the key pressed</param>
+    /// <param name="primary">Primary key code</param>
+    /// <param name="secondary">Optional secondary key code</param>
+    private void QueueKey(int relativeStart, int frames, SpectrumKeyCode primary, SpectrumKeyCode? secondary)
+    {
+        var machine = Vm?.Display?.Machine;
+        machine?.QueueKeyPress(machine.Frames + relativeStart, frames, primary, secondary);
     }
 }
