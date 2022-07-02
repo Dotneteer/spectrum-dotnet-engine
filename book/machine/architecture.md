@@ -25,7 +25,6 @@ While working on the ZX Spectrum 48 implementation, I continuously reviewed and 
 - `IFloatingBusDevice`: This class represents the floating bus behavior of the ZX Spectrum data bus.
 - `ZxSpectrum48FloatingBusDevice`: This class implements the behavior of the ZX Spectrum 48 floating bus.
 
-
 ## Design Decisions
 
 When designing the architecture, I divided the emulated hardware into components that provide a particular functionality of the physical hardware. There are many ways to split the hardware, and I have chosen this configuration to establish the software components:

@@ -115,10 +115,6 @@ public sealed class ZxSpectrum48Machine :
     {
         base.HardReset();
         Reset();
-        lock (_emulatedKeyStrokes)
-        {
-            _emulatedKeyStrokes.Clear();
-        }
     }
 
     /// <summary>
@@ -151,6 +147,12 @@ public sealed class ZxSpectrum48Machine :
         ClockMultiplier = TargetClockMultiplier;
         ExecutionContext.LastTerminationReason = null;
         _lastRenderedFrameTact = -0;
+
+        // --- Empty the queue of emulated keystrokes
+        lock (_emulatedKeyStrokes)
+        {
+            _emulatedKeyStrokes.Clear();
+        }
     }
 
     #endregion
@@ -484,6 +486,10 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     public override uint[] GetPixelBuffer() => ScreenDevice.GetPixelBuffer();
 
+    #endregion
+    
+    #region Keyboard
+    
     /// <summary>
     /// Set the status of the specified ZX Spectrum key.
     /// </summary>

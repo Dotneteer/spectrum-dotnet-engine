@@ -8,6 +8,7 @@ This project aims to implement a ZX Spectrum Emulator engine in .NET 6 so that y
 - [The ZX Spectrum 48 Implementation Architecture](./book/machine/architecture.md)
 - [Z80 CPU Implementation](./book/z80/z80-implementation.md)
 - [The `Z80MachineBase` Implementation](./book/machine/z80-machine-base.md)
+- [The `ZxSpectrum48Machine` Implementation](./book/machine/zx-spectrum48-machine-base.md)
 - [ZX Spectrum 48 I/O Handler Implementation](./book/machine/io-handler.md)
 - [Keyboard Implementation](./book/machine/keyboard-device.md)
 
