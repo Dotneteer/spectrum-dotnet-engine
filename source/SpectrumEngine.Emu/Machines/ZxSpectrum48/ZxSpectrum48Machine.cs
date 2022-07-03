@@ -61,10 +61,7 @@ public sealed class ZxSpectrum48Machine :
         TapeDevice = new TapeDevice(this);
         Reset();
 
-        // --- Set up devices
-        ScreenDevice.SetMemoryScreenOffset(0x4000);
-
-        // --- Initialize the machine's ROM
+        // --- Initialize the machine's ROM (Roms/ZxSpectrum48/ZxSpectrum48.rom)
         UploadRomBytes(LoadRomFromResource(DefaultRomResource));
     }
 
@@ -114,6 +111,7 @@ public sealed class ZxSpectrum48Machine :
     public override void HardReset()
     {
         base.HardReset();
+        for (var i = 0x4000; i < _memory.Length; i++) _memory[i] = 0;
         Reset();
     }
 
@@ -124,9 +122,6 @@ public sealed class ZxSpectrum48Machine :
     {
         // --- Reset the CPU
         base.Reset();
-
-        // --- Reset memory
-        for (var i = 0x4000; i < _memory.Length; i++) _memory[i] = 0;
 
         // --- Reset and setup devices
         KeyboardDevice.Reset();
@@ -149,10 +144,7 @@ public sealed class ZxSpectrum48Machine :
         _lastRenderedFrameTact = -0;
 
         // --- Empty the queue of emulated keystrokes
-        lock (_emulatedKeyStrokes)
-        {
-            _emulatedKeyStrokes.Clear();
-        }
+        lock (_emulatedKeyStrokes) { _emulatedKeyStrokes.Clear(); }
     }
 
     #endregion
