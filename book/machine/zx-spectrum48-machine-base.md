@@ -357,6 +357,8 @@ private byte ReadPort0Xfe(ushort address)
 
 ### `DoWritePort`
 
+The `DoWritePort` method delegates the responsibility of handling the mapped ports (lowest port address bit set to zero) to the `WritePort0Xfe` method:
+
 ```csharp
 public override void DoWritePort(ushort address, byte value)
 {
@@ -367,13 +369,230 @@ public override void DoWritePort(ushort address, byte value)
 }
 ```
 
+`WritePort0xfe` splits the output value into bit groups and sends them to the device handling them:
+
+- Bit 0-2: Set the border color with the screen device
+- Bit 3: Set the MIC bit (tape device)
+- Bit 4: Set the EAR bit (beeper device)
+
+Besides these actions, this method stores the latest value of Bit 3 and Bit 4-related data, as `ReadPort0Xfe` uses these values to calculate the value of the EAR bit input:
+
+
+```csharp
+private void WritePort0xFE(byte value)
+{
+    // --- Extract bthe border color
+    ScreenDevice.BorderColor = value & 0x07;
+
+    // --- Store the last EAR bit
+    var bit4 = value & 0x10;
+    BeeperDevice.SetEarBit(bit4 != 0);
+
+    // --- Set the last value of bit3
+    _portBit3LastValue = (value & 0x08) != 0;
+
+    // --- Instruct the tape device process the MIC bit
+    TapeDevice.ProcessMicBit(_portBit3LastValue);
+
+    // --- Manage bit 4 value
+    if (_portBit4LastValue)
+    {
+        // --- Bit 4 was 1, is it now 0?
+        if (bit4 == 0)
+        {
+            _portBit4ChangedFrom1Tacts = Tacts;
+            _portBit4LastValue = false;
+        }
+    }
+    else
+    {
+        // --- Bit 4 was 0, is it now 1?
+        if (bit4 != 0)
+        {
+            _portBit4ChangedFrom0Tacts = Tacts;
+            _portBit4LastValue = true;
+        }
+    }
+}
+
+```
+
 ## Screen Rendering
 
-_TBD_
+Though the `ZxSpectrum48Machine` delegates the responsibility of rendering the screen to the screen device, it conveys screen-related information to the external consumers of the class instance:
+
+```csharp
+// --- Width of the screen in native machine screen pixels
+public override int ScreenWidthInPixels => ScreenDevice.ScreenWidth;
+
+// --- Height of the screen in native machine screen pixels
+public override int ScreenHeightInPixels => ScreenDevice.ScreenLines;
+
+// --- Gets the buffer that stores the rendered pixels
+public override uint[] GetPixelBuffer() => ScreenDevice.GetPixelBuffer();
+```
 
 ## Keystroke Emulation
 
-_TBD_
+The `SetKeyStatus` method forwards keystroke information to the keyboard device:
+
+```csharp
+public override void SetKeyStatus(SpectrumKeyCode key, bool isDown)
+{
+    KeyboardDevice.SetStatus(key, isDown);
+}
+```
+
+Whenever a new machine frame starts (in about every 20 milliseconds), the execution loop calls the `EmulateKeystroke` method to check if there is a queued keystroke to emulate:
+
+```csharp
+public override void EmulateKeystroke()
+{
+    // --- Exit, if no keystroke to emulate
+    lock (_emulatedKeyStrokes)
+    {
+        if (_emulatedKeyStrokes.Count == 0) return;
+    }
+
+    // --- Check the next keystroke
+    EmulatedKeyStroke keyStroke;
+    lock (_emulatedKeyStrokes)
+    {
+        keyStroke = _emulatedKeyStrokes.Peek();
+    }
+
+    // --- Time has not come
+    if (keyStroke.StartTact > Tacts) return;
+
+    if (keyStroke.EndTact < Tacts)
+    {
+        // --- End emulation of this very keystroke
+        KeyboardDevice.SetStatus(keyStroke.PrimaryCode, false);
+        if (keyStroke.SecondaryCode.HasValue)
+        {
+            KeyboardDevice.SetStatus(keyStroke.SecondaryCode.Value, false);
+        }
+        
+        // --- Remove the keystroke from the queue
+        lock (_emulatedKeyStrokes) _emulatedKeyStrokes.Dequeue();
+        return;
+    }
+
+    // --- Emulate this very keystroke, and leave it in the queue
+    KeyboardDevice.SetStatus(keyStroke.PrimaryCode, true);
+    if (keyStroke.SecondaryCode.HasValue)
+    {
+        KeyboardDevice.SetStatus(keyStroke.SecondaryCode.Value, true);
+    }
+}
+```
+
+The machine receives the emulated keystrokes through the `QueueKeystroke` method:
+
+```csharp
+public override void QueueKeystroke(
+    int startFrame, 
+    int frames, 
+    SpectrumKeyCode primary, 
+    SpectrumKeyCode? secondary)
+{
+    lock (_emulatedKeyStrokes)
+    {
+        var startTact = (ulong)startFrame * (ulong)TactsInFrame * (ulong)ClockMultiplier;
+        var endTact = startTact + (ulong)frames * (ulong)TactsInFrame * (ulong)ClockMultiplier;
+        var keypress = new EmulatedKeyStroke(startTact, endTact, primary, secondary);
+        if (_emulatedKeyStrokes.Count == 0)
+        {
+            _emulatedKeyStrokes.Enqueue(keypress);
+            return;
+        }
+
+        var last = _emulatedKeyStrokes.Peek();
+        if (last.PrimaryCode == keypress.PrimaryCode
+            && last.SecondaryCode == keypress.SecondaryCode)
+        {
+            // --- The same key has been clicked
+            if (keypress.StartTact >= last.StartTact && keypress.StartTact <= last.EndTact)
+            {
+                // --- Old and new click ranges overlap, lengthen the old click
+                last.EndTact = keypress.EndTact;
+                return;
+            }
+        }
+        _emulatedKeyStrokes.Enqueue(keypress);
+    }
+}
+```
 
 ## Machine Frame Execution Overrides
 
+The `ZxSpectrum48Machine` class overwrites several methods of `Z80MachineBase` to provide ZX Spectrum 48 specific behavior with the machine frame.
+
+### `OnTactIncremented`
+
+Every time the CPU clock is incremented, the machine executes the `OnTactIncremented` method and provides an opportunity to manage hardware components that run simultaneously with the CPU.
+
+The overridden `OnTactIncremented` method in `ZxSpectrum48Machine` renders the screen pixels the ULA would have been displayed during the execution of the latest CPU instruction and creates the sound samples according to the state of the EAR bit output.
+
+```csharp
+public override void OnTactIncremented(int increment)
+{
+    var machineTact = CurrentFrameTact / ClockMultiplier;
+    while (_lastRenderedFrameTact <= machineTact)
+    {
+        ScreenDevice.RenderTact(_lastRenderedFrameTact++);
+    }
+    BeeperDevice.RenderBeeperSample();
+}
+```
+
+> *Note*: The most accurate way would be to call the `OnTactIncremented` method for every clock increment. For example, it would mean three subsequent calls for a memory read. However, that implementation would consume unnecessary host CPU resources for such a single task. Thus, the implementation of `OnTactIncremented` gets a value that shows the total increment. According to my experiences, this simplification does not hurt emulation accuracy and results in much faster code.
+
+### `ShouldRaiseInterrupt`
+
+The ZX Spectrum 48K ULA emits an active interrupt signal in every machine frame starting at the first tact (indexed with zero). The interrupt signal is 32 T-states long, which is longer than the longest Z80 instruction (23 T-states).
+
+```csharp
+protected override bool ShouldRaiseInterrupt() => CurrentFrameTact / ClockMultiplier < 32;
+```
+
+> *Note*: As the ULA uses its own clock frequency, we must consider the clock multiplier value.
+
+### `OnInitNewFrame`
+
+This method takes care that the screen device and beeper device prepare to render screen pixels and sound samples for the new frame. The method also handles the changes in the clock frequency multiplier value:
+
+```csharp
+protected override void OnInitNewFrame(bool clockMultiplierChanged)
+{
+    // --- No screen tact rendered in this frame
+    _lastRenderedFrameTact = 0;
+
+    // --- Prepare the screen device for the new machine frame
+    ScreenDevice.OnNewFrame();
+
+    // --- Handle audio sample recalculations when the actual clock frequency changes
+    if (_oldClockMultiplier != ClockMultiplier)
+    {
+        BeeperDevice.SetAudioSampleRate(AUDIO_SAMPLE_RATE);
+        _oldClockMultiplier = ClockMultiplier;
+    }
+
+    // --- Prepare the beeper device for the new frame
+    BeeperDevice.OnNewFrame();
+}
+```
+
+### `AfterInstructionExecuted`
+
+When the CPU executes a complete instruction, it calls the `UpdateTapeMode` method of the tape device. This method is responsible for detecting when the tape gets into
+- LOAD mode (it emulates the bit stream of a tape file as a sequence of EAR bit values), or
+- SAVE mode (it collects the MIC bit values and turns them into a tape file).
+The method also recognizes when the LOAD or SAVE modes and puts the tape back to "passive" mode.
+
+```csharp
+protected override void AfterInstructionExecuted()
+{
+    TapeDevice.UpdateTapeMode();
+}
+```

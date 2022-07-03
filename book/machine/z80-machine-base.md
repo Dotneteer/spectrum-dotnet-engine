@@ -27,7 +27,7 @@ public interface IZ80Machine : IZ80Cpu
     event EventHandler<(string propertyName, object? newValue)>? MachinePropertyChanged;
 
     void SetKeyStatus(SpectrumKeyCode key, bool isDown);
-    void QueueKeyPress(int startFrame, int frames, SpectrumKeyCode primary, SpectrumKeyCode? secondary);
+    void QueueKeystroke(int startFrame, int frames, SpectrumKeyCode primary, SpectrumKeyCode? secondary);
     void EmulateKeystroke();
 
     ExecutionContext ExecutionContext { get; }
@@ -42,7 +42,7 @@ public interface IZ80Machine : IZ80Cpu
 - When it is time to render the machine's screen, the `GetPixelBuffer` method returns an array of 32-bit pixels that define the ARGB pixel values starting from the top-left corner of the screen. The pixels are read from left to right, and then the rows from top to bottom.
 - The `GetMachineProperty` and `SetMachineProperty` methods allow handling named properties that a particular machine may use for its operation. These properties have a string key and a value that can be any object type except `null`. The class raises a `MachinePropertyChanged` event whenever a particular property changes its previous value.
 - `SetKeyStatus` allows setting the state of a particular key in the machine's keyboard (pressed or released).
-- When the machine runs, there you can emulate keystrokes. The `QueueKeyPress` method allows you to queue a key to be emulated in the future.
+- When the machine runs, there you can emulate keystrokes. The `QueueKeystroke` method allows you to queue a key to be emulated in the future.
 - The `EmulateKeystroke` method is essential to the machine frame execution. Its role is to emulate a queued keystroke.
 - While executing a machine frame, the `ExecutionContext` property describes the context the currently running frame uses.
 - The `ExecutionMachineFrame` method executes the next machine frame according to the current execution context.

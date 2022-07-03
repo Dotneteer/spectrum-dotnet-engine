@@ -93,5 +93,5 @@ public interface IZ80Machine : IZ80Cpu
     /// <param name="primary">Primary key code</param>
     /// <param name="secondary">Optional secondary key code</param>
     /// <remarks>The provider can play back emulated key strokes</remarks>
-    void QueueKeyPress(int startFrame, int frames, SpectrumKeyCode primary, SpectrumKeyCode? secondary);
+    void QueueKeystroke(int startFrame, int frames, SpectrumKeyCode primary, SpectrumKeyCode? secondary);
 }

@@ -156,7 +156,7 @@ public partial class KeyboardPanel : UserControl
     {
         var machine = Vm?.Display?.Machine;
         if (machine == null) return;
-        machine.QueueKeyPress(machine.Frames + relativeStart, frames, primary, secondary);
+        machine.QueueKeystroke(machine.Frames + relativeStart, frames, primary, secondary);
         _lastPressFrame = machine.Frames;
     }
 

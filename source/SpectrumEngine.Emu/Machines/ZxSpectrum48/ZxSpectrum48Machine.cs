@@ -520,11 +520,9 @@ public sealed class ZxSpectrum48Machine :
             {
                 KeyboardDevice.SetStatus(keyStroke.SecondaryCode.Value, false);
             }
-            lock (_emulatedKeyStrokes)
-            {
-                _emulatedKeyStrokes.Dequeue();
-            }
 
+            // --- Remove the keystroke from the queue
+            lock (_emulatedKeyStrokes) _emulatedKeyStrokes.Dequeue();
             return;
         }
 
@@ -544,7 +542,7 @@ public sealed class ZxSpectrum48Machine :
     /// <param name="primary">Primary key code</param>
     /// <param name="secondary">Optional secondary key code</param>
     /// <remarks>The provider can play back emulated key strokes</remarks>
-    public override void QueueKeyPress(
+    public override void QueueKeystroke(
         int startFrame, 
         int frames, 
         SpectrumKeyCode primary, 
@@ -617,12 +615,11 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     protected override void AfterInstructionExecuted()
     {
-        BeeperDevice.RenderBeeperSample();
         TapeDevice.UpdateTapeMode();
     }
 
     /// <summary>
-    /// Every time the CPU clock is incremented with a single T-state, this function is executed.
+    /// Every time the CPU clock is incremented, this function is executed.
     /// </summary>
     /// <param name="increment">The tact increment value</param>
     public override void OnTactIncremented(int increment)
@@ -632,6 +629,7 @@ public sealed class ZxSpectrum48Machine :
         {
             ScreenDevice.RenderTact(_lastRenderedFrameTact++);
         }
+        BeeperDevice.RenderBeeperSample();
     }
 
     /// <summary>
