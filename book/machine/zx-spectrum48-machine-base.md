@@ -121,7 +121,7 @@ The first 16,384 bytes of this memory are ROM; the others represent the RAM part
 
 ### `DoReadMemory`
 
-As its name suggest, this method reads the content of the memory with the specified address:
+As its name suggests, this method reads the content of the memory with the specified address:
 
 ```csharp
 public override byte DoReadMemory(ushort address)
@@ -130,6 +130,11 @@ public override byte DoReadMemory(ushort address)
 
 ### `DelayMemoryRead`
 
+The total memory read delay in ZX Spectrum 48K comprises two factors. First, the Z80 CPU adds a 3-T-states delay. Second, if the memory address is within a contended partition (between $4000 and $7fff), the ULA lets the CPU wait while it reads the contents of the screen memory.
+This delay depends on the current screen rendering tact within the machine frame.
+
+> *Note*: You can learn more details about the ZX Spectrum 48K memory contention [here](https://worldofspectrum.org/faq/reference/48kreference.htm) in the "Contended Memory" section.
+
 ```csharp
 public override void DelayMemoryRead(ushort address)
 {
@@ -137,8 +142,9 @@ public override void DelayMemoryRead(ushort address)
     TactPlus3();
 }
 ```
-
 ### `DoWriteMemory`
+
+The write operation does not allow modifying the contents of the $0000-$3fff memory range, as it represents ROM:
 
 ```csharp
 public override void DoWriteMemory(ushort address, byte value)
@@ -152,6 +158,8 @@ public override void DoWriteMemory(ushort address, byte value)
 
 ### `DelayMemoryWrite`
 
+The same delay applies to writing the memory as to reading it:
+
 ```csharp
 public override void DelayMemoryWrite(ushort address)
 {
@@ -161,6 +169,30 @@ public override void DelayMemoryWrite(ushort address)
 ```
 
 ### `DelayAddressBusAccess`
+
+The memory range of $4000-$7fff is a subject of contention between the Z80 CPU and the ULA, where the ULA has priority over the CPU. So, while the ULA reads screen information from this memory range, the CPU must wait. The `_contentionValues` array stores the number of T-States to wait while the machine is in a particular tact of the machine frame:
+
+```csharp
+private byte[] _contentionValues = Array.Empty<byte>();
+```
+
+The screen device is the one that sets up the contention delay values when it initializes itself (these values depend on the screen configuration settings). While the screen initializes, it invokes the `AllocateContentionsValues` and `SetContentionValue` methods of `ZxSpectrum48Machine` to set up the delay values for each screen rendering tact:
+
+```csharp
+// --- Allocate the contention value array 
+public void AllocateContentionValues(int tactsInFrame)
+{
+    _contentionValues = new byte[tactsInFrame];
+}
+
+// --- Set a particular item of the contention value array
+public void SetContentionValue(int tact, byte value)
+{
+    _contentionValues[tact] = value;
+}
+```
+
+The `DelayAddressBusAccess` method takes care that the CPU waits for the ULA to release the access to the contended memory:
 
 ```csharp
 public override void DelayAddressBusAccess(ushort address)
@@ -174,9 +206,166 @@ public override void DelayAddressBusAccess(ushort address)
 }
 ```
 
+> *Note*: The method takes care of the clock frequency differences between the CPU and the ULA when we use clock frequency multiplication.
+
 ## I/O Handling
 
-_TBD_
+Similarly to memory, I/O operations are also delayed when the ULA reads or writes a particular port. The Z80 CPU adds a 4 T-states delay in the normal operation mode. However, when the ULA uses the address bus to access I/O, the ULA lets the CPU wait while completing the I/O operation.
+
+### Contention Delay
+
+This delay is an outcome of two effects:
+Effect #1: If the lowest bit of the I/O port is zero, the ULA needs to read or write the particular I/O port, and it causes a delay if the ULA is currently busy reading screen information from the memory.
+Effect #2: The address put on the bus causes delays just as it happens with memory.
+The combination of these two effects provides four possible delay schemes implemented in the `DelayContendedIo` method:
+
+```csharp
+private void DelayContendedIo(ushort address)
+{
+    var lowbit = (address & 0x0001) != 0;
+
+    // --- Check for contended range
+    if ((address & 0xc000) == 0x4000)
+    {
+        if (lowbit)
+        {
+            // --- Low bit set, C:1, C:1, C:1, C:1
+            ApplyContentionDelay();
+            TactPlus1();
+            ApplyContentionDelay();
+            TactPlus1();
+            ApplyContentionDelay();
+            TactPlus1();
+            ApplyContentionDelay();
+            TactPlus1();
+        }
+        else
+        {
+            // --- Low bit reset, C:1, C:3
+            ApplyContentionDelay();
+            TactPlus1();
+            ApplyContentionDelay();
+            TactPlus3();
+        }
+    }
+    else
+    {
+        if (lowbit)
+        {
+            // --- Low bit set, N:4
+            TactPlus4();
+        }
+        else
+        {
+            // --- Low bit reset, C:1, C:3
+            TactPlus1();
+            ApplyContentionDelay();
+            TactPlus3();
+        }
+    }
+
+    // --- Apply I/O contention
+    void ApplyContentionDelay()
+    {
+        var delay = GetContentionValue(CurrentFrameTact / ClockMultiplier);
+        TactPlusN(delay);
+    }
+}
+```
+
+> *Note*: You can learn more details about the ZX Spectrum 48K I/O contention [here](https://worldofspectrum.org/faq/reference/48kreference.htm) in the "Contended I/O" section.
+
+The `DelayPortRead` and `DelayPortWrite` methods call `DelayContendedIo`:
+
+```csharp
+public override void DelayPortRead(ushort address)
+    => DelayContendedIo(address);
+public override void DelayPortWrite(ushort address)
+    => DelayContendedIo(address);    
+```
+
+### `DoReadPort`
+
+The `DoReadPort` method delegates the responsibility or retrieving a value read from a particular I/O port to the `ReadPort0Xfe` method, provided the port's lowest bit is reset (known port). Otherwise, if the lowest bit is set (unhandled port), it provides to floating bus device to retrieve a value. (You can learn more about the floating bus [here](../hw-overview.md#the-floating-bus).)
+
+```csharp
+public override byte DoReadPort(ushort address)
+{
+    return (address & 0x0001) == 0 
+        ? ReadPort0Xfe(address)
+        : FloatingBusDevice.ReadFloatingPort();
+}
+```
+
+The `ReadPort0Xfe` method collects the bits of the result from the affected devices: the keyboard and the tape signal (EAR bit).
+
+However, in the hardware, the ULA uses the same pin for all of the MIC socket (tape signal output), EAR socket (tape signal input), and the internal speaker (beeper output). Moreover, the EAR and MIC sockets are connected only by resistors, so activating one activates the other.
+
+This hardware implementation results in a strange effect when reading bit 6 (EAR bit input): the value depends on the Bit 3 and Bit 4 values written to the output port and the time elapsed since the last write (as the charging time of a capacitor is involved). ULA Issue 2 and 3 handle this differently, making the scenario more complex.
+
+The `ReadPort0Xfe` method handles these chores this way:
+
+```csharp
+private byte ReadPort0Xfe(ushort address)
+{
+    var portValue = KeyboardDevice.GetKeyLineStatus(address);
+
+    // --- Check for LOAD mode
+    if (TapeDevice.TapeMode == TapeMode.Load)
+    {
+        var earBit = TapeDevice.GetTapeEarBit();
+        BeeperDevice.SetEarBit(earBit);
+        portValue = (byte)((portValue & 0xbf) | (earBit ? 0x40 : 0));
+    }
+    else
+    {
+        // --- Handle analog EAR bit
+        var bit4Sensed = _portBit4LastValue;
+        if (!bit4Sensed)
+        {
+            // --- Changed later to 1 from 0 than to 0 from 1?
+            var chargeTime = _portBit4ChangedFrom1Tacts - _portBit4ChangedFrom0Tacts;
+            if (chargeTime > 0)
+            {
+                // --- Yes, calculate charge time
+                chargeTime = chargeTime > 700 ? 2800 : 4 * chargeTime;
+
+                // --- Calculate time ellapsed since last change from 1 to 0
+                bit4Sensed = Tacts - _portBit4ChangedFrom1Tacts < chargeTime;
+            }
+        }
+
+        // --- Calculate bit 6 value
+        var bit6Value = _portBit3LastValue
+            ? 0x40
+            : bit4Sensed
+                ? 0x40
+                : 0x00;
+
+        // --- Check for ULA 3
+        if (UlaIssue == 3 && _portBit3LastValue && !bit4Sensed)
+        {
+            bit6Value = 0x00;
+        }
+
+        // --- Merge bit 6 with port value
+        portValue = (byte)((portValue & 0xbf) | bit6Value);
+    }
+    return portValue;
+}
+```
+
+### `DoWritePort`
+
+```csharp
+public override void DoWritePort(ushort address, byte value)
+{
+    if ((address & 0x0001) == 0)
+    {
+        WritePort0xFE(value);
+    }
+}
+```
 
 ## Screen Rendering
 

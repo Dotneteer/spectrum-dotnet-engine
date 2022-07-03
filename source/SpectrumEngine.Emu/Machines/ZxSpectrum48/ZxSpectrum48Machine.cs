@@ -213,12 +213,11 @@ public sealed class ZxSpectrum48Machine :
     /// </remarks>
     public override void DelayAddressBusAccess(ushort address)
     {
-        if ((address & 0xc000) == 0x4000)
-        {
-            // --- We read from contended memory
-            var delay = _contentionValues[CurrentFrameTact / ClockMultiplier];
-            TactPlusN(delay);
-        }
+        if ((address & 0xc000) != 0x4000) return;
+        
+        // --- We read from contended memory
+        var delay = _contentionValues[CurrentFrameTact / ClockMultiplier];
+        TactPlusN(delay);
     }
 
     /// <summary>
