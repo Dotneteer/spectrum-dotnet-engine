@@ -293,7 +293,7 @@ public override byte DoReadPort(ushort address)
 {
     return (address & 0x0001) == 0 
         ? ReadPort0Xfe(address)
-        : FloatingBusDevice.ReadFloatingPort();
+        : FloatingBusDevice.ReadFloatingBus();
 }
 ```
 

@@ -38,7 +38,7 @@ public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice
     /// Reads the current floating bus value.
     /// </summary>
     /// <returns></returns>
-    public byte ReadFloatingPort()
+    public byte ReadFloatingBus()
     {
         var screen = Machine.ScreenDevice;
         var renderingTact = screen.RenderingTactTable[Machine.CurrentFrameTact - 5];

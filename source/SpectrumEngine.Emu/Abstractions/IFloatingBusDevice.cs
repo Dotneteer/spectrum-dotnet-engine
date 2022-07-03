@@ -9,5 +9,5 @@ public interface IFloatingBusDevice: IGenericDevice<IZxSpectrum48Machine>
     /// Reads the current floating bus value.
     /// </summary>
     /// <returns></returns>
-    byte ReadFloatingPort();
+    byte ReadFloatingBus();
 }
