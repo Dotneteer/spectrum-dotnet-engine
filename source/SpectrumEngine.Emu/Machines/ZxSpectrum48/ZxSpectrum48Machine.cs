@@ -61,10 +61,7 @@ public sealed class ZxSpectrum48Machine :
         TapeDevice = new TapeDevice(this);
         Reset();
 
-        // --- Set up devices
-        ScreenDevice.SetMemoryScreenOffset(0x4000);
-
-        // --- Initialize the machine's ROM
+        // --- Initialize the machine's ROM (Roms/ZxSpectrum48/ZxSpectrum48.rom)
         UploadRomBytes(LoadRomFromResource(DefaultRomResource));
     }
 
@@ -114,11 +111,8 @@ public sealed class ZxSpectrum48Machine :
     public override void HardReset()
     {
         base.HardReset();
+        for (var i = 0x4000; i < _memory.Length; i++) _memory[i] = 0;
         Reset();
-        lock (_emulatedKeyStrokes)
-        {
-            _emulatedKeyStrokes.Clear();
-        }
     }
 
     /// <summary>
@@ -128,9 +122,6 @@ public sealed class ZxSpectrum48Machine :
     {
         // --- Reset the CPU
         base.Reset();
-
-        // --- Reset memory
-        for (var i = 0x4000; i < _memory.Length; i++) _memory[i] = 0;
 
         // --- Reset and setup devices
         KeyboardDevice.Reset();
@@ -151,6 +142,9 @@ public sealed class ZxSpectrum48Machine :
         ClockMultiplier = TargetClockMultiplier;
         ExecutionContext.LastTerminationReason = null;
         _lastRenderedFrameTact = -0;
+
+        // --- Empty the queue of emulated keystrokes
+        lock (_emulatedKeyStrokes) { _emulatedKeyStrokes.Clear(); }
     }
 
     #endregion
@@ -219,12 +213,11 @@ public sealed class ZxSpectrum48Machine :
     /// </remarks>
     public override void DelayAddressBusAccess(ushort address)
     {
-        if ((address & 0xc000) == 0x4000)
-        {
-            // --- We read from contended memory
-            var delay = _contentionValues[CurrentFrameTact / ClockMultiplier];
-            TactPlusN(delay);
-        }
+        if ((address & 0xc000) != 0x4000) return;
+        
+        // --- We read from contended memory
+        var delay = _contentionValues[CurrentFrameTact / ClockMultiplier];
+        TactPlusN(delay);
     }
 
     /// <summary>
@@ -484,6 +477,10 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     public override uint[] GetPixelBuffer() => ScreenDevice.GetPixelBuffer();
 
+    #endregion
+    
+    #region Keyboard
+    
     /// <summary>
     /// Set the status of the specified ZX Spectrum key.
     /// </summary>
@@ -523,11 +520,9 @@ public sealed class ZxSpectrum48Machine :
             {
                 KeyboardDevice.SetStatus(keyStroke.SecondaryCode.Value, false);
             }
-            lock (_emulatedKeyStrokes)
-            {
-                _emulatedKeyStrokes.Dequeue();
-            }
 
+            // --- Remove the keystroke from the queue
+            lock (_emulatedKeyStrokes) _emulatedKeyStrokes.Dequeue();
             return;
         }
 
@@ -547,7 +542,7 @@ public sealed class ZxSpectrum48Machine :
     /// <param name="primary">Primary key code</param>
     /// <param name="secondary">Optional secondary key code</param>
     /// <remarks>The provider can play back emulated key strokes</remarks>
-    public override void QueueKeyPress(
+    public override void QueueKeystroke(
         int startFrame, 
         int frames, 
         SpectrumKeyCode primary, 
@@ -620,12 +615,11 @@ public sealed class ZxSpectrum48Machine :
     /// </summary>
     protected override void AfterInstructionExecuted()
     {
-        BeeperDevice.RenderBeeperSample();
         TapeDevice.UpdateTapeMode();
     }
 
     /// <summary>
-    /// Every time the CPU clock is incremented with a single T-state, this function is executed.
+    /// Every time the CPU clock is incremented, this function is executed.
     /// </summary>
     /// <param name="increment">The tact increment value</param>
     public override void OnTactIncremented(int increment)
@@ -635,6 +629,7 @@ public sealed class ZxSpectrum48Machine :
         {
             ScreenDevice.RenderTact(_lastRenderedFrameTact++);
         }
+        BeeperDevice.RenderBeeperSample();
     }
 
     /// <summary>

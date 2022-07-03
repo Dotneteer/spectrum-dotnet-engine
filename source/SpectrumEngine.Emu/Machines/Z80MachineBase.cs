@@ -203,7 +203,7 @@ public abstract class Z80MachineBase :
     /// <param name="primary">Primary key code</param>
     /// <param name="secondary">Optional secondary key code</param>
     /// <remarks>The provider can play back emulated key strokes</remarks>
-    public abstract void QueueKeyPress(int startFrame, int frames, SpectrumKeyCode primary, SpectrumKeyCode? secondary);
+    public abstract void QueueKeystroke(int startFrame, int frames, SpectrumKeyCode primary, SpectrumKeyCode? secondary);
 
     /// <summary>
     /// Executes the machine loop using the current execution context.

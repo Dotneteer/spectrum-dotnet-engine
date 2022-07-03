@@ -27,7 +27,7 @@ public interface IZ80Machine : IZ80Cpu
     event EventHandler<(string propertyName, object? newValue)>? MachinePropertyChanged;
 
     void SetKeyStatus(SpectrumKeyCode key, bool isDown);
-    void QueueKeyPress(int startFrame, int frames, SpectrumKeyCode primary, SpectrumKeyCode? secondary);
+    void QueueKeystroke(int startFrame, int frames, SpectrumKeyCode primary, SpectrumKeyCode? secondary);
     void EmulateKeystroke();
 
     ExecutionContext ExecutionContext { get; }
@@ -42,7 +42,7 @@ public interface IZ80Machine : IZ80Cpu
 - When it is time to render the machine's screen, the `GetPixelBuffer` method returns an array of 32-bit pixels that define the ARGB pixel values starting from the top-left corner of the screen. The pixels are read from left to right, and then the rows from top to bottom.
 - The `GetMachineProperty` and `SetMachineProperty` methods allow handling named properties that a particular machine may use for its operation. These properties have a string key and a value that can be any object type except `null`. The class raises a `MachinePropertyChanged` event whenever a particular property changes its previous value.
 - `SetKeyStatus` allows setting the state of a particular key in the machine's keyboard (pressed or released).
-- When the machine runs, there you can emulate keystrokes. The `QueueKeyPress` method allows you to queue a key to be emulated in the future.
+- When the machine runs, there you can emulate keystrokes. The `QueueKeystroke` method allows you to queue a key to be emulated in the future.
 - The `EmulateKeystroke` method is essential to the machine frame execution. Its role is to emulate a queued keystroke.
 - While executing a machine frame, the `ExecutionContext` property describes the context the currently running frame uses.
 - The `ExecutionMachineFrame` method executes the next machine frame according to the current execution context.
@@ -218,7 +218,7 @@ Here are a few additional comments:
 
 - **Section #2** is responsible for allowing a startup breakpoint. This feature is helpful when you want to set a breakpoint at the startup address of the executed code. For example, this feature can set a breakpoint at address 0 when you debug the ZX Spectrum 48 ROM.
 - **Section #3** is the actual machine frame. It continuously executes CPU instructions and lets the other hardware components (such as the ULA) do their tasks until the end of the frame is completed.
-- **Section #3A** carries out the chores of starting a new frame. As the machine frame always executes complete Z80 instructions, a new frame may start with an overflow (the clock cycles of the CPU instruction that did not fit into the latest machine frame). If the user has changed, this code sets a new CPU clock multiplier. A particular machine type can override the `OnInitNewFrame` method to handle the frame initialization with other hardware components.
+- **Section #3A** carries out the chores of starting a new frame. As the machine frame always executes complete Z80 instructions, a new frame may start with an overflow (the clock cycles of the CPU instruction that did not fit into the latest machine frame). If the user has changed it, this code sets a new CPU clock multiplier. A particular machine type can override the `OnInitNewFrame` method to handle the frame initialization with other hardware components.
 - **Section #3B** signs the CPU if a maskable interrupt is requested. The responsibility is delegated to the virtual `ShouldRaiseInterrupt` method.
 - **Section #3C** executes the subsequent CPU instruction entirely. At the end of the operation, it calls the virtual `AfterInstructionExecuted` method, which activates other hardware elements (such as the ULA).
 - **Section #3D** tests if the machine frame should be terminated because of reaching a termination mode or a breakpoint.

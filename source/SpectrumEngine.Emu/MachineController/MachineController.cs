@@ -127,7 +127,7 @@ public class MachineController
     public async Task Restart()
     {
         await Stop();
-        Machine.Reset();
+        Machine.HardReset();
         Start();
     }
 

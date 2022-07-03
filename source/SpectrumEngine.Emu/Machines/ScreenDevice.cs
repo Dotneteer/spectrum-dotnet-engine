@@ -213,16 +213,7 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     /// The ZX Spectrum 48K screen memory address is always $4000. However, the ZX Spectrum 128 and later models 
     /// support the shadow screen feature, where this address may be different.
     /// </remarks>
-    public int MemoryScreenOffset { get; private set; }
-
-    /// <summary>
-    /// Sets the memory address that specifies the screen address in the memory.
-    /// </summary>
-    /// <param name="offset">Start offset of the screen memory</param>
-    public void SetMemoryScreenOffset(int offset)
-    {
-        MemoryScreenOffset = offset;
-    }
+    public int MemoryScreenOffset { get; private set; } = 0x4000;
 
     /// <summary>
     /// Render the pixel pair belonging to the specified frame tact.

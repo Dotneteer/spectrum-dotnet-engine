@@ -62,12 +62,6 @@ public interface IScreenDevice: IGenericDevice<IZxSpectrum48Machine>
     int MemoryScreenOffset { get; }
 
     /// <summary>
-    /// Sets the memory address that specifies the screen address in the memory.
-    /// </summary>
-    /// <param name="offset">Start offset of the screen memory</param>
-    void SetMemoryScreenOffset(int offset);
-
-    /// <summary>
     /// Render the pixel pair belonging to the specified frame tact.
     /// </summary>
     /// <param name="tact">Frame tact to render</param>
