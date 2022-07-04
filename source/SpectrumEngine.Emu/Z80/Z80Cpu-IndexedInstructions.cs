@@ -1,4 +1,5 @@
-﻿namespace SpectrumEngine.Emu;
+﻿// ReSharper disable InconsistentNaming
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class implements the emulation of the Z80 CPU.
@@ -214,7 +215,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void IncXH()
     {
-        Regs.F = (byte)(s_8BitIncFlags[IndexH++] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitIncFlags[IndexH++] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -230,7 +231,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void DecXH()
     {
-        Regs.F = (byte)(s_8BitDecFlags[IndexH--] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitDecFlags[IndexH--] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -313,7 +314,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void IncXL()
     {
-        Regs.F = (byte)(s_8BitIncFlags[IndexL++] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitIncFlags[IndexL++] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -329,7 +330,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void DecXL()
     {
-        Regs.F = (byte)(s_8BitDecFlags[IndexL--] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitDecFlags[IndexL--] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -373,7 +374,7 @@ public partial class Z80Cpu
         Regs.WZ = (ushort)(IndexReg + (sbyte)dist);
         var tmp = ReadMemory(Regs.WZ);
         TactPlus1(Regs.WZ);
-        Regs.F = (byte)(s_8BitIncFlags[tmp++] | Regs.F & FlagsSetMask.C);
+        Regs.F = (byte)(s_8BitIncFlags[tmp++] | Regs.CFlagValue);
         F53Updated = true;
         WriteMemory(Regs.WZ, tmp);
     }
@@ -404,7 +405,7 @@ public partial class Z80Cpu
         Regs.WZ = (ushort)(IndexReg + (sbyte)dist);
         var tmp = ReadMemory(Regs.WZ);
         TactPlus1(Regs.WZ);
-        Regs.F = (byte)(s_8BitDecFlags[tmp--] | Regs.F & FlagsSetMask.C);
+        Regs.F = (byte)(s_8BitDecFlags[tmp--] | Regs.CFlagValue);
         F53Updated = true;
         WriteMemory(Regs.WZ, tmp);
     }

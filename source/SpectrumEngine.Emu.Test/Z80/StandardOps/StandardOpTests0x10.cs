@@ -168,7 +168,7 @@ public class StandardOpTests0x10
         m.ShouldKeepRegisters(except: "D, F");
         m.ShouldKeepMemory();
         m.ShouldKeepCFlag();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
 
         regs.D.ShouldBe((byte)0x44);
         regs.PC.ShouldBe((ushort)0x0003);
@@ -198,7 +198,7 @@ public class StandardOpTests0x10
         m.ShouldKeepRegisters(except: "D, F");
         m.ShouldKeepMemory();
         m.ShouldKeepCFlag();
-        regs.NFlag.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
 
         regs.D.ShouldBe((byte)0x42);
         regs.PC.ShouldBe((ushort)0x0003);
@@ -258,10 +258,10 @@ public class StandardOpTests0x10
         m.ShouldKeepSFlag();
         m.ShouldKeepZFlag();
         m.ShouldKeepPVFlag();
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
 
-        regs.CFlag.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeTrue();
 
         regs.A.ShouldBe((byte)0x02);
         regs.PC.ShouldBe((ushort)0x0003);
@@ -294,10 +294,10 @@ public class StandardOpTests0x10
         m.ShouldKeepSFlag();
         m.ShouldKeepZFlag();
         m.ShouldKeepPVFlag();
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
 
-        regs.CFlag.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
         regs.A.ShouldBe((byte)0x41);
         regs.PC.ShouldBe((ushort)0x0004);
@@ -356,10 +356,10 @@ public class StandardOpTests0x10
         m.ShouldKeepSFlag();
         m.ShouldKeepZFlag();
         m.ShouldKeepPVFlag();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
 
-        regs.CFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
 
         regs.HL.ShouldBe((ushort)0x2336);
         regs.PC.ShouldBe((ushort)0x0007);
@@ -445,7 +445,7 @@ public class StandardOpTests0x10
         m.ShouldKeepRegisters(except: "E, F");
         m.ShouldKeepMemory();
         m.ShouldKeepCFlag();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
 
         regs.E.ShouldBe((byte)0x44);
         regs.PC.ShouldBe((ushort)0x0003);
@@ -475,7 +475,7 @@ public class StandardOpTests0x10
         m.ShouldKeepRegisters(except: "E, F");
         m.ShouldKeepMemory();
         m.ShouldKeepCFlag();
-        regs.NFlag.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
 
         regs.E.ShouldBe((byte)0x42);
         regs.PC.ShouldBe((ushort)0x0003);
@@ -535,10 +535,10 @@ public class StandardOpTests0x10
         m.ShouldKeepSFlag();
         m.ShouldKeepZFlag();
         m.ShouldKeepPVFlag();
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
 
-        regs.CFlag.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeTrue();
 
         regs.A.ShouldBe((byte)0x40);
         regs.PC.ShouldBe((ushort)0x0003);
@@ -571,10 +571,10 @@ public class StandardOpTests0x10
         m.ShouldKeepSFlag();
         m.ShouldKeepZFlag();
         m.ShouldKeepPVFlag();
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
 
-        regs.CFlag.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
         regs.A.ShouldBe((byte)0x90);
         regs.PC.ShouldBe((ushort)0x0004);

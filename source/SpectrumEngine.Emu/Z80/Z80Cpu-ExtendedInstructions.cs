@@ -82,7 +82,7 @@ public partial class Z80Cpu
     {
         Regs.WZ = (ushort)(Regs.BC + 1);
         Regs.B = ReadPort(Regs.BC);
-        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | s_SZ53Table![Regs.B]);
+        Regs.F = (byte)(Regs.CFlagValue | s_SZ53Table![Regs.B]);
         F53Updated = true;
     }
 
@@ -218,7 +218,7 @@ public partial class Z80Cpu
     {
         Regs.WZ = (ushort)(Regs.BC + 1);
         Regs.C = ReadPort(Regs.BC);
-        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | s_SZ53Table![Regs.C]);
+        Regs.F = (byte)(Regs.CFlagValue | s_SZ53Table![Regs.C]);
         F53Updated = true;
     }
 
@@ -322,7 +322,7 @@ public partial class Z80Cpu
     {
         Regs.WZ = (ushort)(Regs.BC + 1);
         Regs.D = ReadPort(Regs.BC);
-        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | s_SZ53Table![Regs.D]);
+        Regs.F = (byte)(Regs.CFlagValue | s_SZ53Table![Regs.D]);
         F53Updated = true;
     }
 
@@ -417,7 +417,7 @@ public partial class Z80Cpu
     {
         TactPlus1(Regs.IR);
         Regs.A = Regs.I;
-        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | s_SZ53Table![Regs.A] | (Iff2 ? FlagsSetMask.PV : 0));
+        Regs.F = (byte)(Regs.CFlagValue | s_SZ53Table![Regs.A] | (Iff2 ? FlagsSetMask.PV : 0));
         F53Updated = true;
     }
 
@@ -444,7 +444,7 @@ public partial class Z80Cpu
     {
         Regs.WZ = (ushort)(Regs.BC + 1);
         Regs.E = ReadPort(Regs.BC);
-        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | s_SZ53Table![Regs.E]);
+        Regs.F = (byte)(Regs.CFlagValue | s_SZ53Table![Regs.E]);
         F53Updated = true;
     }
 
@@ -530,7 +530,7 @@ public partial class Z80Cpu
     {
         TactPlus1(Regs.IR);
         Regs.A = Regs.R;
-        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | s_SZ53Table![Regs.A] | (Iff2 ? FlagsSetMask.PV : 0));
+        Regs.F = (byte)(Regs.CFlagValue | s_SZ53Table![Regs.A] | (Iff2 ? FlagsSetMask.PV : 0));
         F53Updated = true;
     }
 
@@ -571,7 +571,7 @@ public partial class Z80Cpu
     {
         Regs.WZ = (ushort)(Regs.BC + 1);
         Regs.H = ReadPort(Regs.BC);
-        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | s_SZ53Table![Regs.H]);
+        Regs.F = (byte)(Regs.CFlagValue | s_SZ53Table![Regs.H]);
         F53Updated = true;
     }
 
@@ -643,7 +643,7 @@ public partial class Z80Cpu
         TactPlus4(Regs.HL);
         WriteMemory(Regs.HL, (byte)((Regs.A << 4) | (tmp >> 4)));
         Regs.A = (byte)((Regs.A & 0xf0) | (tmp & 0x0f));
-        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | s_SZ53PVTable![Regs.A]);
+        Regs.F = (byte)(Regs.CFlagValue | s_SZ53PVTable![Regs.A]);
         Regs.WZ = (ushort)(Regs.HL + 1);
     }
 
@@ -670,7 +670,7 @@ public partial class Z80Cpu
     {
         Regs.WZ = (ushort)(Regs.BC + 1);
         Regs.L = ReadPort(Regs.BC);
-        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | s_SZ53Table![Regs.L]);
+        Regs.F = (byte)(Regs.CFlagValue | s_SZ53Table![Regs.L]);
         F53Updated = true;
     }
 
@@ -743,7 +743,7 @@ public partial class Z80Cpu
         TactPlus4(Regs.HL);
         WriteMemory(Regs.HL, (byte)((tmp << 4) | (Regs.A & 0x0f)));
         Regs.A = (byte)((Regs.A & 0xf0) | (tmp >> 4));
-        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | s_SZ53PVTable![Regs.A]);
+        Regs.F = (byte)(Regs.CFlagValue | s_SZ53PVTable![Regs.A]);
         Regs.WZ = (ushort)(Regs.HL + 1);
     }
 
@@ -769,7 +769,7 @@ public partial class Z80Cpu
     {
         Regs.WZ = (ushort)(Regs.BC + 1);
         var tmp = ReadPort(Regs.BC);
-        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | s_SZ53Table![tmp]);
+        Regs.F = (byte)(Regs.CFlagValue | s_SZ53Table![tmp]);
         F53Updated = true;
     }
 
@@ -852,7 +852,7 @@ public partial class Z80Cpu
     {
         Regs.WZ = (ushort)(Regs.BC + 1);
         Regs.A = ReadPort(Regs.BC);
-        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | s_SZ53Table![Regs.A]);
+        Regs.F = (byte)(Regs.CFlagValue | s_SZ53Table![Regs.A]);
         F53Updated = true;
     }
 
@@ -998,12 +998,12 @@ public partial class Z80Cpu
         Regs.HL++;
         Regs.BC--;
         Regs.F = (byte)
-        ((Regs.F & FlagsSetMask.C) |
+        (Regs.CFlagValue |
         (Regs.BC != 0 ? (FlagsSetMask.PV | FlagsSetMask.N) : FlagsSetMask.N) |
           s_HalfCarrySubFlags[lookup] |
         (tmp != 0 ? 0 : FlagsSetMask.Z) |
           (tmp & FlagsSetMask.S));
-        if ((Regs.F & FlagsSetMask.H) != 0)
+        if (Regs.IsHFlagSet)
         {
             tmp -= 1;
         }
@@ -1152,12 +1152,12 @@ public partial class Z80Cpu
         Regs.HL--;
         Regs.BC--;
         Regs.F = (byte)
-        ((Regs.F & FlagsSetMask.C) |
+        (Regs.CFlagValue |
         (Regs.BC != 0 ? FlagsSetMask.PV | FlagsSetMask.N : FlagsSetMask.N) |
           s_HalfCarrySubFlags[lookup] |
         (tmp != 0 ? 0 : FlagsSetMask.Z) |
           (tmp & FlagsSetMask.S));
-        if ((Regs.F & FlagsSetMask.H) != 0)
+        if (Regs.IsHFlagSet)
         {
             tmp -= 1;
         }
@@ -1321,12 +1321,12 @@ public partial class Z80Cpu
         TactPlus5(Regs.HL);
         Regs.BC--;
         Regs.F = (byte)
-        ((Regs.F & FlagsSetMask.C) |
+        (Regs.CFlagValue |
         (Regs.BC != 0 ? FlagsSetMask.PV | FlagsSetMask.N : FlagsSetMask.N) |
           s_HalfCarrySubFlags[lookup] |
         (tmp != 0 ? 0 : FlagsSetMask.Z) |
           (tmp & FlagsSetMask.S));
-        if ((Regs.F & FlagsSetMask.H) != 0)
+        if (Regs.IsHFlagSet)
         {
             tmp -= 1;
         }
@@ -1433,11 +1433,9 @@ public partial class Z80Cpu
             (s_ParityTable![(tmp2 & 0x07) ^ Regs.B] != 0 ? FlagsSetMask.PV : 0) |
             s_SZ53Table![Regs.B]);
         F53Updated = true;
-        if (Regs.B != 0)
-        {
-            TactPlus5(Regs.HL);
-            Regs.PC -= 2;
-        }
+        if (Regs.B == 0) return;
+        TactPlus5(Regs.HL);
+        Regs.PC -= 2;
     }
 
     /// <summary>
@@ -1519,12 +1517,12 @@ public partial class Z80Cpu
         TactPlus5(Regs.HL);
         Regs.BC--;
         Regs.F = (byte)
-        ((Regs.F & FlagsSetMask.C) |
+        (Regs.CFlagValue |
         (Regs.BC != 0 ? FlagsSetMask.PV | FlagsSetMask.N : FlagsSetMask.N) |
           s_HalfCarrySubFlags[lookup] |
         (tmp != 0 ? 0 : FlagsSetMask.Z) |
           (tmp & FlagsSetMask.S));
-        if ((Regs.F & FlagsSetMask.H) != 0)
+        if (Regs.IsHFlagSet)
         {
             tmp -= 1;
         }

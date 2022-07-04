@@ -134,7 +134,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void IncB()
     {
-        Regs.F = (byte)(s_8BitIncFlags[Regs.B++] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitIncFlags[Regs.B++] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -155,7 +155,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void DecB()
     {
-        Regs.F = (byte)(s_8BitDecFlags[Regs.B--] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitDecFlags[Regs.B--] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -196,7 +196,7 @@ public partial class Z80Cpu
             rlcaVal = (rlcaVal | 0x01) & 0xFF;
         }
         Regs.A = (byte)rlcaVal;
-        Regs.F = (byte)(cf | (Regs.F & FlagsSetMask.SZPV) | (Regs.A & FlagsSetMask.R3R5));
+        Regs.F = (byte)(cf | Regs.SZPVValue | (Regs.A & FlagsSetMask.R3R5));
         F53Updated = true;
     }
 
@@ -280,7 +280,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void IncC()
     {
-        Regs.F = (byte)(s_8BitIncFlags[Regs.C++] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitIncFlags[Regs.C++] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -300,7 +300,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void DecC()
     {
-        Regs.F = (byte)(s_8BitDecFlags[Regs.C--] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitDecFlags[Regs.C--] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -343,7 +343,7 @@ public partial class Z80Cpu
             rrcaVal >>= 1;
         }
         Regs.A = (byte)rrcaVal;
-        Regs.F = (byte)(cf | (Regs.F & FlagsSetMask.SZPV) | (Regs.A & FlagsSetMask.R3R5));
+        Regs.F = (byte)(cf | Regs.SZPVValue | (Regs.A & FlagsSetMask.R3R5));
         F53Updated = true;
     }
 
@@ -437,7 +437,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void IncD()
     {
-        Regs.F = (byte)(s_8BitIncFlags[Regs.D++] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitIncFlags[Regs.D++] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -458,7 +458,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void DecD()
     {
-        Regs.F = (byte)(s_8BitDecFlags[Regs.D--] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitDecFlags[Regs.D--] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -494,12 +494,12 @@ public partial class Z80Cpu
         var rlaVal = Regs.A;
         var newCF = (rlaVal & 0x80) != 0 ? FlagsSetMask.C : 0;
         rlaVal <<= 1;
-        if (Regs.CFlag)
+        if (Regs.IsCFlagSet)
         {
             rlaVal |= 0x01;
         }
         Regs.A = rlaVal;
-        Regs.F = (byte)(newCF | (Regs.F & FlagsSetMask.SZPV) | (Regs.A & FlagsSetMask.R3R5));
+        Regs.F = (byte)(newCF | Regs.SZPVValue | (Regs.A & FlagsSetMask.R3R5));
         F53Updated = true;
     }
 
@@ -586,7 +586,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void IncE()
     {
-        Regs.F = (byte)(s_8BitIncFlags[Regs.E++] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitIncFlags[Regs.E++] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -606,7 +606,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void DecE()
     {
-        Regs.F = (byte)(s_8BitDecFlags[Regs.E--] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitDecFlags[Regs.E--] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -642,12 +642,12 @@ public partial class Z80Cpu
         var rraVal = Regs.A;
         var newCF = (rraVal & 0x01) != 0 ? FlagsSetMask.C : 0;
         rraVal >>= 1;
-        if (Regs.CFlag)
+        if (Regs.IsCFlagSet)
         {
             rraVal |= 0x80;
         }
         Regs.A = rraVal;
-        Regs.F = (byte)(newCF | (Regs.F & FlagsSetMask.SZPV) | (Regs.A & FlagsSetMask.R3R5));
+        Regs.F = (byte)(newCF | Regs.SZPVValue | (Regs.A & FlagsSetMask.R3R5));
         F53Updated = true;
     }
 
@@ -670,7 +670,7 @@ public partial class Z80Cpu
     private void JrNZ()
     {
         var e = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.Z) == 0)
+        if (!Regs.IsZFlagSet)
         {
             RelativeJump(e);
         }
@@ -738,7 +738,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void IncH()
     {
-        Regs.F = (byte)(s_8BitIncFlags[Regs.H++] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitIncFlags[Regs.H++] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -759,7 +759,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void DecH()
     {
-        Regs.F = (byte)(s_8BitDecFlags[Regs.H--] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitDecFlags[Regs.H--] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -822,8 +822,8 @@ public partial class Z80Cpu
     private void Daa()
     {
         var add = 0;
-        var carry = Regs.F & FlagsSetMask.C;
-        if (((Regs.F & FlagsSetMask.H) != 0) || (Regs.A & 0x0f) > 9)
+        var carry = Regs.CFlagValue;
+        if (Regs.IsHFlagSet || (Regs.A & 0x0f) > 9)
         {
             add = 6;
         }
@@ -835,7 +835,7 @@ public partial class Z80Cpu
         {
             carry = FlagsSetMask.C;
         }
-        if ((Regs.F & FlagsSetMask.N) != 0)
+        if (Regs.IsNFlagSet)
         {
             Sub8((byte)add);
         }
@@ -868,7 +868,7 @@ public partial class Z80Cpu
     private void JrZ()
     {
         var e = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.Z) != 0)
+        if (Regs.IsZFlagSet)
         {
             RelativeJump(e);
         }
@@ -945,7 +945,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void IncL()
     {
-        Regs.F = (byte)(s_8BitIncFlags[Regs.L++] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitIncFlags[Regs.L++] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -965,7 +965,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void DecL()
     {
-        Regs.F = (byte)(s_8BitDecFlags[Regs.L--] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitDecFlags[Regs.L--] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -1021,7 +1021,7 @@ public partial class Z80Cpu
     private void JrNC()
     {
         var e = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.C) == 0)
+        if (!Regs.IsCFlagSet)
         {
             RelativeJump(e);
         }
@@ -1095,7 +1095,7 @@ public partial class Z80Cpu
     {
         var memValue = ReadMemory(Regs.HL);
         TactPlus1(Regs.HL);
-        Regs.F = (byte)(s_8BitIncFlags[memValue++] | Regs.F & FlagsSetMask.C);
+        Regs.F = (byte)(s_8BitIncFlags[memValue++] | Regs.CFlagValue);
         F53Updated = true;
         WriteMemory(Regs.HL, memValue);
     }
@@ -1120,7 +1120,7 @@ public partial class Z80Cpu
     {
         var memValue = ReadMemory(Regs.HL);
         TactPlus1(Regs.HL);
-        Regs.F = (byte)(s_8BitDecFlags[memValue--] | Regs.F & FlagsSetMask.C);
+        Regs.F = (byte)(s_8BitDecFlags[memValue--] | Regs.CFlagValue);
         F53Updated = true;
         WriteMemory(Regs.HL, memValue);
     }
@@ -1152,7 +1152,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void Scf()
     {
-        Regs.F = (byte)((Regs.F & FlagsSetMask.SZPV) | FlagsSetMask.C);
+        Regs.F = (byte)(Regs.SZPVValue | FlagsSetMask.C);
         SetR5R3ForScfAndCcf();
     }
 
@@ -1175,7 +1175,7 @@ public partial class Z80Cpu
     private void JrC()
     {
         var e = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.C) != 0)
+        if (Regs.IsCFlagSet)
         {
             RelativeJump(e);
         }
@@ -1249,7 +1249,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void IncA()
     {
-        Regs.F = (byte)(s_8BitIncFlags[Regs.A++] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitIncFlags[Regs.A++] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -1269,7 +1269,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void DecA()
     {
-        Regs.F = (byte)(s_8BitDecFlags[Regs.A--] | (Regs.F & FlagsSetMask.C));
+        Regs.F = (byte)(s_8BitDecFlags[Regs.A--] | Regs.CFlagValue);
         F53Updated = true;
     }
 
@@ -1299,7 +1299,7 @@ public partial class Z80Cpu
     /// </remarks>
     private void Ccf()
     {
-        Regs.F = (byte)((Regs.F & FlagsSetMask.SZPV) | ((Regs.F & FlagsSetMask.C) != 0 ? FlagsSetMask.H : FlagsSetMask.C));
+        Regs.F = (byte)(Regs.SZPVValue | (Regs.IsCFlagSet ? FlagsSetMask.H : FlagsSetMask.C));
         SetR5R3ForScfAndCcf();
     }
 
@@ -3439,7 +3439,7 @@ public partial class Z80Cpu
     private void RetNZ()
     {
         TactPlus1(Regs.IR);
-        if ((Regs.F & FlagsSetMask.Z) == 0)
+        if (!Regs.IsZFlagSet)
         {
             Ret();
         }
@@ -3481,7 +3481,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.Z) == 0)
+        if (!Regs.IsZFlagSet)
         {
             Regs.PC = Regs.WZ;
         }
@@ -3609,7 +3609,7 @@ public partial class Z80Cpu
     private void RetZ()
     {
         TactPlus1(Regs.IR);
-        if ((Regs.F & FlagsSetMask.Z) != 0)
+        if (Regs.IsZFlagSet)
         {
             Ret();
         }
@@ -3651,7 +3651,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.Z) != 0)
+        if (Regs.IsZFlagSet)
         {
             Regs.PC = Regs.WZ;
         }
@@ -3678,7 +3678,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.Z) != 0)
+        if (Regs.IsZFlagSet)
         {
             CallCore();
         }
@@ -3764,7 +3764,7 @@ public partial class Z80Cpu
     private void RetNC()
     {
         TactPlus1(Regs.IR);
-        if ((Regs.F & FlagsSetMask.C) == 0)
+        if (!Regs.IsCFlagSet)
         {
             Ret();
         }
@@ -3806,7 +3806,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.C) == 0)
+        if (!Regs.IsCFlagSet)
         {
             Regs.PC = Regs.WZ;
         }
@@ -3853,7 +3853,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.C) == 0)
+        if (!Regs.IsCFlagSet)
         {
             CallCore();
         }
@@ -3938,7 +3938,7 @@ public partial class Z80Cpu
     private void RetC()
     {
         TactPlus1(Regs.IR);
-        if ((Regs.F & FlagsSetMask.C) != 0)
+        if (Regs.IsCFlagSet)
         {
             Ret();
         }
@@ -3974,7 +3974,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.C) != 0)
+        if (Regs.IsCFlagSet)
         {
             Regs.PC = Regs.WZ;
         }
@@ -4019,7 +4019,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.C) != 0)
+        if (Regs.IsCFlagSet)
         {
             CallCore();
         }
@@ -4083,7 +4083,7 @@ public partial class Z80Cpu
     private void RetPO()
     {
         TactPlus1(Regs.IR);
-        if ((Regs.F & FlagsSetMask.PV) == 0)
+        if (!Regs.IsPFlagSet)
         {
             Ret();
         }
@@ -4125,7 +4125,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.PV) == 0)
+        if (!Regs.IsPFlagSet)
         {
             Regs.PC = Regs.WZ;
         }
@@ -4177,7 +4177,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.PV) == 0)
+        if (!Regs.IsPFlagSet)
         {
             CallCore();
         }
@@ -4262,7 +4262,7 @@ public partial class Z80Cpu
     private void RetPE()
     {
         TactPlus1(Regs.IR);
-        if ((Regs.F & FlagsSetMask.PV) != 0)
+        if (Regs.IsPFlagSet)
         {
             Ret();
         }
@@ -4298,7 +4298,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.PV) != 0)
+        if (Regs.IsPFlagSet)
         {
             Regs.PC = Regs.WZ;
         }
@@ -4339,7 +4339,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.PV) != 0)
+        if (Regs.IsPFlagSet)
         {
             CallCore();
         }
@@ -4403,7 +4403,7 @@ public partial class Z80Cpu
     private void RetP()
     {
         TactPlus1(Regs.IR);
-        if ((Regs.F & FlagsSetMask.S) == 0)
+        if (!Regs.IsSFlagSet)
         {
             Ret();
         }
@@ -4445,7 +4445,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.S) == 0)
+        if (!Regs.IsSFlagSet)
         {
             Regs.PC = Regs.WZ;
         }
@@ -4486,7 +4486,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.S) == 0)
+        if (!Regs.IsSFlagSet)
         {
             CallCore();
         }
@@ -4571,7 +4571,7 @@ public partial class Z80Cpu
     private void RetM()
     {
         TactPlus1(Regs.IR);
-        if ((Regs.F & FlagsSetMask.S) != 0)
+        if (Regs.IsSFlagSet)
         {
             Ret();
         }
@@ -4607,7 +4607,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.S) != 0)
+        if (Regs.IsSFlagSet)
         {
             Regs.PC = Regs.WZ;
         }
@@ -4651,7 +4651,7 @@ public partial class Z80Cpu
     {
         Regs.WL = FetchCodeByte();
         Regs.WH = FetchCodeByte();
-        if ((Regs.F & FlagsSetMask.S) != 0)
+        if (Regs.IsSFlagSet)
         {
             CallCore();
         }

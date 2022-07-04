@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+// ReSharper disable InconsistentNaming
 
 namespace SpectrumEngine.Emu;
 
@@ -25,7 +26,7 @@ public abstract partial class Z80Cpu: IZ80Cpu
     /// instruction execution.
     /// </para>
     /// </remarks>
-    public Z80Cpu()
+    protected Z80Cpu()
     {
         // --- Initialize worker tables
         InitializeAluTables();
@@ -39,7 +40,7 @@ public abstract partial class Z80Cpu: IZ80Cpu
     /// <summary>
     /// Represents integer constants that mask out particular flags of the Z80 CPU's F register.
     /// </summary>
-    public sealed class FlagsSetMask
+    public static class FlagsSetMask
     {
         /// <summary>Sign Flag</summary>
         /// <remarks>
@@ -118,13 +119,6 @@ public abstract partial class Z80Cpu: IZ80Cpu
         /// Combination of R3, and R5
         /// </summary>
         public const byte R3R5 = R3 | R5;
-
-        /// <summary>
-        /// Combination of S, Z, R5, and R3
-        /// </summary>
-        public const byte SZ53 = S | Z | R5 | R3;
-
-
     }
 
     /// <summary>
@@ -321,42 +315,42 @@ public abstract partial class Z80Cpu: IZ80Cpu
         /// <summary>
         /// Sign Flag
         /// </summary>
-        public bool SFlag => (F & FlagsSetMask.S) != 0;
+        public bool IsSFlagSet => (F & FlagsSetMask.S) != 0;
 
         /// <summary>
         /// Zero Flag
         /// </summary>
-        public bool ZFlag => (F & FlagsSetMask.Z) != 0;
+        public bool IsZFlagSet => (F & FlagsSetMask.Z) != 0;
 
         /// <summary>
         /// R5 Flag (Bit 5 of last ALU operation result)
         /// </summary>
-        public bool R5Flag => (F & FlagsSetMask.R5) != 0;
+        public bool IsR5FlagSet => (F & FlagsSetMask.R5) != 0;
 
         /// <summary>
         /// Half Carry Flag
         /// </summary>
-        public bool HFlag => (F & FlagsSetMask.H) != 0;
+        public bool IsHFlagSet => (F & FlagsSetMask.H) != 0;
 
         /// <summary>
         /// R3 Flag (Bit 3 of last ALU operation result)
         /// </summary>
-        public bool R3Flag => (F & FlagsSetMask.R3) != 0;
+        public bool IsR3FlagSet => (F & FlagsSetMask.R3) != 0;
 
         /// <summary>
         /// Parity/Overflow Flag
         /// </summary>
-        public bool PFlag => (F & FlagsSetMask.PV) != 0;
+        public bool IsPFlagSet => (F & FlagsSetMask.PV) != 0;
 
         /// <summary>
         /// Add/Subtract Flag
         /// </summary>
-        public bool NFlag => (F & FlagsSetMask.N) != 0;
+        public bool IsNFlagSet => (F & FlagsSetMask.N) != 0;
 
         /// <summary>
         /// Carry Flag
         /// </summary>
-        public bool CFlag => (F & FlagsSetMask.C) != 0;
+        public bool IsCFlagSet => (F & FlagsSetMask.C) != 0;
 
         /// <summary>
         /// Exchanges the AF -- AF' register sets
@@ -384,9 +378,25 @@ public abstract partial class Z80Cpu: IZ80Cpu
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Swap(ref ushort orig, ref ushort alt)
         {
-            var temp = orig;
-            orig = alt;
-            alt = temp;
+            (orig, alt) = (alt, orig);
+        }
+
+        /// <summary>
+        /// Gets the bits that represent the value of SZPV flag group
+        /// </summary>
+        public int SZPVValue
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => F & FlagsSetMask.SZPV;
+        }
+        
+        /// <summary>
+        /// Gets the bits that represent the value of the C flag
+        /// </summary>
+        public int CFlagValue
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => F & FlagsSetMask.C;
         }
     }
 

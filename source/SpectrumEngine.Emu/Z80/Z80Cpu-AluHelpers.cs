@@ -1,4 +1,5 @@
-﻿namespace SpectrumEngine.Emu;
+﻿// ReSharper disable InconsistentNaming
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class implements the emulation of the Z80 CPU.
@@ -11,7 +12,7 @@ public partial class Z80Cpu
     /// <summary>
     /// Take care that the code initializes static ALU helper tables only once.
     /// </summary>
-    private static bool s_TablesInitialized = false;
+    private static bool s_TablesInitialized;
 
     /// <summary>
     /// Provide a table that contains the value of the F register after an 8-bit INC operation.
@@ -65,11 +66,8 @@ public partial class Z80Cpu
     /// <summary>
     /// Initialize the helper tables used for ALU operations.
     /// </summary>
-    private void InitializeAluTables()
+    private static void InitializeAluTables()
     {
-        // --- Initialize instance tables
-        // TODO
-
         // --- Initialize static tables
         if (s_TablesInitialized)
         {
@@ -142,21 +140,21 @@ public partial class Z80Cpu
     }
 
     /// <summary>
-    /// Adds the <paramref name="regHL"/> value and <paramref name="regOther"/> value
+    /// Adds the <paramref name="regHl"/> value and <paramref name="regOther"/> value
     /// according to the rule of ADD HL,QQ operation
     /// </summary>
-    /// <param name="regHL">HL (IX, IY) value</param>
+    /// <param name="regHl">HL (IX, IY) value</param>
     /// <param name="regOther">Other value</param>
     /// <returns>Result value</returns>
-    private ushort Add16(ushort regHL, ushort regOther)
+    private ushort Add16(ushort regHl, ushort regOther)
     {
-        var tmpVal = regHL + regOther;
+        var tmpVal = regHl + regOther;
         var lookup =
-          ((regHL & 0x0800) >> 11) |
+          ((regHl & 0x0800) >> 11) |
           ((regOther & 0x0800) >> 10) |
           ((tmpVal & 0x0800) >> 9);
-        Regs.WZ = (ushort)(regHL + 1);
-        Regs.F =(byte)((Regs.F & FlagsSetMask.SZPV) |
+        Regs.WZ = (ushort)(regHl + 1);
+        Regs.F =(byte)((Regs.SZPVValue) |
           ((tmpVal & 0x10000) != 0 ? FlagsSetMask.C : 0x00) |
           ((tmpVal >> 8) & (FlagsSetMask.R3R5)) |
           s_HalfCarryAddFlags[lookup]);
@@ -190,7 +188,7 @@ public partial class Z80Cpu
     /// <param name="value">Value to add to A</param>
     private void Adc8(byte value)
     {
-        var tmp = Regs.A + value + (Regs.F & FlagsSetMask.C);
+        var tmp = Regs.A + value + (Regs.CFlagValue);
         var lookup =
             ((Regs.A & 0x88) >> 3) |
             ((value & 0x88) >> 2) |
@@ -231,7 +229,7 @@ public partial class Z80Cpu
     /// <param name="value">Value to subtract to A</param>
     private void Sbc8(byte value)
     {
-        var tmp = Regs.A - value - (Regs.F & FlagsSetMask.C);
+        var tmp = Regs.A - value - Regs.CFlagValue;
         var lookup =
           ((Regs.A & 0x88) >> 3) |
           ((value & 0x88) >> 2) |
@@ -335,7 +333,7 @@ public partial class Z80Cpu
     /// <returns>Operation result</returns>
     private byte Rl8(byte oper)
     {
-        byte result = (byte)((oper << 1) | (Regs.F & FlagsSetMask.C));
+        byte result = (byte)((oper << 1) | Regs.CFlagValue);
         Regs.F = (byte)((oper >> 7) | s_SZ53PVTable![result]);
         F53Updated = true;
         return result;
@@ -348,7 +346,7 @@ public partial class Z80Cpu
     /// <returns>Operation result</returns>
     private byte Rr8(byte oper)
     {
-        byte result = (byte)((oper >> 1) | (Regs.F << 7));
+        var result = (byte)((oper >> 1) | (Regs.F << 7));
         Regs.F = (byte)((oper & FlagsSetMask.C) | s_SZ53PVTable![result]);
         F53Updated = true;
         return result;
@@ -362,7 +360,7 @@ public partial class Z80Cpu
     private byte Sla8(byte oper)
     {
         Regs.F = (byte)(oper >> 7);
-        byte result = (byte)(oper << 1);
+        var result = (byte)(oper << 1);
         Regs.F |= s_SZ53PVTable![result];
         F53Updated = true;
         return result;
@@ -390,7 +388,7 @@ public partial class Z80Cpu
     private byte Sll8(byte oper)
     {
         Regs.F = (byte)(oper >> 7);
-        byte result = (byte)((oper << 1) | 0x01);
+        var result = (byte)((oper << 1) | 0x01);
         Regs.F |= s_SZ53PVTable![result];
         F53Updated = true;
         return result;
@@ -418,7 +416,7 @@ public partial class Z80Cpu
     /// <returns>Operation result</returns>
     private void Bit8(int bit, byte oper)
     {
-        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | FlagsSetMask.H | (oper & FlagsSetMask.R3R5));
+        Regs.F = (byte)(Regs.CFlagValue | FlagsSetMask.H | (oper & FlagsSetMask.R3R5));
         var bitVal = oper & (0x01 << bit);
         if (bitVal == 0)
         {
@@ -436,7 +434,7 @@ public partial class Z80Cpu
     /// <returns>Operation result</returns>
     private void Bit8W(int bit, byte oper)
     {
-        Regs.F = (byte)((Regs.F & FlagsSetMask.C) | FlagsSetMask.H | (Regs.WH & FlagsSetMask.R3R5));
+        Regs.F = (byte)(Regs.CFlagValue | FlagsSetMask.H | (Regs.WH & FlagsSetMask.R3R5));
         var bitVal = oper & (0x01 << bit);
         if (bitVal == 0)
         {
@@ -452,7 +450,7 @@ public partial class Z80Cpu
     /// <param name="value">Value to subtract from HL</param>
     private void Sbc16(ushort value)
     {
-        int tmpVal = Regs.HL - value - (Regs.F & FlagsSetMask.C);
+        int tmpVal = Regs.HL - value - Regs.CFlagValue;
         var lookup =
           ((Regs.HL & 0x8800) >> 11) |
           ((value & 0x8800) >> 10) |
@@ -462,9 +460,9 @@ public partial class Z80Cpu
         Regs.F = (byte)
           (((tmpVal & 0x10000) != 0 ? FlagsSetMask.C : 0) |
           FlagsSetMask.N |
-          s_OverflowSubFlags![lookup >> 4] |
+          s_OverflowSubFlags[lookup >> 4] |
           (Regs.H & (FlagsSetMask.R3R5 | FlagsSetMask.S)) |
-          s_HalfCarrySubFlags![lookup & 0x07] |
+          s_HalfCarrySubFlags[lookup & 0x07] |
           (Regs.HL != 0 ? 0 : FlagsSetMask.Z));
         F53Updated = true;
     }
@@ -475,7 +473,7 @@ public partial class Z80Cpu
     /// <param name="value">Value to add to HL</param>
     private void Adc16(ushort value)
     {
-        var tmpVal = Regs.HL + value + (Regs.F & FlagsSetMask.C);
+        var tmpVal = Regs.HL + value + Regs.CFlagValue;
         var lookup =
           ((Regs.HL & 0x8800) >> 11) |
           ((value & 0x8800) >> 10) |
@@ -484,9 +482,9 @@ public partial class Z80Cpu
         Regs.HL = (ushort)tmpVal;
         Regs.F = (byte)
           (((tmpVal & 0x10000) != 0 ? FlagsSetMask.C : 0) |
-          s_OverflowAddFlags![lookup >> 4] |
+          s_OverflowAddFlags[lookup >> 4] |
           (Regs.H & (FlagsSetMask.R3R5 | FlagsSetMask.S)) |
-          s_HalfCarryAddFlags![lookup & 0x07] |
+          s_HalfCarryAddFlags[lookup & 0x07] |
           (Regs.HL != 0 ? 0 : FlagsSetMask.Z));
         F53Updated = true;
     }

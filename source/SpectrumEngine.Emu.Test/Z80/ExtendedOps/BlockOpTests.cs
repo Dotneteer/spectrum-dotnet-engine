@@ -31,11 +31,11 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x000F);
         regs.HL.ShouldBe((ushort)0x1001);
         regs.DE.ShouldBe((ushort)0x1002);
-        regs.PFlag.ShouldBeTrue();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, DE, HL");
         m.ShouldKeepMemory(except: "1001");
 
@@ -72,11 +72,11 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x0000);
         regs.HL.ShouldBe((ushort)0x1001);
         regs.DE.ShouldBe((ushort)0x1002);
-        regs.PFlag.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, DE, HL");
         m.ShouldKeepMemory(except: "1001");
 
@@ -111,12 +111,12 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x000F);
         regs.HL.ShouldBe((ushort)0x1001);
 
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
-        regs.HFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
+        regs.IsHFlagSet.ShouldBeTrue();
 
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
@@ -151,12 +151,12 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x0000);
         regs.HL.ShouldBe((ushort)0x1001);
 
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeTrue();
 
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
@@ -191,12 +191,12 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x000F);
         regs.HL.ShouldBe((ushort)0x1001);
 
-        regs.ZFlag.ShouldBeTrue();
-        regs.PFlag.ShouldBeTrue();
-        regs.HFlag.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsPFlagSet.ShouldBeTrue();
+        regs.IsHFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
@@ -231,12 +231,12 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x0000);
         regs.HL.ShouldBe((ushort)0x1001);
 
-        regs.ZFlag.ShouldBeTrue();
-        regs.PFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
@@ -271,9 +271,9 @@ public class BlockOpTests
         regs.C.ShouldBe((byte)0xCC);
         regs.HL.ShouldBe((ushort)0x1001);
 
-        regs.ZFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000");
 
@@ -308,9 +308,9 @@ public class BlockOpTests
         regs.C.ShouldBe((byte)0xCC);
         regs.HL.ShouldBe((ushort)0x1001);
 
-        regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000");
 
@@ -344,9 +344,9 @@ public class BlockOpTests
         regs.C.ShouldBe((byte)0xCC);
         regs.HL.ShouldBe((ushort)0x1001);
 
-        regs.ZFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
@@ -385,9 +385,9 @@ public class BlockOpTests
         regs.C.ShouldBe((byte)0xCC);
         regs.HL.ShouldBe((ushort)0x1001);
 
-        regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000");
 
@@ -429,11 +429,11 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x000F);
         regs.HL.ShouldBe((ushort)0x0FFF);
         regs.DE.ShouldBe((ushort)0x1000);
-        regs.PFlag.ShouldBeTrue();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, DE, HL");
         m.ShouldKeepMemory(except: "1001");
 
@@ -470,11 +470,11 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x0000);
         regs.HL.ShouldBe((ushort)0x0FFF);
         regs.DE.ShouldBe((ushort)0x1000);
-        regs.PFlag.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, DE, HL");
         m.ShouldKeepMemory(except: "1001");
 
@@ -509,12 +509,12 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x000F);
         regs.HL.ShouldBe((ushort)0x0FFF);
 
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
-        regs.HFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
+        regs.IsHFlagSet.ShouldBeTrue();
 
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
@@ -549,12 +549,12 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x0000);
         regs.HL.ShouldBe((ushort)0x0FFF);
 
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeTrue();
 
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
@@ -589,12 +589,12 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x000F);
         regs.HL.ShouldBe((ushort)0x0FFF);
 
-        regs.ZFlag.ShouldBeTrue();
-        regs.PFlag.ShouldBeTrue();
-        regs.HFlag.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsPFlagSet.ShouldBeTrue();
+        regs.IsHFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
@@ -629,12 +629,12 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x0000);
         regs.HL.ShouldBe((ushort)0x0FFF);
 
-        regs.ZFlag.ShouldBeTrue();
-        regs.PFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
@@ -669,9 +669,9 @@ public class BlockOpTests
         regs.C.ShouldBe((byte)0xCC);
         regs.HL.ShouldBe((ushort)0x0FFF);
 
-        regs.ZFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000");
 
@@ -706,9 +706,9 @@ public class BlockOpTests
         regs.C.ShouldBe((byte)0xCC);
         regs.HL.ShouldBe((ushort)0x0FFF);
 
-        regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000");
 
@@ -743,9 +743,9 @@ public class BlockOpTests
         regs.C.ShouldBe((byte)0xCC);
         regs.HL.ShouldBe((ushort)0x0FFF);
 
-        regs.ZFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000");
 
@@ -784,9 +784,9 @@ public class BlockOpTests
         regs.C.ShouldBe((byte)0xCC);
         regs.HL.ShouldBe((ushort)0x0FFF);
 
-        regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000");
 
@@ -831,11 +831,11 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x0000);
         regs.HL.ShouldBe((ushort)0x1004);
         regs.DE.ShouldBe((ushort)0x1003);
-        regs.PFlag.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, DE, HL");
         m.ShouldKeepMemory(except: "1000-1002");
 
@@ -872,12 +872,12 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x0000);
         regs.HL.ShouldBe((ushort)0x1003);
 
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeTrue();
 
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
@@ -914,12 +914,12 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x0001);
         regs.HL.ShouldBe((ushort)0x1002);
 
-        regs.ZFlag.ShouldBeTrue();
-        regs.PFlag.ShouldBeTrue();
-        regs.HFlag.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsPFlagSet.ShouldBeTrue();
+        regs.IsHFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
@@ -958,9 +958,9 @@ public class BlockOpTests
         regs.C.ShouldBe((byte)0xCC);
         regs.HL.ShouldBe((ushort)0x1003);
 
-        regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000-1002");
 
@@ -996,9 +996,9 @@ public class BlockOpTests
         regs.C.ShouldBe((byte)0xCC);
         regs.HL.ShouldBe((ushort)0x1003);
 
-        regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
@@ -1049,11 +1049,11 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x0000);
         regs.HL.ShouldBe((ushort)0x0FFF);
         regs.DE.ShouldBe((ushort)0x1000);
-        regs.PFlag.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, DE, HL");
         m.ShouldKeepMemory(except: "1001-1003");
 
@@ -1090,12 +1090,12 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x0000);
         regs.HL.ShouldBe((ushort)0x0FFF);
 
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeTrue();
 
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
@@ -1132,12 +1132,12 @@ public class BlockOpTests
         regs.BC.ShouldBe((ushort)0x0001);
         regs.HL.ShouldBe((ushort)0x1000);
 
-        regs.ZFlag.ShouldBeTrue();
-        regs.PFlag.ShouldBeTrue();
-        regs.HFlag.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsPFlagSet.ShouldBeTrue();
+        regs.IsHFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
@@ -1176,9 +1176,9 @@ public class BlockOpTests
         regs.C.ShouldBe((byte)0xCC);
         regs.HL.ShouldBe((ushort)0x0FFF);
 
-        regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory(except: "1000-1002");
 
@@ -1214,9 +1214,9 @@ public class BlockOpTests
         regs.C.ShouldBe((byte)0xCC);
         regs.HL.ShouldBe((ushort)0x0FFF);
 
-        regs.ZFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F, BC, HL");
         m.ShouldKeepMemory();
 
