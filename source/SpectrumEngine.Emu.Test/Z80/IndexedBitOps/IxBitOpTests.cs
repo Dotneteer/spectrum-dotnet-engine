@@ -31,13 +31,13 @@ public class IxBitOpTests
                 m.Run();
 
                 // --- Assert
-                regs.SFlag.ShouldBeFalse();
-                regs.ZFlag.ShouldBeTrue();
-                regs.CFlag.ShouldBeFalse();
-                regs.PFlag.ShouldBeTrue();
+                regs.IsSFlagSet.ShouldBeFalse();
+                regs.IsZFlagSet.ShouldBeTrue();
+                regs.IsCFlagSet.ShouldBeFalse();
+                regs.IsPFlagSet.ShouldBeTrue();
 
-                regs.HFlag.ShouldBeTrue();
-                regs.NFlag.ShouldBeFalse();
+                regs.IsHFlagSet.ShouldBeTrue();
+                regs.IsNFlagSet.ShouldBeFalse();
                 m.ShouldKeepRegisters(except: "F");
                 m.ShouldKeepMemory();
 
@@ -76,13 +76,13 @@ public class IxBitOpTests
                 m.Run();
 
                 // --- Assert
-                regs.SFlag.ShouldBe(n == 0x07);
-                regs.ZFlag.ShouldBeFalse();
-                regs.CFlag.ShouldBeFalse();
-                regs.PFlag.ShouldBeFalse();
+                regs.IsSFlagSet.ShouldBe(n == 0x07);
+                regs.IsZFlagSet.ShouldBeFalse();
+                regs.IsCFlagSet.ShouldBeFalse();
+                regs.IsPFlagSet.ShouldBeFalse();
 
-                regs.HFlag.ShouldBeTrue();
-                regs.NFlag.ShouldBeFalse();
+                regs.IsHFlagSet.ShouldBeTrue();
+                regs.IsNFlagSet.ShouldBeFalse();
                 m.ShouldKeepRegisters(except: "F");
                 m.ShouldKeepMemory();
 

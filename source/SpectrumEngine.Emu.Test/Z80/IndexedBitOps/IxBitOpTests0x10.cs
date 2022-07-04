@@ -29,13 +29,13 @@ public class IxBitOpTests0x10
         regs.B.ShouldBe(m.Memory[regs.IX + OFFS]);
         regs.B.ShouldBe((byte)0x11);
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, B");
         m.ShouldKeepMemory(except: "1032");
 
@@ -68,13 +68,13 @@ public class IxBitOpTests0x10
         regs.C.ShouldBe(m.Memory[regs.IX + OFFS]);
         regs.C.ShouldBe((byte)0x11);
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, C");
         m.ShouldKeepMemory(except: "1032");
 
@@ -107,13 +107,13 @@ public class IxBitOpTests0x10
         regs.D.ShouldBe(m.Memory[regs.IX + OFFS]);
         regs.D.ShouldBe((byte)0x11);
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, D");
         m.ShouldKeepMemory(except: "1032");
 
@@ -146,13 +146,13 @@ public class IxBitOpTests0x10
         regs.E.ShouldBe(m.Memory[regs.IX + OFFS]);
         regs.E.ShouldBe((byte)0x11);
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, E");
         m.ShouldKeepMemory(except: "1032");
 
@@ -185,13 +185,13 @@ public class IxBitOpTests0x10
         regs.H.ShouldBe(m.Memory[regs.IX + OFFS]);
         regs.H.ShouldBe((byte)0x11);
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, H");
         m.ShouldKeepMemory(except: "1032");
 
@@ -224,13 +224,13 @@ public class IxBitOpTests0x10
         regs.L.ShouldBe(m.Memory[regs.IX + OFFS]);
         regs.L.ShouldBe((byte)0x11);
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, L");
         m.ShouldKeepMemory(except: "1032");
 
@@ -262,13 +262,13 @@ public class IxBitOpTests0x10
         // --- Assert
         m.Memory[regs.IX + OFFS].ShouldBe((byte)0x11);
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F");
         m.ShouldKeepMemory(except: "1032");
 
@@ -301,13 +301,13 @@ public class IxBitOpTests0x10
         regs.A.ShouldBe(m.Memory[regs.IX + OFFS]);
         regs.A.ShouldBe((byte)0x11);
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, A");
         m.ShouldKeepMemory(except: "1032");
 
@@ -340,13 +340,13 @@ public class IxBitOpTests0x10
         regs.B.ShouldBe(m.Memory[regs.IX + OFFS]);
         regs.B.ShouldBe((byte)0x84);
 
-        regs.SFlag.ShouldBeTrue();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, B");
         m.ShouldKeepMemory(except: "1032");
 
@@ -379,13 +379,13 @@ public class IxBitOpTests0x10
         regs.C.ShouldBe(m.Memory[regs.IX + OFFS]);
         regs.C.ShouldBe((byte)0x84);
 
-        regs.SFlag.ShouldBeTrue();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, C");
         m.ShouldKeepMemory(except: "1032");
 
@@ -418,13 +418,13 @@ public class IxBitOpTests0x10
         regs.D.ShouldBe(m.Memory[regs.IX + OFFS]);
         regs.D.ShouldBe((byte)0x84);
 
-        regs.SFlag.ShouldBeTrue();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, D");
         m.ShouldKeepMemory(except: "1032");
 
@@ -457,13 +457,13 @@ public class IxBitOpTests0x10
         regs.E.ShouldBe(m.Memory[regs.IX + OFFS]);
         regs.E.ShouldBe((byte)0x84);
 
-        regs.SFlag.ShouldBeTrue();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, E");
         m.ShouldKeepMemory(except: "1032");
 
@@ -496,13 +496,13 @@ public class IxBitOpTests0x10
         regs.H.ShouldBe(m.Memory[regs.IX + OFFS]);
         regs.H.ShouldBe((byte)0x84);
 
-        regs.SFlag.ShouldBeTrue();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, H");
         m.ShouldKeepMemory(except: "1032");
 
@@ -535,13 +535,13 @@ public class IxBitOpTests0x10
         regs.L.ShouldBe(m.Memory[regs.IX + OFFS]);
         regs.L.ShouldBe((byte)0x84);
 
-        regs.SFlag.ShouldBeTrue();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, L");
         m.ShouldKeepMemory(except: "1032");
 
@@ -573,13 +573,13 @@ public class IxBitOpTests0x10
         // --- Assert
         m.Memory[regs.IX + OFFS].ShouldBe((byte)0x84);
 
-        regs.SFlag.ShouldBeTrue();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, A");
         m.ShouldKeepMemory(except: "1032");
 
@@ -612,13 +612,13 @@ public class IxBitOpTests0x10
         regs.A.ShouldBe(m.Memory[regs.IX + OFFS]);
         regs.A.ShouldBe((byte)0x84);
 
-        regs.SFlag.ShouldBeTrue();
-        regs.ZFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "F, A");
         m.ShouldKeepMemory(except: "1032");
 

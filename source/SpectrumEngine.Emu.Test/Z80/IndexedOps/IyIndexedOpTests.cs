@@ -26,10 +26,10 @@ public class IyIndexedOpTests
         var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0x2335);
 
-        regs.CFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "IY, BC, F");
         m.ShouldKeepMemory();
 
@@ -59,10 +59,10 @@ public class IyIndexedOpTests
         var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0x0235);
 
-        regs.CFlag.ShouldBeTrue();
-        regs.HFlag.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeTrue();
+        regs.IsHFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "IY, BC, F");
         m.ShouldKeepMemory();
 
@@ -92,10 +92,10 @@ public class IyIndexedOpTests
         var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0x2135);
 
-        regs.CFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeTrue();
 
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "IY, BC, F");
         m.ShouldKeepMemory();
 
@@ -125,10 +125,10 @@ public class IyIndexedOpTests
         var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0x2335);
 
-        regs.CFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "IY, DE, F");
         m.ShouldKeepMemory();
 
@@ -271,11 +271,11 @@ public class IyIndexedOpTests
         // --- Assert
         regs.IY.ShouldBe((ushort)0xFF34);
 
-        regs.SFlag.ShouldBeTrue();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
         m.ShouldKeepRegisters(except: "F, IY");
         m.ShouldKeepMemory();
@@ -306,11 +306,11 @@ public class IyIndexedOpTests
         // --- Assert
         regs.IY.ShouldBe((ushort)0x5034);
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeTrue();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeTrue();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
         m.ShouldKeepRegisters(except: "F, IY");
         m.ShouldKeepMemory();
@@ -341,11 +341,11 @@ public class IyIndexedOpTests
         // --- Assert
         regs.IY.ShouldBe((ushort)0x8034);
 
-        regs.SFlag.ShouldBeTrue();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeTrue();
-        regs.PFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeTrue();
+        regs.IsPFlagSet.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
 
         m.ShouldKeepRegisters(except: "F, IY");
         m.ShouldKeepMemory();
@@ -376,11 +376,11 @@ public class IyIndexedOpTests
         // --- Assert
         regs.IY.ShouldBe((ushort)0x0034);
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeTrue();
-        regs.HFlag.ShouldBeTrue();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsHFlagSet.ShouldBeTrue();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
         m.ShouldKeepRegisters(except: "F, IY");
         m.ShouldKeepMemory();
@@ -439,11 +439,11 @@ public class IyIndexedOpTests
         // --- Assert
         regs.IY.ShouldBe((ushort)0x8434);
 
-        regs.SFlag.ShouldBeTrue();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
         m.ShouldKeepRegisters(except: "F, IY");
         m.ShouldKeepMemory();
@@ -474,11 +474,11 @@ public class IyIndexedOpTests
         // --- Assert
         regs.IY.ShouldBe((ushort)0x3F34);
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeTrue();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeTrue();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
         m.ShouldKeepRegisters(except: "F, IY");
         m.ShouldKeepMemory();
@@ -509,11 +509,11 @@ public class IyIndexedOpTests
         // --- Assert
         regs.IY.ShouldBe((ushort)0x7F34);
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeTrue();
-        regs.PFlag.ShouldBeTrue();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeTrue();
+        regs.IsPFlagSet.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeFalse();
 
         m.ShouldKeepRegisters(except: "F, IY");
         m.ShouldKeepMemory();
@@ -544,11 +544,11 @@ public class IyIndexedOpTests
         // --- Assert
         regs.IY.ShouldBe((ushort)0x0034);
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeTrue();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeTrue();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
         m.ShouldKeepRegisters(except: "F, IY");
         m.ShouldKeepMemory();
@@ -606,10 +606,10 @@ public class IyIndexedOpTests
         var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0x2202);
 
-        regs.CFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "IY, F");
         m.ShouldKeepMemory();
 
@@ -898,10 +898,10 @@ public class IyIndexedOpTests
         var regs = m.Cpu.Regs;
         regs.IY.ShouldBe((ushort)0x2335);
 
-        regs.CFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "IY, SP, F");
         m.ShouldKeepMemory();
 
@@ -1977,13 +1977,13 @@ public class IyIndexedOpTests
         var regs = m.Cpu.Regs;
 
         regs.A.ShouldBe((byte)0x4F);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF, IY");
         m.ShouldKeepMemory();
 
@@ -2013,13 +2013,13 @@ public class IyIndexedOpTests
         var regs = m.Cpu.Regs;
 
         regs.A.ShouldBe((byte)0x36);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF, IY");
         m.ShouldKeepMemory();
 
@@ -2051,13 +2051,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0x36);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF, IY");
         m.ShouldKeepMemory();
 
@@ -2088,13 +2088,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0xE1);
-        regs.SFlag.ShouldBeTrue();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeTrue();
 
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -2125,13 +2125,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0xE1);
-        regs.SFlag.ShouldBeTrue();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeTrue();
 
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -2164,13 +2164,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0xE1);
-        regs.SFlag.ShouldBeTrue();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeTrue();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeTrue();
 
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -2200,13 +2200,13 @@ public class IyIndexedOpTests
         var regs = m.Cpu.Regs;
 
         regs.A.ShouldBe((byte)0x12);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "AF, IY");
         m.ShouldKeepMemory();
 
@@ -2236,13 +2236,13 @@ public class IyIndexedOpTests
         var regs = m.Cpu.Regs;
 
         regs.A.ShouldBe((byte)0x12);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "AF, IY");
         m.ShouldKeepMemory();
 
@@ -2275,13 +2275,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0x12);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -2312,13 +2312,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0x11);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "AF, IY");
         m.ShouldKeepMemory();
 
@@ -2348,13 +2348,13 @@ public class IyIndexedOpTests
 
         // --- Assert
         regs.A.ShouldBe((byte)0x11);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "AF, IY");
         m.ShouldKeepMemory();
 
@@ -2388,13 +2388,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0x11);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -2424,13 +2424,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0x02);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
 
-        regs.HFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -2460,13 +2460,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0x02);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
 
-        regs.HFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -2498,13 +2498,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0x02);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
 
-        regs.HFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -2534,13 +2534,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0x31);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -2570,13 +2570,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0x31);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -2608,13 +2608,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0x31);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -2644,13 +2644,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0x33);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -2680,13 +2680,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0x33);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -2718,13 +2718,13 @@ public class IyIndexedOpTests
         // --- Assert
 
         regs.A.ShouldBe((byte)0x33);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeTrue();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeTrue();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -2753,13 +2753,13 @@ public class IyIndexedOpTests
 
         // --- Assert
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F");
         m.ShouldKeepMemory();
 
@@ -2788,13 +2788,13 @@ public class IyIndexedOpTests
 
         // --- Assert
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F");
         m.ShouldKeepMemory();
 
@@ -2825,13 +2825,13 @@ public class IyIndexedOpTests
 
         // --- Assert
 
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
-        regs.NFlag.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
         m.ShouldKeepRegisters(except: "F");
         m.ShouldKeepMemory();
 

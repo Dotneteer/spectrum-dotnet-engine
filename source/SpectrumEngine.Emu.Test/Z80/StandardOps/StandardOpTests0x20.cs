@@ -174,7 +174,7 @@ public class StandardOpTests0x20
         m.ShouldKeepRegisters(except: "H, F");
         m.ShouldKeepMemory();
         m.ShouldKeepCFlag();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
 
         regs.H.ShouldBe((byte)0x44);
         regs.PC.ShouldBe((ushort)0x0003);
@@ -204,7 +204,7 @@ public class StandardOpTests0x20
         m.ShouldKeepRegisters(except: "H, F");
         m.ShouldKeepMemory();
         m.ShouldKeepCFlag();
-        regs.NFlag.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
 
         regs.H.ShouldBe((byte)0x42);
         regs.PC.ShouldBe((ushort)0x0003);
@@ -370,10 +370,10 @@ public class StandardOpTests0x20
         m.ShouldKeepSFlag();
         m.ShouldKeepZFlag();
         m.ShouldKeepPVFlag();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
 
-        regs.CFlag.ShouldBeFalse();
-        regs.HFlag.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
 
         regs.HL.ShouldBe((ushort)0x2468);
         regs.PC.ShouldBe((ushort)0x0004);
@@ -460,7 +460,7 @@ public class StandardOpTests0x20
         m.ShouldKeepRegisters(except: "L, F");
         m.ShouldKeepMemory();
         m.ShouldKeepCFlag();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
 
         regs.L.ShouldBe((byte)0x44);
         regs.PC.ShouldBe((ushort)0x0003);
@@ -490,7 +490,7 @@ public class StandardOpTests0x20
         m.ShouldKeepRegisters(except: "L, F");
         m.ShouldKeepMemory();
         m.ShouldKeepCFlag();
-        regs.NFlag.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
 
         regs.L.ShouldBe((byte)0x42);
         regs.PC.ShouldBe((ushort)0x0003);
@@ -550,8 +550,8 @@ public class StandardOpTests0x20
         m.ShouldKeepZFlag();
         m.ShouldKeepPVFlag();
         m.ShouldKeepCFlag();
-        regs.HFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeTrue();
+        regs.IsHFlagSet.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
 
         regs.A.ShouldBe((byte)0x7E);
         regs.PC.ShouldBe((ushort)0x0003);

@@ -250,7 +250,7 @@ public class StandardOpTests0x30
         var regs = m.Cpu.Regs;
 
         m.ShouldKeepRegisters(except: "F");
-        regs.CFlag.ShouldBeTrue();
+        regs.IsCFlagSet.ShouldBeTrue();
         regs.PC.ShouldBe((ushort)0x0001);
         m.Cpu.Tacts.ShouldBe(4UL);
     }
@@ -418,7 +418,7 @@ public class StandardOpTests0x30
         m.ShouldKeepRegisters(except: "A, F");
         m.ShouldKeepMemory();
         m.ShouldKeepCFlag();
-        regs.NFlag.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
 
         regs.A.ShouldBe((byte)0x44);
         regs.PC.ShouldBe((ushort)0x0003);
@@ -448,7 +448,7 @@ public class StandardOpTests0x30
         m.ShouldKeepRegisters(except: "A, F");
         m.ShouldKeepMemory();
         m.ShouldKeepCFlag();
-        regs.NFlag.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeTrue();
 
         regs.A.ShouldBe((byte)0x42);
         regs.PC.ShouldBe((ushort)0x0003);
@@ -504,7 +504,7 @@ public class StandardOpTests0x30
 
         m.ShouldKeepRegisters(except: "F");
         m.ShouldKeepMemory();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
 
         regs.PC.ShouldBe((ushort)0x0002);
         m.Cpu.Tacts.ShouldBe(8UL);

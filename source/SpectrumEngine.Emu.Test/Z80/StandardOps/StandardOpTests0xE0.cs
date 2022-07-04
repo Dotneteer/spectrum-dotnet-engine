@@ -309,13 +309,13 @@ public class StandardOpTests0xE0
         var regs = m.Cpu.Regs;
 
         regs.A.ShouldBe((byte)0x02);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
 
-        regs.HFlag.ShouldBeTrue();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeTrue();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 
@@ -628,13 +628,13 @@ public class StandardOpTests0xE0
         var regs = m.Cpu.Regs;
 
         regs.A.ShouldBe((byte)0x31);
-        regs.SFlag.ShouldBeFalse();
-        regs.ZFlag.ShouldBeFalse();
-        regs.PFlag.ShouldBeFalse();
+        regs.IsSFlagSet.ShouldBeFalse();
+        regs.IsZFlagSet.ShouldBeFalse();
+        regs.IsPFlagSet.ShouldBeFalse();
 
-        regs.HFlag.ShouldBeFalse();
-        regs.NFlag.ShouldBeFalse();
-        regs.CFlag.ShouldBeFalse();
+        regs.IsHFlagSet.ShouldBeFalse();
+        regs.IsNFlagSet.ShouldBeFalse();
+        regs.IsCFlagSet.ShouldBeFalse();
         m.ShouldKeepRegisters(except: "AF");
         m.ShouldKeepMemory();
 

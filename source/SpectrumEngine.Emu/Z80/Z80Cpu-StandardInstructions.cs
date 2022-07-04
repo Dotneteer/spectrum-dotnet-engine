@@ -494,7 +494,7 @@ public partial class Z80Cpu
         var rlaVal = Regs.A;
         var newCF = (rlaVal & 0x80) != 0 ? FlagsSetMask.C : 0;
         rlaVal <<= 1;
-        if (Regs.CFlag)
+        if (Regs.IsCFlagSet)
         {
             rlaVal |= 0x01;
         }
@@ -642,7 +642,7 @@ public partial class Z80Cpu
         var rraVal = Regs.A;
         var newCF = (rraVal & 0x01) != 0 ? FlagsSetMask.C : 0;
         rraVal >>= 1;
-        if (Regs.CFlag)
+        if (Regs.IsCFlagSet)
         {
             rraVal |= 0x80;
         }
