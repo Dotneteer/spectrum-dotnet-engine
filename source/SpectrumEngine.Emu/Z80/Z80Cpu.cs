@@ -40,7 +40,7 @@ public abstract partial class Z80Cpu: IZ80Cpu
     /// <summary>
     /// Represents integer constants that mask out particular flags of the Z80 CPU's F register.
     /// </summary>
-    public sealed class FlagsSetMask
+    public static class FlagsSetMask
     {
         /// <summary>Sign Flag</summary>
         /// <remarks>
@@ -379,6 +379,24 @@ public abstract partial class Z80Cpu: IZ80Cpu
         public static void Swap(ref ushort orig, ref ushort alt)
         {
             (orig, alt) = (alt, orig);
+        }
+
+        /// <summary>
+        /// Gets the bits that represent the value of SZPV flag group
+        /// </summary>
+        public int SZPVValue
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => F & FlagsSetMask.SZPV;
+        }
+        
+        /// <summary>
+        /// Gets the bits that represent the value of the C flag
+        /// </summary>
+        public int CFlagValue
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => F & FlagsSetMask.C;
         }
     }
 
