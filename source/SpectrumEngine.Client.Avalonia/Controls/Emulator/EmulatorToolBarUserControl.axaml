@@ -8,7 +8,7 @@
              xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
              xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="60"
-             x:Class="SpectrumEngine.Client.Avalonia.Controls.ToolBarUserControl"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.EmulatorToolBarUserControl"
              Background="{DynamicResource ToolbarGray}">
     
     <Design.DataContext>

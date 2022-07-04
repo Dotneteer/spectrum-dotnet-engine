@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace SpectrumEngine.Client.Avalonia.Controls;
 
-public partial class StatusBarUserControl : UserControl
+public partial class EmulatorStatusBarUserControl : UserControl
 {
-    public StatusBarUserControl()
+    public EmulatorStatusBarUserControl()
     {
         InitializeComponent();
     }

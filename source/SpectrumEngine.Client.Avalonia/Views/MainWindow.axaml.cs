@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -16,8 +17,15 @@ namespace SpectrumEngine.Client.Avalonia.Views
             InitializeComponent();
         }
 
+        private void OnClosing(object? sender, CancelEventArgs e)
+        {
+            App.CloseDevToolsWindow();
+        }
+
+        // ReSharper disable once SuggestBaseTypeForParameter
         private void OnClickClose(object? sender, RoutedEventArgs e)
         {
+            App.CloseDevToolsWindow();
             Close();
         }
         

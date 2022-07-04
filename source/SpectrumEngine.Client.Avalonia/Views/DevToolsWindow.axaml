@@ -1,0 +1,47 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="SpectrumEngine.Client.Avalonia.Views.DevToolsWindow"
+        Title="DevToolsWindow"
+        Closed="DevToolsClosed">
+    
+    <Design.DataContext>
+        <viewModels:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <NativeMenu.Menu>
+        <NativeMenu>
+            <NativeMenuItem Header="DevTools">
+                <NativeMenu>
+                    <NativeMenuItem
+                        Header="Show Toolbar"
+                        Command="{Binding ViewOptions.ToggleShowToolbar}"
+                        ToggleType="CheckBox"
+                        IsChecked="{Binding ViewOptions.ShowToolbar}" />
+                    <NativeMenuItem
+                        Header="Show Status Bar" 
+                        Command="{Binding ViewOptions.ToggleShowStatusBar}"
+                        ToggleType="CheckBox"
+                        IsChecked="{Binding ViewOptions.ShowStatusBar}"/>
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem
+                        Header="Show Keyboard" 
+                        Command="{Binding ViewOptions.ToggleShowKeyboard}"
+                        ToggleType="CheckBox"
+                        IsChecked="{Binding ViewOptions.ShowKeyboard, Mode=TwoWay}"/>
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem 
+                        Header="Mute Sound" 
+                        Command="{Binding ViewOptions.ToggleMuted}"
+                        ToggleType="CheckBox"
+                        IsChecked="{Binding ViewOptions.IsMuted} "/>
+                </NativeMenu>
+            </NativeMenuItem>
+        </NativeMenu>
+    </NativeMenu.Menu>
+    
+    Welcome to Avalonia!
+</Window>
