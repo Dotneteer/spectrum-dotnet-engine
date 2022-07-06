@@ -19,7 +19,14 @@ public class MainWindowViewModel : ViewModelBase
             ShowKeyboard = false,
             IsMuted = false
         };
-        DevTools = new DevToolsViewModel();
+        DevTools = new DevToolsViewModel
+        {
+            ShowDevTools = false,
+            ShowToolbar = true,
+            ShowStatusBar = true,
+            ShowSiteBar = true,
+            ShowPanels = true
+        };
         Preferences = new PreferencesViewModel();
     }
     

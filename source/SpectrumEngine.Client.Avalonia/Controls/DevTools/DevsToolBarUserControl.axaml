@@ -71,13 +71,6 @@
                 Hint="Pause" />
             <controls:IconButtonSeparator />
             <controls:IconButton
-                IsChecked="{Binding ViewOptions.ShowKeyboard}"
-                Path="{DynamicResource IconKeyboard}"
-                Fill="{DynamicResource IconDefaultBrush}"
-                Command="{Binding ViewOptions.ToggleShowKeyboard}"
-                Hint="Pause" />
-            <controls:IconButtonSeparator />
-            <controls:IconButton
                 IsVisible="{Binding !ViewOptions.IsMuted}"
                 Path="{DynamicResource IconMute}"
                 Fill="{DynamicResource IconDefaultBrush}"
@@ -90,18 +83,6 @@
                 Command="{Binding ViewOptions.ToggleMuted}"
                 Hint="Pause" />
             <controls:IconButtonSeparator />
-            <controls:IconButton
-                IsChecked="{Binding Machine.AllowFastLoad}"
-                Path="{DynamicResource IconFastLoad}"
-                Fill="{DynamicResource IconDefaultBrush}"
-                Command="{Binding Machine.ToggleFastLoad}"
-                Hint="Pause" />
-            <controls:IconButton
-                IsEnabled="{Binding !Machine.TapeMode, Converter={StaticResource TapeModeVisibilityConverter}}"
-                Path="{DynamicResource IconRewind}"
-                Fill="{DynamicResource IconDefaultBrush}"
-                Command="{Binding Machine.Rewind}"
-                Hint="Pause" />
         </StackPanel>
     </Border>
 </UserControl>

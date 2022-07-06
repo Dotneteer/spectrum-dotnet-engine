@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
         xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
+        xmlns:devTools="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SpectrumEngine.Client.Avalonia.Views.DevToolsWindow"
         Title="DevToolsWindow"
@@ -20,26 +21,25 @@
                 <NativeMenu>
                     <NativeMenuItem
                         Header="Show Toolbar"
-                        Command="{Binding ViewOptions.ToggleShowToolbar}"
+                        Command="{Binding DevTools.ToggleShowToolbar}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding ViewOptions.ShowToolbar}" />
+                        IsChecked="{Binding DevTools.ShowToolbar}" />
                     <NativeMenuItem
                         Header="Show Status Bar" 
-                        Command="{Binding ViewOptions.ToggleShowStatusBar}"
+                        Command="{Binding DevTools.ToggleShowStatusBar}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding ViewOptions.ShowStatusBar}"/>
+                        IsChecked="{Binding DevTools.ShowStatusBar}"/>
                     <NativeMenuItemSeparator />
                     <NativeMenuItem
-                        Header="Show Keyboard" 
-                        Command="{Binding ViewOptions.ToggleShowKeyboard}"
+                        Header="Show Site Bar"
+                        Command="{Binding DevTools.ToggleShowSiteBar}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding ViewOptions.ShowKeyboard, Mode=TwoWay}"/>
-                    <NativeMenuItemSeparator />
-                    <NativeMenuItem 
-                        Header="Mute Sound" 
-                        Command="{Binding ViewOptions.ToggleMuted}"
+                        IsChecked="{Binding DevTools.ShowSiteBar}" />
+                    <NativeMenuItem
+                        Header="Show Panels"
+                        Command="{Binding DevTools.ToggleShowPanels}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding ViewOptions.IsMuted} "/>
+                        IsChecked="{Binding DevTools.ShowPanels}" />
                 </NativeMenu>
             </NativeMenuItem>
         </NativeMenu>
@@ -48,22 +48,39 @@
     <DockPanel>
         <controls:DevsToolBarUserControl
             DockPanel.Dock="Top"
-            IsVisible="{Binding ViewOptions.ShowToolbar}" />
+            IsVisible="{Binding DevTools.ShowToolbar}" />
         <controls:DevsStatusBarUserControl 
             DockPanel.Dock="Bottom" 
-            IsVisible="{Binding ViewOptions.ShowStatusBar}"/>
-        <Panel
+            IsVisible="{Binding DevTools.ShowStatusBar}"/>
+        <devTools:SiteBar
             DockPanel.Dock="Left"
-            Width="300"
-            Background="Gray" />
+            IsVisible="{Binding DevTools.ShowSiteBar}"
+            Width="300" />
         <controls:SplitterPanel 
-            IsVisible="True"
+            DockPanel.Dock="Left"
+            IsVisible="{Binding DevTools.ShowSiteBar}"
             Orientation="Horizontal"
             ResizeNext="False"
             NegateDelta="True"
             PreviousMinSize="120"
             NextMinSize="120"
-            DockPanel.Dock="Left"/>
-        <Panel Background="Green" />
+            Background="{DynamicResource SiteBarBackgroundBrush}" />
+        <DockPanel>
+            <devTools:PanelBar
+                DockPanel.Dock="Bottom"
+                IsVisible="{Binding DevTools.ShowPanels}"
+                Height="240" />
+            <controls:SplitterPanel 
+                IsVisible="{Binding DevTools.ShowPanels}"
+                Orientation="Vertical"
+                ResizeNext="False"
+                NegateDelta="False"
+                PreviousMinSize="120"
+                NextMinSize="120"
+                Background="{DynamicResource DevsBackground}"
+                DockPanel.Dock="Bottom"/>
+            <Panel
+                Background="{DynamicResource DevsBackground}" />
+        </DockPanel>
     </DockPanel>
 </Window>
