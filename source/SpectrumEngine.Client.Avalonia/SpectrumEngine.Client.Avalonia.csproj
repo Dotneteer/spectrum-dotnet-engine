@@ -93,5 +93,13 @@
         <DependentUpon>ToolBarUserControl.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Controls\DevTools\DevsToolBarUserControl.axaml.cs">
+        <DependentUpon>EmulatorToolBarUserControl.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\DevTools\DevsStatusBarUserControl.axaml.cs">
+        <DependentUpon>EmulatorStatusBarUserControl.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

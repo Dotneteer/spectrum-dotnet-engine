@@ -158,8 +158,7 @@
         </NativeMenu>
     </NativeMenu.Menu>
     
-    <Grid>
-        <DockPanel>
+    <DockPanel>
             
             <!-- Use this menu on Windows -->
             <Menu DockPanel.Dock="Top" IsVisible="{Binding !Environment.UseNativeMenu}">
@@ -335,6 +334,4 @@
                     x:Name="SpectrumDisplay"
                     DataContext="{Binding Display}" />
         </DockPanel>
-    </Grid>
-
 </Window>

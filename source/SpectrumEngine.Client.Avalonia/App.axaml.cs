@@ -17,6 +17,8 @@ namespace SpectrumEngine.Client.Avalonia
         
         public static DevToolsWindow? DevToolsWindow { get; set; }
         
+        public static bool IsAppClosing { get; private set; }
+        
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
@@ -61,6 +63,7 @@ namespace SpectrumEngine.Client.Avalonia
 
         public static void CloseDevToolsWindow()
         {
+            IsAppClosing = true;
             DevToolsWindow?.Close();
         }
         

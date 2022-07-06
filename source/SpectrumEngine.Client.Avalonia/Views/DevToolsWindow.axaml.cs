@@ -1,4 +1,6 @@
 using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -28,5 +30,15 @@ public partial class DevToolsWindow : Window
         if (Vm == null) return;
         Vm.DevTools.ShowDevTools = false;
         App.DiscardDevToolsWindow();
+    }
+
+    private async void OnClosing(object? sender, CancelEventArgs e)
+    {
+        if (App.IsAppClosing || Vm == null) return;
+        e.Cancel = true;
+
+        await Task.Delay(100);
+        Vm.DevTools.ShowDevTools = false;
+        App.HideDevToolsWindow();
     }
 }

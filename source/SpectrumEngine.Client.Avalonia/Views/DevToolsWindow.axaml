@@ -3,9 +3,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
+        xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SpectrumEngine.Client.Avalonia.Views.DevToolsWindow"
         Title="DevToolsWindow"
+        Closing="OnClosing"
         Closed="DevToolsClosed">
     
     <Design.DataContext>
@@ -43,5 +45,25 @@
         </NativeMenu>
     </NativeMenu.Menu>
     
-    Welcome to Avalonia!
+    <DockPanel>
+        <controls:DevsToolBarUserControl
+            DockPanel.Dock="Top"
+            IsVisible="{Binding ViewOptions.ShowToolbar}" />
+        <controls:DevsStatusBarUserControl 
+            DockPanel.Dock="Bottom" 
+            IsVisible="{Binding ViewOptions.ShowStatusBar}"/>
+        <Panel
+            DockPanel.Dock="Left"
+            Width="300"
+            Background="Gray" />
+        <controls:SplitterPanel 
+            IsVisible="True"
+            Orientation="Horizontal"
+            ResizeNext="False"
+            NegateDelta="True"
+            PreviousMinSize="120"
+            NextMinSize="120"
+            DockPanel.Dock="Left"/>
+        <Panel Background="Green" />
+    </DockPanel>
 </Window>
