@@ -20,11 +20,11 @@
     
     <Application.Styles>
         <FluentTheme Mode="Dark"/>
-        <StyleInclude Source="/Controls/CheckedIndicator.axaml"/>
-        <StyleInclude Source="/Controls/IconButton.axaml"/>
-        <StyleInclude Source="/Controls/IconButtonSeparator.axaml"/>
-        <StyleInclude Source="/Controls/PlainIcon.axaml"/>
-        <StyleInclude Source="/Controls/SplitterPanel.axaml"/>
-        <StyleInclude Source="/Controls/StatusLabel.axaml"/>
+        <StyleInclude Source="/Controls/Common/CheckedIndicator.axaml"/>
+        <StyleInclude Source="/Controls/Common/IconButton.axaml"/>
+        <StyleInclude Source="/Controls/Common/IconButtonSeparator.axaml"/>
+        <StyleInclude Source="/Controls/Common/PlainIcon.axaml"/>
+        <StyleInclude Source="/Controls/Common/SplitterPanel.axaml"/>
+        <StyleInclude Source="/Controls/Common/StatusLabel.axaml"/>
     </Application.Styles>
 </Application>

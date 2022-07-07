@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -32,8 +30,14 @@ public class SplitterPanel : Thumb
         AvaloniaProperty.Register<SplitterPanel, double>(nameof(NextMinSize), double.NaN);
 
     public static readonly StyledProperty<bool> NegateDeltaProperty = 
-        AvaloniaProperty.Register<SplitterPanel, bool>(nameof(NegateDelta), false);
+        AvaloniaProperty.Register<SplitterPanel, bool>(nameof(NegateDelta));
 
+    public SplitterPanel()
+    {
+        Orientation = Orientation.Horizontal;
+        Cursor = new Cursor(StandardCursorType.SizeWestEast);
+    }
+    
     public Orientation Orientation
     {
         get => GetValue(OrientationProperty);
@@ -75,8 +79,8 @@ public class SplitterPanel : Thumb
         if (change.Property.Name == "Orientation")
         {
             // --- Orientation changed
-            Cursor = new Cursor(change.NewValue is Orientation.Horizontal ? 
-                StandardCursorType.SizeWestEast 
+            Cursor = new Cursor(change.NewValue is Orientation.Horizontal 
+                ? StandardCursorType.SizeWestEast 
                 : StandardCursorType.SizeNorthSouth);
         }
         base.OnPropertyChanged(change);
@@ -93,26 +97,24 @@ public class SplitterPanel : Thumb
     protected override void OnDragStarted(VectorEventArgs e)
     {
         base.OnDragStarted(e);
-        _startSize = e.Vector.Y;
-        Debug.WriteLine($"Starting with: {_startSize}");
+        _startSize = Orientation == Orientation.Horizontal ? e.Vector.X : e.Vector.Y;
     }
 
     protected override void OnDragCompleted(VectorEventArgs e)
     {
         base.OnDragCompleted(e);
-        Resize(e.Vector.Y, _startSize);
+        Resize(Orientation == Orientation.Horizontal ? e.Vector.X : e.Vector.Y, _startSize);
     }
 
     protected override void OnDragDelta(VectorEventArgs e)
     {
         base.OnDragDelta(e);
-        Resize(e.Vector.Y, 0.0);
+        Resize(Orientation == Orientation.Horizontal ? e.Vector.X : e.Vector.Y, 0.0);
     }
 
     private void Resize(double delta, double offset)
     {
         // --- Check the logical tree for previous and next siblings
-        Debug.WriteLine($"Resizing delta: {delta}");
         if (_parent == null || _splitterIndex < 1) return;
         var children = _parent.GetLogicalChildren().ToList();
         if (_splitterIndex >= children.Count - 1) return;
@@ -121,13 +123,21 @@ public class SplitterPanel : Thumb
         if (children[_splitterIndex - 1] is not Control previousControl
             || children[_splitterIndex + 1] is not Control nextControl) return;
 
-        var prevSize = previousControl.Bounds.Height - (delta - offset) * (NegateDelta ? -1.0 : 1.0); 
+        var prevSize = 
+            (Orientation == Orientation.Horizontal 
+                ? previousControl.Bounds.Width 
+                : previousControl.Bounds.Height) - 
+            (delta - offset) * (NegateDelta ? -1.0 : 1.0); 
         if (!double.IsNaN(PreviousMinSize) && prevSize < PreviousMinSize)
         {
             delta -= PreviousMinSize - prevSize;
             prevSize = PreviousMinSize;
         }
-        var nextSize = nextControl.Bounds.Height + (delta - offset) * (NegateDelta ? -1.0 : 1.0);
+        var nextSize = 
+            (Orientation == Orientation.Horizontal 
+                ? nextControl.Bounds.Width 
+                : nextControl.Bounds.Height) + 
+            (delta - offset) * (NegateDelta ? -1.0 : 1.0);
         if (!double.IsNaN(NextMinSize) && nextSize < NextMinSize)
         {
             prevSize += nextSize - NextMinSize;
@@ -136,10 +146,23 @@ public class SplitterPanel : Thumb
         
         if (ResizePrevious)
         {
-            previousControl.Height = prevSize;
+            if (Orientation == Orientation.Horizontal)
+            {
+                previousControl.Width = prevSize;
+            }
+            else
+            {
+                previousControl.Height = prevSize;
+            }
         }
 
-        if (ResizeNext)
+        if (!ResizeNext) return;
+        
+        if (Orientation == Orientation.Horizontal)
+        {
+            nextControl.Width = nextSize;
+        }
+        else
         {
             nextControl.Height = nextSize;
         }

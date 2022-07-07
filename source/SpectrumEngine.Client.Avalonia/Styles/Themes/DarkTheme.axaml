@@ -11,6 +11,7 @@
     <Styles.Resources>
         <Color x:Key="DarkGray">#202020</Color>
         <Color x:Key="MenuGray">#303030</Color>
+        <Color x:Key="SiteBarGrey">#282828</Color>
         <Color x:Key="TextGray">#c0c0c0</Color>
         <Color x:Key="ToolbarGray">#383838</Color>
         <Color x:Key="HighlightColor">#007acc</Color>
@@ -42,12 +43,14 @@
         <SolidColorBrush x:Key="MachineStatusOverlayBackgroundBrush" Color="{DynamicResource MachineStatusOverlayBackgroundColor}"/>
         <SolidColorBrush x:Key="MachineStatusOverlayForegroundBrush" Color="{DynamicResource MachineStatusOverlayForegroundColor}"/>
         <SolidColorBrush x:Key="SplitterBackgroundBrush" Color="{DynamicResource HighlightColor}"/>
+        <SolidColorBrush x:Key="SiteBarBackgroundBrush" Color="{DynamicResource SiteBarGrey}"/>
+        <SolidColorBrush x:Key="PanelBarBackgroundBrush" Color="{DynamicResource MenuGray}"/>
         
         <SolidColorBrush x:Key="KeyboardBackgroundBrush" Color="{DynamicResource MenuGray}"/>
         <SolidColorBrush x:Key="MainButtonTextBrush" Color="{StaticResource MainButtonTextColor}"/>
         <SolidColorBrush x:Key="KeyTextHighlightBrush" Color="{StaticResource HighlightColor}"/>
         <SolidColorBrush x:Key="KeyTextHighlightPressedBrush" Color="{StaticResource HighlightPressedColor}"/>
         <SolidColorBrush x:Key="KeyBackgroundBrush" Color="{StaticResource KeyBackgroundColor}"/>
-
+        <SolidColorBrush x:Key="DevsBackground" Color="{DynamicResource DarkGray}"/>
     </Styles.Resources>
 </Styles>

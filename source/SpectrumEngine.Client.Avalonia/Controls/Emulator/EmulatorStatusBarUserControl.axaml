@@ -8,7 +8,7 @@
              xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
              xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SpectrumEngine.Client.Avalonia.Controls.StatusBarUserControl"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.EmulatorStatusBarUserControl"
              
              Background="{DynamicResource StatusBarBackgroundBrush}"
              VerticalAlignment="Center"

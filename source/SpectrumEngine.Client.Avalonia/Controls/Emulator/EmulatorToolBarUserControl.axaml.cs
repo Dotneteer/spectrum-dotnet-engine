@@ -1,14 +1,14 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
 namespace SpectrumEngine.Client.Avalonia.Controls;
 
-public partial class StatusBarUserControl : UserControl
+public partial class EmulatorToolBarUserControl : UserControl
 {
-    public StatusBarUserControl()
+    public EmulatorToolBarUserControl()
     {
         InitializeComponent();
+        DataContext = App.AppViewModel;
     }
 
     private void InitializeComponent()

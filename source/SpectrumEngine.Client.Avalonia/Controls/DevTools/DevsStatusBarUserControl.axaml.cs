@@ -4,12 +4,11 @@ using Avalonia.Markup.Xaml;
 
 namespace SpectrumEngine.Client.Avalonia.Controls;
 
-public partial class ToolBarUserControl : UserControl
+public partial class DevsStatusBarUserControl : UserControl
 {
-    public ToolBarUserControl()
+    public DevsStatusBarUserControl()
     {
         InitializeComponent();
-        DataContext = App.AppViewModel;
     }
 
     private void InitializeComponent()

@@ -1,0 +1,99 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
+        xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
+        xmlns:devTools="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="SpectrumEngine.Client.Avalonia.Views.DevToolsWindow"
+        Title="DevToolsWindow"
+        Closing="OnClosing"
+        Closed="DevToolsClosed">
+    
+    <Design.DataContext>
+        <viewModels:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <NativeMenu.Menu>
+        <NativeMenu>
+            <NativeMenuItem Header="DevTools">
+                <NativeMenu>
+                    <NativeMenuItem
+                        Header="Show Toolbar"
+                        Command="{Binding DevTools.ToggleShowToolbar}"
+                        ToggleType="CheckBox"
+                        IsChecked="{Binding DevTools.ShowToolbar}" />
+                    <NativeMenuItem
+                        Header="Show Status Bar" 
+                        Command="{Binding DevTools.ToggleShowStatusBar}"
+                        ToggleType="CheckBox"
+                        IsChecked="{Binding DevTools.ShowStatusBar}"/>
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem
+                        Header="Show Site Bar"
+                        Command="{Binding DevTools.ToggleShowSiteBar}"
+                        ToggleType="CheckBox"
+                        IsChecked="{Binding DevTools.ShowSiteBar}" />
+                    <NativeMenuItem
+                        Header="Site Bar On the Left Side"
+                        Command="{Binding DevTools.ToggleSiteBarOnLeft}"
+                        ToggleType="CheckBox"
+                        IsEnabled="{Binding DevTools.ShowSiteBar}"
+                        IsChecked="{Binding DevTools.SiteBarOnLeft}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem
+                        Header="Show Panels"
+                        Command="{Binding DevTools.ToggleShowPanels}"
+                        ToggleType="CheckBox"
+                        IsChecked="{Binding DevTools.ShowPanels}" />
+                    <NativeMenuItem
+                        Header="Panels At the Bottom"
+                        Command="{Binding DevTools.TogglePanelsAtBottom}"
+                        ToggleType="CheckBox"
+                        IsEnabled="{Binding DevTools.ShowPanels}"
+                        IsChecked="{Binding DevTools.PanelsAtBottom}" />
+                </NativeMenu>
+            </NativeMenuItem>
+        </NativeMenu>
+    </NativeMenu.Menu>
+    
+    <DockPanel>
+        <controls:DevsToolBarUserControl
+            DockPanel.Dock="Top"
+            IsVisible="{Binding DevTools.ShowToolbar}" />
+        <controls:DevsStatusBarUserControl 
+            DockPanel.Dock="Bottom" 
+            IsVisible="{Binding DevTools.ShowStatusBar}"/>
+        <devTools:SiteBar
+            DockPanel.Dock="{Binding DevTools.SiteBarOnLeft, Converter={StaticResource SiteBarDockConverter}}"
+            IsVisible="{Binding DevTools.ShowSiteBar}"
+            Width="300" />
+        <controls:SplitterPanel 
+            DockPanel.Dock="{Binding DevTools.SiteBarOnLeft, Converter={StaticResource SiteBarDockConverter}}"
+            IsVisible="{Binding DevTools.ShowSiteBar}"
+            Orientation="Horizontal"
+            ResizeNext="False"
+            NegateDelta="{Binding DevTools.SiteBarOnLeft}"
+            PreviousMinSize="120"
+            NextMinSize="120"
+            Background="{DynamicResource SiteBarBackgroundBrush}" />
+        <DockPanel>
+            <devTools:PanelBar
+                DockPanel.Dock="{Binding DevTools.PanelsAtBottom, Converter={StaticResource PanelsDockConverter}}"
+                IsVisible="{Binding DevTools.ShowPanels}"
+                Height="240" />
+            <controls:SplitterPanel 
+                DockPanel.Dock="{Binding DevTools.PanelsAtBottom, Converter={StaticResource PanelsDockConverter}}"
+                IsVisible="{Binding DevTools.ShowPanels}"
+                Orientation="Vertical"
+                ResizeNext="False"
+                NegateDelta="{Binding !DevTools.PanelsAtBottom}"
+                PreviousMinSize="120"
+                NextMinSize="120"
+                Background="{DynamicResource DevsBackground}" />
+            <Panel
+                Background="{DynamicResource DevsBackground}" />
+        </DockPanel>
+    </DockPanel>
+</Window>

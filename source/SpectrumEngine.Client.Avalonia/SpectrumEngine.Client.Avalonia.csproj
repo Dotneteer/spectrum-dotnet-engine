@@ -44,4 +44,62 @@
       <None Remove="BassResources\libbass.dylib" />
       <EmbeddedResource Include="BassResources\libbass.dylib" />
     </ItemGroup>
+    <ItemGroup>
+      <Compile Update="Controls\Common\CheckedIndicator.axaml.cs">
+        <DependentUpon>CheckedIndicator.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\Common\IconButton.axaml.cs">
+        <DependentUpon>IconButton.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\Common\IconButtonSeparator.axaml.cs">
+        <DependentUpon>IconButtonSeparator.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\Emulator\KeyboardPanel.axaml.cs">
+        <DependentUpon>KeyboardPanel.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\Emulator\MachineStatusOverlay.axaml.cs">
+        <DependentUpon>MachineStatusOverlay.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\Common\PlainIcon.axaml.cs">
+        <DependentUpon>PlainIcon.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\Emulator\Sp48Key.axaml.cs">
+        <DependentUpon>Sp48Key.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\Emulator\SpectrumDisplayControl.axaml.cs">
+        <DependentUpon>SpectrumDisplayControl.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\Common\SplitterPanel.axaml.cs">
+        <DependentUpon>SplitterPanel.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\Emulator\EmulatorStatusBarUserControl.axaml.cs">
+        <DependentUpon>StatusBarUserControl.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\Common\StatusLabel.axaml.cs">
+        <DependentUpon>StatusLabel.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\Emulator\EmulatorToolBarUserControl.axaml.cs">
+        <DependentUpon>ToolBarUserControl.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\DevTools\DevsToolBarUserControl.axaml.cs">
+        <DependentUpon>EmulatorToolBarUserControl.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\DevTools\DevsStatusBarUserControl.axaml.cs">
+        <DependentUpon>EmulatorStatusBarUserControl.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
 </Project>

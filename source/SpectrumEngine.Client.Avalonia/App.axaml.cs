@@ -15,6 +15,10 @@ namespace SpectrumEngine.Client.Avalonia
         
         public static MainWindow? AppWindow { get; private set; }
         
+        public static DevToolsWindow? DevToolsWindow { get; set; }
+        
+        public static bool IsAppClosing { get; private set; }
+        
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
@@ -28,11 +32,39 @@ namespace SpectrumEngine.Client.Avalonia
                 AppViewModel = new MainWindowViewModel();
                 desktop.MainWindow = AppWindow = new MainWindow
                 {
-                    DataContext = AppViewModel,
+                    DataContext = AppViewModel
                 };
             }
 
             base.OnFrameworkInitializationCompleted();
+        }
+
+        public static void ShowDevToolsWindow()
+        {
+            if (DevToolsWindow == null)
+            {
+                DevToolsWindow = new DevToolsWindow
+                {
+                    DataContext = AppViewModel
+                };
+            }
+            DevToolsWindow.Show();
+        }
+
+        public static void HideDevToolsWindow()
+        {
+            DevToolsWindow?.Hide();
+        }
+
+        public static void DiscardDevToolsWindow()
+        {
+            DevToolsWindow = null;
+        }
+
+        public static void CloseDevToolsWindow()
+        {
+            IsAppClosing = true;
+            DevToolsWindow?.Close();
         }
         
         private void LoadTheme()

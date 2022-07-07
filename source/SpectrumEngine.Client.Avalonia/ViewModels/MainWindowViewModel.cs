@@ -19,6 +19,16 @@ public class MainWindowViewModel : ViewModelBase
             ShowKeyboard = false,
             IsMuted = false
         };
+        DevTools = new DevToolsViewModel
+        {
+            ShowDevTools = false,
+            ShowToolbar = true,
+            ShowStatusBar = true,
+            ShowSiteBar = true,
+            ShowPanels = true,
+            SiteBarOnLeft = true,
+            PanelsAtBottom = true
+        };
         Preferences = new PreferencesViewModel();
     }
     
@@ -37,6 +47,11 @@ public class MainWindowViewModel : ViewModelBase
     /// </summary>
     public ViewOptionsViewModel ViewOptions { get; }
 
+    /// <summary>
+    /// The DevTools partition of the view model
+    /// </summary>
+    public DevToolsViewModel DevTools { get; }
+    
     /// <summary>
     /// The display view model created by the machine
     /// </summary>

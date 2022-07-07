@@ -13,6 +13,7 @@
         Title="SpectrumEngine - ZX Spectrum 48K Emulator"
         Background="{DynamicResource AppBackground}"
         WindowState="{Binding Environment.InitialWindowState, Mode=OneTime}"
+        Closing="OnClosing"
         DataContextChanged="OnDataContextChanged"
         KeyUp="MainWindowOnKeyUp"
         KeyDown="MainWindowOnKeyDown">
@@ -32,25 +33,34 @@
         <NativeMenu>
             <NativeMenuItem Header="View">
                 <NativeMenu>
-                    <NativeMenuItemSeparator />
                     <NativeMenuItem
-                        Header="Show Toolbar" Command="{Binding ViewOptions.ToggleShowToolbar}"
+                        Header="Show Toolbar"
+                        Command="{Binding ViewOptions.ToggleShowToolbar}"
                         ToggleType="CheckBox"
                         IsChecked="{Binding ViewOptions.ShowToolbar}" />
                     <NativeMenuItem
-                        Header="Show Status Bar" Command="{Binding ViewOptions.ToggleShowStatusBar}"
+                        Header="Show Status Bar" 
+                        Command="{Binding ViewOptions.ToggleShowStatusBar}"
                         ToggleType="CheckBox"
                         IsChecked="{Binding ViewOptions.ShowStatusBar}"/>
                     <NativeMenuItemSeparator />
                     <NativeMenuItem
-                        Header="Show Keyboard" Command="{Binding ViewOptions.ToggleShowKeyboard}"
+                        Header="Show Keyboard" 
+                        Command="{Binding ViewOptions.ToggleShowKeyboard}"
                         ToggleType="CheckBox"
                         IsChecked="{Binding ViewOptions.ShowKeyboard, Mode=TwoWay}"/>
                     <NativeMenuItemSeparator />
                     <NativeMenuItem 
-                        Header="Mute Sound" Command="{Binding ViewOptions.ToggleMuted}"
+                        Header="Show DevTools" 
+                        Command="{Binding DevTools.ToggleDevTools}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding ViewOptions.IsMuted}"/>
+                        IsChecked="{Binding DevTools.ShowDevTools}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem 
+                        Header="Mute Sound" 
+                        Command="{Binding ViewOptions.ToggleMuted}"
+                        ToggleType="CheckBox"
+                        IsChecked="{Binding ViewOptions.IsMuted} "/>
                 </NativeMenu>
             </NativeMenuItem>
             <NativeMenuItem Header="Machine">
@@ -148,8 +158,7 @@
         </NativeMenu>
     </NativeMenu.Menu>
     
-    <Grid>
-        <DockPanel>
+    <DockPanel>
             
             <!-- Use this menu on Windows -->
             <Menu DockPanel.Dock="Top" IsVisible="{Binding !Environment.UseNativeMenu}">
@@ -172,6 +181,12 @@
                     <MenuItem Header="Show Keyboard" Command="{Binding ViewOptions.ToggleShowKeyboard}" >
                         <MenuItem.Icon>
                             <local:CheckedIndicator IsChecked="{Binding ViewOptions.ShowKeyboard, Mode=TwoWay}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="Show DevTools" Command="{Binding DevTools.ToggleDevTools}">
+                        <MenuItem.Icon>
+                            <local:CheckedIndicator IsChecked="{Binding DevTools.ShowDevTools}" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
@@ -299,9 +314,9 @@
                 </MenuItem>
             </Menu>
 
-            <local:ToolBarUserControl DockPanel.Dock="Top"
+            <local:EmulatorToolBarUserControl DockPanel.Dock="Top"
                 IsVisible="{Binding ViewOptions.ShowToolbar}" />
-            <local:StatusBarUserControl DockPanel.Dock="Bottom" 
+            <local:EmulatorStatusBarUserControl DockPanel.Dock="Bottom" 
                 IsVisible="{Binding ViewOptions.ShowStatusBar}"/>
             <local:KeyboardPanel 
                 IsVisible="{Binding ViewOptions.ShowKeyboard}"
@@ -319,6 +334,4 @@
                     x:Name="SpectrumDisplay"
                     DataContext="{Binding Display}" />
         </DockPanel>
-    </Grid>
-
 </Window>
