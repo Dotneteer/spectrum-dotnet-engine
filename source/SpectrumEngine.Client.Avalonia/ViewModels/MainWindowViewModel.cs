@@ -25,7 +25,9 @@ public class MainWindowViewModel : ViewModelBase
             ShowToolbar = true,
             ShowStatusBar = true,
             ShowSiteBar = true,
-            ShowPanels = true
+            ShowPanels = true,
+            SiteBarOnLeft = true,
+            PanelsAtBottom = true
         };
         Preferences = new PreferencesViewModel();
     }

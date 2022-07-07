@@ -36,10 +36,23 @@
                         ToggleType="CheckBox"
                         IsChecked="{Binding DevTools.ShowSiteBar}" />
                     <NativeMenuItem
+                        Header="Site Bar On the Left Side"
+                        Command="{Binding DevTools.ToggleSiteBarOnLeft}"
+                        ToggleType="CheckBox"
+                        IsEnabled="{Binding DevTools.ShowSiteBar}"
+                        IsChecked="{Binding DevTools.SiteBarOnLeft}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem
                         Header="Show Panels"
                         Command="{Binding DevTools.ToggleShowPanels}"
                         ToggleType="CheckBox"
                         IsChecked="{Binding DevTools.ShowPanels}" />
+                    <NativeMenuItem
+                        Header="Panels At the Bottom"
+                        Command="{Binding DevTools.TogglePanelsAtBottom}"
+                        ToggleType="CheckBox"
+                        IsEnabled="{Binding DevTools.ShowPanels}"
+                        IsChecked="{Binding DevTools.PanelsAtBottom}" />
                 </NativeMenu>
             </NativeMenuItem>
         </NativeMenu>
@@ -53,32 +66,32 @@
             DockPanel.Dock="Bottom" 
             IsVisible="{Binding DevTools.ShowStatusBar}"/>
         <devTools:SiteBar
-            DockPanel.Dock="Left"
+            DockPanel.Dock="{Binding DevTools.SiteBarOnLeft, Converter={StaticResource SiteBarDockConverter}}"
             IsVisible="{Binding DevTools.ShowSiteBar}"
             Width="300" />
         <controls:SplitterPanel 
-            DockPanel.Dock="Left"
+            DockPanel.Dock="{Binding DevTools.SiteBarOnLeft, Converter={StaticResource SiteBarDockConverter}}"
             IsVisible="{Binding DevTools.ShowSiteBar}"
             Orientation="Horizontal"
             ResizeNext="False"
-            NegateDelta="True"
+            NegateDelta="{Binding DevTools.SiteBarOnLeft}"
             PreviousMinSize="120"
             NextMinSize="120"
             Background="{DynamicResource SiteBarBackgroundBrush}" />
         <DockPanel>
             <devTools:PanelBar
-                DockPanel.Dock="Bottom"
+                DockPanel.Dock="{Binding DevTools.PanelsAtBottom, Converter={StaticResource PanelsDockConverter}}"
                 IsVisible="{Binding DevTools.ShowPanels}"
                 Height="240" />
             <controls:SplitterPanel 
+                DockPanel.Dock="{Binding DevTools.PanelsAtBottom, Converter={StaticResource PanelsDockConverter}}"
                 IsVisible="{Binding DevTools.ShowPanels}"
                 Orientation="Vertical"
                 ResizeNext="False"
-                NegateDelta="False"
+                NegateDelta="{Binding !DevTools.PanelsAtBottom}"
                 PreviousMinSize="120"
                 NextMinSize="120"
-                Background="{DynamicResource DevsBackground}"
-                DockPanel.Dock="Bottom"/>
+                Background="{DynamicResource DevsBackground}" />
             <Panel
                 Background="{DynamicResource DevsBackground}" />
         </DockPanel>

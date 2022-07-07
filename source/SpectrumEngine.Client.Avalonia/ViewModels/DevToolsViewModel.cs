@@ -7,6 +7,8 @@ public class DevToolsViewModel: ViewModelBase
     private bool _showStatusBar;
     private bool _showSiteBar;
     private bool _showPanels;
+    private bool _siteBarOnLeft;
+    private bool _panelsAtBottom;
 
     public bool ShowDevTools
     {
@@ -37,6 +39,18 @@ public class DevToolsViewModel: ViewModelBase
         get => _showPanels;
         set => SetProperty(ref _showPanels, value);
     }
+
+    public bool SiteBarOnLeft
+    {
+        get => _siteBarOnLeft;
+        set => SetProperty(ref _siteBarOnLeft, value);
+    }
+
+    public bool PanelsAtBottom
+    {
+        get => _panelsAtBottom;
+        set => SetProperty(ref _panelsAtBottom, value);
+    }
     
     public void ToggleDevTools()
     {
@@ -58,4 +72,8 @@ public class DevToolsViewModel: ViewModelBase
     public void ToggleShowSiteBar() => ShowSiteBar = !ShowSiteBar;
 
     public void ToggleShowPanels() => ShowPanels = !ShowPanels;
+    
+    public void ToggleSiteBarOnLeft() => SiteBarOnLeft = !SiteBarOnLeft;
+
+    public void TogglePanelsAtBottom() => PanelsAtBottom = !PanelsAtBottom;
 }
