@@ -5,5 +5,66 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.SiteBar"
              Background="{DynamicResource SiteBarBackgroundBrush}">
-    <Panel />
+    
+    <UserControl.Styles>
+        <Style Selector="Expander /template/ ToggleButton#ExpanderHeader">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border x:Name="ToggleButtonBackground">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <ContentPresenter x:Name="PART_ContentPresenter"
+                                              Margin="{TemplateBinding Padding}"
+                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalContentAlignment="Center"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}" />
+                            <Border x:Name="ExpandCollapseChevronBorder"
+                                    Grid.Column="1"
+                                    Width="32"
+                                    Height="32"
+                                    Margin="0"
+                                    RenderTransformOrigin="50%,50%">
+                                <Path x:Name="ExpandCollapseChevron"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      RenderTransformOrigin="50%,50%"
+                                      Stretch="None"
+                                      Stroke="{DynamicResource ExpanderChevronForeground}"
+                                      StrokeThickness="1" />
+                                <Border.RenderTransform>
+                                    <RotateTransform />
+                                </Border.RenderTransform>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+    </UserControl.Styles>
+
+    <DockPanel>
+        <Expander
+            DockPanel.Dock="Top">
+            <Expander.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="Registers" />
+                </DataTemplate>
+            </Expander.HeaderTemplate>
+            This is Registers
+        </Expander>
+        <Expander
+            DockPanel.Dock="Top">
+            <Expander.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="ULA" />
+                </DataTemplate>
+            </Expander.HeaderTemplate>
+            This is ULA
+        </Expander>
+    </DockPanel>
 </UserControl>
