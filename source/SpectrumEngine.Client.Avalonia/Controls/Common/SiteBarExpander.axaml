@@ -28,10 +28,9 @@
     </Styles.Resources>
     
 <Style Selector="controls|SiteBarExpander">
-    <Setter Property="Background" Value="{DynamicResource ExpanderBackground}" />
+    <Setter Property="Background" Value="{DynamicResource SiteBarHeaderBackground}" />
     <Setter Property="BorderThickness" Value="{DynamicResource ExpanderBorderThickness}" />
     <Setter Property="BorderBrush" Value="{DynamicResource ExpanderBorderBrush}" />
-    <Setter Property="CornerRadius" Value="0" />
     <Setter Property="Padding" Value="0,0,12,0" />
     <Setter Property="HorizontalAlignment" Value="Stretch" />
     <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -46,7 +45,7 @@
                         HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
+                        BorderThickness="0,0,0,1"
                         Content="{TemplateBinding Header}"
                         ContentTemplate="{TemplateBinding HeaderTemplate}"
                         IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}"
@@ -55,6 +54,7 @@
                   Padding="{DynamicResource ExpanderContentPadding}"
                   Background="{DynamicResource ExpanderDropDownBackground}"
                   BorderBrush="{DynamicResource ExpanderDropDownBorderBrush}"
+                  BorderThickness="0"
                   IsVisible="{TemplateBinding IsExpanded, Mode=TwoWay}">
             <ContentPresenter x:Name="PART_ContentPresenter"
                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -81,7 +81,7 @@
                               VerticalContentAlignment="Center"
                               Background="Transparent"
                               BorderBrush="Transparent"
-                              BorderThickness="0"
+                              BorderThickness="0,0,0,1"
                               Content="{TemplateBinding Content}"
                               ContentTemplate="{TemplateBinding ContentTemplate}" />
             <Border x:Name="ExpandCollapseChevronBorder"
@@ -121,34 +121,6 @@
     <Setter Property="BorderThickness" Value="{TemplateBinding BorderThickness}" />
   </Style>
 
-  <Style Selector="controls|SiteBarExpander:not(:expanded) /template/ ToggleButton#ExpanderHeader /template/ Border#ToggleButtonBackground">
-    <Setter Property="CornerRadius" Value="{Binding $parent[Expander].CornerRadius}" />
-  </Style>
-  <Style Selector="controls|SiteBarExpander:expanded:up /template/ ToggleButton#ExpanderHeader /template/ Border#ToggleButtonBackground">
-    <Setter Property="CornerRadius" Value="{Binding $parent[Expander].CornerRadius, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
-  </Style>
-  <Style Selector="controls|SiteBarExpander:expanded:up /template/ Border#ExpanderContent">
-    <Setter Property="CornerRadius" Value="{Binding $parent[Expander].CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
-  </Style>
-  <Style Selector="controls|SiteBarExpander:expanded:down /template/ ToggleButton#ExpanderHeader /template/ Border#ToggleButtonBackground">
-    <Setter Property="CornerRadius" Value="{Binding $parent[Expander].CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
-  </Style>
-  <Style Selector="controls|SiteBarExpander:expanded:down /template/ Border#ExpanderContent">
-    <Setter Property="CornerRadius" Value="{Binding $parent[Expander].CornerRadius, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
-  </Style>
-  <Style Selector="controls|SiteBarExpander:expanded:left /template/ ToggleButton#ExpanderHeader /template/ Border#ToggleButtonBackground">
-    <Setter Property="CornerRadius" Value="{Binding $parent[Expander].CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}" />
-  </Style>
-  <Style Selector="controls|SiteBarExpander:expanded:left /template/ Border#ExpanderContent">
-    <Setter Property="CornerRadius" Value="{Binding $parent[Expander].CornerRadius, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
-  </Style>
-  <Style Selector="controls|SiteBarExpander:expanded:right /template/ ToggleButton#ExpanderHeader /template/ Border#ToggleButtonBackground">
-    <Setter Property="CornerRadius" Value="{Binding $parent[Expander].CornerRadius, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
-  </Style>
-  <Style Selector="controls|SiteBarExpander:expanded:right /template/ Border#ExpanderContent">
-    <Setter Property="CornerRadius" Value="{Binding $parent[Expander].CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}" />
-  </Style>
-
   <Style Selector="controls|SiteBarExpander:left /template/ ToggleButton#ExpanderHeader">
     <Setter Property="DockPanel.Dock" Value="Right" />
   </Style>
@@ -161,7 +133,6 @@
   <Style Selector="controls|SiteBarExpander:down /template/ ToggleButton#ExpanderHeader">
     <Setter Property="DockPanel.Dock" Value="Top" />
   </Style>
-
 
   <Style Selector="controls|SiteBarExpander:expanded /template/ ToggleButton#ExpanderHeader /template/ Border#ExpandCollapseChevronBorder">
     <Style.Animations>
@@ -197,18 +168,4 @@
   <Style Selector="controls|SiteBarExpander:down /template/ ToggleButton#ExpanderHeader /template/ Path#ExpandCollapseChevron">
     <Setter Property="Data" Value="M 0 0 L 5 5 L 0 10" />
   </Style>
-
-
-  <Style Selector="controls|SiteBarExpander:left /template/ Border#ExpanderContent">
-    <Setter Property="BorderThickness" Value="{DynamicResource ExpanderDropdownLeftBorderThickness}" />
-  </Style>
-  <Style Selector="controls|SiteBarExpander:up /template/ Border#ExpanderContent">
-    <Setter Property="BorderThickness" Value="{DynamicResource ExpanderDropdownUpBorderThickness}" />
-  </Style>
-  <Style Selector="controls|SiteBarExpander:right /template/ Border#ExpanderContent">
-    <Setter Property="BorderThickness" Value="{DynamicResource ExpanderDropdownRightBorderThickness}" />
-  </Style>
-  <Style Selector="controls|SiteBarExpander:down /template/ Border#ExpanderContent">
-    <Setter Property="BorderThickness" Value="{DynamicResource ExpanderDropdownDownBorderThickness}" />
-  </Style>    
 </Styles>

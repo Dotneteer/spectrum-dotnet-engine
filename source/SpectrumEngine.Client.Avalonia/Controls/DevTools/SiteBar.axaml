@@ -22,6 +22,7 @@
             IsVisible="{Binding SiteBar.ShowCpu}"
             Grid.Row="0"
             Header="CPU"
+            BorderThickness="0,0,0,1"
             PropertyChanged="OnCpuPropertyChanged">
             This is Registers
         </common:SiteBarExpander>

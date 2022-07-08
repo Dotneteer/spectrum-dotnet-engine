@@ -3,4 +3,14 @@
     <Style Selector="Menu">
         <Setter Property="Background" Value="{DynamicResource MenuBackground}" />
     </Style>
-</Styles>
+    
+    <Style Selector=":is(Button)">
+        <Setter Property="FocusAdorner">
+            <FocusAdornerTemplate>
+                <Border BorderThickness="1"
+                        BorderBrush="{DynamicResource FocusHighlightBrush}"
+                        CornerRadius="0"
+                        Padding="0"/>
+            </FocusAdornerTemplate>
+        </Setter>
+    </Style></Styles>

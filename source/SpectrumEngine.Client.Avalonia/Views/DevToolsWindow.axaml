@@ -15,6 +15,10 @@
         <viewModels:MainWindowViewModel/>
     </Design.DataContext>
 
+    <Window.Styles>
+        <StyleInclude Source="/Styles/Themes/Styles.axaml" />
+    </Window.Styles>
+
     <NativeMenu.Menu>
         <NativeMenu>
             <NativeMenuItem Header="DevTools">

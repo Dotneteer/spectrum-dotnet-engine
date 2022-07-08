@@ -49,8 +49,10 @@
         <SolidColorBrush x:Key="KeyboardBackgroundBrush" Color="{DynamicResource MenuGray}"/>
         <SolidColorBrush x:Key="MainButtonTextBrush" Color="{StaticResource MainButtonTextColor}"/>
         <SolidColorBrush x:Key="KeyTextHighlightBrush" Color="{StaticResource HighlightColor}"/>
+        <SolidColorBrush x:Key="FocusHighlightBrush" Color="{StaticResource HighlightColor}"/>
         <SolidColorBrush x:Key="KeyTextHighlightPressedBrush" Color="{StaticResource HighlightPressedColor}"/>
         <SolidColorBrush x:Key="KeyBackgroundBrush" Color="{StaticResource KeyBackgroundColor}"/>
         <SolidColorBrush x:Key="DevsBackground" Color="{DynamicResource DarkGray}"/>
+        <SolidColorBrush x:Key="SiteBarHeaderBackground" Color="{DynamicResource SiteBarGrey}"/>
     </Styles.Resources>
 </Styles>
