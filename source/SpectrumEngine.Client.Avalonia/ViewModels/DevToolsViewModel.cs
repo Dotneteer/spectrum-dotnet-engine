@@ -10,6 +10,26 @@ public class DevToolsViewModel: ViewModelBase
     private bool _siteBarOnLeft;
     private bool _panelsAtBottom;
 
+    public DevToolsViewModel()
+    {
+        SiteBar = new SiteBarViewModel
+        {
+            ShowCpu = true,
+            ShowUla = true,
+            ShowBreakpoints = true
+        };
+        SiteBar.OnPanelVisibilityChanged += (_, _) =>
+        {
+            if (!SiteBar.ShowCpu && !SiteBar.ShowUla && !SiteBar.ShowBreakpoints)
+            {
+                ShowSiteBar = false;
+                return;
+            }
+            if (!ShowSiteBar) ShowSiteBar = true;
+        };
+    }
+    public SiteBarViewModel SiteBar { get; }
+    
     public bool ShowDevTools
     {
         get => _showDevTools;

@@ -2,69 +2,42 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:common="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.Common"
+             xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.SiteBar"
              Background="{DynamicResource SiteBarBackgroundBrush}">
     
-    <UserControl.Styles>
-        <Style Selector="Expander /template/ ToggleButton#ExpanderHeader">
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="Template">
-                <ControlTemplate>
-                    <Border x:Name="ToggleButtonBackground">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <ContentPresenter x:Name="PART_ContentPresenter"
-                                              Margin="{TemplateBinding Padding}"
-                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalContentAlignment="Center"
-                                              Background="Transparent"
-                                              BorderBrush="Transparent"
-                                              BorderThickness="0"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}" />
-                            <Border x:Name="ExpandCollapseChevronBorder"
-                                    Grid.Column="1"
-                                    Width="32"
-                                    Height="32"
-                                    Margin="0"
-                                    RenderTransformOrigin="50%,50%">
-                                <Path x:Name="ExpandCollapseChevron"
-                                      HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"
-                                      RenderTransformOrigin="50%,50%"
-                                      Stretch="None"
-                                      Stroke="{DynamicResource ExpanderChevronForeground}"
-                                      StrokeThickness="1" />
-                                <Border.RenderTransform>
-                                    <RotateTransform />
-                                </Border.RenderTransform>
-                            </Border>
-                        </Grid>
-                    </Border>
-                </ControlTemplate>
-            </Setter>
-        </Style>
-    </UserControl.Styles>
-
-    <DockPanel>
-        <Expander
-            DockPanel.Dock="Top">
-            <Expander.HeaderTemplate>
-                <DataTemplate>
-                    <TextBlock Text="Registers" />
-                </DataTemplate>
-            </Expander.HeaderTemplate>
+    <Design.DataContext>
+        <viewModels:DevToolsViewModel/>
+    </Design.DataContext>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{Binding SiteBar.CpuHeight}" />
+            <RowDefinition Height="{Binding SiteBar.UlaHeight}" />
+            <RowDefinition Height="{Binding SiteBar.BreakpointsHeight}" />
+        </Grid.RowDefinitions>
+        <common:SiteBarExpander
+            IsVisible="{Binding SiteBar.ShowCpu}"
+            Grid.Row="0"
+            Header="CPU"
+            PropertyChanged="OnCpuPropertyChanged">
             This is Registers
-        </Expander>
-        <Expander
-            DockPanel.Dock="Top">
-            <Expander.HeaderTemplate>
-                <DataTemplate>
-                    <TextBlock Text="ULA" />
-                </DataTemplate>
-            </Expander.HeaderTemplate>
+        </common:SiteBarExpander>
+        <common:SiteBarExpander
+            Grid.Row="1"
+            IsVisible="{Binding SiteBar.ShowUla}"
+            Header="ULA"
+            PropertyChanged="OnUlaPropertyChanged">
             This is ULA
-        </Expander>
-    </DockPanel>
+        </common:SiteBarExpander>
+        <common:SiteBarExpander
+            Grid.Row="2"
+            IsVisible="{Binding SiteBar.ShowBreakpoints}"
+            Header="Breakpoints"
+            PropertyChanged="OnBreakpointsPropertyChanged">
+            This is Breakpoints
+        </common:SiteBarExpander>
+    </Grid>        
 </UserControl>

@@ -43,6 +43,22 @@
                         IsChecked="{Binding DevTools.SiteBarOnLeft}" />
                     <NativeMenuItemSeparator />
                     <NativeMenuItem
+                        Header="Show CPU Info"
+                        Command="{Binding DevTools.SiteBar.ToggleShowCpu}"
+                        ToggleType="CheckBox"
+                        IsChecked="{Binding DevTools.SiteBar.ShowCpu}" />
+                    <NativeMenuItem
+                        Header="Show ULA Info"
+                        Command="{Binding DevTools.SiteBar.ToggleShowUla}"
+                        ToggleType="CheckBox"
+                        IsChecked="{Binding DevTools.SiteBar.ShowUla}" />
+                    <NativeMenuItem
+                        Header="Show Breakpoints Info"
+                        Command="{Binding DevTools.SiteBar.ToggleShowBreakpoints}"
+                        ToggleType="CheckBox"
+                        IsChecked="{Binding DevTools.SiteBar.ShowBreakpoints}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem
                         Header="Show Panels"
                         Command="{Binding DevTools.ToggleShowPanels}"
                         ToggleType="CheckBox"
@@ -66,8 +82,9 @@
             DockPanel.Dock="Bottom" 
             IsVisible="{Binding DevTools.ShowStatusBar}"/>
         <devTools:SiteBar
-            DockPanel.Dock="{Binding DevTools.SiteBarOnLeft, Converter={StaticResource SiteBarDockConverter}}"
-            IsVisible="{Binding DevTools.ShowSiteBar}"
+            DataContext="{Binding DevTools}"
+            DockPanel.Dock="{Binding SiteBarOnLeft, Converter={StaticResource SiteBarDockConverter}}"
+            IsVisible="{Binding ShowSiteBar}"
             Width="300" />
         <controls:SplitterPanel 
             DockPanel.Dock="{Binding DevTools.SiteBarOnLeft, Converter={StaticResource SiteBarDockConverter}}"
