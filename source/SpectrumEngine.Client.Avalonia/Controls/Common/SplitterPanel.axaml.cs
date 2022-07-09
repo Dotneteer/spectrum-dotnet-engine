@@ -10,6 +10,7 @@ namespace SpectrumEngine.Client.Avalonia.Controls;
 
 public class SplitterPanel : Thumb
 {
+    private const int KEY_RESIZE = 10;
     private ILogical? _parent; 
     private int _splitterIndex;
     private double _startSize;
@@ -72,6 +73,30 @@ public class SplitterPanel : Thumb
     {
         get => GetValue(NegateDeltaProperty);
         set => SetValue(NegateDeltaProperty, value);
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case Key.Left:
+                if (Orientation == Orientation.Horizontal) Resize(-KEY_RESIZE, _startSize);
+                e.Handled = true;
+                break;
+            case Key.Right:
+                if (Orientation == Orientation.Horizontal) Resize(KEY_RESIZE, _startSize);
+                e.Handled = true;
+                break;
+            case Key.Up:
+                if (Orientation == Orientation.Vertical) Resize(-KEY_RESIZE, _startSize);
+                e.Handled = true;
+                break;
+            case Key.Down:
+                if (Orientation == Orientation.Vertical) Resize(KEY_RESIZE, _startSize);
+                e.Handled = true;
+                break;
+        }
+        base.OnKeyDown(e);
     }
 
     protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)

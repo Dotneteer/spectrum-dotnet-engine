@@ -1,10 +1,11 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
     <Style Selector="Menu">
         <Setter Property="Background" Value="{DynamicResource MenuBackground}" />
     </Style>
     
-    <Style Selector=":is(Button)">
+    <Style Selector=":is(Button), :is(controls|SplitterPanel), :is(controls|SpectrumDisplayControl)">
         <Setter Property="FocusAdorner">
             <FocusAdornerTemplate>
                 <Border BorderThickness="1"

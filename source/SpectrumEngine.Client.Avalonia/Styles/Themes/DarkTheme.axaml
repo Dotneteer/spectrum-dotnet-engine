@@ -22,6 +22,7 @@
         <Color x:Key="IconButtonDisabledColor">#a0a0a0</Color>
         <Color x:Key="IconButtonSeparatorColor">#808080</Color>
         <Color x:Key="IconButtonCheckedBorderColor">#007acc</Color>
+        <Color x:Key="IconButtonCheckedBackgroundColor">#40007acc</Color>
         
         <Color x:Key="MachineStatusOverlayBackgroundColor">#404040</Color>
         <Color x:Key="MachineStatusOverlayForegroundColor">LimeGreen</Color>
@@ -38,6 +39,7 @@
         <SolidColorBrush x:Key="IconButtonDisabledBrush" Color="{DynamicResource IconButtonDisabledColor}"/>
         <SolidColorBrush x:Key="IconButtonSeparatorBrush" Color="{DynamicResource IconButtonSeparatorColor}"/>
         <SolidColorBrush x:Key="IconButtonCheckedBorderBrush" Color="{DynamicResource IconButtonCheckedBorderColor}"/>
+        <SolidColorBrush x:Key="IconButtonCheckedBackground" Color="{ DynamicResource IconButtonCheckedBackgroundColor}"/>
         <SolidColorBrush x:Key="StatusBarBackgroundBrush" Color="{DynamicResource HighlightColor}"/>
         <SolidColorBrush x:Key="StatusBarForegroundBrush" Color="{DynamicResource StatusBarForegroundColor}"/>
         <SolidColorBrush x:Key="MachineStatusOverlayBackgroundBrush" Color="{DynamicResource MachineStatusOverlayBackgroundColor}"/>

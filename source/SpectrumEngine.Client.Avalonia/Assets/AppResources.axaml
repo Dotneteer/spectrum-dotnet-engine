@@ -4,6 +4,7 @@
                     xmlns:devTools="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools">
     
     <controls:IconButtonBorderBrushConverter x:Key="IconButtonBorderBrushConverter" /> 
+    <controls:IconButtonBackgroundConverter x:Key="IconButtonBackgroundConverter" /> 
     <controls:MachineStateOverlayVisibilityConverter x:Key="MachineStateOverlayVisibilityConverter" />
     <controls:TapeModeVisibilityConverter x:Key="TapeModeVisibilityConverter" />
     <controls:ClockMultiplierConverter x:Key="ClockMultiplierConverter" />

@@ -19,7 +19,7 @@
             <ControlTemplate>
                 <Border
                     IsEnabled="{TemplateBinding IsEnabled}"
-                    Background="{TemplateBinding Background}"
+                    Background="{TemplateBinding IsChecked, Converter={StaticResource IconButtonBackgroundConverter}}"
                     BorderBrush="{TemplateBinding IsChecked, Converter={StaticResource IconButtonBorderBrushConverter}}"
                     BorderThickness="1"
                     VerticalAlignment="Center"
