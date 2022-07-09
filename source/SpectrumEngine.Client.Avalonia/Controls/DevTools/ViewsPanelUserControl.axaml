@@ -13,7 +13,9 @@
 
     <Grid>
         <TabControl VerticalAlignment="Stretch">
-            <TabItem Header="Memory">
+            <TabItem
+                Header="Memory"
+                IsVisible="{Binding Views.ShowMemory}">
                 <TabItem.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Move to Right" />
@@ -21,10 +23,14 @@
                 </TabItem.ContextMenu>
                 <devTools:MemoryViewPanel />
             </TabItem>
-            <TabItem Header="Disassembly">
+            <TabItem 
+                Header="Disassembly"
+                IsVisible="{Binding Views.ShowDisassembly}">
                 <devTools:DisassemblyViewPanel />
             </TabItem>
-            <TabItem Header="Watch">
+            <TabItem
+                Header="Watch"
+                IsVisible="{Binding Views.ShowWatch}">
                 <devTools:WatchViewPanel />
             </TabItem>
         </TabControl>

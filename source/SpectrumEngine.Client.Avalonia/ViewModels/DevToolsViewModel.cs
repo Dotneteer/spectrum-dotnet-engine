@@ -27,8 +27,19 @@ public class DevToolsViewModel: ViewModelBase
             }
             if (!ShowSiteBar) ShowSiteBar = true;
         };
+        Views = new ViewsPanelViewModel
+        {
+            ShowMemory = true,
+            ShowDisassembly = true,
+            ShowWatch = false,
+            MemoryOnLeft = true,
+            DisassemblyOnLeft = true,
+            WatchOnLeft = true
+        };
     }
     public SiteBarViewModel SiteBar { get; }
+    
+    public ViewsPanelViewModel Views { get; }
     
     public bool ShowDevTools
     {
