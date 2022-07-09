@@ -63,12 +63,12 @@
                         IsChecked="{Binding DevTools.SiteBar.ShowBreakpoints}" />
                     <NativeMenuItemSeparator />
                     <NativeMenuItem
-                        Header="Show Panels"
+                        Header="Show Tool Panels"
                         Command="{Binding DevTools.ToggleShowPanels}"
                         ToggleType="CheckBox"
                         IsChecked="{Binding DevTools.ShowPanels}" />
                     <NativeMenuItem
-                        Header="Panels At the Bottom"
+                        Header="Tool Panels At the Bottom"
                         Command="{Binding DevTools.TogglePanelsAtBottom}"
                         ToggleType="CheckBox"
                         IsEnabled="{Binding DevTools.ShowPanels}"
@@ -138,14 +138,14 @@
                     </MenuItem>
                     <Separator />
                     <MenuItem
-                        Header="Show Panels" 
+                        Header="Show Tool Panels" 
                         Command="{Binding DevTools.ToggleShowPanels}">
                         <MenuItem.Icon>
                             <controls:CheckedIndicator IsChecked="{Binding DevTools.ShowPanels}" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem
-                        Header="Panels At the Bottom" 
+                        Header="Tool Panels At the Bottom" 
                         Command="{Binding DevTools.TogglePanelsAtBottom}"
                         IsEnabled="{Binding DevTools.ShowPanels}">
                         <MenuItem.Icon>
@@ -175,9 +175,10 @@
             NextMinSize="120"
             Background="{DynamicResource SiteBarBackgroundBrush}" />
         <DockPanel>
-            <devTools:PanelBar
-                DockPanel.Dock="{Binding DevTools.PanelsAtBottom, Converter={StaticResource PanelsDockConverter}}"
-                IsVisible="{Binding DevTools.ShowPanels}"
+            <devTools:ToolsPanelUserControl
+                DataContext="{Binding DevTools}"
+                DockPanel.Dock="{Binding PanelsAtBottom, Converter={StaticResource PanelsDockConverter}}"
+                IsVisible="{Binding ShowPanels}"
                 Height="240" />
             <controls:SplitterPanel 
                 DockPanel.Dock="{Binding DevTools.PanelsAtBottom, Converter={StaticResource PanelsDockConverter}}"
@@ -188,8 +189,7 @@
                 PreviousMinSize="120"
                 NextMinSize="120"
                 Background="{DynamicResource DevsBackground}" />
-            <Panel
-                Background="{DynamicResource DevsBackground}" />
+            <devTools:ViewsPanelUserControl />
         </DockPanel>
     </DockPanel>
 </Window>

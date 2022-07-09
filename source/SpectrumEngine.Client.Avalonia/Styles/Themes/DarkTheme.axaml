@@ -29,7 +29,11 @@
         
         <Color x:Key="MainButtonTextColor">#F0F0F0</Color>
         <Color x:Key="KeyBackgroundColor">#808080</Color>
-        
+
+        <Color x:Key="ToolTabInactiveColor">#a0a0a0</Color>
+        <Color x:Key="ToolTabActiveColor">#f0f0f0</Color>
+        <Color x:Key="ToolTabPipeColor">#f0f0f0</Color>
+
         <SolidColorBrush x:Key="AppBackground" Color="{DynamicResource DarkGray}"/>
         <SolidColorBrush x:Key="MenuText" Color="{DynamicResource TextGray}"/>
         <SolidColorBrush x:Key="MenuBackground" Color="{DynamicResource MenuGray}"/>
@@ -56,5 +60,8 @@
         <SolidColorBrush x:Key="KeyBackgroundBrush" Color="{StaticResource KeyBackgroundColor}"/>
         <SolidColorBrush x:Key="DevsBackground" Color="{DynamicResource DarkGray}"/>
         <SolidColorBrush x:Key="SiteBarHeaderBackground" Color="{DynamicResource SiteBarGrey}"/>
+        
+        <SolidColorBrush x:Key="ToolTabActiveBrush" Color="{DynamicResource ToolTabActiveColor}"/>
+        <SolidColorBrush x:Key="ToolTabInactiveBrush" Color="{DynamicResource ToolTabInactiveColor}"/>
     </Styles.Resources>
 </Styles>

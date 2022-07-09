@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
+             xmlns:devTools="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.ToolsPanelUserControl"
+             Background="{DynamicResource DevsBackground}"
+             VerticalAlignment="Stretch">
+    
+    <Design.DataContext>
+        <viewModels:DevToolsViewModel/>
+    </Design.DataContext>
+
+    <DockPanel VerticalAlignment="Stretch">
+        <Border
+            DockPanel.Dock="Top"
+            IsVisible="{Binding PanelsAtBottom}"
+            BorderThickness="0,1,0,0"
+            Height="2"
+            BorderBrush="gray" 
+            HorizontalAlignment="Stretch" />
+        <Border
+            DockPanel.Dock="Bottom"
+            IsVisible="{Binding !PanelsAtBottom}"
+            BorderThickness="0,0,0,1"
+            Height="2"
+            BorderBrush="gray" 
+            HorizontalAlignment="Stretch" />
+        <TabControl VerticalAlignment="Stretch">
+            <TabItem Header="Console Output">
+                <devTools:OutputPanel />
+            </TabItem>
+            <TabItem Header="Interactive Commands">
+                <devTools:CommandsPanel />
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</UserControl>

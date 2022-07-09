@@ -1,10 +1,33 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
+    
+    <Styles.Resources>
+        <x:Double x:Key="TabItemPipeThickness">2</x:Double>
+        <CornerRadius x:Key="ControlCornerRadius">0</CornerRadius>
+        <SolidColorBrush x:Key="TabItemHeaderSelectedPipeFill" Color="{DynamicResource ToolTabPipeColor}"/>
+        <SolidColorBrush x:Key="TabItemHeaderForegroundSelected" Color="{DynamicResource ToolTabActiveColor}"/>
+        <SolidColorBrush x:Key="TabItemHeaderForegroundUnselectedPointerOver" Color="{DynamicResource ToolTabActiveColor}"/>
+        <SolidColorBrush x:Key="TabItemHeaderForegroundSelectedPointerOver" Color="{DynamicResource ToolTabActiveColor}"/>
+    </Styles.Resources>
+    
     <Style Selector="Menu">
         <Setter Property="Background" Value="{DynamicResource MenuBackground}" />
     </Style>
-    
+
+    <Style Selector="TabControl WrapPanel">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="TabItem">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="MinHeight" Value="28"/>
+        <Setter Property="Height" Value="36"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="{DynamicResource ToolTabInactiveBrush}"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Padding" Value="12 0"/>
+    </Style>
+
     <Style Selector=":is(Button), :is(controls|SplitterPanel), :is(controls|SpectrumDisplayControl)">
         <Setter Property="FocusAdorner">
             <FocusAdornerTemplate>
@@ -14,4 +37,6 @@
                         Padding="0"/>
             </FocusAdornerTemplate>
         </Setter>
-    </Style></Styles>
+    </Style>
+    
+</Styles>
