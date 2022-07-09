@@ -9,6 +9,6 @@
     <controls:TapeModeVisibilityConverter x:Key="TapeModeVisibilityConverter" />
     <controls:ClockMultiplierConverter x:Key="ClockMultiplierConverter" />
     <controls:FixedDecimalConverter x:Key="FixedDecimalConverter" />
-    <devTools:SiteBarDockConverter x:Key="SiteBarDockConverter" />
+    <devTools:VerticalDockConverter x:Key="VerticalDockConverter" />
     <devTools:PanelsDockConverter x:Key="PanelsDockConverter" />
 </ResourceDictionary>

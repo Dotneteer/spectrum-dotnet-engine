@@ -116,7 +116,14 @@ public class SplitterPanel : Thumb
         base.OnAttachedToLogicalTree(e);
         _parent = this.GetLogicalParent();
         if (_parent == null) return;
-        _splitterIndex = _parent.GetLogicalChildren().Count() - 1 ;
+        var children = _parent.GetLogicalChildren().ToArray();
+        for (var i = 0; i < children.Length; i++)
+        {
+            if (children[i] is SplitterPanel)
+            {
+                _splitterIndex = i;
+            }
+        }
     }
 
     protected override void OnDragStarted(VectorEventArgs e)

@@ -86,7 +86,7 @@
                                 IsChecked="{Binding DevTools.Views.ShowDisassembly}" />
                             <NativeMenuItem
                                 Header="Disassembly View On the Left"
-                                Command="{Binding DevTools.Views.ToggleDisassemblyOnLeft}"
+                                Command="{Binding DevTools.Views.ToggleDismOnLeft}"
                                 ToggleType="CheckBox"
                                 IsChecked="{Binding DevTools.Views.DisassemblyOnLeft}" />
                             <NativeMenuItemSeparator />
@@ -208,11 +208,11 @@
             IsVisible="{Binding DevTools.ShowStatusBar}"/>
         <devTools:SiteBar
             DataContext="{Binding DevTools}"
-            DockPanel.Dock="{Binding SiteBarOnLeft, Converter={StaticResource SiteBarDockConverter}}"
+            DockPanel.Dock="{Binding SiteBarOnLeft, Converter={StaticResource VerticalDockConverter}}"
             IsVisible="{Binding ShowSiteBar}"
             Width="300" />
         <controls:SplitterPanel 
-            DockPanel.Dock="{Binding DevTools.SiteBarOnLeft, Converter={StaticResource SiteBarDockConverter}}"
+            DockPanel.Dock="{Binding DevTools.SiteBarOnLeft, Converter={StaticResource VerticalDockConverter}}"
             IsVisible="{Binding DevTools.ShowSiteBar}"
             Orientation="Horizontal"
             ResizeNext="False"

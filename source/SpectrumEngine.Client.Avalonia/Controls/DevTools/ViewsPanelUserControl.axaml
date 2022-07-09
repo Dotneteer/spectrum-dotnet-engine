@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
              xmlns:devTools="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools"
+             xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.ViewsPanelUserControl"
              Background="{DynamicResource DevsBackground}">
@@ -11,28 +12,58 @@
         <viewModels:DevToolsViewModel/>
     </Design.DataContext>
 
-    <Grid>
-        <TabControl VerticalAlignment="Stretch">
+    <DockPanel>
+        <TabControl
+            DockPanel.Dock="Left"
+            IsVisible="{Binding Views.LeftVisible}"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            Background="Blue">
             <TabItem
                 Header="Memory"
-                IsVisible="{Binding Views.ShowMemory}">
-                <TabItem.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Move to Right" />
-                    </ContextMenu>
-                </TabItem.ContextMenu>
+                IsVisible="{Binding Views.MemoryVisibleOnLeft}">
                 <devTools:MemoryViewPanel />
             </TabItem>
             <TabItem 
                 Header="Disassembly"
-                IsVisible="{Binding Views.ShowDisassembly}">
+                IsVisible="{Binding Views.DisassemblyVisibleOnLeft}">
                 <devTools:DisassemblyViewPanel />
             </TabItem>
             <TabItem
                 Header="Watch"
-                IsVisible="{Binding Views.ShowWatch}">
+                IsVisible="{Binding Views.WatchVisibleOnLeft}">
                 <devTools:WatchViewPanel />
             </TabItem>
         </TabControl>
-    </Grid>
+        <controls:SplitterPanel 
+            DockPanel.Dock="{Binding Views.LeftVisible, Converter={StaticResource VerticalDockConverter}}"
+            IsVisible="{Binding Views.BothVisible}"
+            Orientation="Horizontal"
+            ResizeNext="False"
+            NegateDelta="{Binding Views.BothVisible}"
+            PreviousMinSize="120"
+            NextMinSize="120"
+            Background="{DynamicResource SiteBarBackgroundBrush}" />
+        <TabControl
+            IsVisible="{Binding Views.RightVisible}"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            Background="Green">
+            <TabItem
+                Header="Memory"
+                IsVisible="{Binding Views.MemoryVisibleOnRight}">
+                <devTools:MemoryViewPanel />
+            </TabItem>
+            <TabItem 
+                Header="Disassembly"
+                IsVisible="{Binding Views.DisassemblyVisibleOnRight}">
+                <devTools:DisassemblyViewPanel />
+            </TabItem>
+            <TabItem
+                Header="Watch"
+                IsVisible="{Binding Views.WatchVisibleOnRight}">
+                <devTools:WatchViewPanel />
+            </TabItem>
+        </TabControl>
+    </DockPanel>
 </UserControl>
