@@ -18,7 +18,7 @@ public class DevToolsViewModel: ViewModelBase
             ShowUla = true,
             ShowBreakpoints = true
         };
-        SiteBar.OnPanelVisibilityChanged += (_, _) =>
+        SiteBar.OnPanelGotVisible += (_, _) =>
         {
             if (!SiteBar.ShowCpu && !SiteBar.ShowUla && !SiteBar.ShowBreakpoints)
             {

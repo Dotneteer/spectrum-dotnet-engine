@@ -79,6 +79,81 @@
     </NativeMenu.Menu>
     
     <DockPanel>
+        
+        <!-- Use this menu on Windows -->
+        <Menu DockPanel.Dock="Top" IsVisible="{Binding !Environment.UseNativeMenu}">
+                <MenuItem Header="View">
+                    <MenuItem 
+                        Header="Show Toolbar" 
+                        Command="{Binding DevTools.ToggleShowToolbar}">
+                        <MenuItem.Icon>
+                            <controls:CheckedIndicator IsChecked="{Binding DevTools.ShowToolbar}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem 
+                        Header="Show Status Bar" 
+                        Command="{Binding DevTools.ToggleShowStatusBar}">
+                        <MenuItem.Icon>
+                            <controls:CheckedIndicator IsChecked="{Binding DevTools.ShowStatusBar}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem 
+                        Header="Show Site bar" 
+                        Command="{Binding DevTools.ToggleShowSiteBar}" >
+                        <MenuItem.Icon>
+                            <controls:CheckedIndicator IsChecked="{Binding DevTools.ShowSiteBar}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem 
+                        Header="Side Bar On the Left Side" 
+                        Command="{Binding DevTools.ToggleSiteBarOnLeft}"
+                        IsEnabled="{Binding DevTools.ShowSiteBar}">
+                        <MenuItem.Icon>
+                            <controls:CheckedIndicator IsChecked="{Binding DevTools.SiteBarOnLeft}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem 
+                        Header="Show CPU Info" 
+                        Command="{Binding DevTools.SiteBar.ToggleShowCpu}">
+                        <MenuItem.Icon>
+                            <controls:CheckedIndicator IsChecked="{Binding DevTools.SiteBar.ShowCpu}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem 
+                        Header="Show ULA Info" 
+                        Command="{Binding DevTools.SiteBar.ToggleShowUla}">
+                        <MenuItem.Icon>
+                            <controls:CheckedIndicator IsChecked="{Binding DevTools.SiteBar.ShowUla}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem 
+                        Header="Show Breakpoints Info" 
+                        Command="{Binding DevTools.SiteBar.ToggleShowBreakpoints}">
+                        <MenuItem.Icon>
+                            <controls:CheckedIndicator IsChecked="{Binding DevTools.SiteBar.ShowBreakpoints}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem
+                        Header="Show Panels" 
+                        Command="{Binding DevTools.ToggleShowPanels}">
+                        <MenuItem.Icon>
+                            <controls:CheckedIndicator IsChecked="{Binding DevTools.ShowPanels}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem
+                        Header="Panels At the Bottom" 
+                        Command="{Binding DevTools.TogglePanelsAtBottom}"
+                        IsEnabled="{Binding DevTools.ShowPanels}">
+                        <MenuItem.Icon>
+                            <controls:CheckedIndicator IsChecked="{Binding DevTools.PanelsAtBottom}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
         <controls:DevsToolBarUserControl
             DockPanel.Dock="Top"
             IsVisible="{Binding DevTools.ShowToolbar}" />

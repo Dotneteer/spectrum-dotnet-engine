@@ -19,7 +19,7 @@ public class SiteBarViewModel: ViewModelBase
         {
             SetProperty(ref _showCpu, value);
             RaisePropertyChanged(nameof(CpuHeight));
-            OnPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            if (value) OnPanelGotVisible?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -30,7 +30,7 @@ public class SiteBarViewModel: ViewModelBase
         {
             SetProperty(ref _showUla, value);
             RaisePropertyChanged(nameof(UlaHeight));
-            OnPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            if (value) OnPanelGotVisible?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -41,7 +41,7 @@ public class SiteBarViewModel: ViewModelBase
         {
             SetProperty(ref _showBreakpoints, value);
             RaisePropertyChanged(nameof(BreakpointsHeight));
-            OnPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            if (value) OnPanelGotVisible?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -93,5 +93,5 @@ public class SiteBarViewModel: ViewModelBase
     
     public void ToggleShowBreakpoints() => ShowBreakpoints = !ShowBreakpoints;
 
-    public event EventHandler? OnPanelVisibilityChanged;
+    public event EventHandler? OnPanelGotVisible;
 }
