@@ -24,6 +24,11 @@
             <NativeMenuItem Header="DevTools">
                 <NativeMenu>
                     <NativeMenuItem
+                        Header="Show Menu Bar"
+                        Command="{Binding DevTools.ToggleShowMenuBar}"
+                        ToggleType="CheckBox"
+                        IsChecked="{Binding DevTools.ShowMenuBar}" />
+                    <NativeMenuItem
                         Header="Show Toolbar"
                         Command="{Binding DevTools.ToggleShowToolbar}"
                         ToggleType="CheckBox"
@@ -108,7 +113,7 @@
     <DockPanel>
         
         <!-- Use this menu on Windows -->
-        <Menu DockPanel.Dock="Top" IsVisible="{Binding !Environment.UseNativeMenu}">
+        <Menu DockPanel.Dock="Top" IsVisible="{Binding DevTools.ShouldDisplayMenu}">
                 <MenuItem Header="DevTools">
                     <MenuItem 
                         Header="Show Toolbar" 

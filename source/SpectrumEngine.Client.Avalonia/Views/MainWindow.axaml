@@ -34,6 +34,11 @@
             <NativeMenuItem Header="View">
                 <NativeMenu>
                     <NativeMenuItem
+                        Header="Show Menu Bar"
+                        Command="{Binding ViewOptions.ToggleShowMenuBar}"
+                        ToggleType="CheckBox"
+                        IsChecked="{Binding ViewOptions.ShowMenuBar}" />
+                    <NativeMenuItem
                         Header="Show Toolbar"
                         Command="{Binding ViewOptions.ToggleShowToolbar}"
                         ToggleType="CheckBox"
@@ -161,7 +166,7 @@
     <DockPanel>
             
             <!-- Use this menu on Windows -->
-            <Menu DockPanel.Dock="Top" IsVisible="{Binding !Environment.UseNativeMenu}">
+            <Menu DockPanel.Dock="Top" IsVisible="{Binding ViewOptions.ShouldDisplayMenu}">
                 <MenuItem Header="File">
                     <MenuItem Header="Exit" Click="OnClickClose" />
                     <MenuItem Header="About" />

@@ -10,17 +10,18 @@ public class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel()
     {
         Environment = new EnvironmentViewModel();
-        ViewOptions = new ViewOptionsViewModel();
         Machine = new MachineViewModel(this);
-        ViewOptions = new ViewOptionsViewModel
+        ViewOptions = new ViewOptionsViewModel(Environment)
         {
+            ShowMenuBar = true,
             ShowToolbar = true,
             ShowStatusBar = true,
             ShowKeyboard = false,
             IsMuted = false
         };
-        DevTools = new DevToolsViewModel
+        DevTools = new DevToolsViewModel(Environment)
         {
+            ShowMenuBar = true,
             ShowDevTools = false,
             ShowToolbar = true,
             ShowStatusBar = true,
