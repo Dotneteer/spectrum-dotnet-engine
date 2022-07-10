@@ -1,0 +1,171 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls.Common">
+    <Design.PreviewWith>
+        <controls:SiteBarExpander Height="100" Header="CPU"/>
+    </Design.PreviewWith>
+
+    <Styles.Resources>
+        <Thickness x:Key="ExpanderHeaderPadding">16</Thickness>
+        <Thickness x:Key="ExpanderContentPadding">16</Thickness>
+
+        <Thickness x:Key="ExpanderBorderThickness">1</Thickness>
+
+        <Thickness x:Key="ExpanderDropdownLeftBorderThickness">1,1,0,1</Thickness>
+        <Thickness x:Key="ExpanderDropdownUpBorderThickness">1,1,1,0</Thickness>
+        <Thickness x:Key="ExpanderDropdownRightBorderThickness">0,1,1,1</Thickness>
+        <Thickness x:Key="ExpanderDropdownDownBorderThickness">1,0,1,1</Thickness>
+
+        <SolidColorBrush x:Key="ExpanderBackground" Color="{DynamicResource SystemAltMediumHighColor}" />
+        <SolidColorBrush x:Key="ExpanderBorderBrush" Color="{DynamicResource SystemBaseLowColor}" />
+
+        <SolidColorBrush x:Key="ExpanderDropDownBackground" Color="{DynamicResource SystemChromeMediumLowColor}" />
+        <SolidColorBrush x:Key="ExpanderDropDownBorderBrush" Color="{DynamicResource SystemBaseLowColor}" />
+
+        <SolidColorBrush x:Key="ExpanderForeground" Color="{DynamicResource SystemBaseHighColor}" />
+
+        <SolidColorBrush x:Key="ExpanderChevronForeground" Color="{DynamicResource SystemBaseHighColor}" />
+    </Styles.Resources>
+    
+<Style Selector="controls|SiteBarExpander">
+    <Setter Property="Background" Value="{DynamicResource SiteBarHeaderBackground}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource ExpanderBorderThickness}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ExpanderBorderBrush}" />
+    <Setter Property="Padding" Value="0,0,12,0" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+  <Style Selector="controls|SiteBarExpander">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <DockPanel>
+          <ToggleButton x:Name="ExpanderHeader"
+                        Padding="{TemplateBinding Padding}"
+                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="0,0,0,1"
+                        Content="{TemplateBinding Header}"
+                        ContentTemplate="{TemplateBinding HeaderTemplate}"
+                        IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}"
+                        IsEnabled="{TemplateBinding IsEnabled}" />
+          <Border x:Name="ExpanderContent"
+                  Padding="{DynamicResource ExpanderContentPadding}"
+                  Background="{DynamicResource ExpanderDropDownBackground}"
+                  BorderBrush="{DynamicResource ExpanderDropDownBorderBrush}"
+                  BorderThickness="0"
+                  IsVisible="{TemplateBinding IsExpanded, Mode=TwoWay}">
+            <ContentPresenter x:Name="PART_ContentPresenter"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}" />
+          </Border>
+        </DockPanel>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="controls|SiteBarExpander /template/ ToggleButton#ExpanderHeader">
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border x:Name="ToggleButtonBackground">
+          <Grid ColumnDefinitions="Auto,*">
+            <ContentPresenter
+              Grid.Column="1"
+              x:Name="PART_ContentPresenter"
+                              Margin="{TemplateBinding Padding}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="Center"
+                              Background="Transparent"
+                              BorderBrush="Transparent"
+                              BorderThickness="0,0,0,1"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}" />
+            <Border x:Name="ExpandCollapseChevronBorder"
+                    Grid.Column="0"
+                    Width="28"
+                    Height="28"
+                    Margin="0"
+                    RenderTransformOrigin="50%,50%">
+              <Path x:Name="ExpandCollapseChevron"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    RenderTransformOrigin="50%,50%"
+                    Stretch="None"
+                    Stroke="{DynamicResource ExpanderChevronForeground}"
+                    StrokeThickness="1" />
+              <Border.RenderTransform>
+                <RotateTransform />
+              </Border.RenderTransform>
+            </Border>
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="controls|SiteBarExpander /template/ ToggleButton#ExpanderHeader:pressed">
+    <Setter Property="RenderTransform" Value="{x:Null}" />
+  </Style>
+
+  <Style Selector="controls|SiteBarExpander:left /template/ ToggleButton#ExpanderHeader, Expander:right /template/ ToggleButton#ExpanderHeader">
+    <Setter Property="VerticalAlignment" Value="Stretch" />
+  </Style>
+
+
+  <Style Selector="controls|SiteBarExpander /template/ ToggleButton#ExpanderHeader /template/ Border#ToggleButtonBackground">
+    <Setter Property="Background" Value="{TemplateBinding Background}" />
+    <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" />
+    <Setter Property="BorderThickness" Value="{TemplateBinding BorderThickness}" />
+  </Style>
+
+  <Style Selector="controls|SiteBarExpander:left /template/ ToggleButton#ExpanderHeader">
+    <Setter Property="DockPanel.Dock" Value="Right" />
+  </Style>
+  <Style Selector="controls|SiteBarExpander:up /template/ ToggleButton#ExpanderHeader">
+    <Setter Property="DockPanel.Dock" Value="Bottom" />
+  </Style>
+  <Style Selector="controls|SiteBarExpander:right /template/ ToggleButton#ExpanderHeader">
+    <Setter Property="DockPanel.Dock" Value="Left" />
+  </Style>
+  <Style Selector="controls|SiteBarExpander:down /template/ ToggleButton#ExpanderHeader">
+    <Setter Property="DockPanel.Dock" Value="Top" />
+  </Style>
+
+  <Style Selector="controls|SiteBarExpander:expanded /template/ ToggleButton#ExpanderHeader /template/ Border#ExpandCollapseChevronBorder">
+    <Style.Animations>
+      <Animation FillMode="Both" Duration="0:0:0.0625">
+        <KeyFrame Cue="100%">
+          <Setter Property="RotateTransform.Angle" Value="90" />
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+  <Style Selector="controls|SiteBarExpander:not(:expanded) /template/ ToggleButton#ExpanderHeader /template/ Border#ExpandCollapseChevronBorder">
+    <Style.Animations>
+      <Animation FillMode="Both" Duration="0:0:0.0625">
+        <KeyFrame Cue="0%">
+          <Setter Property="RotateTransform.Angle" Value="180" />
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="RotateTransform.Angle" Value="0" />
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <Style Selector="controls|SiteBarExpander:left /template/ ToggleButton#ExpanderHeader /template/ Path#ExpandCollapseChevron">
+    <Setter Property="Data" Value="M 0 0 L 5 5 L 0 10" />
+  </Style>
+  <Style Selector="controls|SiteBarExpander:up /template/ ToggleButton#ExpanderHeader /template/ Path#ExpandCollapseChevron">
+    <Setter Property="Data" Value="M 0 0 L 5 5 L 0 10" />
+  </Style>
+  <Style Selector="controls|SiteBarExpander:right /template/ ToggleButton#ExpanderHeader /template/ Path#ExpandCollapseChevron">
+    <Setter Property="Data" Value="M 0 0 L 5 5 L 0 10" />
+  </Style>
+  <Style Selector="controls|SiteBarExpander:down /template/ ToggleButton#ExpanderHeader /template/ Path#ExpandCollapseChevron">
+    <Setter Property="Data" Value="M 0 0 L 5 5 L 0 10" />
+  </Style>
+</Styles>

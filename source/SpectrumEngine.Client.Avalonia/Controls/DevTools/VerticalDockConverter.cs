@@ -5,7 +5,7 @@ using Avalonia.Data.Converters;
 
 namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
-public class SiteBarDockConverter: IValueConverter
+public class VerticalDockConverter: IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {

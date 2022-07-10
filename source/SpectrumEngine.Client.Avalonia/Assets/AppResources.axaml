@@ -4,10 +4,11 @@
                     xmlns:devTools="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools">
     
     <controls:IconButtonBorderBrushConverter x:Key="IconButtonBorderBrushConverter" /> 
+    <controls:IconButtonBackgroundConverter x:Key="IconButtonBackgroundConverter" /> 
     <controls:MachineStateOverlayVisibilityConverter x:Key="MachineStateOverlayVisibilityConverter" />
     <controls:TapeModeVisibilityConverter x:Key="TapeModeVisibilityConverter" />
     <controls:ClockMultiplierConverter x:Key="ClockMultiplierConverter" />
     <controls:FixedDecimalConverter x:Key="FixedDecimalConverter" />
-    <devTools:SiteBarDockConverter x:Key="SiteBarDockConverter" />
+    <devTools:VerticalDockConverter x:Key="VerticalDockConverter" />
     <devTools:PanelsDockConverter x:Key="PanelsDockConverter" />
 </ResourceDictionary>

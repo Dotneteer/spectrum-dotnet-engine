@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
-public partial class PanelBar : UserControl
+public partial class OutputPanel : UserControl
 {
-    public PanelBar()
+    public OutputPanel()
     {
         InitializeComponent();
     }
