@@ -7,7 +7,7 @@
         xmlns:devTools="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SpectrumEngine.Client.Avalonia.Views.DevToolsWindow"
-        Title="Spectrum Engine Development Tools"
+        Title="SpectrumEngine - Development Tools"
         Closing="OnClosing"
         Closed="DevToolsClosed">
     
