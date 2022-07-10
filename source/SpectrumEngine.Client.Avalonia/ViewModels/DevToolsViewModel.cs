@@ -32,9 +32,6 @@ public class DevToolsViewModel: ViewModelBase
             ShowMemory = true,
             ShowDisassembly = true,
             ShowWatch = false,
-            MemoryOnLeft = true,
-            DisassemblyOnLeft = true,
-            WatchOnLeft = true
         };
     }
     public SiteBarViewModel SiteBar { get; }

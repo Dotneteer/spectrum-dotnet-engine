@@ -63,5 +63,8 @@
         
         <SolidColorBrush x:Key="ToolTabActiveBrush" Color="{DynamicResource ToolTabActiveColor}"/>
         <SolidColorBrush x:Key="ToolTabInactiveBrush" Color="{DynamicResource ToolTabInactiveColor}"/>
+        <SolidColorBrush x:Key="ViewTabBackgroundBrush" Color="{DynamicResource MenuGray}"/>
+        <SolidColorBrush x:Key="ViewTabInactiveBrush" Color="{DynamicResource MenuGray}"/>
+        <SolidColorBrush x:Key="ViewTabActiveBrush" Color="{DynamicResource DarkGray}"/>
     </Styles.Resources>
 </Styles>

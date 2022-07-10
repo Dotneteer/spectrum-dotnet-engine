@@ -4,66 +4,49 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
              xmlns:devTools="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools"
-             xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.ViewsPanelUserControl"
              Background="{DynamicResource DevsBackground}">
     <Design.DataContext>
         <viewModels:DevToolsViewModel/>
     </Design.DataContext>
+    
+    <UserControl.Resources>
+        <x:Double x:Key="TabItemPipeThickness">0</x:Double>
+        <CornerRadius x:Key="ControlCornerRadius">0</CornerRadius>
+        <SolidColorBrush x:Key="TabItemHeaderBackgroundSelected" Color="{DynamicResource DarkGray}"/>
+        <SolidColorBrush x:Key="TabItemHeaderBackgroundUnselected" Color="{DynamicResource MenuGray}"/>
+        <SolidColorBrush x:Key="TabItemHeaderBackgroundSelectedPointerOver" Color="{DynamicResource DarkGray}"/>
+        <SolidColorBrush x:Key="TabItemHeaderBackgroundUnselectedPointerOver" Color="{DynamicResource ManuGray}"/>
+        <SolidColorBrush x:Key="TabItemHeaderForegroundSelectedPointerOver" Color="{DynamicResource ToolTabActiveColor}"/>
+        <SolidColorBrush x:Key="TabItemHeaderForegroundSelected" Color="{DynamicResource ToolTabActiveColor}"/>
+        <SolidColorBrush x:Key="TabItemHeaderForegroundUnselectedPointerOver" Color="{DynamicResource ToolTabActiveColor}"/>
+    </UserControl.Resources>
 
-    <DockPanel>
-        <TabControl
-            DockPanel.Dock="Left"
-            IsVisible="{Binding Views.LeftVisible}"
-            VerticalAlignment="Stretch"
-            HorizontalAlignment="Stretch"
-            Background="Blue">
-            <TabItem
-                Header="Memory"
-                IsVisible="{Binding Views.MemoryVisibleOnLeft}">
-                <devTools:MemoryViewPanel />
-            </TabItem>
-            <TabItem 
-                Header="Disassembly"
-                IsVisible="{Binding Views.DisassemblyVisibleOnLeft}">
-                <devTools:DisassemblyViewPanel />
-            </TabItem>
-            <TabItem
-                Header="Watch"
-                IsVisible="{Binding Views.WatchVisibleOnLeft}">
-                <devTools:WatchViewPanel />
-            </TabItem>
-        </TabControl>
-        <controls:SplitterPanel 
-            DockPanel.Dock="{Binding Views.LeftVisible, Converter={StaticResource VerticalDockConverter}}"
-            IsVisible="{Binding Views.BothVisible}"
-            Orientation="Horizontal"
-            ResizeNext="False"
-            NegateDelta="{Binding Views.BothVisible}"
-            PreviousMinSize="120"
-            NextMinSize="120"
-            Background="{DynamicResource SiteBarBackgroundBrush}" />
-        <TabControl
-            IsVisible="{Binding Views.RightVisible}"
-            VerticalAlignment="Stretch"
-            HorizontalAlignment="Stretch"
-            Background="Green">
-            <TabItem
-                Header="Memory"
-                IsVisible="{Binding Views.MemoryVisibleOnRight}">
-                <devTools:MemoryViewPanel />
-            </TabItem>
-            <TabItem 
-                Header="Disassembly"
-                IsVisible="{Binding Views.DisassemblyVisibleOnRight}">
-                <devTools:DisassemblyViewPanel />
-            </TabItem>
-            <TabItem
-                Header="Watch"
-                IsVisible="{Binding Views.WatchVisibleOnRight}">
-                <devTools:WatchViewPanel />
-            </TabItem>
-        </TabControl>
-    </DockPanel>
+    <UserControl.Styles>
+        <Style Selector="TabControl WrapPanel">
+            <Setter Property="Background" Value="{DynamicResource ViewTabBackgroundBrush}"/>
+        </Style>
+    </UserControl.Styles>
+    
+    <TabControl
+        DockPanel.Dock="Left"
+        VerticalAlignment="Stretch"
+        HorizontalAlignment="Stretch">
+        <TabItem
+            Header="Memory"
+            IsVisible="{Binding Views.ShowMemory}">
+            <devTools:MemoryViewPanel />
+        </TabItem>
+        <TabItem 
+            Header="Disassembly"
+            IsVisible="{Binding Views.ShowDisassembly}">
+            <devTools:DisassemblyViewPanel />
+        </TabItem>
+        <TabItem
+            Header="Watch"
+            IsVisible="{Binding Views.ShowWatch}">
+            <devTools:WatchViewPanel />
+        </TabItem>
+    </TabControl>
 </UserControl>

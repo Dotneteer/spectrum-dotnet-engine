@@ -74,32 +74,15 @@
                                 ToggleType="CheckBox"
                                 IsChecked="{Binding DevTools.Views.ShowMemory}" />
                             <NativeMenuItem
-                                Header="Memory View On the Left"
-                                Command="{Binding DevTools.Views.ToggleMemoryOnLeft}"
-                                ToggleType="CheckBox"
-                                IsChecked="{Binding DevTools.Views.MemoryOnLeft}" />
-                            <NativeMenuItemSeparator />
-                            <NativeMenuItem
                                 Header="Show Disassembly View"
                                 Command="{Binding DevTools.Views.ToggleShowDisassembly}"
                                 ToggleType="CheckBox"
                                 IsChecked="{Binding DevTools.Views.ShowDisassembly}" />
                             <NativeMenuItem
-                                Header="Disassembly View On the Left"
-                                Command="{Binding DevTools.Views.ToggleDismOnLeft}"
-                                ToggleType="CheckBox"
-                                IsChecked="{Binding DevTools.Views.DisassemblyOnLeft}" />
-                            <NativeMenuItemSeparator />
-                            <NativeMenuItem
                                 Header="Show Watch View"
                                 Command="{Binding DevTools.Views.ToggleShowWatch}"
                                 ToggleType="CheckBox"
                                 IsChecked="{Binding DevTools.Views.ShowWatch}" />
-                            <NativeMenuItem
-                                Header="Watch View On the Left"
-                                Command="{Binding DevTools.Views.ToggleWatchOnLeft}"
-                                ToggleType="CheckBox"
-                                IsChecked="{Binding DevTools.Views.WatchOnLeft}" />
                         </NativeMenu>
                     </NativeMenuItem>
                     <NativeMenuItemSeparator />
