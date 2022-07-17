@@ -8,10 +8,10 @@
     
     <Design.DataContext>
         <!-- ReSharper disable once Xaml.ConstructorWarning -->
-        <viewModels:CpuPanelViewModel/>
+        <viewModels:MainWindowViewModel/>
     </Design.DataContext>
 
     <ScrollViewer>
-        <TextBlock Text="{Binding AF}" />
+        <TextBlock Text="{Binding Cpu.AF}" />
     </ScrollViewer>
 </UserControl>

@@ -92,7 +92,7 @@ public class MachineViewModel: ViewModelBase
 
     public MachineController? Controller => _mc;
 
-    public event EventHandler<(MachineController? OldController, MachineController? NewControllee)>? ControllerChanged; 
+    public event EventHandler<(MachineController? OldController, MachineController? NewController)>? ControllerChanged; 
 
     public FrameStats FrameStats
     {

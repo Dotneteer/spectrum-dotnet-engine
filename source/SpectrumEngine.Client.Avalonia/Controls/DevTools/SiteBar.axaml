@@ -28,7 +28,7 @@
             VerticalContentAlignment="Stretch"
             Padding="0"
             PropertyChanged="OnCpuPropertyChanged">
-            <devTools:CpuPanel Controller="{Binding Machine.Controller}" />
+            <devTools:CpuPanel />
         </common:SiteBarExpander>
         <common:SiteBarExpander
             Grid.Row="1"

@@ -23,6 +23,13 @@ public class MainWindowViewModel : ViewModelBase
 
         // --- Initialize the machine information
         Machine = new MachineViewModel(this);
+        Machine.ControllerChanged += (sender, tuple) =>
+        {
+            if (tuple.NewController != null)
+            {
+                Cpu = new CpuPanelViewModel(tuple.NewController);
+            }
+        };
         
         // --- Initialize view options
         EmuViewOptions = new EmuViewOptionsViewModel(this)
@@ -119,5 +126,10 @@ public class MainWindowViewModel : ViewModelBase
     /// DevTools panels view options
     /// </summary>
     public PanelsViewOptionsViewModel PanelsViewOptions { get; }
+    
+    /// <summary>
+    /// Represents the CPU's view model
+    /// </summary>
+    public CpuPanelViewModel? Cpu { get; private set; }
     
 }

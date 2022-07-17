@@ -1,5 +1,8 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Threading;
+using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 
 namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
@@ -11,56 +14,60 @@ public abstract class MachineStatusUserControl: UserControl
     public static readonly StyledProperty<int> RefreshRateProperty =
         AvaloniaProperty.Register<MachineStatusUserControl, int>(nameof(RefreshRate), 5);
 
-    public static readonly StyledProperty<MachineController> ControllerProperty =
-        AvaloniaProperty.Register<MachineStatusUserControl, MachineController>(nameof(Controller));
-
     public int RefreshRate
     {
         get => GetValue(RefreshRateProperty);
         set => SetValue(RefreshRateProperty, value);
     }
 
-    public MachineController Controller
+    protected override void OnDataContextChanged(EventArgs e)
     {
-        get => GetValue(ControllerProperty);
-        set => SetValue(ControllerProperty, value);
-    }
+        base.OnDataContextChanged(e);
+        if (DataContext is not MainWindowViewModel vm) return;
 
-    protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
-    {
-        if (change.Property != ControllerProperty) return;
-        
-        // --- Release the events of the old controller
-        if (change.OldValue.HasValue && change.OldValue.Value is MachineController oldController)
+        if (vm.Machine.Controller != null)
         {
-            oldController.FrameCompleted -= OnFrameCompleted;
-            oldController.StateChanged -= OnStateChanged;
+            vm.Machine.Controller.FrameCompleted += OnFrameCompleted;
+            vm.Machine.Controller.StateChanged += OnStateChanged;
         }
         
-        if (!change.NewValue.HasValue || change.NewValue.Value is not MachineController newController) return;
-        
-        // --- Setup the events of the new controller
-        newController.FrameCompleted += OnFrameCompleted;
-        newController.StateChanged += OnStateChanged;
-        NewControllerSet(newController);
-    }
+        // --- Respond to machine controller changes
+        vm.Machine.ControllerChanged += (sender, tuple) =>
+        {
+            var (oldController, newController) = tuple;
+            if (oldController != null)
+            {
+                oldController.FrameCompleted -= OnFrameCompleted;
+                oldController.StateChanged -= OnStateChanged;
+            }
 
-    protected abstract void NewControllerSet(MachineController controller);
+            if (newController == null) return;
+            
+            newController.FrameCompleted += OnFrameCompleted;
+            newController.StateChanged += OnStateChanged;
+        };
+    }
 
     protected abstract void RefreshPanel();
     
     private void OnStateChanged(object? sender, (MachineControllerState OldState, MachineControllerState NewState) e)
     {
-        _counter = 0;
-        RefreshPanel();
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _counter = 0;
+            RefreshPanel();
+        });
     }
 
     private void OnFrameCompleted(object? sender, bool e)
     {
-        _counter++;
-        if (RefreshRate <= 0 || _counter % RefreshRate == 0)
+        Dispatcher.UIThread.InvokeAsync(() =>
         {
-            RefreshPanel();
-        }
+            _counter++;
+            if (RefreshRate <= 0 || _counter % RefreshRate == 0)
+            {
+                RefreshPanel();
+            }
+        });
     }
 }
