@@ -12,7 +12,7 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="SpectrumEngine - ZX Spectrum 48K Emulator"
         Background="{DynamicResource AppBackground}"
-        WindowState="{Binding Environment.InitialWindowState, Mode=OneTime}"
+        WindowState="{Binding InitialWindowState, Mode=OneTime}"
         Closing="OnClosing"
         DataContextChanged="OnDataContextChanged"
         KeyUp="MainWindowOnKeyUp"
@@ -35,37 +35,37 @@
                 <NativeMenu>
                     <NativeMenuItem
                         Header="Show Menu Bar"
-                        Command="{Binding ViewOptions.ToggleShowMenuBar}"
+                        Command="{Binding EmuViewOptions.ToggleShowMenuBar}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding ViewOptions.ShowMenuBar}" />
+                        IsChecked="{Binding EmuViewOptions.ShowMenuBar}" />
                     <NativeMenuItem
                         Header="Show Toolbar"
-                        Command="{Binding ViewOptions.ToggleShowToolbar}"
+                        Command="{Binding EmuViewOptions.ToggleShowToolbar}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding ViewOptions.ShowToolbar}" />
+                        IsChecked="{Binding EmuViewOptions.ShowToolbar}" />
                     <NativeMenuItem
                         Header="Show Status Bar" 
-                        Command="{Binding ViewOptions.ToggleShowStatusBar}"
+                        Command="{Binding EmuViewOptions.ToggleShowStatusBar}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding ViewOptions.ShowStatusBar}"/>
+                        IsChecked="{Binding EmuViewOptions.ShowStatusBar}"/>
                     <NativeMenuItemSeparator />
                     <NativeMenuItem
                         Header="Show Keyboard" 
-                        Command="{Binding ViewOptions.ToggleShowKeyboard}"
+                        Command="{Binding EmuViewOptions.ToggleShowKeyboard}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding ViewOptions.ShowKeyboard, Mode=TwoWay}"/>
+                        IsChecked="{Binding EmuViewOptions.ShowKeyboard, Mode=TwoWay}"/>
                     <NativeMenuItemSeparator />
                     <NativeMenuItem 
                         Header="Show DevTools" 
-                        Command="{Binding DevTools.ToggleDevTools}"
+                        Command="{Binding DevToolsViewOptions.ToggleDevTools}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding DevTools.ShowDevTools}" />
+                        IsChecked="{Binding DevToolsViewOptions.ShowDevTools}" />
                     <NativeMenuItemSeparator />
                     <NativeMenuItem 
                         Header="Mute Sound" 
-                        Command="{Binding ViewOptions.ToggleMuted}"
+                        Command="{Binding EmuViewOptions.ToggleMuted}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding ViewOptions.IsMuted} "/>
+                        IsChecked="{Binding EmuViewOptions.IsMuted} "/>
                 </NativeMenu>
             </NativeMenuItem>
             <NativeMenuItem Header="Machine">
@@ -166,38 +166,38 @@
     <DockPanel>
             
             <!-- Use this menu on Windows -->
-            <Menu DockPanel.Dock="Top" IsVisible="{Binding ViewOptions.ShouldDisplayMenu}">
+            <Menu DockPanel.Dock="Top" IsVisible="{Binding EmuViewOptions.ShouldDisplayMenu}">
                 <MenuItem Header="File">
                     <MenuItem Header="Exit" Click="OnClickClose" />
                     <MenuItem Header="About" />
                 </MenuItem>
                 <MenuItem Header="View">
-                    <MenuItem Header="Show Toolbar" Command="{Binding ViewOptions.ToggleShowToolbar}">
+                    <MenuItem Header="Show Toolbar" Command="{Binding EmuViewOptions.ToggleShowToolbar}">
                         <MenuItem.Icon>
-                            <local:CheckedIndicator IsChecked="{Binding ViewOptions.ShowToolbar}" />
+                            <local:CheckedIndicator IsChecked="{Binding EmuViewOptions.ShowToolbar}" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="Show Status Bar" Command="{Binding ViewOptions.ToggleShowStatusBar}">
+                    <MenuItem Header="Show Status Bar" Command="{Binding EmuViewOptions.ToggleShowStatusBar}">
                         <MenuItem.Icon>
-                            <local:CheckedIndicator IsChecked="{Binding ViewOptions.ShowStatusBar}" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <Separator />
-                    <MenuItem Header="Show Keyboard" Command="{Binding ViewOptions.ToggleShowKeyboard}" >
-                        <MenuItem.Icon>
-                            <local:CheckedIndicator IsChecked="{Binding ViewOptions.ShowKeyboard, Mode=TwoWay}" />
+                            <local:CheckedIndicator IsChecked="{Binding EmuViewOptions.ShowStatusBar}" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
-                    <MenuItem Header="Show DevTools" Command="{Binding DevTools.ToggleDevTools}">
+                    <MenuItem Header="Show Keyboard" Command="{Binding EmuViewOptions.ToggleShowKeyboard}" >
                         <MenuItem.Icon>
-                            <local:CheckedIndicator IsChecked="{Binding DevTools.ShowDevTools}" />
+                            <local:CheckedIndicator IsChecked="{Binding EmuViewOptions.ShowKeyboard, Mode=TwoWay}" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
-                    <MenuItem Header="Mute Sound" Command="{Binding ViewOptions.ToggleMuted}">
+                    <MenuItem Header="Show DevTools" Command="{Binding DevToolsViewOptions.ToggleDevTools}">
                         <MenuItem.Icon>
-                            <local:CheckedIndicator IsChecked="{Binding ViewOptions.IsMuted}" />
+                            <local:CheckedIndicator IsChecked="{Binding DevToolsViewOptions.ShowDevTools}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="Mute Sound" Command="{Binding EmuViewOptions.ToggleMuted}">
+                        <MenuItem.Icon>
+                            <local:CheckedIndicator IsChecked="{Binding EmuViewOptions.IsMuted}" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
@@ -320,15 +320,15 @@
             </Menu>
 
             <local:EmulatorToolBarUserControl DockPanel.Dock="Top"
-                IsVisible="{Binding ViewOptions.ShowToolbar}" />
+                IsVisible="{Binding EmuViewOptions.ShowToolbar}" />
             <local:EmulatorStatusBarUserControl DockPanel.Dock="Bottom" 
-                IsVisible="{Binding ViewOptions.ShowStatusBar}"/>
+                IsVisible="{Binding EmuViewOptions.ShowStatusBar}"/>
             <local:KeyboardPanel 
-                IsVisible="{Binding ViewOptions.ShowKeyboard}"
+                IsVisible="{Binding EmuViewOptions.ShowKeyboard}"
                 Height="300"
                 DockPanel.Dock="Bottom" />
             <local:SplitterPanel 
-                IsVisible="{Binding ViewOptions.ShowKeyboard}"
+                IsVisible="{Binding EmuViewOptions.ShowKeyboard}"
                 Orientation="Vertical"
                 ResizeNext="False"
                 NegateDelta="False"

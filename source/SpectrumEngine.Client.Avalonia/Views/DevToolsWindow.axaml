@@ -25,68 +25,68 @@
                 <NativeMenu>
                     <NativeMenuItem
                         Header="Show Menu Bar"
-                        Command="{Binding DevTools.ToggleShowMenuBar}"
+                        Command="{Binding DevToolsViewOptions.ToggleShowMenuBar}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding DevTools.ShowMenuBar}" />
+                        IsChecked="{Binding DevToolsViewOptions.ShowMenuBar}" />
                     <NativeMenuItem
                         Header="Show Toolbar"
-                        Command="{Binding DevTools.ToggleShowToolbar}"
+                        Command="{Binding DevToolsViewOptions.ToggleShowToolbar}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding DevTools.ShowToolbar}" />
+                        IsChecked="{Binding DevToolsViewOptions.ShowToolbar}" />
                     <NativeMenuItem
                         Header="Show Status Bar" 
-                        Command="{Binding DevTools.ToggleShowStatusBar}"
+                        Command="{Binding DevToolsViewOptions.ToggleShowStatusBar}"
                         ToggleType="CheckBox"
-                        IsChecked="{Binding DevTools.ShowStatusBar}"/>
+                        IsChecked="{Binding DevToolsViewOptions.ShowStatusBar}"/>
                     <NativeMenuItemSeparator />
                     <NativeMenuItem Header="Site Bar">
                         <NativeMenu>
                             <NativeMenuItem
                                 Header="Show Site Bar"
-                                Command="{Binding DevTools.ToggleShowSiteBar}"
+                                Command="{Binding DevToolsViewOptions.ToggleShowSiteBar}"
                                 ToggleType="CheckBox"
-                                IsChecked="{Binding DevTools.ShowSiteBar}" />
+                                IsChecked="{Binding DevToolsViewOptions.ShowSiteBar}" />
                         </NativeMenu>
                         <NativeMenuItem
                             Header="Site Bar On the Left Side"
-                            Command="{Binding DevTools.ToggleSiteBarOnLeft}"
+                            Command="{Binding DevToolsViewOptions.ToggleSiteBarOnLeft}"
                             ToggleType="CheckBox"
-                            IsEnabled="{Binding DevTools.ShowSiteBar}"
-                            IsChecked="{Binding DevTools.SiteBarOnLeft}" />
+                            IsEnabled="{Binding DevToolsViewOptions.ShowSiteBar}"
+                            IsChecked="{Binding DevToolsViewOptions.SiteBarOnLeft}" />
                         <NativeMenuItemSeparator />
                         <NativeMenuItem
                             Header="Show CPU Info"
-                            Command="{Binding DevTools.SiteBar.ToggleShowCpu}"
+                            Command="{Binding SiteBarViewOptions.ToggleShowCpu}"
                             ToggleType="CheckBox"
-                            IsChecked="{Binding DevTools.SiteBar.ShowCpu}" />
+                            IsChecked="{Binding SiteBarViewOptions.ShowCpu}" />
                         <NativeMenuItem
                             Header="Show ULA Info"
-                            Command="{Binding DevTools.SiteBar.ToggleShowUla}"
+                            Command="{Binding SiteBarViewOptions.ToggleShowUla}"
                             ToggleType="CheckBox"
-                            IsChecked="{Binding DevTools.SiteBar.ShowUla}" />
+                            IsChecked="{Binding SiteBarViewOptions.ShowUla}" />
                         <NativeMenuItem
                             Header="Show Breakpoints Info"
-                            Command="{Binding DevTools.SiteBar.ToggleShowBreakpoints}"
+                            Command="{Binding SiteBarViewOptions.ToggleShowBreakpoints}"
                             ToggleType="CheckBox"
-                            IsChecked="{Binding DevTools.SiteBar.ShowBreakpoints}" />
+                            IsChecked="{Binding SiteBarViewOptions.ShowBreakpoints}" />
                     </NativeMenuItem>
                     <NativeMenuItem Header="Diagnostic Panels">
                         <NativeMenu>
                             <NativeMenuItem
                                 Header="Show Memory View"
-                                Command="{Binding DevTools.Views.ToggleShowMemory}"
+                                Command="{Binding PanelsViewOptions.ToggleShowMemory}"
                                 ToggleType="CheckBox"
-                                IsChecked="{Binding DevTools.Views.ShowMemory}" />
+                                IsChecked="{Binding PanelsViewOptions.ShowMemory}" />
                             <NativeMenuItem
                                 Header="Show Disassembly View"
-                                Command="{Binding DevTools.Views.ToggleShowDisassembly}"
+                                Command="{Binding PanelsViewOptions.ToggleShowDisassembly}"
                                 ToggleType="CheckBox"
-                                IsChecked="{Binding DevTools.Views.ShowDisassembly}" />
+                                IsChecked="{Binding PanelsViewOptions.ShowDisassembly}" />
                             <NativeMenuItem
                                 Header="Show Watch View"
-                                Command="{Binding DevTools.Views.ToggleShowWatch}"
+                                Command="{Binding PanelsViewOptions.ToggleShowWatch}"
                                 ToggleType="CheckBox"
-                                IsChecked="{Binding DevTools.Views.ShowWatch}" />
+                                IsChecked="{Binding PanelsViewOptions.ShowWatch}" />
                         </NativeMenu>
                     </NativeMenuItem>
                     <NativeMenuItem
@@ -94,15 +94,15 @@
                         <NativeMenu>
                             <NativeMenuItem
                                 Header="Show Tool Panels"
-                                Command="{Binding DevTools.ToggleShowPanels}"
+                                Command="{Binding DevToolsViewOptions.ToggleShowPanels}"
                                 ToggleType="CheckBox"
-                                IsChecked="{Binding DevTools.ShowPanels}" />
+                                IsChecked="{Binding DevToolsViewOptions.ShowPanels}" />
                             <NativeMenuItem
                                 Header="Tool Panels At the Bottom"
-                                Command="{Binding DevTools.TogglePanelsAtBottom}"
+                                Command="{Binding DevToolsViewOptions.TogglePanelsAtBottom}"
                                 ToggleType="CheckBox"
-                                IsEnabled="{Binding DevTools.ShowPanels}"
-                                IsChecked="{Binding DevTools.PanelsAtBottom}" />
+                                IsEnabled="{Binding DevToolsViewOptions.ShowPanels}"
+                                IsChecked="{Binding DevToolsViewOptions.PanelsAtBottom}" />
                         </NativeMenu>
                     </NativeMenuItem>
                 </NativeMenu>
@@ -112,99 +112,99 @@
     
     <DockPanel>
         <!-- Use this menu on Windows -->
-        <Menu DockPanel.Dock="Top" IsVisible="{Binding DevTools.ShouldDisplayMenu}">
+        <Menu DockPanel.Dock="Top" IsVisible="{Binding DevToolsViewOptions.ShouldDisplayMenu}">
                 <MenuItem Header="DevTools">
                     <MenuItem 
                         Header="Show Toolbar" 
-                        Command="{Binding DevTools.ToggleShowToolbar}">
+                        Command="{Binding DevToolsViewOptions.ToggleShowToolbar}">
                         <MenuItem.Icon>
-                            <controls:CheckedIndicator IsChecked="{Binding DevTools.ShowToolbar}" />
+                            <controls:CheckedIndicator IsChecked="{Binding DevToolsViewOptions.ShowToolbar}" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem 
                         Header="Show Status Bar" 
-                        Command="{Binding DevTools.ToggleShowStatusBar}">
+                        Command="{Binding DevToolsViewOptions.ToggleShowStatusBar}">
                         <MenuItem.Icon>
-                            <controls:CheckedIndicator IsChecked="{Binding DevTools.ShowStatusBar}" />
+                            <controls:CheckedIndicator IsChecked="{Binding DevToolsViewOptions.ShowStatusBar}" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
                     <MenuItem Header="Site Bar">
                         <MenuItem 
                             Header="Show Site bar" 
-                            Command="{Binding DevTools.ToggleShowSiteBar}" >
+                            Command="{Binding DevToolsViewOptions.ToggleShowSiteBar}" >
                             <MenuItem.Icon>
-                                <controls:CheckedIndicator IsChecked="{Binding DevTools.ShowSiteBar}" />
+                                <controls:CheckedIndicator IsChecked="{Binding DevToolsViewOptions.ShowSiteBar}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem 
                             Header="Side Bar On the Left Side" 
-                            Command="{Binding DevTools.ToggleSiteBarOnLeft}"
-                            IsEnabled="{Binding DevTools.ShowSiteBar}">
+                            Command="{Binding DevToolsViewOptions.ToggleSiteBarOnLeft}"
+                            IsEnabled="{Binding DevToolsViewOptions.ShowSiteBar}">
                             <MenuItem.Icon>
-                                <controls:CheckedIndicator IsChecked="{Binding DevTools.SiteBarOnLeft}" />
+                                <controls:CheckedIndicator IsChecked="{Binding DevToolsViewOptions.SiteBarOnLeft}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <Separator />
                         <MenuItem 
                             Header="Show CPU Info" 
-                            Command="{Binding DevTools.SiteBar.ToggleShowCpu}">
+                            Command="{Binding SiteBarViewOptions.ToggleShowCpu}">
                             <MenuItem.Icon>
-                                <controls:CheckedIndicator IsChecked="{Binding DevTools.SiteBar.ShowCpu}" />
+                                <controls:CheckedIndicator IsChecked="{Binding SiteBarViewOptions.ShowCpu}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem 
                             Header="Show ULA Info" 
-                            Command="{Binding DevTools.SiteBar.ToggleShowUla}">
+                            Command="{Binding SiteBarViewOptions.ToggleShowUla}">
                             <MenuItem.Icon>
-                                <controls:CheckedIndicator IsChecked="{Binding DevTools.SiteBar.ShowUla}" />
+                                <controls:CheckedIndicator IsChecked="{Binding SiteBarViewOptions.ShowUla}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem 
                             Header="Show Breakpoints Info" 
-                            Command="{Binding DevTools.SiteBar.ToggleShowBreakpoints}">
+                            Command="{Binding SiteBarViewOptions.ToggleShowBreakpoints}">
                             <MenuItem.Icon>
-                                <controls:CheckedIndicator IsChecked="{Binding DevTools.SiteBar.ShowBreakpoints}" />
+                                <controls:CheckedIndicator IsChecked="{Binding SiteBarViewOptions.ShowBreakpoints}" />
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
                     <MenuItem Header="Diagnostic Panels">
                         <MenuItem 
                             Header="Show Memory View" 
-                            Command="{Binding DevTools.Views.ToggleShowMemory}">
+                            Command="{Binding PanelsViewOptions.ToggleShowMemory}">
                             <MenuItem.Icon>
-                                <controls:CheckedIndicator IsChecked="{Binding DevTools.Views.ShowMemory}" />
+                                <controls:CheckedIndicator IsChecked="{Binding PanelsViewOptions.ShowMemory}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem 
                             Header="Show Disassembly View" 
-                            Command="{Binding DevTools.Views.ToggleShowDisassembly}">
+                            Command="{Binding PanelsViewOptions.ToggleShowDisassembly}">
                             <MenuItem.Icon>
-                                <controls:CheckedIndicator IsChecked="{Binding DevTools.Views.ShowDisassembly}" />
+                                <controls:CheckedIndicator IsChecked="{Binding PanelsViewOptions.ShowDisassembly}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem 
                             Header="Show Watch View" 
-                            Command="{Binding DevTools.Views.ToggleShowMemory}">
+                            Command="{Binding PanelsViewOptions.ToggleShowWatch}">
                             <MenuItem.Icon>
-                                <controls:CheckedIndicator IsChecked="{Binding DevTools.Views.ShowWatch}" />
+                                <controls:CheckedIndicator IsChecked="{Binding PanelsViewOptions.ShowWatch}" />
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
                     <MenuItem Header="Tool Panels"> 
                         <MenuItem
                             Header="Show Tool Panels" 
-                            Command="{Binding DevTools.ToggleShowPanels}">
+                            Command="{Binding DevToolsViewOptions.ToggleShowPanels}">
                             <MenuItem.Icon>
-                                <controls:CheckedIndicator IsChecked="{Binding DevTools.ShowPanels}" />
+                                <controls:CheckedIndicator IsChecked="{Binding DevToolsViewOptions.ShowPanels}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem
                             Header="Tool Panels At the Bottom" 
-                            Command="{Binding DevTools.TogglePanelsAtBottom}"
-                            IsEnabled="{Binding DevTools.ShowPanels}">
+                            Command="{Binding DevToolsViewOptions.TogglePanelsAtBottom}"
+                            IsEnabled="{Binding DevToolsViewOptions.ShowPanels}">
                             <MenuItem.Icon>
-                                <controls:CheckedIndicator IsChecked="{Binding DevTools.PanelsAtBottom}" />
+                                <controls:CheckedIndicator IsChecked="{Binding DevToolsViewOptions.PanelsAtBottom}" />
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
@@ -212,41 +212,38 @@
             </Menu>
         <controls:DevsToolBarUserControl
             DockPanel.Dock="Top"
-            IsVisible="{Binding DevTools.ShowToolbar}" />
+            IsVisible="{Binding DevToolsViewOptions.ShowToolbar}" />
         <controls:DevsStatusBarUserControl 
             DockPanel.Dock="Bottom" 
-            IsVisible="{Binding DevTools.ShowStatusBar}"/>
+            IsVisible="{Binding DevToolsViewOptions.ShowStatusBar}"/>
         <devTools:SiteBar
-            DataContext="{Binding DevTools}"
-            DockPanel.Dock="{Binding SiteBarOnLeft, Converter={StaticResource VerticalDockConverter}}"
-            IsVisible="{Binding ShowSiteBar}"
+            DockPanel.Dock="{Binding DevToolsViewOptions.SiteBarOnLeft, Converter={StaticResource VerticalDockConverter}}"
+            IsVisible="{Binding DevToolsViewOptions.ShowSiteBar}"
             Width="300" />
         <controls:SplitterPanel 
-            DockPanel.Dock="{Binding DevTools.SiteBarOnLeft, Converter={StaticResource VerticalDockConverter}}"
-            IsVisible="{Binding DevTools.ShowSiteBar}"
+            DockPanel.Dock="{Binding DevToolsViewOptions.SiteBarOnLeft, Converter={StaticResource VerticalDockConverter}}"
+            IsVisible="{Binding DevToolsViewOptions.ShowSiteBar}"
             Orientation="Horizontal"
             ResizeNext="False"
-            NegateDelta="{Binding DevTools.SiteBarOnLeft}"
+            NegateDelta="{Binding DevToolsViewOptions.SiteBarOnLeft}"
             PreviousMinSize="120"
             NextMinSize="120"
             Background="{DynamicResource SiteBarBackgroundBrush}" />
         <DockPanel>
             <devTools:ToolsPanelUserControl
-                DataContext="{Binding DevTools}"
-                DockPanel.Dock="{Binding PanelsAtBottom, Converter={StaticResource PanelsDockConverter}}"
-                IsVisible="{Binding ShowPanels}"
+                DockPanel.Dock="{Binding DevToolsViewOptions.PanelsAtBottom, Converter={StaticResource PanelsDockConverter}}"
+                IsVisible="{Binding DevToolsViewOptions.ShowPanels}"
                 Height="240" />
             <controls:SplitterPanel 
-                DockPanel.Dock="{Binding DevTools.PanelsAtBottom, Converter={StaticResource PanelsDockConverter}}"
-                IsVisible="{Binding DevTools.ShowPanels}"
+                DockPanel.Dock="{Binding DevToolsViewOptions.PanelsAtBottom, Converter={StaticResource PanelsDockConverter}}"
+                IsVisible="{Binding DevToolsViewOptions.ShowPanels}"
                 Orientation="Vertical"
                 ResizeNext="False"
-                NegateDelta="{Binding !DevTools.PanelsAtBottom}"
+                NegateDelta="{Binding !DevToolsViewOptions.PanelsAtBottom}"
                 PreviousMinSize="120"
                 NextMinSize="120"
                 Background="{DynamicResource DevsBackground}" />
-            <devTools:ViewsPanelUserControl
-                DataContext="{Binding DevTools}"/>
+            <devTools:ViewsPanelUserControl />
         </DockPanel>
     </DockPanel>
 </Window>

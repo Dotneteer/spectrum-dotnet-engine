@@ -1,17 +1,17 @@
 ﻿namespace SpectrumEngine.Client.Avalonia.ViewModels;
 
-public class ViewOptionsViewModel : ViewModelBase
+public class EmuViewOptionsViewModel : ViewModelBase
 {
-    private readonly bool _useNativeMenu;
+    private readonly MainWindowViewModel _parent;
     private bool _showMenuBar;
     private bool _showToolbar;
     private bool _showStatusBar;
     private bool _isMuted;
     private bool _showKeyboard;
 
-    public ViewOptionsViewModel(EnvironmentViewModel env)
+    public EmuViewOptionsViewModel(MainWindowViewModel parent)
     {
-        _useNativeMenu = env.UseNativeMenu;
+        _parent = parent;
     }
     
     public bool ShowMenuBar
@@ -24,7 +24,7 @@ public class ViewOptionsViewModel : ViewModelBase
         }
     }
 
-    public bool ShouldDisplayMenu => !_useNativeMenu || ShowMenuBar;
+    public bool ShouldDisplayMenu => !_parent.UseNativeMenu || ShowMenuBar;
     
     public bool ShowToolbar
     {
@@ -59,6 +59,4 @@ public class ViewOptionsViewModel : ViewModelBase
     public void ToggleShowKeyboard() => ShowKeyboard = !ShowKeyboard;
 
     public void ToggleMuted() => IsMuted = !IsMuted;
-
-
 }

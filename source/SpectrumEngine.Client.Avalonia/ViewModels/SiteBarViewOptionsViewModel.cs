@@ -3,7 +3,7 @@ using Avalonia.Controls;
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels;
 
-public class SiteBarViewModel: ViewModelBase
+public class SiteBarViewOptionsViewModel: ViewModelBase
 {
     private bool _showCpu;
     private bool _showUla;

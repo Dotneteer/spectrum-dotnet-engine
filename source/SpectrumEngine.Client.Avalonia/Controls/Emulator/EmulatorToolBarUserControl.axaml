@@ -71,23 +71,23 @@
                 Hint="Pause" />
             <controls:IconButtonSeparator />
             <controls:IconButton
-                IsChecked="{Binding ViewOptions.ShowKeyboard}"
+                IsChecked="{Binding EmuViewOptions.ShowKeyboard}"
                 Path="{DynamicResource IconKeyboard}"
                 Fill="{DynamicResource IconDefaultBrush}"
-                Command="{Binding ViewOptions.ToggleShowKeyboard}"
+                Command="{Binding EmuViewOptions.ToggleShowKeyboard}"
                 Hint="Pause" />
             <controls:IconButtonSeparator />
             <controls:IconButton
-                IsVisible="{Binding !ViewOptions.IsMuted}"
+                IsVisible="{Binding !EmuViewOptions.IsMuted}"
                 Path="{DynamicResource IconMute}"
                 Fill="{DynamicResource IconDefaultBrush}"
-                Command="{Binding ViewOptions.ToggleMuted}"
+                Command="{Binding EmuViewOptions.ToggleMuted}"
                 Hint="Pause" />
             <controls:IconButton
-                IsVisible="{Binding ViewOptions.IsMuted}"
+                IsVisible="{Binding EmuViewOptions.IsMuted}"
                 Path="{DynamicResource IconUnmute}"
                 Fill="{DynamicResource IconDefaultBrush}"
-                Command="{Binding ViewOptions.ToggleMuted}"
+                Command="{Binding EmuViewOptions.ToggleMuted}"
                 Hint="Pause" />
             <controls:IconButtonSeparator />
             <controls:IconButton

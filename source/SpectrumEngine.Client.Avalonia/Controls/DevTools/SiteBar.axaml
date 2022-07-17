@@ -11,17 +11,17 @@
     
     <Design.DataContext>
         <!-- ReSharper disable once Xaml.ConstructorWarning -->
-        <viewModels:DevToolsViewModel/>
+        <viewModels:MainWindowViewModel/>
     </Design.DataContext>
     
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="{Binding SiteBar.CpuHeight}" />
-            <RowDefinition Height="{Binding SiteBar.UlaHeight}" />
-            <RowDefinition Height="{Binding SiteBar.BreakpointsHeight}" />
+            <RowDefinition Height="{Binding SiteBarViewOptions.CpuHeight}" />
+            <RowDefinition Height="{Binding SiteBarViewOptions.UlaHeight}" />
+            <RowDefinition Height="{Binding SiteBarViewOptions.BreakpointsHeight}" />
         </Grid.RowDefinitions>
         <common:SiteBarExpander
-            IsVisible="{Binding SiteBar.ShowCpu}"
+            IsVisible="{Binding SiteBarViewOptions.ShowCpu}"
             Grid.Row="0"
             Header="CPU"
             HorizontalContentAlignment="Stretch"
@@ -32,14 +32,14 @@
         </common:SiteBarExpander>
         <common:SiteBarExpander
             Grid.Row="1"
-            IsVisible="{Binding SiteBar.ShowUla}"
+            IsVisible="{Binding SiteBarViewOptions.ShowUla}"
             Header="ULA"
             PropertyChanged="OnUlaPropertyChanged">
             This is ULA
         </common:SiteBarExpander>
         <common:SiteBarExpander
             Grid.Row="2"
-            IsVisible="{Binding SiteBar.ShowBreakpoints}"
+            IsVisible="{Binding SiteBarViewOptions.ShowBreakpoints}"
             Header="Breakpoints"
             PropertyChanged="OnBreakpointsPropertyChanged">
             This is Breakpoints

@@ -10,20 +10,20 @@
              VerticalAlignment="Stretch">
     
     <Design.DataContext>
-        <viewModels:DevToolsViewModel/>
+        <viewModels:MainWindowViewModel/>
     </Design.DataContext>
 
     <DockPanel VerticalAlignment="Stretch">
         <Border
             DockPanel.Dock="Top"
-            IsVisible="{Binding PanelsAtBottom}"
+            IsVisible="{Binding DevToolsViewOptions.PanelsAtBottom}"
             BorderThickness="0,1,0,0"
             Height="2"
             BorderBrush="gray" 
             HorizontalAlignment="Stretch" />
         <Border
             DockPanel.Dock="Bottom"
-            IsVisible="{Binding !PanelsAtBottom}"
+            IsVisible="{Binding !DevToolsViewOptions.PanelsAtBottom}"
             BorderThickness="0,0,0,1"
             Height="2"
             BorderBrush="gray" 

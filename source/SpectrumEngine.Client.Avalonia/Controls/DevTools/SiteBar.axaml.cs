@@ -13,7 +13,7 @@ public partial class SiteBar : UserControl
         InitializeComponent();
     }
 
-    private DevToolsViewModel? Vm => DataContext as DevToolsViewModel; 
+    private MainWindowViewModel? Vm => DataContext as MainWindowViewModel; 
 
     private void InitializeComponent()
     {
@@ -23,18 +23,18 @@ public partial class SiteBar : UserControl
     private void OnCpuPropertyChanged(object? _, AvaloniaPropertyChangedEventArgs e)
     {
         if (e.Property.Name != "IsExpanded" || Vm is null) return;
-        Vm.SiteBar.CpuExpanded = e.NewValue != null && (bool)e.NewValue;
+        Vm.SiteBarViewOptions.CpuExpanded = e.NewValue != null && (bool)e.NewValue;
     }
 
     private void OnUlaPropertyChanged(object? _, AvaloniaPropertyChangedEventArgs e)
     {
         if (e.Property.Name != "IsExpanded" || Vm is null) return;
-        Vm.SiteBar.UlaExpanded = e.NewValue != null && (bool)e.NewValue;
+        Vm.SiteBarViewOptions.UlaExpanded = e.NewValue != null && (bool)e.NewValue;
     }
 
     private void OnBreakpointsPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
     {
         if (e.Property.Name != "IsExpanded" || Vm is null) return;
-        Vm.SiteBar.BreakpointsExpanded = e.NewValue != null && (bool)e.NewValue;
+        Vm.SiteBarViewOptions.BreakpointsExpanded = e.NewValue != null && (bool)e.NewValue;
     }
 }
