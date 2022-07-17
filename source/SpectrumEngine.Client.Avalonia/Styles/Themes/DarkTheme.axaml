@@ -33,6 +33,11 @@
         <Color x:Key="ToolTabInactiveColor">#a0a0a0</Color>
         <Color x:Key="ToolTabActiveColor">#f0f0f0</Color>
         <Color x:Key="ToolTabPipeColor">#f0f0f0</Color>
+        
+        <Color x:Key="DiagLabelTextColor">#FFF89406</Color>
+        <Color x:Key="DiagValueTextColor">#00AFFF</Color>
+        <Color x:Key="DiagSecondaryTextColor">#FF51c351</Color>
+
 
         <SolidColorBrush x:Key="AppBackground" Color="{DynamicResource DarkGray}"/>
         <SolidColorBrush x:Key="MenuText" Color="{DynamicResource TextGray}"/>
@@ -66,5 +71,9 @@
         <SolidColorBrush x:Key="ViewTabBackgroundBrush" Color="{DynamicResource MenuGray}"/>
         <SolidColorBrush x:Key="ViewTabInactiveBrush" Color="{DynamicResource MenuGray}"/>
         <SolidColorBrush x:Key="ViewTabActiveBrush" Color="{DynamicResource DarkGray}"/>
+        
+        <SolidColorBrush x:Key="DiagLabelTextBrush" Color="{DynamicResource DiagLabelTextColor}" />
+        <SolidColorBrush x:Key="DiagValueTextBrush" Color="{DynamicResource DiagValueTextColor}" />
+        <SolidColorBrush x:Key="DiagSecondaryTextBrush" Color="{DynamicResource DiagSecondaryTextColor}" />
     </Styles.Resources>
 </Styles>

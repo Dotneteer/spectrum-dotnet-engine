@@ -12,7 +12,7 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="SpectrumEngine - ZX Spectrum 48K Emulator"
         Background="{DynamicResource AppBackground}"
-        WindowState="{Binding InitialWindowState, Mode=OneTime}"
+        WindowState="Maximized"
         Closing="OnClosing"
         DataContextChanged="OnDataContextChanged"
         KeyUp="MainWindowOnKeyUp"

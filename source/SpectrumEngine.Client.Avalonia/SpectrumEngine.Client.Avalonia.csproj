@@ -101,5 +101,9 @@
         <DependentUpon>EmulatorStatusBarUserControl.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Controls\DevTools\Cpu\CpuPanel.axaml.cs">
+        <DependentUpon>CpuPanel.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

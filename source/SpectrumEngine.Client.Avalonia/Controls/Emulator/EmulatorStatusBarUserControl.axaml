@@ -36,6 +36,12 @@
                     <controls:StatusLabel
                         ShowIcon="false"
                         Text="{Binding Machine.FrameStats.AvgFrameTimeInMs, Converter={StaticResource FixedDecimalConverter}}" />
+                    <controls:StatusLabel ShowIcon="false" Text="PC:" />
+                    <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                    <controls:StatusLabel 
+                        ShowIcon="false"
+                        Margin="-8 0 0 0"
+                        Text="{Binding Cpu.PC, Converter={StaticResource HexConverter}}" />
                 </StackPanel>
             </StackPanel>
         </Panel>

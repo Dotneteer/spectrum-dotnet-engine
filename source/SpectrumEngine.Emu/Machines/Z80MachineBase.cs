@@ -284,12 +284,16 @@ public abstract class Z80MachineBase :
     {
         // --- Sign that the loop execution is in progress
         ExecutionContext.LastTerminationReason = null;
+        var instructionsExecuted = 0;
 
         // --- Check the startup breakpoint
         if (Regs.PC != LastStartupBreakpoint)
         {
             // --- Check startup breakpoint
-            CheckBreakpoints();
+            if (CheckBreakpoints())
+            {
+                return (ExecutionContext.LastTerminationReason = FrameTerminationMode.DebugEvent).Value;
+            }
             if (ExecutionContext.LastTerminationReason.HasValue)
             {
                 // --- The code execution has stopped at the startup breakpoint.
@@ -342,6 +346,7 @@ public abstract class Z80MachineBase :
             do
             {
                 ExecuteCpuCycle();
+                instructionsExecuted++;
             } while (Prefix != OpCodePrefix.None);
 
             // --- Allow the machine to do additional tasks after the completed CPU instruction
@@ -355,7 +360,10 @@ public abstract class Z80MachineBase :
             }
 
             // --- Test if the execution reached a breakpoint
-            CheckBreakpoints();
+            if (CheckBreakpoints())
+            {
+                return (ExecutionContext.LastTerminationReason = FrameTerminationMode.DebugEvent).Value;
+            }
             if (ExecutionContext.LastTerminationReason.HasValue)
             {
                 // --- The code execution has stopped at the startup breakpoint.
@@ -372,16 +380,27 @@ public abstract class Z80MachineBase :
 
         // --- Done
         return (ExecutionContext.LastTerminationReason = FrameTerminationMode.Normal).Value;
+        
+        // --- This method tests if any breakpoint is reached during the execution of the machine frame
+        // --- to suspend the loop.
+        bool CheckBreakpoints()
+        {
+            switch (ExecutionContext.DebugStepMode)
+            {
+                case DebugStepMode.StepInto:
+                    return instructionsExecuted > 0;        
+                case DebugStepMode.StepOver:
+                    break;
+                case DebugStepMode.StepOut:
+                    break;
+            }
+            return false;
+        }
     }
 
     /// <summary>
-    /// This method tests if any breakpoint is reached during the execution of the machine frame to suspend the loop.
     /// </summary>
-    private void CheckBreakpoints()
-    {
-        // TODO: Implement this method
-    }
-
+    
     /// <summary>
     /// This method tests if the CPU reached the specified termination point.
     /// </summary>

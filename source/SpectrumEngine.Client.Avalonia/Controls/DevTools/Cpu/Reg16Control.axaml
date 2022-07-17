@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Name="UserControl"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.Cpu.Reg16Control">
+    <Grid ColumnDefinitions="38,44,64">
+        <TextBlock
+            Grid.Column="0"
+            Foreground="{DynamicResource DiagLabelTextColor}"
+            Text="{Binding ElementName=UserControl, Path=Reg}"/>
+        <TextBlock
+            Grid.Column="1"
+            Foreground="{DynamicResource DiagValueTextColor}"
+            Text="{Binding ElementName=UserControl, Path=Value, Converter={StaticResource HexConverter}}"/>
+        <TextBlock
+            Grid.Column="2"
+            Foreground="{DynamicResource DiagSecondaryTextColor}"
+            Text="{Binding ElementName=UserControl, Path=Value}"/>
+    </Grid>
+</UserControl>

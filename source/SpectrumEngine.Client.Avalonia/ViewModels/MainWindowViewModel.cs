@@ -2,7 +2,6 @@
 // ReSharper disable UnusedParameter.Local
 
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Platform;
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels;
@@ -16,7 +15,6 @@ public class MainWindowViewModel : ViewModelBase
         // --- Get environment information
         var os = AvaloniaLocator.Current.GetService<IRuntimePlatform>()!.GetRuntimeInfo();
         UseNativeMenu = os.OperatingSystem is OperatingSystemType.OSX;
-        InitialWindowState = UseNativeMenu ? WindowState.FullScreen : WindowState.Maximized;
 
         // --- Initialize preferences
         Preferences = new PreferencesViewModel();
@@ -34,7 +32,7 @@ public class MainWindowViewModel : ViewModelBase
         // --- Initialize view options
         EmuViewOptions = new EmuViewOptionsViewModel(this)
         {
-            ShowMenuBar = true,
+            ShowMenuBar = false,
             ShowToolbar = true,
             ShowStatusBar = true,
             ShowKeyboard = false,
@@ -42,7 +40,7 @@ public class MainWindowViewModel : ViewModelBase
         };
         DevToolsViewOptions = new DevToolsViewOptionsViewModel(this)
         {
-            ShowMenuBar = true,
+            ShowMenuBar = false,
             ShowDevTools = false,
             ShowToolbar = true,
             ShowStatusBar = true,
@@ -84,11 +82,6 @@ public class MainWindowViewModel : ViewModelBase
     public bool UseNativeMenu { get; }
 
     /// <summary>
-    /// Represents the initial state of the app's main window (OS-dependent)
-    /// </summary>
-    public WindowState InitialWindowState { get; }
-    
-    /// <summary>
     /// The machine state partition of the view model
     /// </summary>
     public MachineViewModel Machine { get; }
@@ -106,9 +99,9 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// The display view model created by the machine
     /// </summary>
-    public DisplayViewModel? Display
+    public DisplayViewModel Display
     {
-        get => _display;
+        get => _display!;
         set => SetProperty(ref _display, value);
     }
     

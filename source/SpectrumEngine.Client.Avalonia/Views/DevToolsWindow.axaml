@@ -219,7 +219,7 @@
         <devTools:SiteBar
             DockPanel.Dock="{Binding DevToolsViewOptions.SiteBarOnLeft, Converter={StaticResource VerticalDockConverter}}"
             IsVisible="{Binding DevToolsViewOptions.ShowSiteBar}"
-            Width="300" />
+            Width="320" />
         <controls:SplitterPanel 
             DockPanel.Dock="{Binding DevToolsViewOptions.SiteBarOnLeft, Converter={StaticResource VerticalDockConverter}}"
             IsVisible="{Binding DevToolsViewOptions.ShowSiteBar}"

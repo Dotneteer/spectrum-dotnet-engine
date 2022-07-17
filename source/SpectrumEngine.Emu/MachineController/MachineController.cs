@@ -134,38 +134,31 @@ public class MachineController
     /// <summary>
     /// Starts the machine in step-into mode.
     /// </summary>
-    public void StepInto()
+    public async Task StepInto()
     {
         IsDebugging = true;
         Run(FrameTerminationMode.DebugEvent, DebugStepMode.StepInto);
+        await FinishExecutionLoop(MachineControllerState.Pausing, MachineControllerState.Paused);
     }
 
     /// <summary>
     /// Starts the machine in step-over mode.
     /// </summary>
-    public void StepOver()
+    public async Task StepOver()
     {
         IsDebugging = true;
         Run(FrameTerminationMode.DebugEvent, DebugStepMode.StepOver);
+        await FinishExecutionLoop(MachineControllerState.Pausing, MachineControllerState.Paused);
     }
 
     /// <summary>
     /// Starts the machine in step-out mode.
     /// </summary>
-    public void StepOut()
+    public async Task StepOut()
     {
         IsDebugging = true;
         Run(FrameTerminationMode.DebugEvent, DebugStepMode.StepOut);
-    }
-
-    public async Task RunToTerminationPoint(int? terminationPartition, ushort? terminationPoint)
-    {
-        Run(FrameTerminationMode.UntilExecutionPoint, DebugStepMode.NoDebug, terminationPartition, terminationPoint);
-        await CompleteExecutionLoop();
-        if (!Context.Canceled)
-        {
-            State = MachineControllerState.Paused;
-        }
+        await FinishExecutionLoop(MachineControllerState.Pausing, MachineControllerState.Paused);
     }
 
     /// <summary>
