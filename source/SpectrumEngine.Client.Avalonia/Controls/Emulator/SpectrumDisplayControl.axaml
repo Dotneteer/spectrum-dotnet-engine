@@ -16,13 +16,13 @@
              EffectiveViewportChanged="OnViewportChanged">
     
     <Design.DataContext>
-        <vm:DisplayViewModel />
+        <vm:MainWindowViewModel />
     </Design.DataContext>
     
     <!-- ReSharper disable once MarkupAttributeTypo -->
     <Grid
-        Width="{Binding ScreenWidth}" d:Width="600"
-        Height="{Binding ScreenHeight}" d:Height="400"
+        Width="{Binding Display.ScreenWidth}" d:Width="600"
+        Height="{Binding Display.ScreenHeight}" d:Height="400"
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
         Background="{DynamicResource DisplayBackgroundBrush}">

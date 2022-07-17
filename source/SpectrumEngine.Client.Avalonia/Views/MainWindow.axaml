@@ -335,8 +335,6 @@
                 PreviousMinSize="120"
                 NextMinSize="120"
                 DockPanel.Dock="Bottom"/>
-            <local:SpectrumDisplayControl
-                    x:Name="SpectrumDisplay"
-                    DataContext="{Binding Display}" />
+            <local:SpectrumDisplayControl x:Name="SpectrumDisplay" />
         </DockPanel>
 </Window>

@@ -10,11 +10,11 @@
              x:Class="SpectrumEngine.Client.Avalonia.Controls.MachineStatusOverlay"
              IsVisible="{Binding}">
     <Design.DataContext>
-        <viewModels:DisplayViewModel />
+        <viewModels:MainWindowViewModel />
     </Design.DataContext>
 
     <Border 
-        IsVisible="{Binding Controller, Converter={StaticResource MachineStateOverlayVisibilityConverter}}"
+        IsVisible="{Binding Machine.Controller, Converter={StaticResource MachineStateOverlayVisibilityConverter}}"
         Margin="12"
         Padding="16,8"
         Opacity="0.9"
@@ -22,6 +22,8 @@
         HorizontalAlignment="Left"
         BorderThickness="1"
         Background="{DynamicResource MachineStatusOverlayBackgroundBrush}">
-        <TextBlock Foreground="{DynamicResource MachineStatusOverlayForegroundBrush}" Text="{Binding OverlayMessage}"></TextBlock>
+        <TextBlock 
+            Foreground="{DynamicResource MachineStatusOverlayForegroundBrush}" 
+            Text="{Binding Display.OverlayMessage}" />
     </Border>
 </UserControl>

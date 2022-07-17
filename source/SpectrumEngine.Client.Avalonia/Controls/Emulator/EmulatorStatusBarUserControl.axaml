@@ -28,7 +28,9 @@
                     Path="{DynamicResource IconVm}"
                     Text="{Binding Machine.FrameStats.FrameCount}"
                     Width="90"/>
-                <StackPanel Orientation="Horizontal" Width="200">
+                <StackPanel 
+                    Orientation="Horizontal" 
+                    Width="148">
                     <controls:StatusLabel
                         Path="{DynamicResource IconDashboard}"
                         Text="{Binding Machine.FrameStats.AvgCpuFrameTimeInMs, Converter={StaticResource FixedDecimalConverter}}" />
@@ -36,6 +38,8 @@
                     <controls:StatusLabel
                         ShowIcon="false"
                         Text="{Binding Machine.FrameStats.AvgFrameTimeInMs, Converter={StaticResource FixedDecimalConverter}}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
                     <controls:StatusLabel ShowIcon="false" Text="PC:" />
                     <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
                     <controls:StatusLabel 

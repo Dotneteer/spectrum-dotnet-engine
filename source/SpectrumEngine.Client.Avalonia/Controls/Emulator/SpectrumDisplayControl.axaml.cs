@@ -37,15 +37,20 @@ public partial class SpectrumDisplayControl : UserControl
     /// </remarks>
     public bool HandleKeyboardEvent(KeyEventArgs e, bool isPressed)
     {
-        if (DataContext is not DisplayViewModel context || context.Machine == null) return false;
+        if (DataContext is not MainWindowViewModel context || context.Machine.Controller?.Machine == null)
+        {
+            return false;
+        }
+
+        var machine = context.Machine.Controller.Machine;
         var keyMapping = KeyMappings.DefaultMapping.FirstOrDefault(m => m.Input == e.Key);
         if (keyMapping == null) return false;
         
         // --- Apply the pressed key
-        context.Machine.SetKeyStatus(keyMapping.Primary, isPressed);
+        machine.SetKeyStatus(keyMapping.Primary, isPressed);
         if (keyMapping.Secondary != null)
         {
-            context.Machine.SetKeyStatus(keyMapping.Secondary.Value, isPressed);
+            machine.SetKeyStatus(keyMapping.Secondary.Value, isPressed);
         }
         return true;
     }
@@ -53,7 +58,7 @@ public partial class SpectrumDisplayControl : UserControl
     /// <summary>
     /// Gets the current view model in the data context
     /// </summary>
-    private DisplayViewModel? Vm => DataContext as DisplayViewModel;
+    private MainWindowViewModel? Vm => DataContext as MainWindowViewModel;
   
     /// <summary>
     /// Change the view model properties when the user control is resized.
@@ -63,15 +68,17 @@ public partial class SpectrumDisplayControl : UserControl
     /// </remarks>
     private void ResizeScreen()
     {
-        if (DataContext is not DisplayViewModel context || context.Machine == null)
+        if (DataContext is not MainWindowViewModel context || context.Machine.Controller?.Machine == null)
         {
-            return;
+            return ;
         }
-        var horZoom = (int)(Bounds.Width / context.Machine!.ScreenWidthInPixels);
-        var vertZoom = (int)(Bounds.Height / context.Machine!.ScreenHeightInPixels);
-        _zoomFactor = context.ZoomFactor = Math.Max(1, Math.Min(horZoom, vertZoom));
-        Display.Width = context.ScreenWidth = _zoomFactor * context.Machine!.ScreenWidthInPixels;
-        Display.Height = context.ScreenHeight = _zoomFactor * context.Machine!.ScreenHeightInPixels;
+
+        var machine = context.Machine.Controller.Machine;
+        var horZoom = (int)(Bounds.Width / machine.ScreenWidthInPixels);
+        var vertZoom = (int)(Bounds.Height / machine.ScreenHeightInPixels);
+        _zoomFactor = context.Display.ZoomFactor = Math.Max(1, Math.Min(horZoom, vertZoom));
+        Display.Width = context.Display.ScreenWidth = _zoomFactor * machine.ScreenWidthInPixels;
+        Display.Height = context.Display.ScreenHeight = _zoomFactor * machine.ScreenHeightInPixels;
     }
 
     /// <summary>
@@ -79,26 +86,28 @@ public partial class SpectrumDisplayControl : UserControl
     /// </summary>
     private void OnControllerStateChanged(object? sender, (MachineControllerState OldState, MachineControllerState NewState) e)
     {
-        if (Vm?.Controller == null) return;
-        
-        Vm.IsDebugging = Vm.Controller.IsDebugging;
-        Vm.RaisePropertyChanged(nameof(Vm.Controller));
+        if (Vm?.Machine.Controller == null) return;
+
+        var display = Vm.Display;
+        display.IsDebugging = Vm.Machine.Controller.IsDebugging;
+        Vm.Cpu?.SignStateChanged();
+        Vm.Machine.RaisePropertyChanged(nameof(Vm.Machine.Controller));
 
         switch (e.NewState)
         {
             case MachineControllerState.None:
-                Vm.OverlayMessage = "Start the machine";
+                display.OverlayMessage = "Start the machine";
                 break;
             case MachineControllerState.Running:
-                Vm.OverlayMessage = Vm.IsDebugging ? "Debug mode" : "Running";
+                display.OverlayMessage = display.IsDebugging ? "Debug mode" : "Running";
                 _audioProvider?.Play();
                 break;
             case MachineControllerState.Paused:
-                Vm.OverlayMessage = "Paused";
+                display.OverlayMessage = "Paused";
                 _audioProvider?.Pause();
                 break;
             case MachineControllerState.Stopped:
-                Vm.OverlayMessage = "Stopped";
+                display.OverlayMessage = "Stopped";
                 _audioProvider?.Stop();
                 break;
         }
@@ -110,7 +119,7 @@ public partial class SpectrumDisplayControl : UserControl
         if (machine == null) return;
 
         // --- Add sound samples
-        var samples = (machine as ZxSpectrum48Machine)?.BeeperDevice?.GetAudioSamples();
+        var samples = (machine as ZxSpectrum48Machine)?.BeeperDevice.GetAudioSamples();
         if (samples != null)
         {
             _audioProvider?.AddSamples(samples);
@@ -154,6 +163,12 @@ public partial class SpectrumDisplayControl : UserControl
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             Display.Source = bitmap;
+
+            // --- Refresh status information
+            if (machine.Frames % 10 == 0)
+            {
+                Vm?.Cpu?.SignStateChanged();
+            }
         });
     }
 
@@ -162,42 +177,45 @@ public partial class SpectrumDisplayControl : UserControl
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             if (args.key != MachinePropNames.TapeMode || args.value is not TapeMode tapeMode) return;
-            if (Vm?.Controller == null) return;
-            
+            if (Vm?.Machine.Controller == null) return;
+
+            var display = Vm.Display;
             switch (tapeMode)
             {
                 case TapeMode.Load:
-                    Vm.OverlayMessage = "LOAD mode";
+                    display.OverlayMessage = "LOAD mode";
                     break;
                         
                 case TapeMode.Save:
-                    Vm.OverlayMessage = "SAVE mode";
+                    display.OverlayMessage = "SAVE mode";
                     break;
             }
-            Vm?.RaisePropertyChanged(nameof(Vm.Controller));
+            Vm?.RaisePropertyChanged(nameof(Vm.Machine.Controller));
         });
     }   
 
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
         // --- Release the events of the old controller
-        var oldVm = _prevDataContext as DisplayViewModel;
-        if (oldVm?.Controller != null)
+        var oldVm = _prevDataContext as MainWindowViewModel;
+        if (oldVm?.Machine.Controller != null)
         {
-            oldVm.Controller.FrameCompleted -= OnControllerFrameCompleted;
-            oldVm.Controller.StateChanged -= OnControllerStateChanged;
-            oldVm.Controller.Machine.MachinePropertyChanged -= OnMachinePropertyChanged;
+            var oldController = oldVm.Machine.Controller;
+            oldController.FrameCompleted -= OnControllerFrameCompleted;
+            oldController.StateChanged -= OnControllerStateChanged;
+            oldController.Machine.MachinePropertyChanged -= OnMachinePropertyChanged;
         }
 
         // --- Setup the events of the new controller
-        var newVm = DataContext as DisplayViewModel;
+        var newVm = DataContext as MainWindowViewModel;
         
-        if (newVm?.Controller != null)
+        if (newVm?.Machine.Controller != null)
         {
-            newVm.Controller.FrameCompleted += OnControllerFrameCompleted;
-            newVm.Controller.StateChanged += OnControllerStateChanged;
-            newVm.Controller.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
-            if (newVm.Machine is ZxSpectrum48Machine zxMachine)
+            var newController = newVm.Machine.Controller;
+            newController.FrameCompleted += OnControllerFrameCompleted;
+            newController.StateChanged += OnControllerStateChanged;
+            newController.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
+            if (newController.Machine is ZxSpectrum48Machine zxMachine)
             {
                 _audioProvider = new BassAudioProvider(zxMachine.BeeperDevice);
             }

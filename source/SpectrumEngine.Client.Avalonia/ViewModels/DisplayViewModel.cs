@@ -1,7 +1,4 @@
-﻿using Avalonia.Media;
-using SpectrumEngine.Emu;
-
-namespace SpectrumEngine.Client.Avalonia.ViewModels;
+﻿namespace SpectrumEngine.Client.Avalonia.ViewModels;
 
 public class DisplayViewModel: ViewModelBase
 {
@@ -11,22 +8,11 @@ public class DisplayViewModel: ViewModelBase
     private bool _isDebugging;
     private string? _overlayMessage;
 
-    // ReSharper disable once UnusedMember.Global
     public DisplayViewModel()
     {
-    }
-
-    public DisplayViewModel(MachineController controller)
-    {
-        Controller = controller;
-        Machine = controller.Machine;
         ScreenWidth = 800;
         ScreenHeight = 400;
     }
-
-    public MachineController? Controller { get; }
-
-    public IZ80Machine? Machine { get; }
 
     /// <summary>
     /// Indicates if the machine runs in debug mode

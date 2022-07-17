@@ -8,8 +8,6 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    private DisplayViewModel? _display;
-
     public MainWindowViewModel()
     {
         // --- Get environment information
@@ -20,7 +18,7 @@ public class MainWindowViewModel : ViewModelBase
         Preferences = new PreferencesViewModel();
 
         // --- Initialize the machine information
-        Machine = new MachineViewModel(this);
+        Machine = new MachineViewModel();
         Machine.ControllerChanged += (sender, tuple) =>
         {
             if (tuple.NewController != null)
@@ -28,6 +26,9 @@ public class MainWindowViewModel : ViewModelBase
                 Cpu = new CpuPanelViewModel(tuple.NewController);
             }
         };
+        
+        // --- Spectrum Display
+        Display = new DisplayViewModel();
         
         // --- Initialize view options
         EmuViewOptions = new EmuViewOptionsViewModel(this)
@@ -99,11 +100,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// The display view model created by the machine
     /// </summary>
-    public DisplayViewModel Display
-    {
-        get => _display!;
-        set => SetProperty(ref _display, value);
-    }
+    public DisplayViewModel Display { get; }
     
     /// <summary>
     /// Application preferences

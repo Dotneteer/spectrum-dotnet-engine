@@ -134,7 +134,7 @@ public partial class KeyboardPanel : UserControl
     /// <param name="secondary">Optional secondary key code</param>
     private void SetKeyStatus(bool down, SpectrumKeyCode primary, SpectrumKeyCode? secondary)
     {
-        var machine = Vm?.Display?.Machine;
+        var machine = Vm?.Machine.Controller?.Machine;
         if (machine == null) return;
         
         machine.SetKeyStatus(primary, down);
@@ -154,7 +154,7 @@ public partial class KeyboardPanel : UserControl
     /// <param name="secondary">Optional secondary key code</param>
     private void QueueKey(int relativeStart, int frames, SpectrumKeyCode primary, SpectrumKeyCode? secondary)
     {
-        var machine = Vm?.Display?.Machine;
+        var machine = Vm?.Machine.Controller?.Machine;
         if (machine == null) return;
         machine.QueueKeystroke(machine.Frames + relativeStart, frames, primary, secondary);
         _lastPressFrame = machine.Frames;
@@ -167,7 +167,7 @@ public partial class KeyboardPanel : UserControl
     /// <returns>True, if the next keypress is allowed; otherwise, false.</returns>
     private bool WaitForNextKeyPress(int frames)
     {
-        var machine = Vm?.Display?.Machine;
+        var machine = Vm?.Machine.Controller?.Machine;
         return machine != null && machine.Frames > _lastPressFrame + frames * machine.ClockMultiplier;
     }
 }
