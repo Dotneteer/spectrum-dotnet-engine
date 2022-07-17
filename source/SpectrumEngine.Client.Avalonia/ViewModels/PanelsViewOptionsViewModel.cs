@@ -1,6 +1,6 @@
 namespace SpectrumEngine.Client.Avalonia.ViewModels;
 
-public class ViewsPanelViewModel: ViewModelBase
+public class PanelsViewOptionsViewModel: ViewModelBase
 {
     private bool _showMemory;
     private bool _showDisassembly;

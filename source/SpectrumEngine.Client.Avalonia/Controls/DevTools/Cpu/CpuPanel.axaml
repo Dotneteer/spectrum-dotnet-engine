@@ -1,0 +1,91 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
+             xmlns:cpu="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools.Cpu"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.CpuPanel">
+    
+    <Design.DataContext>
+        <!-- ReSharper disable once Xaml.ConstructorWarning -->
+        <viewModels:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <ScrollViewer>
+        <StackPanel>
+            <WrapPanel>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:Reg16Control Reg="AF" Value="{Binding Cpu.AF}"/>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:Reg16Control Reg="AF'" Value="{Binding Cpu.AF_}"/>
+            </WrapPanel>
+            <WrapPanel>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:Reg16Control Reg="BC" Value="{Binding Cpu.BC}"/>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:Reg16Control Reg="BC'" Value="{Binding Cpu.BC_}"/>
+            </WrapPanel>
+            <WrapPanel>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:Reg16Control Reg="DE" Value="{Binding Cpu.DE}"/>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:Reg16Control Reg="DE'" Value="{Binding Cpu.DE_}"/>
+            </WrapPanel>
+            <WrapPanel>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:Reg16Control Reg="HL" Value="{Binding Cpu.HL}"/>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:Reg16Control Reg="HL'" Value="{Binding Cpu.HL_}"/>
+            </WrapPanel>
+            <Border 
+                Height="2" 
+                Margin="0 4"
+                BorderThickness="0 0 0 1" 
+                BorderBrush="{DynamicResource ExpanderBorderBrush}" />
+            <WrapPanel>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:Reg16Control Reg="PC" Value="{Binding Cpu.PC}"/>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:Reg16Control Reg="SP" Value="{Binding Cpu.SP}"/>
+            </WrapPanel>
+            <WrapPanel>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:Reg16Control Reg="IX" Value="{Binding Cpu.IX}"/>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:Reg16Control Reg="IY" Value="{Binding Cpu.IY}"/>
+            </WrapPanel>
+            <WrapPanel>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:Reg8Control Reg="I" Value="{Binding Cpu.I}"/>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:Reg8Control Reg="R" Value="{Binding Cpu.R}"/>
+            </WrapPanel>
+            <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+            <cpu:Reg16Control Reg="WZ" Value="{Binding Cpu.WZ}"/>
+            <Border 
+                Height="2" 
+                Margin="0 4"
+                BorderThickness="0 0 0 1" 
+                BorderBrush="{DynamicResource ExpanderBorderBrush}" />
+            <WrapPanel>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:StateValueControl Reg="CLK" Value="{Binding Cpu.Tacts}"/>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:StateValueControl Reg="IM" Value="{Binding Cpu.InterruptMode}"/>
+            </WrapPanel>
+            <WrapPanel>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:LabeledFlagControl Reg="IFF1" Value="{Binding Cpu.Iff1}"/>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:LabeledFlagControl Reg="IFF2" Value="{Binding Cpu.Iff2}"/>
+            </WrapPanel>
+            <WrapPanel>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:LabeledFlagControl Reg="INT" Value="{Binding Cpu.IntRequested}"/>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:LabeledFlagControl Reg="HLT" Value="{Binding Cpu.Halted}"/>
+            </WrapPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

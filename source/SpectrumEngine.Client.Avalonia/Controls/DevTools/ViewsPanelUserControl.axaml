@@ -8,7 +8,7 @@
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.ViewsPanelUserControl"
              Background="{DynamicResource DevsBackground}">
     <Design.DataContext>
-        <viewModels:DevToolsViewModel/>
+        <viewModels:MainWindowViewModel/>
     </Design.DataContext>
     
     <UserControl.Resources>
@@ -31,22 +31,22 @@
     
     <TabControl
         DockPanel.Dock="Left"
-        SelectedIndex="{Binding Views.SelectedIndex, Mode=TwoWay}"
+        SelectedIndex="{Binding PanelsViewOptions.SelectedIndex, Mode=TwoWay}"
         VerticalAlignment="Stretch"
         HorizontalAlignment="Stretch">
         <TabItem
             Header="Memory"
-            IsVisible="{Binding Views.ShowMemory}">
+            IsVisible="{Binding PanelsViewOptions.ShowMemory}">
             <devTools:MemoryViewPanel />
         </TabItem>
         <TabItem 
             Header="Disassembly"
-            IsVisible="{Binding Views.ShowDisassembly}">
+            IsVisible="{Binding PanelsViewOptions.ShowDisassembly}">
             <devTools:DisassemblyViewPanel />
         </TabItem>
         <TabItem
             Header="Watch"
-            IsVisible="{Binding Views.ShowWatch}">
+            IsVisible="{Binding PanelsViewOptions.ShowWatch}">
             <devTools:WatchViewPanel />
         </TabItem>
     </TabControl>

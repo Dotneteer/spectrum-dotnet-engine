@@ -7,6 +7,7 @@ using Avalonia.Metadata;
 using SpectrumEngine.Emu;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels;
 
@@ -15,8 +16,6 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels;
 /// </summary>
 public class MachineViewModel: ViewModelBase
 {
-    private readonly MainWindowViewModel _parentVm;
-    private MachineController? _mc;
     private MachineControllerState _mstate;
     private bool _allowFastLoad;
     private TapeMode _tapeMode;
@@ -24,38 +23,30 @@ public class MachineViewModel: ViewModelBase
     private FrameStats _frameStats = new(); 
 
     /// <summary>
-    /// Bind this view model to its parent
-    /// </summary>
-    /// <param name="parent">The parent MainWindowViewModel instance</param>
-    public MachineViewModel(MainWindowViewModel parent)
-    {
-        _parentVm = parent;
-    }
-    
-    /// <summary>
     /// Set the machine controller to use with this view model
     /// </summary>
     /// <param name="controller">The machine controller to use</param>
     public void SetMachineController(MachineController controller)
     {
+        var oldController = Controller;
+        
         // --- Unsubscribe from the events of the previous controller
-        if (_mc != null)
+        if (Controller != null)
         {
-            _mc.StateChanged -= OnStateChanged;
-            _mc.FrameCompleted -= OnFrameCompleted;
-            _mc.Machine.MachinePropertyChanged -= OnMachinePropertyChanged;
+            Controller.StateChanged -= OnStateChanged;
+            Controller.FrameCompleted -= OnFrameCompleted;
+            Controller.Machine.MachinePropertyChanged -= OnMachinePropertyChanged;
         }
 
         // --- Set up the new controller and handle the state changes
-        _mc = controller;
-        _mc.StateChanged += OnStateChanged;
-        _mc.FrameCompleted += OnFrameCompleted;
-        _mc.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
-        ClockMultiplier = _mc.Machine.TargetClockMultiplier;
+        Controller = controller;
+        Controller.StateChanged += OnStateChanged;
+        Controller.FrameCompleted += OnFrameCompleted;
+        Controller.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
+        ClockMultiplier = Controller.Machine.TargetClockMultiplier;
+        RaisePropertyChanged(nameof(Controller));
+        ControllerChanged?.Invoke(this, (oldController, Controller));
         OnStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
-
-        // --- Update view model properties
-        _parentVm.Display = new DisplayViewModel(_mc);
 
         void OnStateChanged(object? sender, (MachineControllerState OldState, MachineControllerState NewState) e)
         {
@@ -66,7 +57,7 @@ public class MachineViewModel: ViewModelBase
         void OnFrameCompleted(object? sender, bool completed)
         {
             if (!completed) return;
-            var frameStats = _mc.FrameStats;
+            var frameStats = Controller.FrameStats;
             FrameStats = new FrameStats
             {
                 FrameCount = frameStats.FrameCount,
@@ -85,6 +76,10 @@ public class MachineViewModel: ViewModelBase
             }
         }
     }
+
+    public MachineController? Controller { get; private set; }
+
+    public event EventHandler<(MachineController? OldController, MachineController? NewController)>? ControllerChanged; 
 
     public FrameStats FrameStats
     {
@@ -119,7 +114,7 @@ public class MachineViewModel: ViewModelBase
         set
         {
             SetProperty(ref _allowFastLoad, value);
-            _mc?.Machine.SetMachineProperty(MachinePropNames.FastLoad, value);
+            Controller?.Machine.SetMachineProperty(MachinePropNames.FastLoad, value);
         }
     }
 
@@ -146,7 +141,7 @@ public class MachineViewModel: ViewModelBase
     /// </summary>
     public void Start()
     {
-        _mc?.Start();
+        Controller?.Start();
         RaiseCommandExecuted();
     }
 
@@ -157,7 +152,7 @@ public class MachineViewModel: ViewModelBase
     /// <returns>Is the command enabled?</returns>
     [DependsOn(nameof(MachineControllerState))]
     private bool CanStart(object? parameter)
-        => _mc != null && MachineControllerState != MachineControllerState.Running; 
+        => Controller != null && MachineControllerState != MachineControllerState.Running; 
     
     /// <summary>
     /// Execute the Pause command
@@ -165,7 +160,7 @@ public class MachineViewModel: ViewModelBase
     public Task Pause()
     {
         RaiseCommandExecuted();
-        return _mc!.Pause();
+        return Controller!.Pause();
     }
 
     /// <summary>
@@ -175,7 +170,7 @@ public class MachineViewModel: ViewModelBase
     /// <returns>Is the command enabled?</returns>
     [DependsOn(nameof(MachineControllerState))]
     private bool CanPause(object? parameter)
-        => _mc != null && MachineControllerState == MachineControllerState.Running; 
+        => Controller != null && MachineControllerState == MachineControllerState.Running; 
     
     /// <summary>
     /// Execute the Stop command
@@ -183,7 +178,7 @@ public class MachineViewModel: ViewModelBase
     public Task Stop()
     {
         RaiseCommandExecuted();
-        return _mc!.Stop();
+        return Controller!.Stop();
     }
 
     /// <summary>
@@ -193,7 +188,7 @@ public class MachineViewModel: ViewModelBase
     /// <returns>Is the command enabled?</returns>
     [DependsOn(nameof(MachineControllerState))]
     private bool CanStop(object? parameter)
-        => _mc != null && MachineControllerState == MachineControllerState.Running 
+        => Controller != null && MachineControllerState == MachineControllerState.Running 
            || MachineControllerState == MachineControllerState.Paused; 
     
     /// <summary>
@@ -202,7 +197,7 @@ public class MachineViewModel: ViewModelBase
     public Task Restart()
     {
         RaiseCommandExecuted();
-        return _mc!.Restart();
+        return Controller!.Restart();
     }
 
     /// <summary>
@@ -212,7 +207,7 @@ public class MachineViewModel: ViewModelBase
     /// <returns>Is the command enabled?</returns>
     [DependsOn(nameof(MachineControllerState))]
     private bool CanRestart(object? parameter)
-        => _mc != null && MachineControllerState == MachineControllerState.Running 
+        => Controller != null && MachineControllerState == MachineControllerState.Running 
            || MachineControllerState == MachineControllerState.Paused;
     
     /// <summary>
@@ -221,7 +216,7 @@ public class MachineViewModel: ViewModelBase
     public void StartDebug()
     {
         RaiseCommandExecuted();
-        _mc!.StartDebug();
+        Controller!.StartDebug();
     }
 
     /// <summary>
@@ -231,14 +226,14 @@ public class MachineViewModel: ViewModelBase
     /// <returns>Is the command enabled?</returns>
     [DependsOn(nameof(MachineControllerState))]
     private bool CanStartDebug(object? parameter)
-        => _mc != null && MachineControllerState != MachineControllerState.Running;
+        => Controller != null && MachineControllerState != MachineControllerState.Running;
     
     /// <summary>
     /// Execute the StepInto command
     /// </summary>
     public void StepInto()
     {
-        _mc!.StepInto();
+        Controller?.StepInto();
         RaiseCommandExecuted();
     }
 
@@ -249,14 +244,14 @@ public class MachineViewModel: ViewModelBase
     /// <returns>Is the command enabled?</returns>
     [DependsOn(nameof(MachineControllerState))]
     private bool CanStepInto(object? parameter)
-        => _mc != null && MachineControllerState == MachineControllerState.Paused;
+        => Controller != null && MachineControllerState == MachineControllerState.Paused;
     
     /// <summary>
     /// Execute the StepOver command
     /// </summary>
     public void StepOver()
     {
-        _mc!.StepOver();
+        Controller?.StepOver();
         RaiseCommandExecuted();
     }
 
@@ -267,14 +262,14 @@ public class MachineViewModel: ViewModelBase
     /// <returns>Is the command enabled?</returns>
     [DependsOn(nameof(MachineControllerState))]
     private bool CanStepOver(object? parameter)
-        => _mc != null && MachineControllerState == MachineControllerState.Paused;
+        => Controller != null && MachineControllerState == MachineControllerState.Paused;
     
     /// <summary>
     /// Execute the StepOut command
     /// </summary>
     public void StepOut()
     {
-        _mc!.StepOut();
+        Controller?.StepOut();
         RaiseCommandExecuted();
     }
 
@@ -285,7 +280,7 @@ public class MachineViewModel: ViewModelBase
     /// <returns>Is the command enabled?</returns>
     [DependsOn(nameof(MachineControllerState))]
     private bool CanStepOut(object? parameter)
-        => _mc != null && MachineControllerState == MachineControllerState.Paused;
+        => Controller != null && MachineControllerState == MachineControllerState.Paused;
     
     public void ToggleFastLoad() => AllowFastLoad = !AllowFastLoad;
 
@@ -325,7 +320,7 @@ public class MachineViewModel: ViewModelBase
             {
                 // --- This is a .TZX format
                 var dataBlocks = tzxReader.DataBlocks.Select(b => b.GetDataBlock()).Where(b => b != null).ToList();
-                _mc?.Machine.SetMachineProperty(MachinePropNames.TapeData, dataBlocks);
+                Controller?.Machine.SetMachineProperty(MachinePropNames.TapeData, dataBlocks);
                 return;
             }
 
@@ -339,7 +334,7 @@ public class MachineViewModel: ViewModelBase
                 {
                     // --- This is a .TAP format
                     var dataBlocks = tapReader.DataBlocks.ToList();
-                    _mc?.Machine.SetMachineProperty(MachinePropNames.TapeData, dataBlocks);
+                    Controller?.Machine.SetMachineProperty(MachinePropNames.TapeData, dataBlocks);
                 }
                 else
                 {
@@ -349,7 +344,7 @@ public class MachineViewModel: ViewModelBase
             catch (Exception ex)
             {
                 // --- Perhaps wrong file format
-                _mc?.Machine.SetMachineProperty(MachinePropNames.TapeData, null);
+                Controller?.Machine.SetMachineProperty(MachinePropNames.TapeData, null);
                 var msgBox = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxStandardWindow("Error",
                     $"Cannot parse the contents of the specified file as a valid TZX or TAP file ({ex.Message})");
                 await msgBox.Show();
@@ -363,7 +358,7 @@ public class MachineViewModel: ViewModelBase
     /// </summary>
     public void Rewind()
     {
-        _mc?.Machine.SetMachineProperty(MachinePropNames.RewindRequested, true);
+        Controller?.Machine.SetMachineProperty(MachinePropNames.RewindRequested, true);
         RaiseCommandExecuted();
     }
 
@@ -375,7 +370,7 @@ public class MachineViewModel: ViewModelBase
     {
         if (arg is not string stringValue || !int.TryParse(stringValue, out var intValue)) return;
         
-        _mc!.Machine.TargetClockMultiplier = intValue;
+        Controller!.Machine.TargetClockMultiplier = intValue;
         ClockMultiplier = intValue;
     }
 }

@@ -11,4 +11,5 @@
     <controls:FixedDecimalConverter x:Key="FixedDecimalConverter" />
     <devTools:VerticalDockConverter x:Key="VerticalDockConverter" />
     <devTools:PanelsDockConverter x:Key="PanelsDockConverter" />
+    <devTools:HexConverter x:Key="HexConverter" />
 </ResourceDictionary>

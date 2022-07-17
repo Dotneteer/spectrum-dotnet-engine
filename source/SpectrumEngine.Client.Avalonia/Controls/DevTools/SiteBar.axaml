@@ -4,38 +4,42 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:common="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.Common"
              xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
+             xmlns:devTools="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.SiteBar"
              Background="{DynamicResource SiteBarBackgroundBrush}">
     
     <Design.DataContext>
-        <viewModels:DevToolsViewModel/>
+        <!-- ReSharper disable once Xaml.ConstructorWarning -->
+        <viewModels:MainWindowViewModel/>
     </Design.DataContext>
     
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="{Binding SiteBar.CpuHeight}" />
-            <RowDefinition Height="{Binding SiteBar.UlaHeight}" />
-            <RowDefinition Height="{Binding SiteBar.BreakpointsHeight}" />
+            <RowDefinition Height="{Binding SiteBarViewOptions.CpuHeight}" />
+            <RowDefinition Height="{Binding SiteBarViewOptions.UlaHeight}" />
+            <RowDefinition Height="{Binding SiteBarViewOptions.BreakpointsHeight}" />
         </Grid.RowDefinitions>
         <common:SiteBarExpander
-            IsVisible="{Binding SiteBar.ShowCpu}"
+            IsVisible="{Binding SiteBarViewOptions.ShowCpu}"
             Grid.Row="0"
             Header="CPU"
-            BorderThickness="0,0,0,1"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            Padding="0"
             PropertyChanged="OnCpuPropertyChanged">
-            This is Registers
+            <devTools:CpuPanel RefreshRate="10" />
         </common:SiteBarExpander>
         <common:SiteBarExpander
             Grid.Row="1"
-            IsVisible="{Binding SiteBar.ShowUla}"
+            IsVisible="{Binding SiteBarViewOptions.ShowUla}"
             Header="ULA"
             PropertyChanged="OnUlaPropertyChanged">
             This is ULA
         </common:SiteBarExpander>
         <common:SiteBarExpander
             Grid.Row="2"
-            IsVisible="{Binding SiteBar.ShowBreakpoints}"
+            IsVisible="{Binding SiteBarViewOptions.ShowBreakpoints}"
             Header="Breakpoints"
             PropertyChanged="OnBreakpointsPropertyChanged">
             This is Breakpoints

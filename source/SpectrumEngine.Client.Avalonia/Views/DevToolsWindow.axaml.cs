@@ -25,20 +25,20 @@ public partial class DevToolsWindow : Window
         AvaloniaXamlLoader.Load(this);
     }
 
-    private void DevToolsClosed(object? sender, EventArgs e)
+    private void DevToolsClosed(object? _, EventArgs e)
     {
         if (Vm == null) return;
-        Vm.DevTools.ShowDevTools = false;
+        Vm.DevToolsViewOptions.ShowDevTools = false;
         App.DiscardDevToolsWindow();
     }
 
-    private async void OnClosing(object? sender, CancelEventArgs e)
+    private async void OnClosing(object? _, CancelEventArgs e)
     {
         if (App.IsAppClosing || Vm == null) return;
         e.Cancel = true;
 
         await Task.Delay(100);
-        Vm.DevTools.ShowDevTools = false;
+        Vm.DevToolsViewOptions.ShowDevTools = false;
         App.HideDevToolsWindow();
     }
 }
