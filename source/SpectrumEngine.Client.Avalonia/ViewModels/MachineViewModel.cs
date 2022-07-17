@@ -38,6 +38,8 @@ public class MachineViewModel: ViewModelBase
     /// <param name="controller">The machine controller to use</param>
     public void SetMachineController(MachineController controller)
     {
+        var oldController = _mc;
+        
         // --- Unsubscribe from the events of the previous controller
         if (_mc != null)
         {
@@ -52,6 +54,8 @@ public class MachineViewModel: ViewModelBase
         _mc.FrameCompleted += OnFrameCompleted;
         _mc.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
         ClockMultiplier = _mc.Machine.TargetClockMultiplier;
+        RaisePropertyChanged(nameof(Controller));
+        ControllerChanged?.Invoke(this, (oldController, _mc));
         OnStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
 
         // --- Update view model properties
@@ -85,6 +89,10 @@ public class MachineViewModel: ViewModelBase
             }
         }
     }
+
+    public MachineController? Controller => _mc;
+
+    public event EventHandler<(MachineController? OldController, MachineController? NewControllee)>? ControllerChanged; 
 
     public FrameStats FrameStats
     {

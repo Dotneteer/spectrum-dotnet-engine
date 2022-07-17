@@ -19,7 +19,7 @@ public class MainWindowViewModel : ViewModelBase
             ShowKeyboard = false,
             IsMuted = false
         };
-        DevTools = new DevToolsViewModel(Environment)
+        DevTools = new DevToolsViewModel(Environment, this)
         {
             ShowMenuBar = true,
             ShowDevTools = false,

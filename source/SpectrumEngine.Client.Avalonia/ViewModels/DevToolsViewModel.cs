@@ -2,6 +2,7 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels;
 
 public class DevToolsViewModel: ViewModelBase
 {
+    private readonly MainWindowViewModel _parent;
     private bool _showDevTools;
     private readonly bool _useNativeMenu;
     private bool _showMenuBar;
@@ -12,8 +13,9 @@ public class DevToolsViewModel: ViewModelBase
     private bool _siteBarOnLeft;
     private bool _panelsAtBottom;
 
-    public DevToolsViewModel(EnvironmentViewModel env)
+    public DevToolsViewModel(EnvironmentViewModel env, MainWindowViewModel parent)
     {
+        _parent = parent;
         _useNativeMenu = env.UseNativeMenu;
         SiteBar = new SiteBarViewModel
         {
@@ -38,6 +40,8 @@ public class DevToolsViewModel: ViewModelBase
             SelectedIndex = 0
         };
     }
+
+    public MachineViewModel Machine => _parent.Machine;
     
     public bool ShowMenuBar
     {

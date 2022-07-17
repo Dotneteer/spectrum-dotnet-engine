@@ -111,7 +111,6 @@
     </NativeMenu.Menu>
     
     <DockPanel>
-        
         <!-- Use this menu on Windows -->
         <Menu DockPanel.Dock="Top" IsVisible="{Binding DevTools.ShouldDisplayMenu}">
                 <MenuItem Header="DevTools">

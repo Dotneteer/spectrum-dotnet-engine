@@ -7,7 +7,7 @@
 
     <Styles.Resources>
         <Thickness x:Key="ExpanderHeaderPadding">16</Thickness>
-        <Thickness x:Key="ExpanderContentPadding">16</Thickness>
+        <Thickness x:Key="ExpanderContentPadding">8 8 4 8</Thickness>
 
         <Thickness x:Key="ExpanderBorderThickness">1</Thickness>
 
