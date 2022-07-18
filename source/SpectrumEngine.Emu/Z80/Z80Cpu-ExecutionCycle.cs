@@ -42,6 +42,8 @@ public partial class Z80Cpu
         Prefix = OpCodePrefix.None;
         EiBacklog = 0;
         RetExecuted = false;
+        TotalContentionDelaySinceStart = 0;
+        ContentionDelaySincePause = 0;
     }
 
     /// <summary>
@@ -68,6 +70,8 @@ public partial class Z80Cpu
         Prefix = OpCodePrefix.None;
         EiBacklog = 0;
         RetExecuted = false;
+        TotalContentionDelaySinceStart = 0;
+        ContentionDelaySincePause = 0;
     }
 
     /// <summary>
@@ -168,7 +172,7 @@ public partial class Z80Cpu
                         Prefix = OpCodePrefix.FD;
                         break;
                     default:
-                        _standardInstrs![OpCode]?.Invoke();
+                        _standardInstrs![OpCode]();
                         Prefix = OpCodePrefix.None;
                         break;
                 }
@@ -176,13 +180,13 @@ public partial class Z80Cpu
 
             // --- Bit instructions
             case OpCodePrefix.CB:
-                _bitInstrs![OpCode]?.Invoke();
+                _bitInstrs![OpCode].Invoke();
                 Prefix = OpCodePrefix.None;
                 break;
 
             // --- Extended instructions
             case OpCodePrefix.ED:
-                _extendedInstrs![OpCode]?.Invoke();
+                _extendedInstrs![OpCode].Invoke();
                 Prefix = OpCodePrefix.None;
                 break;
 
@@ -205,9 +209,8 @@ public partial class Z80Cpu
                 }
                 else
                 {
-                    _indexedInstrs![OpCode]?.Invoke();
+                    _indexedInstrs![OpCode].Invoke();
                     Prefix = OpCodePrefix.None;
-                    break;
                 }
                 break;
 
@@ -219,7 +222,7 @@ public partial class Z80Cpu
                 OpCode = ReadMemory(Regs.PC);
                 TactPlus2(Regs.PC);
                 Regs.PC++;
-                _indexedBitInstrs![OpCode]?.Invoke();
+                _indexedBitInstrs![OpCode].Invoke();
                 Prefix = OpCodePrefix.None;
                 break;
         }

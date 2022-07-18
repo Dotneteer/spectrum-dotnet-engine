@@ -105,5 +105,9 @@
         <DependentUpon>CpuPanel.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Controls\DevTools\StateValueControl.axaml.cs">
+        <DependentUpon>StateValueControl.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

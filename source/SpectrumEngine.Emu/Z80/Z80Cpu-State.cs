@@ -21,7 +21,7 @@ public partial class Z80Cpu
     /// <summary>
     /// The current maskable interrupt mode (0, 1, or 2)
     /// </summary>
-    public int InterruptMode { get; private set; } = 0;
+    public int InterruptMode { get; private set; }
 
     /// <summary>
     /// Interrupt Enable Flip-Flop
@@ -29,7 +29,7 @@ public partial class Z80Cpu
     /// <remarks>
     /// If set, the CPU accepts maskable interrupt; otherwise, not.
     /// </remarks>
-    public bool Iff1 { get; set; } = false;
+    public bool Iff1 { get; set; }
 
     /// <summary>
     /// Temporary storage for Iff1.
@@ -41,7 +41,7 @@ public partial class Z80Cpu
     /// is saved so that the complete state of the CPU just prior to the non-maskable interrupt can be restored at any
     /// time.
     /// </remarks>
-    public bool Iff2 { get; set; } = false;
+    public bool Iff2 { get; set; }
 
     /// <summary>
     /// This flag indicates if the CPU is in a halted state.
@@ -73,6 +73,11 @@ public partial class Z80Cpu
     public int TactsInFrame { get; private set; } = 100_000_000;
 
     /// <summary>
+    /// Get the number of T-states in a display line (use -1, if this info is not available)
+    /// </summary>
+    public virtual int TactsInDisplayLine => -1;
+
+    /// <summary>
     /// Show the number of machine frames completed since the CPU started.
     /// </summary>
     public int Frames => (int)(Tacts / ((ulong)TactsInFrame * (ulong)ClockMultiplier));
@@ -86,13 +91,13 @@ public partial class Z80Cpu
     /// This flag indicates if bit 3 or 5 of Register F has been updated. We need to keep this value, as we utilize
     /// it within the `SCF` and `CCF` instructions to calculate the new values of bit 3 and 5 of F.
     /// </summary>
-    public bool F53Updated { get; private set; } = false;
+    public bool F53Updated { get; private set; }
 
     /// <summary>
     /// When calculating the value of bit 3 and 5 of Register F within the `SCF` and `CCF` instructions, we must know
     /// whether the last executed instruction has updated these flags. This field stores this information.
     /// </summary>
-    public bool PrevF53Updated { get; private set; } = false;
+    public bool PrevF53Updated { get; private set; }
 
     /// <summary>
     /// The last fetched opcode. If an instruction is prefixed, it contains the prefix or the opcode following the
@@ -120,11 +125,21 @@ public partial class Z80Cpu
     /// current subroutine returns to its caller. The debugger will observe the change of this flag and manage its
     /// internal tracking of the call stack accordingly.
     /// </summary>
-    public bool RetExecuted { get; private set; } = false;
+    public bool RetExecuted { get; private set; }
 
     /// <summary>
     /// This flag is reserved for future extension. The ZX Spectrum Next computer uses additional Z80 instructions.
     /// This flag indicates if those are allowed.
     /// </summary>
-    public bool AllowExtendedInstructions { get; set; } = false;
+    public bool AllowExtendedInstructions { get; set; }
+
+    /// <summary>
+    /// Accumulates the total contention value since the last start
+    /// </summary>
+    public int TotalContentionDelaySinceStart { get; set; }
+    
+    /// <summary>
+    /// Accumulates the contention since the last pause
+    /// </summary>
+    public int ContentionDelaySincePause { get; set; }
 }

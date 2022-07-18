@@ -147,6 +147,11 @@ public sealed class ZxSpectrum48Machine :
         lock (_emulatedKeyStrokes) { _emulatedKeyStrokes.Clear(); }
     }
 
+    /// <summary>
+    /// Get the number of T-states in a display line (use -1, if this info is not available)
+    /// </summary>
+    public override int TactsInDisplayLine => ScreenDevice.ScreenWidth;
+
     #endregion
 
     #region Memory Device
@@ -172,6 +177,8 @@ public sealed class ZxSpectrum48Machine :
     {
         DelayAddressBusAccess(address);
         TactPlus3();
+        TotalContentionDelaySinceStart += 3;
+        ContentionDelaySincePause += 3;
     }
 
     /// <summary>
@@ -200,6 +207,8 @@ public sealed class ZxSpectrum48Machine :
     {
         DelayAddressBusAccess(address);
         TactPlus3();
+        TotalContentionDelaySinceStart += 3;
+        ContentionDelaySincePause += 3;
     }
 
     /// <summary>
@@ -218,6 +227,8 @@ public sealed class ZxSpectrum48Machine :
         // --- We read from contended memory
         var delay = _contentionValues[CurrentFrameTact / ClockMultiplier];
         TactPlusN(delay);
+        TotalContentionDelaySinceStart += delay;
+        ContentionDelaySincePause += delay;
     }
 
     /// <summary>
@@ -449,12 +460,17 @@ public sealed class ZxSpectrum48Machine :
                 TactPlus3();
             }
         }
+        
+        TotalContentionDelaySinceStart += 4;
+        ContentionDelaySincePause += 4;
 
         // --- Apply I/O contention
         void ApplyContentionDelay()
         {
             var delay = GetContentionValue(CurrentFrameTact / ClockMultiplier);
             TactPlusN(delay);
+            TotalContentionDelaySinceStart += delay;
+            ContentionDelaySincePause += delay;
         }
     }
 
