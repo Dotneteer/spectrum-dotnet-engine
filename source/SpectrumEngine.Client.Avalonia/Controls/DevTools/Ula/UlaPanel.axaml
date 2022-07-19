@@ -28,6 +28,12 @@
             </WrapPanel>
             <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
             <cpu:StateValueControl Reg="PIX" Value="{Binding Ula.PixelOp}"/>
+            <WrapPanel>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:StateValueControl Reg="BOR" Value="{Binding Ula.BorderValue}"/>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:StateValueControl Reg="FLO" Value="{Binding Ula.FloatingBusValue}"/>
+            </WrapPanel>
             <devTools:PanelSeparatorControl />
             <WrapPanel>
                 <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
@@ -35,6 +41,30 @@
                 <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
                 <cpu:StateValueControl Reg="LCO" Value="{Binding Ula.LastContention}"/>
             </WrapPanel>
+            <devTools:PanelSeparatorControl />
+            <WrapPanel>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:LabeledFlagControl Reg="EAR" Value="{Binding Ula.EarBit}"/>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <cpu:LabeledFlagControl Reg="MIC" Value="{Binding Ula.MicBit}"/>
+            </WrapPanel>
+            <devTools:PanelSeparatorControl />
+            <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+            <devTools:KeyLineControl Reg="KL0" Value="{Binding Ula.KeyboardLine0}" Comment="(1..2)"/>
+            <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+            <devTools:KeyLineControl Reg="KL1" Value="{Binding Ula.KeyboardLine1}" Comment="(1..2)"/>
+            <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+            <devTools:KeyLineControl Reg="KL2" Value="{Binding Ula.KeyboardLine2}" Comment="(Q.. T)"/>
+            <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+            <devTools:KeyLineControl Reg="KL3" Value="{Binding Ula.KeyboardLine3}" Comment="(1.. 5)"/>
+            <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+            <devTools:KeyLineControl Reg="KL4" Value="{Binding Ula.KeyboardLine4}" Comment="(0 ..6)"/>
+            <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+            <devTools:KeyLineControl Reg="KL5" Value="{Binding Ula.KeyboardLine5}" Comment="(Y ..P)"/>
+            <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+            <devTools:KeyLineControl Reg="KL6" Value="{Binding Ula.KeyboardLine6}" Comment="(1..2)"/>
+            <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+            <devTools:KeyLineControl Reg="KL7" Value="{Binding Ula.KeyboardLine7}" Comment="(1..2)"/>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

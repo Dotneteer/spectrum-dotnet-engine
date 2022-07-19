@@ -109,5 +109,9 @@
         <DependentUpon>StateValueControl.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Controls\DevTools\Ula\KeyLineControl.axaml.cs">
+        <DependentUpon>ByteFlagsControl.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

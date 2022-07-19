@@ -12,4 +12,5 @@
     <devTools:VerticalDockConverter x:Key="VerticalDockConverter" />
     <devTools:PanelsDockConverter x:Key="PanelsDockConverter" />
     <devTools:HexConverter x:Key="HexConverter" />
+    <devTools:FlagConverter x:Key="FlagConverter" />
 </ResourceDictionary>
