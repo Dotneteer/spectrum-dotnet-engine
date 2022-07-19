@@ -12,7 +12,6 @@ public sealed class BeeperDevice : IBeeperDevice
     private int _audioGateValue;
     private int _audioNextSampleTact;
     private readonly List<float> _audioSamples = new();
-    private bool _earBitValue;
 
     /// <summary>
     /// Initialize the beeper device and assign it to its host machine.
@@ -58,12 +57,17 @@ public sealed class BeeperDevice : IBeeperDevice
     }
 
     /// <summary>
+    /// The current value of the EAR bit
+    /// </summary>
+    public bool EarBit { get; private set; }
+
+    /// <summary>
     /// This method sets the EAR bit value to generate sound with the beeper.
     /// </summary>
     /// <param name="value">EAR bit value to set</param>
     public void SetEarBit(bool value)
     {
-        _earBitValue = value;
+        EarBit = value;
     }
 
     /// <summary>
@@ -73,7 +77,7 @@ public sealed class BeeperDevice : IBeeperDevice
     {
         if (Machine.CurrentFrameTact <= _audioNextSampleTact) return;
         
-        _audioSamples.Add(_earBitValue ? 1.0f : 0.0f);
+        _audioSamples.Add(EarBit ? 1.0f : 0.0f);
         _audioGateValue += _audioLowerGate;
         _audioNextSampleTact += _audioSampleLength;
         if (_audioGateValue < GATE) return;
@@ -102,7 +106,7 @@ public sealed class BeeperDevice : IBeeperDevice
             }
             else
             {
-                _audioSamples.Add(_earBitValue ? 1.0f : 0.0f);
+                _audioSamples.Add(EarBit ? 1.0f : 0.0f);
                 _audioNextSampleTact = _audioSampleLength - cpuTactsInFrame + _audioNextSampleTact;
             }
         }

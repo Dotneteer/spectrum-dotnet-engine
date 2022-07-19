@@ -114,7 +114,6 @@ public sealed class TapeDevice: ITapeDevice
     private ulong _tapeLastMicBitTact;
 
     // --- The last MIC bit value
-    private bool _tapeLastMicBit;
 
     // --- Current save phase
     private SavePhase _savePhase;
@@ -224,7 +223,7 @@ public sealed class TapeDevice: ITapeDevice
                     // --- Turn on SAVE mode
                     TapeMode = TapeMode.Save;
                     _tapeLastMicBitTact = Machine.Tacts;
-                    _tapeLastMicBit = true;
+                    MicBit = true;
                     _savePhase = SavePhase.None;
                     _pilotPulseCount = 0;
                     _dataBlockCount = 0;
@@ -361,13 +360,15 @@ public sealed class TapeDevice: ITapeDevice
         return true;
     }
 
+    public bool MicBit { get; private set; }
+
     /// <summary>
     /// Process the specified MIC bit value.
     /// </summary>
     /// <param name="micBit">MIC bit to process</param>
     public void ProcessMicBit(bool micBit)
     {
-        if (_tapeMode != TapeMode.Save || _tapeLastMicBit == micBit)
+        if (_tapeMode != TapeMode.Save || MicBit == micBit)
         {
             return;
         }
@@ -415,7 +416,7 @@ public sealed class TapeDevice: ITapeDevice
                 pulse = MicPulseType.TooLong;
             }
 
-            _tapeLastMicBit = micBit;
+            MicBit = micBit;
             _tapeLastMicBitTact = Machine.Tacts;
 
             // --- Lets process the pulse according to the current SAVE phase and pulse width

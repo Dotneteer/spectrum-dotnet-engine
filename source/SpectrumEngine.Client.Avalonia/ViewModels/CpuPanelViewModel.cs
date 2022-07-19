@@ -5,11 +5,11 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels;
 
 public class CpuPanelViewModel: ViewModelBase
 {
-    private readonly IZ80Machine _controller;
+    private readonly IZ80Machine _machine;
 
     public CpuPanelViewModel(MachineController controller)
     {
-        _controller = controller.Machine;
+        _machine = controller.Machine;
     }
 
     public void SignStateChanged()
@@ -40,63 +40,66 @@ public class CpuPanelViewModel: ViewModelBase
         RaisePropertyChanged(nameof(R5Flag));
         RaisePropertyChanged(nameof(PFlag));
         RaisePropertyChanged(nameof(R3Flag));
+        RaisePropertyChanged(nameof(HFlag));
         RaisePropertyChanged(nameof(NFlag));
         RaisePropertyChanged(nameof(CFlag));
     }
     
-    public ushort AF => _controller.Regs.AF;
+    public ushort AF => _machine.Regs.AF;
 
-    public ushort BC => _controller.Regs.BC;
+    public ushort BC => _machine.Regs.BC;
 
-    public ushort DE => _controller.Regs.DE;
+    public ushort DE => _machine.Regs.DE;
     
-    public ushort HL => _controller.Regs.HL;
+    public ushort HL => _machine.Regs.HL;
 
-    public ushort AF_ => _controller.Regs._AF_;
+    public ushort AF_ => _machine.Regs._AF_;
 
-    public ushort BC_ => _controller.Regs._BC_;
+    public ushort BC_ => _machine.Regs._BC_;
 
-    public ushort DE_ => _controller.Regs._DE_;
+    public ushort DE_ => _machine.Regs._DE_;
     
-    public ushort HL_ => _controller.Regs._HL_;
+    public ushort HL_ => _machine.Regs._HL_;
 
-    public ushort PC => _controller.Regs.PC;
+    public ushort PC => _machine.Regs.PC;
 
-    public ushort SP => _controller.Regs.SP;
+    public ushort SP => _machine.Regs.SP;
 
-    public ushort IX => _controller.Regs.IX;
+    public ushort IX => _machine.Regs.IX;
     
-    public ushort IY => _controller.Regs.IY;
+    public ushort IY => _machine.Regs.IY;
 
-    public byte I => _controller.Regs.I;
+    public byte I => _machine.Regs.I;
 
-    public byte R => _controller.Regs.R;
+    public byte R => _machine.Regs.R;
 
-    public ushort WZ => _controller.Regs.WZ;
+    public ushort WZ => _machine.Regs.WZ;
 
-    public bool IntRequested => (_controller.SignalFlags & Z80Cpu.Z80Signals.Int) != 0;
+    public bool IntRequested => (_machine.SignalFlags & Z80Cpu.Z80Signals.Int) != 0;
 
-    public bool Halted => _controller.Halted;
+    public bool Halted => _machine.Halted;
 
-    public int InterruptMode => _controller.InterruptMode;
+    public int InterruptMode => _machine.InterruptMode;
 
-    public bool Iff1 => _controller.Iff1;
+    public bool Iff1 => _machine.Iff1;
     
-    public bool Iff2 => _controller.Iff2;
+    public bool Iff2 => _machine.Iff2;
 
-    public ulong Tacts => _controller.Tacts;
+    public ulong Tacts => _machine.Tacts;
 
-    public bool SFlag => _controller.Regs.IsSFlagSet;
+    public bool SFlag => _machine.Regs.IsSFlagSet;
 
-    public bool ZFlag => _controller.Regs.IsZFlagSet;
+    public bool ZFlag => _machine.Regs.IsZFlagSet;
 
-    public bool R5Flag => _controller.Regs.IsR5FlagSet;
+    public bool R5Flag => _machine.Regs.IsR5FlagSet;
 
-    public bool PFlag => _controller.Regs.IsPFlagSet;
+    public bool PFlag => _machine.Regs.IsPFlagSet;
 
-    public bool R3Flag => _controller.Regs.IsR3FlagSet;
+    public bool R3Flag => _machine.Regs.IsR3FlagSet;
 
-    public bool NFlag => _controller.Regs.IsNFlagSet;
+    public bool HFlag => _machine.Regs.IsHFlagSet;
+
+    public bool NFlag => _machine.Regs.IsNFlagSet;
     
-    public bool CFlag => _controller.Regs.IsCFlagSet;
+    public bool CFlag => _machine.Regs.IsCFlagSet;
 }

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
              xmlns:cpu="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools.Cpu"
+             xmlns:devTools="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.CpuPanel">
     
@@ -14,6 +15,53 @@
 
     <ScrollViewer>
         <StackPanel>
+            <Grid 
+                ColumnDefinitions="38, Auto" 
+                RowDefinitions="Auto, Auto">
+                <TextBlock 
+                    Grid.Column="0"
+                    Grid.RowSpan="2"
+                    FontSize="22" 
+                    TextAlignment="Left"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource DiagLabelTextColor}"
+                    Text="F"/>
+                <StackPanel
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    Orientation="Horizontal">
+                    <TextBlock Width="18" Foreground="{DynamicResource DiagLabelTextColor}" Text="S" />
+                    <TextBlock Width="18" Foreground="{DynamicResource DiagLabelTextColor}" Text="Z" />
+                    <TextBlock Width="18" Foreground="{DynamicResource DiagLabelTextColor}" Text="5" />
+                    <TextBlock Width="18" Foreground="{DynamicResource DiagLabelTextColor}" Text="P" />
+                    <TextBlock Width="18" Foreground="{DynamicResource DiagLabelTextColor}" Text="3" />
+                    <TextBlock Width="18" Foreground="{DynamicResource DiagLabelTextColor}" Text="H" />
+                    <TextBlock Width="18" Foreground="{DynamicResource DiagLabelTextColor}" Text="N" />
+                    <TextBlock Width="18" Foreground="{DynamicResource DiagLabelTextColor}" Text="C" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Column="1"
+                    Grid.Row="1"
+                    Orientation="Horizontal">
+                    <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                    <cpu:FlagControl Width="18" Value="{Binding Cpu.SFlag}" />
+                    <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                    <cpu:FlagControl Width="18" Value="{Binding Cpu.ZFlag}" />
+                    <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                    <cpu:FlagControl Width="18" Value="{Binding Cpu.R5Flag}" />
+                    <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                    <cpu:FlagControl Width="18" Value="{Binding Cpu.PFlag}" />
+                    <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                    <cpu:FlagControl Width="18" Value="{Binding Cpu.R3Flag}" />
+                    <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                    <cpu:FlagControl Width="18" Value="{Binding Cpu.HFlag}" />
+                    <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                    <cpu:FlagControl Width="18" Value="{Binding Cpu.NFlag}" />
+                    <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                    <cpu:FlagControl Width="18" Value="{Binding Cpu.CFlag}" />
+                </StackPanel>
+            </Grid>
+            <devTools:PanelSeparatorControl />
             <WrapPanel>
                 <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
                 <cpu:Reg16Control Reg="AF" Value="{Binding Cpu.AF}"/>
@@ -38,11 +86,7 @@
                 <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
                 <cpu:Reg16Control Reg="HL'" Value="{Binding Cpu.HL_}"/>
             </WrapPanel>
-            <Border 
-                Height="2" 
-                Margin="0 4"
-                BorderThickness="0 0 0 1" 
-                BorderBrush="{DynamicResource ExpanderBorderBrush}" />
+            <devTools:PanelSeparatorControl />
             <WrapPanel>
                 <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
                 <cpu:Reg16Control Reg="PC" Value="{Binding Cpu.PC}"/>
@@ -63,11 +107,7 @@
             </WrapPanel>
             <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
             <cpu:Reg16Control Reg="WZ" Value="{Binding Cpu.WZ}"/>
-            <Border 
-                Height="2" 
-                Margin="0 4"
-                BorderThickness="0 0 0 1" 
-                BorderBrush="{DynamicResource ExpanderBorderBrush}" />
+            <devTools:PanelSeparatorControl />
             <WrapPanel>
                 <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
                 <cpu:StateValueControl Reg="CLK" Value="{Binding Cpu.Tacts}"/>

@@ -170,21 +170,27 @@ public class MachineController
         int? terminationPartition = null,
         ushort? terminationPoint = null)
     {
-        if (State == MachineControllerState.Running)
+        switch (State)
         {
-            throw new InvalidOperationException("The machine is already running");
+            case MachineControllerState.Running:
+                throw new InvalidOperationException("The machine is already running");
+            case MachineControllerState.None or MachineControllerState.Stopped:
+                // --- First start (after stop), reset the machine
+                Machine.Reset();
+                break;
         }
-        if (State is MachineControllerState.None or MachineControllerState.Stopped)
-        {
-            // --- First start (after stop), reset the machine
-            Machine.Reset();
-        }
+
+        // --- Initialize the context
         Context.FrameTerminationMode = terminationMode;
         Context.DebugStepMode = debugStepMode;
         Context.TerminationPartition = terminationPartition;
         Context.TerminationPoint = terminationPoint;
         Context.Canceled = false;
         
+        // --- Set up the state
+        Machine.ContentionDelaySincePause = 0;
+
+        // --- Now, run!
         State = MachineControllerState.Running;
         _machineTask = Task.Run(async () =>
         {

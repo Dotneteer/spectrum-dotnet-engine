@@ -31,10 +31,9 @@
     <Setter Property="Background" Value="{DynamicResource SiteBarHeaderBackground}" />
     <Setter Property="BorderThickness" Value="{DynamicResource ExpanderBorderThickness}" />
     <Setter Property="BorderBrush" Value="{DynamicResource ExpanderBorderBrush}" />
-    <Setter Property="Padding" Value="0,0,12,0" />
     <Setter Property="HorizontalAlignment" Value="Stretch" />
-    <Setter Property="HorizontalContentAlignment" Value="Left" />
-    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
   </Style>
   <Style Selector="controls|SiteBarExpander">
     <Setter Property="Template">

@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:cpu="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools.Cpu"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Name="UserControl"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.KeyLineControl">
+    <Grid ColumnDefinitions="38,90,*">
+        <TextBlock
+            Grid.Column="0"
+            Foreground="{DynamicResource DiagLabelTextColor}"
+            Text="{Binding ElementName=UserControl, Path=Reg}"/>
+        <Grid Grid.Column="1" ColumnDefinitions="18,18,18,18,18">
+            <cpu:FlagControl
+                Grid.Column="4"
+                Value="{Binding ElementName=UserControl, Path=Value, Converter={StaticResource FlagConverter}, ConverterParameter=4}" />
+            <cpu:FlagControl
+                Grid.Column="3"
+                Value="{Binding ElementName=UserControl, Path=Value, Converter={StaticResource FlagConverter}, ConverterParameter=3}" />
+            <cpu:FlagControl
+                Grid.Column="2"
+                Value="{Binding ElementName=UserControl, Path=Value, Converter={StaticResource FlagConverter}, ConverterParameter=2}" />
+            <cpu:FlagControl
+                Grid.Column="1"
+                Value="{Binding ElementName=UserControl, Path=Value, Converter={StaticResource FlagConverter}, ConverterParameter=1}" />
+            <cpu:FlagControl
+                Grid.Column="0"
+                Value="{Binding ElementName=UserControl, Path=Value, Converter={StaticResource FlagConverter}, ConverterParameter=0}" />
+        </Grid>
+        <TextBlock
+            Grid.Column="2"
+            Foreground="{DynamicResource DiagSecondaryTextColor}"
+            Text="{Binding ElementName=UserControl, Path=Comment}"/>
+    </Grid>
+</UserControl>

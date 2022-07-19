@@ -68,6 +68,11 @@ public interface IZ80Cpu
     /// Get the number of T-states in a machine frame.
     /// </summary>
     int TactsInFrame { get; }
+    
+    /// <summary>
+    /// Get the number of T-states in a display line (use -1, if this info is not available)
+    /// </summary>
+    int TactsInDisplayLine { get; }
 
     /// <summary>
     /// Set the number of tacts in a machine frame.
@@ -115,6 +120,16 @@ public interface IZ80Cpu
     /// This flag indicates if those are allowed.
     /// </summary>
     bool AllowExtendedInstructions { get; set; }
+
+    /// <summary>
+    /// Accumulates the total contention value since the last start
+    /// </summary>
+    int TotalContentionDelaySinceStart { get; set; }
+
+    /// <summary>
+    /// Accumulates the contention since the last pause
+    /// </summary>
+    int ContentionDelaySincePause { get; set; }
 
     /// <summary>
     /// Executes a hard reset as if the machine and the CPU had just been turned on.

@@ -20,6 +20,13 @@ public interface IKeyboardDevice: IGenericDevice<IZxSpectrum48Machine>
     bool GetStatus(SpectrumKeyCode key);
 
     /// <summary>
+    /// Gets the value of the specified keyline
+    /// </summary>
+    /// <param name="line">Key line index</param>
+    /// <returns>Key line value</returns>
+    byte GetKeyLineValue(byte line);
+    
+    /// <summary>
     /// This method queries the status of the keyboard keys using the specified port address.
     /// </summary>
     /// <param name="address">Port address of the line to query</param>

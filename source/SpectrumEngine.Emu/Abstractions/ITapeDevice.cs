@@ -21,6 +21,11 @@ public interface ITapeDevice: IGenericDevice<IZxSpectrum48Machine>
     bool GetTapeEarBit();
 
     /// <summary>
+    /// The current value of the MIC bit
+    /// </summary>
+    bool MicBit { get; }
+    
+    /// <summary>
     /// Process the specified MIC bit value.
     /// </summary>
     /// <param name="micBit">MIC bit to process</param>

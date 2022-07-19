@@ -68,6 +68,16 @@ public sealed class KeyboardDevice: IKeyboardDevice, IDisposable
     }
 
     /// <summary>
+    /// Gets the value of the specified keyline
+    /// </summary>
+    /// <param name="line">Key line index</param>
+    /// <returns>Key line value</returns>
+    public byte GetKeyLineValue(byte line)
+    {
+        return _lineStatus[line & 0x07];
+    }
+
+    /// <summary>
     /// This method queries the status of the keyboard keys using the specified port address.
     /// </summary>
     /// <param name="address">Port address of the line to query</param>

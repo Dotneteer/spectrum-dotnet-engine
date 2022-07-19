@@ -19,12 +19,11 @@ public class MainWindowViewModel : ViewModelBase
 
         // --- Initialize the machine information
         Machine = new MachineViewModel();
-        Machine.ControllerChanged += (sender, tuple) =>
+        Machine.ControllerChanged += (sender, change) =>
         {
-            if (tuple.NewController != null)
-            {
-                Cpu = new CpuPanelViewModel(tuple.NewController);
-            }
+            if (change.NewController == null) return;
+            Cpu = new CpuPanelViewModel(change.NewController);
+            Ula = new UlaPanelViewModel(change.NewController);
         };
         
         // --- Spectrum Display
@@ -121,5 +120,10 @@ public class MainWindowViewModel : ViewModelBase
     /// Represents the CPU's view model
     /// </summary>
     public CpuPanelViewModel? Cpu { get; private set; }
+    
+    /// <summary>
+    /// Represents the ULA's view model
+    /// </summary>
+    public UlaPanelViewModel? Ula { get; private set; }
     
 }
