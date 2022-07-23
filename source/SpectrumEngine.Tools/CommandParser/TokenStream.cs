@@ -143,7 +143,7 @@ public class TokenStream
   /// Fethces the nex token and advances the stream position 
   /// </summary>
   /// <param name="ws">If true, retrieve whitespaces too</param>
-  private Token Get(bool ws = false)
+  public Token Get(bool ws = false)
   {
     while (true)
     {
