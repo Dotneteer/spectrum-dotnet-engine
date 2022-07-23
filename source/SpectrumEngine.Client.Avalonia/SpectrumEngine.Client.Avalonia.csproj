@@ -37,6 +37,7 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\SpectrumEngine.Emu\SpectrumEngine.Emu.csproj" />
+      <ProjectReference Include="..\SpectrumEngine.Tools\SpectrumEngine.Tools.csproj" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="BassResources\bass64.dll" />
