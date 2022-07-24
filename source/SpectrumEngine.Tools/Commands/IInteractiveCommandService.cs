@@ -1,3 +1,5 @@
+using SpectrumEngine.Tools.Output;
+
 namespace SpectrumEngine.Tools.Commands;
 
 public sealed class InteractiveCommandService

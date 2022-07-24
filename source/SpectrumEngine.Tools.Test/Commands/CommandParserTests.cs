@@ -2,7 +2,7 @@ using Shouldly;
 using SpectrumEngine.Tools.Commands;
 using Xunit;
 
-namespace SpectrumEngine.Tools.Test;
+namespace SpectrumEngine.Tools.Test.Commands;
 
 public class CommandParserTests
 {
