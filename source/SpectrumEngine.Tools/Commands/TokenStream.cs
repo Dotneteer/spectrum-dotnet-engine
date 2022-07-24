@@ -1,4 +1,4 @@
-namespace SpectrumEngine.Tools.CommandParser;
+namespace SpectrumEngine.Tools.Commands;
 
 /**
  * This class implements the tokenizer (lexer) of the Klive command parser.

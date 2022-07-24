@@ -1,5 +1,5 @@
 using Shouldly;
-using SpectrumEngine.Tools.CommandParser;
+using SpectrumEngine.Tools.Commands;
 using Xunit;
 
 namespace SpectrumEngine.Tools.Test;

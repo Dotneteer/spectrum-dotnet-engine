@@ -1,4 +1,4 @@
-namespace SpectrumEngine.Tools.CommandParser;
+namespace SpectrumEngine.Tools.Commands;
 
 /// <summary>
 /// Represents a token

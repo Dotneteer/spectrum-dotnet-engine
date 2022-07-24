@@ -1,4 +1,4 @@
-namespace SpectrumEngine.Tools.CommandParser;
+namespace SpectrumEngine.Tools.Commands;
 
 /// <summary>
 /// This class represents the input stream of the command parser
