@@ -300,6 +300,7 @@ public enum OutputColors
     Magenta,
     Cyan,
     White,
+    BrightBlack,
     BrightRed,
     BrightGreen,
     BrightYellow,

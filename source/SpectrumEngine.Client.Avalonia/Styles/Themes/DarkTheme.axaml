@@ -37,7 +37,24 @@
         <Color x:Key="DiagLabelTextColor">#FFF89406</Color>
         <Color x:Key="DiagValueTextColor">#00AFFF</Color>
         <Color x:Key="DiagSecondaryTextColor">#FF51c351</Color>
-
+        
+        <!-- Console Colors -->
+        <Color x:Key="ConsoleBlack">#000000</Color>
+        <Color x:Key="ConsoleBrightBlack">#666666</Color>
+        <Color x:Key="ConsoleRed">#CD3131</Color>
+        <Color x:Key="ConsoleBrightRed">#F14C4C</Color>
+        <Color x:Key="ConsoleGreen">#0DBC79</Color>
+        <Color x:Key="ConsoleBrightGreen">#23D18B</Color>
+        <Color x:Key="ConsoleYellow">#E5E510</Color>
+        <Color x:Key="ConsoleBrightYellow">#F5F543</Color>
+        <Color x:Key="ConsoleBlue">#2472C8</Color>
+        <Color x:Key="ConsoleBrightBlue">#3B8EEA</Color>
+        <Color x:Key="ConsoleMagenta">#BC3FBC</Color>
+        <Color x:Key="ConsoleBrightMagenta">#D670D6</Color>
+        <Color x:Key="ConsoleCyan">#11A8CD</Color>
+        <Color x:Key="ConsoleBrightCyan">#29B8DB</Color>
+        <Color x:Key="ConsoleWhite">#E5E5E5</Color>
+        <Color x:Key="ConsoleBrightWhite">#ffffff</Color>
 
         <SolidColorBrush x:Key="AppBackground" Color="{DynamicResource DarkGray}"/>
         <SolidColorBrush x:Key="MenuText" Color="{DynamicResource TextGray}"/>
