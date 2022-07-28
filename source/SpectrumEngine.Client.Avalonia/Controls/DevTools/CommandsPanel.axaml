@@ -5,5 +5,31 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.CommandsPanel"
              Padding="0,8,0,4">
-    Commands Panel
+    <UserControl.Styles>
+        <Style Selector="TextBox.Prompt">
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <Style Selector="TextBox.Prompt /template/ TextBlock#PART_Watermark">
+            <Setter Property="FontStyle" Value="Italic" />
+        </Style>
+        <Style Selector="TextBox.Prompt:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Background" Value="#10808080"/>
+        </Style>
+    </UserControl.Styles>
+    
+    <Grid RowDefinitions="*, Auto">
+        <DataGrid Grid.Row="0"></DataGrid>
+        <Border Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="Silver">
+            <Grid ColumnDefinitions="Auto, *">
+                <TextBlock Text="$" VerticalAlignment="Center"/>
+                <TextBox 
+                    Classes="Prompt" 
+                    Grid.Column="1"
+                    Watermark="Type ? for help"/>
+            </Grid>
+        </Border>
+    </Grid>
 </UserControl>

@@ -6,7 +6,7 @@ namespace SpectrumEngine.Tools.Output;
 public sealed class OutputBuffer
 {
     private OutputColors _color = OutputColors.White;
-    private OutputColors _backColor = OutputColors.Black;
+    private OutputColors _background = OutputColors.Black;
     private bool _isBold;
     private bool _isItalic;
     private bool _isUnderline;
@@ -55,24 +55,24 @@ public sealed class OutputBuffer
     /// <summary>
     /// Gets or sets the current text color
     /// </summary>
-    public OutputColors BackColor
+    public OutputColors Background
     {
-        get => _backColor;
+        get => _background;
         set {
-            if (_backColor == value) return;
+            if (_background == value) return;
             
             var lastSection = GetLastSection();
             if (lastSection != null && string.IsNullOrEmpty(lastSection.Text))
             {
-                lastSection.BackColor = value;
+                lastSection.Background = value;
                 return;
             }
             
             OpenSection(new OutputSection
             {
-                BackColor = value
+                Background = value
             });
-            _backColor = value;
+            _background = value;
         }
     }
 
@@ -178,7 +178,7 @@ public sealed class OutputBuffer
     public void ResetFormat()
     {
         Color = OutputColors.White;
-        BackColor = OutputColors.Black;
+        Background = OutputColors.Black;
         Bold = false;
         Italic = false;
         Underline = false;
@@ -225,7 +225,7 @@ public sealed class OutputBuffer
                 Text = message,
                 Action = action,
                 Color = Color,
-                BackColor = BackColor,
+                Background = Background,
                 Underline = Underline,
                 Strikethrough = Strikethrough
             });
@@ -316,8 +316,8 @@ public enum OutputColors
 public record OutputSection
 {
     public string? Text { get; set; }
-    public OutputColors Color { get; set; }
-    public OutputColors BackColor { get; set; }
+    public OutputColors Color { get; set; } = OutputColors.White;
+    public OutputColors Background { get; set; } = OutputColors.Black;
     public Action<object?>? Action { get; set; }
     public bool Bold { get; set; }
     public bool Italic { get; set; }
