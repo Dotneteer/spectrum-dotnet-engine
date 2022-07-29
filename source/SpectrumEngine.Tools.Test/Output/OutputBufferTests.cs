@@ -16,7 +16,7 @@ public class CommandParserTests
         // --- Assert
         ob.Contents.Count.ShouldBe(0);
         ob.Color.ShouldBe(OutputColors.White);
-        ob.Background.ShouldBe(OutputColors.Black);
+        ob.Background.ShouldBe(OutputColors.Transparent);
         ob.Bold.ShouldBeFalse();
         ob.Italic.ShouldBeFalse();
         ob.Underline.ShouldBeFalse();

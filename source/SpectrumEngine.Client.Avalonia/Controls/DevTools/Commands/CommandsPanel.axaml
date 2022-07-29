@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
+             xmlns:output="clr-namespace:SpectrumEngine.Tools.Output;assembly=SpectrumEngine.Tools"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.CommandsPanel"
+             Padding="0,8,0,4">
+    
+    <Design.DataContext>
+        <viewModels:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock.Prompt">
+            <Setter Property="Foreground" Value="{DynamicResource ConsoleBrightGreen}"/>
+            <Setter Property="FontFamily" Value="Monaco, Courier, Courier New, Consolas"/>
+        </Style>
+        <Style Selector="TextBlock.Display">
+            <Setter Property="FontFamily" Value="Monaco, Courier, Courier New, Consolas"/>
+        </Style>
+        <Style Selector="TextBox.Prompt">
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource ConsoleBrightGreen}"/>
+            <Setter Property="FontFamily" Value="Monaco, Courier, Courier New, Consolas"/>
+        </Style>
+        <Style Selector="TextBox.Prompt /template/ TextBlock#PART_Watermark">
+            <Setter Property="FontStyle" Value="Italic" />
+            <Setter Property="Foreground" Value="{DynamicResource ConsoleWhite}"/>
+        </Style>
+        <Style Selector="TextBox.Prompt:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <Style Selector="TextBox.Prompt:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Background" Value="#10808080"/>
+        </Style>
+    </UserControl.Styles>
+    
+    <Grid RowDefinitions="*, Auto">
+        <ScrollViewer Grid.Row="0">
+            <ItemsRepeater 
+                Items="{Binding Commands.Buffer.Contents}">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <ItemsRepeater Items="{Binding}">
+                                <Design.DataContext>
+                                    <output:OutputSection/>
+                                </Design.DataContext>
+                                <ItemsRepeater.Layout>
+                                    <StackLayout Orientation="Horizontal" />
+                                </ItemsRepeater.Layout>
+                                <ItemsRepeater.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock  
+                                            Classes="Display"
+                                            Text="{Binding Text}"
+                                            Foreground="{Binding Color, Converter={StaticResource OutputColorConverter}}" 
+                                            Background="{Binding Background, Converter={StaticResource OutputColorConverter}}"
+                                            FontWeight="{Binding Bold, Converter={StaticResource OutputWeightConverter}}"
+                                            FontStyle="{Binding Italic, Converter={StaticResource OutputStyleConverter}}"
+                                            TextDecorations="{Binding Converter={StaticResource OutputDecorationsConverter}}"/>
+                                    </DataTemplate>
+                                </ItemsRepeater.ItemTemplate>
+                            </ItemsRepeater>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollViewer>
+        <!-- <ListBox Grid.Row="0" VirtualizationMode="Simple"></ListBox> -->
+        <Border Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="Silver">
+            <Grid ColumnDefinitions="Auto, *">
+                <TextBlock Classes="Prompt" Text=">" VerticalAlignment="Center"/>
+                <TextBox 
+                    x:Name="Prompt"
+                    Classes="Prompt" 
+                    Grid.Column="1"
+                    Watermark="Type ? for help" 
+                    KeyDown="Prompt_OnKeyDown" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

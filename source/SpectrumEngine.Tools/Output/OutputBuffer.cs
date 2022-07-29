@@ -1,3 +1,7 @@
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media;
+
 namespace SpectrumEngine.Tools.Output;
 
 /// <summary>
@@ -6,7 +10,7 @@ namespace SpectrumEngine.Tools.Output;
 public sealed class OutputBuffer
 {
     private OutputColors _color = OutputColors.White;
-    private OutputColors _background = OutputColors.Black;
+    private OutputColors _background = OutputColors.Transparent;
     private bool _isBold;
     private bool _isItalic;
     private bool _isUnderline;
@@ -178,7 +182,7 @@ public sealed class OutputBuffer
     public void ResetFormat()
     {
         Color = OutputColors.White;
-        Background = OutputColors.Black;
+        Background = OutputColors.Transparent;
         Bold = false;
         Italic = false;
         Underline = false;
@@ -284,6 +288,34 @@ public sealed class OutputBuffer
     /// Fire the ContenstChanged event
     /// </summary>
     private void RaiseContentsChanged() => ContentsChanged?.Invoke(this, EventArgs.Empty);
+
+    public static Brush GetBrushFor(OutputColors color)
+    {
+        if (color == OutputColors.Transparent) return new SolidColorBrush(Colors.Transparent);
+        
+        var colorResource = color switch
+        {
+            OutputColors.Black => "ConsoleBlack",
+            OutputColors.Blue => "ConsoleBlue",
+            OutputColors.Cyan => "ConsoleCyan",
+            OutputColors.Green => "ConsoleGreen",
+            OutputColors.Magenta => "ConsoleMagenta",
+            OutputColors.Red => "ConsoleRed",
+            OutputColors.White => "ConsoleWhite",
+            OutputColors.Yellow => "ConsoleYellow",
+            OutputColors.BrightBlack => "ConsoleBrightBlack",
+            OutputColors.BrightBlue => "ConsoleBrightBlue",
+            OutputColors.BrightCyan => "ConsoleBrightCyan",
+            OutputColors.BrightGreen => "ConsoleBrightGreen",
+            OutputColors.BrightMagenta => "ConsoleBrightMagenta",
+            OutputColors.BrightRed => "ConsoleBrightRed",
+            OutputColors.BrightWhite => "ConsoleBrightWhite",
+            OutputColors.BrightYellow => "ConsoleBrightYellow",
+            _ => ""
+        };
+        var value = Application.Current!.FindResource(colorResource);
+        return new SolidColorBrush(value is Color colorValue ? colorValue : Colors.OrangeRed);
+    }
 }
 
 
@@ -292,6 +324,7 @@ public sealed class OutputBuffer
 /// </summary>
 public enum OutputColors
 {
+    Transparent,
     Black,
     Red,
     Green,
@@ -318,7 +351,7 @@ public record OutputSection
 {
     public string? Text { get; set; }
     public OutputColors Color { get; set; } = OutputColors.White;
-    public OutputColors Background { get; set; } = OutputColors.Black;
+    public OutputColors Background { get; set; } = OutputColors.Transparent;
     public Action<object?>? Action { get; set; }
     public bool Bold { get; set; }
     public bool Italic { get; set; }

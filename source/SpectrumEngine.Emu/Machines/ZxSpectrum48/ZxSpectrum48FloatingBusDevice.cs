@@ -41,7 +41,8 @@ public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice
     public byte ReadFloatingBus()
     {
         var screen = Machine.ScreenDevice;
-        var renderingTact = screen.RenderingTactTable[Machine.CurrentFrameTact - 5];
+        var renderTact = (Machine.CurrentFrameTact - 5 + Machine.TactsInFrame) % Machine.TactsInFrame;
+        var renderingTact = screen.RenderingTactTable[renderTact];
         switch (renderingTact.Phase)
         {
             case RenderingPhase.BorderFetchPixel:
