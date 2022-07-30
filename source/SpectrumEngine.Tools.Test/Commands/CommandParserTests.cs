@@ -245,7 +245,7 @@ public class CommandParserTests
     {
         // --- Test for the single token
         var resultStr = errorToken ?? tokenStr;
-        var ts = new TokenStream(new InputStream(tokenStr));
+        var ts = new CommandTokenStream(new InputStream(tokenStr));
 
         var token = ts.Get();
         token.Type.ShouldBe(type);
@@ -259,7 +259,7 @@ public class CommandParserTests
         // --- Test for token with subsequent token
         if (errorToken != null)
         {
-            ts = new TokenStream(new InputStream(tokenStr + " /"));
+            ts = new CommandTokenStream(new InputStream(tokenStr + " /"));
             token = ts.Get();
             token.Type.ShouldBe(type);
             token.Text.ShouldBe(resultStr);
@@ -271,7 +271,7 @@ public class CommandParserTests
         }
 
         // --- Test for token with leading whitespace
-        ts = new TokenStream(new InputStream("  " + tokenStr));
+        ts = new CommandTokenStream(new InputStream("  " + tokenStr));
         token = ts.Get();
         token.Type.ShouldBe(type);
         token.Text.ShouldBe(resultStr);

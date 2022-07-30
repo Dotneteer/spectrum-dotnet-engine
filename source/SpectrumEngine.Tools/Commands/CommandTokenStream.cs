@@ -93,7 +93,7 @@ namespace SpectrumEngine.Tools.Commands;
  *   : [any characted except NL, CR, or other whitespace]+
  *   ;
  */
-public class TokenStream
+public class CommandTokenStream
 {
   // --- Prefetched character (from the next token)
   private char? _prefetched;
@@ -108,7 +108,7 @@ public class TokenStream
    * Initializes the tokenizer with the input stream
    * @param input Input source code stream
    */
-  public TokenStream(InputStream input)
+  public CommandTokenStream(InputStream input)
   {
     Input = input;
   }
@@ -127,7 +127,7 @@ public class TokenStream
   {
     var tokens = new List<Token>();
     var input = new InputStream(command);
-    var tokenStream = new TokenStream(input);
+    var tokenStream = new CommandTokenStream(input);
     bool eof;
     do {
       var nextToken = tokenStream.Get();

@@ -198,7 +198,7 @@ public sealed class OutputBuffer
     /// <summary>
     /// Sets the default color
     /// </summary>
-    private void ResetFormat()
+    public void ResetFormat()
     {
         Color = OutputColors.White;
         Background = OutputColors.Transparent;

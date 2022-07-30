@@ -5,10 +5,6 @@ namespace SpectrumEngine.Tools.Commands;
 /// </summary>
 public class InputStream
 {
-    // --- Current stream position
-
-    // --- Current line number
-
     // --- Current column number
     private int _column;
 

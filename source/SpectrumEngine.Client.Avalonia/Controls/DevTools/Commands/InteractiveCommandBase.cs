@@ -1,6 +1,11 @@
+using System;
+using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
+using SpectrumEngine.Tools.Commands;
+using SpectrumEngine.Tools.Output;
 
-namespace SpectrumEngine.Tools.Commands;
+namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
 public interface IInteractiveCommandInfo
 {
@@ -82,9 +87,10 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
         Description = description.Value;
     }
 
-    public Task<InteractiveCommandResult> Execute(InteractiveCommandContext context)
+    public Task<InteractiveCommandResult> Execute(IInteractiveCommandContext context)
     {
-        return Task.FromResult(new InteractiveCommandResult(true));
+        // TODO: Validate command arguments
+        return DoExecute(context);
     }
     
     protected virtual Task<List<TraceMessage>> ValidateArgs(List<Token> args)
@@ -92,7 +98,7 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
         return Task.FromResult(new List<TraceMessage>());
     }
 
-    protected abstract Task<InteractiveCommandResult> DoExecute(InteractiveCommandContext context);
+    protected abstract Task<InteractiveCommandResult> DoExecute(IInteractiveCommandContext context);
 }
 
 /// <summary>
