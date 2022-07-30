@@ -76,30 +76,7 @@ public class MainWindowViewModel : ViewModelBase
             SelectedIndex = 0
         };
 
-        var buffer = new OutputBuffer();
-        for (var i = 0; i < 10; i++)
-        {
-            buffer.Color = OutputColors.Cyan;
-            buffer.Write("Hello");
-            buffer.Color = OutputColors.Green;
-            buffer.Strikethrough = true;
-            buffer.WriteLine("World");
-            buffer.Strikethrough = false;
-            buffer.Bold = true;
-            buffer.Color = OutputColors.Red;
-            buffer.Write("Welcome ");
-            buffer.Bold = false;
-            buffer.Italic = true;
-            buffer.Background = OutputColors.Red;            
-            buffer.WriteLine("in SpectrumEngine");
-            buffer.Italic = false;
-            buffer.Bold = false;
-        }
-
-        Commands = new CommandsPanelViewModel
-        {
-            Buffer = buffer
-        };
+        Commands = new CommandsPanelViewModel();
     }
     
     /// <summary>

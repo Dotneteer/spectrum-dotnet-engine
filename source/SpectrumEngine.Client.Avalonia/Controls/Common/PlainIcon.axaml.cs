@@ -5,6 +5,9 @@ using Avalonia.Media;
 
 namespace SpectrumEngine.Client.Avalonia.Controls;
 
+/// <summary>
+/// This control displays a simple icon given with an SVG path
+/// </summary>
 public class PlainIcon : TemplatedControl
 {
     public static readonly StyledProperty<Brush> FillProperty = 

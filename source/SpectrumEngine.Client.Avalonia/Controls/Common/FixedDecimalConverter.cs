@@ -4,6 +4,9 @@ using Avalonia.Data.Converters;
 
 namespace SpectrumEngine.Client.Avalonia.Controls;
 
+/// <summary>
+/// Converts a value to a fixed decimal number with three fractional digits
+/// </summary>
 public class FixedDecimalConverter: IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

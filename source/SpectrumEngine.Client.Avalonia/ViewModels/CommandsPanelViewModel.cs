@@ -1,12 +1,13 @@
+using System.Collections.Generic;
 using SpectrumEngine.Tools.Output;
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels;
 
 public class CommandsPanelViewModel: ViewModelBase
 {
-    private OutputBuffer? _buffer;
+    private List<List<OutputSection>>? _buffer = new();
 
-    public OutputBuffer? Buffer
+    public List<List<OutputSection>>? Buffer
     {
         get => _buffer;
         set => SetProperty(ref _buffer, value);

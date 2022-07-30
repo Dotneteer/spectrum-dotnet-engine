@@ -27,6 +27,25 @@ public sealed class OutputBuffer
     }
 
     /// <summary>
+    /// Creates a clone of this buffer
+    /// </summary>
+    /// <returns></returns>
+    public OutputBuffer Clone()
+    {
+        var clone = new OutputBuffer
+        {
+            _color = _color,
+            _background = _background,
+            _isBold = _isBold,
+            _isItalic = _isItalic,
+            _isUnderline = _isUnderline,
+            _isStrikethrough = _isStrikethrough
+        };
+        clone.Contents.AddRange(Contents.Select(l => new List<OutputSection>(l)));
+        return clone;
+    }
+    
+    /// <summary>
     /// Gets the contents of the buffer 
     /// </summary>
     /// <returns></returns>
@@ -179,7 +198,7 @@ public sealed class OutputBuffer
     /// <summary>
     /// Sets the default color
     /// </summary>
-    public void ResetFormat()
+    private void ResetFormat()
     {
         Color = OutputColors.White;
         Background = OutputColors.Transparent;
@@ -250,7 +269,7 @@ public sealed class OutputBuffer
     /// <summary>
     /// This event fires when the contents of the buffer changes.
     /// </summary>
-    event EventHandler? ContentsChanged;
+    public event EventHandler? ContentsChanged;
 
     /// <summary>
     /// Gets the last output section
@@ -262,11 +281,6 @@ public sealed class OutputBuffer
         return lastLine.Count == 0 ? null : lastLine[^1];
     }
 
-    /// <summary>
-    /// Tests if the buffer has open text section
-    /// </summary>
-    private bool HasOpenText => !string.IsNullOrEmpty(GetLastSection()?.Text);
-    
     /// <summary>
     /// Closes the last segment and opens a new one
     /// </summary>
@@ -346,13 +360,12 @@ public enum OutputColors
 /// <summary>
 /// Represent an output section within a section line
 /// </summary>
-/// <param name="Text">Text to display</param>
 public record OutputSection
 {
     public string? Text { get; set; }
     public OutputColors Color { get; set; } = OutputColors.White;
     public OutputColors Background { get; set; } = OutputColors.Transparent;
-    public Action<object?>? Action { get; set; }
+    public Action<object?>? Action { get; init; }
     public bool Bold { get; set; }
     public bool Italic { get; set; }
     public bool Underline { get; set; }
