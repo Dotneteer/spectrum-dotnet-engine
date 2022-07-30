@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SpectrumEngine.Tools.Commands;
 using SpectrumEngine.Tools.Output;
@@ -40,17 +42,17 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
     /// Primary ID of the command
     /// </summary>
     public string Id { get; }
-    
+
     /// <summary>
     /// Aliases of the command
     /// </summary>
     public string[] Aliases { get; }
-    
+
     /// <summary>
     /// Usage information of the command
     /// </summary>
     public string Usage { get; }
-    
+
     /// <summary>
     /// Descirption of the command
     /// </summary>
@@ -62,14 +64,15 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
     /// <exception cref="InvalidOperationException"></exception>
     protected InteractiveCommandBase()
     {
-        var typeInfo = GetType().GetTypeInfo(); 
+        var typeInfo = GetType().GetTypeInfo();
         var id = typeInfo.GetCustomAttribute<CommandIdAttribute>();
         if (id == null)
         {
             throw new InvalidOperationException("Interactive command does not have an ID");
         }
+
         Id = id.Value;
-        
+
         var aliases = typeInfo.GetCustomAttribute<CommandAliasesAttribute>();
         Aliases = aliases?.Values ?? Array.Empty<string>();
 
@@ -78,21 +81,23 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
         {
             throw new InvalidOperationException("Interactive command does not have usage information");
         }
+
         Usage = usage.Value;
 
-        var description = typeInfo.GetCustomAttribute<CommandDescriptionAttribute>();   
+        var description = typeInfo.GetCustomAttribute<CommandDescriptionAttribute>();
         if (description == null)
         {
             throw new InvalidOperationException("Interactive command does not have help information");
         }
+
         Description = description.Value;
     }
 
     public async Task<InteractiveCommandResult> Execute(IInteractiveCommandContext context)
     {
         // --- Validate the input arguments
-        var validation = await ValidateArgs(context.CommandTokens.Skip(1).ToList());
-        
+        var validation = await ValidateArgs(context.CommandTokens!.Skip(1).ToList());
+
         // --- Display validation messages and detect error
         var output = context.Output;
         var errorFound = false;
@@ -110,25 +115,97 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
                     color = OutputColors.Yellow;
                     break;
             }
+
             if (output == null) continue;
-            
+
             output.Color = color;
             output.WriteLine(msg.Message);
         }
 
         if (errorFound)
         {
-            return new InteractiveCommandResult(false, "Command execution aborted.");
+            if (output != null)
+            {
+                output.ResetFormat();
+                output.Color = OutputColors.Yellow;
+                output.WriteLine($"Usage: {Usage}");
+            }
+            return new InteractiveCommandResult(false);
         }
         return await DoExecute(context);
     }
-    
+
     protected virtual Task<List<TraceMessage>> ValidateArgs(List<Token> args)
     {
         return Task.FromResult(new List<TraceMessage>());
     }
 
     protected abstract Task<InteractiveCommandResult> DoExecute(IInteractiveCommandContext context);
+
+    /// <summary>
+    /// Returns a successful validation message
+    /// </summary>
+    public static Task<List<TraceMessage>> SuccessMessage => Task.FromResult(new List<TraceMessage>());
+
+    /// <summary>
+    /// Returns a success result
+    /// </summary>
+    public static Task<InteractiveCommandResult> SuccessResult => Task.FromResult(new InteractiveCommandResult(true));
+    
+    public static List<TraceMessage> ExpectArgs(int count)
+    {
+        return new List<TraceMessage>
+        {
+            new(TraceMessageType.Error, $"This command expects {count} argument{(count > 1 ? "s" : "")}")
+        };
+    }
+    
+    /// <summary>
+    /// Converts a token to an integer value
+    /// </summary>
+    /// <param name="token">Token to convert</param>
+    /// <returns>Integer value if conversion successful; otherwise, null</returns>
+    public static (int?, List<TraceMessage>?) GetNumericTokenValue(Token token) {
+        var plainText = token.Text.Replace("'", "").Replace("_", "");
+        try
+        {
+            switch (token.Type)
+            {
+                case TokenType.DecimalLiteral:
+                    return (int.Parse(plainText), null);
+                case TokenType.BinaryLiteral:
+                    return (Convert.ToInt32(plainText[1..], 2), null);
+                case TokenType.HexadecimalLiteral:
+                    return (int.Parse(plainText[1..], NumberStyles.HexNumber), null);
+                default:
+                    throw new Exception("Invalid token type");
+            }
+        }
+        catch
+        {
+            return (null, new List<TraceMessage>
+            {
+                new(TraceMessageType.Error, "Invalid numeric value")
+            });
+        }
+    }
+
+    /// <summary>
+    /// Converts a token to a 16-bit address value
+    /// </summary>
+    /// <param name="token">Token to convert</param>
+    /// <returns>16-bit value if conversion successful; otherwise, null</returns>
+    public static (ushort?, List<TraceMessage>?) GetAddressValue(Token token)
+    {
+        var (value, message) = GetNumericTokenValue(token);
+        return value switch
+        {
+            null => (null, message),
+            < 0 or > ushort.MaxValue => (null,
+                new List<TraceMessage> {new(TraceMessageType.Error, "Invalid 16-bit address value")}),
+            _ => ((ushort) value.Value, null)
+        };
+    }
 }
 
 /// <summary>

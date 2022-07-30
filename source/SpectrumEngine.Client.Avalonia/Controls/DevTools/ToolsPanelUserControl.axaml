@@ -29,14 +29,14 @@
             BorderBrush="gray" 
             HorizontalAlignment="Stretch" />
         <TabControl VerticalAlignment="Stretch">
-            <TabItem Header="Console Output">
-                <devTools:OutputPanel />
-            </TabItem>
             <TabItem 
                 Header="Interactive Commands"
                 x:Name="Commands"     
                 GotFocus="CommandsGotFocus">
                 <devTools:CommandsPanel />
+            </TabItem>
+            <TabItem Header="Console Output">
+                <devTools:OutputPanel />
             </TabItem>
         </TabControl>
     </DockPanel>

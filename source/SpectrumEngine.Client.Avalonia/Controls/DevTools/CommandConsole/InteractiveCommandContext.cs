@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Tools.Commands;
 using SpectrumEngine.Tools.Output;
 
@@ -14,12 +15,17 @@ public interface IInteractiveCommandContext
     /// <summary>
     /// The tokens of the command
     /// </summary>
-    List<Token> CommandTokens { get; }
+    List<Token>? CommandTokens { get; }
     
     /// <summary>
     /// The output buffer the command can use to write its messages
     /// </summary>
     OutputBuffer? Output { get; }
+    
+    /// <summary>
+    /// The main model of the context
+    /// </summary>
+    MainWindowViewModel? Model { get; set; }
 }
 
 /// <summary>
@@ -32,14 +38,18 @@ public class InteractiveCommandContext : IInteractiveCommandContext
     /// </summary>
     public string? CommandText { get; init; }
 
-
     /// <summary>
     /// The tokens of the command
     /// </summary>
-    public List<Token> CommandTokens { get; init; }
+    public List<Token>? CommandTokens { get; init; }
 
     /// <summary>
     /// The output buffer the command can use to write its messages
     /// </summary>
     public OutputBuffer? Output { get; init; }
+
+    /// <summary>
+    /// The main model of the context
+    /// </summary>
+    public MainWindowViewModel? Model { get; set; }
 }

@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SpectrumEngine.Tools.Commands;
+using SpectrumEngine.Tools.Output;
 
 namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
@@ -20,12 +22,32 @@ public class AddBreakpointCommand: InteractiveCommandBase
 
     protected override Task<List<TraceMessage>> ValidateArgs(List<Token> args)
     {
-        return Task.FromResult(new List<TraceMessage>());
+        if (args.Count != 1)
+        {
+            return Task.FromResult(ExpectArgs(1));
+        }
+        var (address, message) = GetAddressValue(args[0]);
+        if (address == null)
+        {
+            return Task.FromResult(message!);
+        }
+        Address = address.Value;
+        return SuccessMessage;
     }
 
     protected override Task<InteractiveCommandResult> DoExecute(IInteractiveCommandContext context)
     {
-        context.Output?.WriteLine("Add breakpoint...");
-        return Task.FromResult(new InteractiveCommandResult(true));
+        if (context.Model != null)
+        {
+            context.Model.Debugger.AddBreakpoint(Address);
+            var output = context.Output;
+            if (output != null)
+            {
+                output.ResetFormat();
+                output.Color = OutputColors.BrightCyan;
+                output.WriteLine($"Breakpoint set at ${Address:X4} ({Address}, %{Convert.ToString(Address, 2)})");
+            }
+        }
+        return SuccessResult;
     }
 }

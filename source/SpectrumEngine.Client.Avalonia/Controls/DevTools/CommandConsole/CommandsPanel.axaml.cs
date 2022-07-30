@@ -63,7 +63,7 @@ public partial class CommandsPanel : UserControl
                 e.Handled = true;
                 _commandHistory.Add(Prompt.Text);
                 var result = await ExecuteComand(Prompt.Text);
-                if (!result.Success)
+                if (!result.Success && result.FinalMessage != null)
                 {
                     _buffer.ResetFormat();
                     _buffer.Color = OutputColors.Red;
@@ -130,7 +130,8 @@ public partial class CommandsPanel : UserControl
         {
             CommandText = commandText,
             CommandTokens = tokens,
-            Output = _buffer
+            Output = _buffer,
+            Model = App.AppViewModel
         };
         
         // --- Execute the command
