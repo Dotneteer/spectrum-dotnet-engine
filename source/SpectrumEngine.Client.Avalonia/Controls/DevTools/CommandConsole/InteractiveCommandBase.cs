@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using SpectrumEngine.Tools.Commands;
@@ -87,10 +88,39 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
         Description = description.Value;
     }
 
-    public Task<InteractiveCommandResult> Execute(IInteractiveCommandContext context)
+    public async Task<InteractiveCommandResult> Execute(IInteractiveCommandContext context)
     {
-        // TODO: Validate command arguments
-        return DoExecute(context);
+        // --- Validate the input arguments
+        var validation = await ValidateArgs(context.CommandTokens.Skip(1).ToList());
+        
+        // --- Display validation messages and detect error
+        var output = context.Output;
+        var errorFound = false;
+        foreach (var msg in validation)
+        {
+            output?.ResetFormat();
+            var color = OutputColors.Cyan;
+            switch (msg.Type)
+            {
+                case TraceMessageType.Error:
+                    errorFound = true;
+                    color = OutputColors.Red;
+                    break;
+                case TraceMessageType.Warning:
+                    color = OutputColors.Yellow;
+                    break;
+            }
+            if (output == null) continue;
+            
+            output.Color = color;
+            output.WriteLine(msg.Message);
+        }
+
+        if (errorFound)
+        {
+            return new InteractiveCommandResult(false, "Command execution aborted.");
+        }
+        return await DoExecute(context);
     }
     
     protected virtual Task<List<TraceMessage>> ValidateArgs(List<Token> args)

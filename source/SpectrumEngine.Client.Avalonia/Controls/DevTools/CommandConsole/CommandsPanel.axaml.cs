@@ -129,6 +129,7 @@ public partial class CommandsPanel : UserControl
         var context = new InteractiveCommandContext
         {
             CommandText = commandText,
+            CommandTokens = tokens,
             Output = _buffer
         };
         

@@ -37,7 +37,10 @@ namespace SpectrumEngine.Client.Avalonia.Views
 
             var machine = new ZxSpectrum48Machine();
             machine.SetMachineProperty(MachinePropNames.TapeSaver, new DefaultTapeSaver());
-            var controller = new MachineController(machine);
+            var controller = new MachineController(machine)
+            {
+                DebugSupport = Vm.Debugger
+            };
             Vm.Machine.SetMachineController(controller);
             Vm.Machine.CommandExecuted += (s, args) =>
             {

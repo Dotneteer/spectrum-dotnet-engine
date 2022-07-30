@@ -38,4 +38,9 @@ public sealed class ExecutionContext
     /// Has the last execution loop cancelled?
     /// </summary>
     public bool Canceled { get; set; }
+    
+    /// <summary>
+    /// The object that provides debug support for the machone
+    /// </summary>
+    public IDebugSupport? DebugSupport { get; set; }
 }

@@ -31,6 +31,11 @@ public class MachineController
     public IZ80Machine Machine { get; }
 
     /// <summary>
+    /// Gets or sets the object providing debug support
+    /// </summary>
+    public IDebugSupport? DebugSupport { get; set; }
+    
+    /// <summary>
     /// The execution context of the controlled machine
     /// </summary>
     private ExecutionContext Context { get; }
@@ -186,6 +191,7 @@ public class MachineController
         Context.TerminationPartition = terminationPartition;
         Context.TerminationPoint = terminationPoint;
         Context.Canceled = false;
+        Context.DebugSupport = DebugSupport;
         
         // --- Set up the state
         Machine.ContentionDelaySincePause = 0;
