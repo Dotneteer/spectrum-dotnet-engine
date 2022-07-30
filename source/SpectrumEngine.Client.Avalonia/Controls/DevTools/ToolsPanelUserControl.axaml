@@ -32,7 +32,10 @@
             <TabItem Header="Console Output">
                 <devTools:OutputPanel />
             </TabItem>
-            <TabItem Header="Interactive Commands">
+            <TabItem 
+                Header="Interactive Commands"
+                x:Name="Commands"     
+                GotFocus="CommandsGotFocus">
                 <devTools:CommandsPanel />
             </TabItem>
         </TabControl>

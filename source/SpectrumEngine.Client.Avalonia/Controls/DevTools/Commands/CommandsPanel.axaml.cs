@@ -36,6 +36,14 @@ public partial class CommandsPanel : UserControl
         };
     }
 
+    /// <summary>
+    /// Set the focus to the prompt
+    /// </summary>
+    public void FocusPrompt()
+    {
+        Prompt.Focus();
+    }
+    
     private MainWindowViewModel? Vm => DataContext as MainWindowViewModel;
     
     /// <summary>

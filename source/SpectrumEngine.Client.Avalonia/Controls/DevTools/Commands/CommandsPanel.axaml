@@ -6,7 +6,8 @@
              xmlns:output="clr-namespace:SpectrumEngine.Tools.Output;assembly=SpectrumEngine.Tools"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.CommandsPanel"
-             Padding="0,8,0,4">
+             Padding="0,8,0,4"
+             Focusable="true">
     
     <Design.DataContext>
         <viewModels:MainWindowViewModel/>
