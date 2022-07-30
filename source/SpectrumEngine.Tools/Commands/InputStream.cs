@@ -1,14 +1,10 @@
-namespace SpectrumEngine.Tools.CommandParser;
+namespace SpectrumEngine.Tools.Commands;
 
 /// <summary>
 /// This class represents the input stream of the command parser
 /// </summary>
 public class InputStream
 {
-    // --- Current stream position
-
-    // --- Current line number
-
     // --- Current column number
     private int _column;
 

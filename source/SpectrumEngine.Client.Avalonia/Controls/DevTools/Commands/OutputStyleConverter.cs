@@ -1,17 +1,17 @@
 using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
+using Avalonia.Media;
 
-namespace SpectrumEngine.Client.Avalonia.Controls;
+namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
-/// <summary>
-/// Converts a value to a fixed decimal number with three fractional digits
-/// </summary>
-public class FixedDecimalConverter: IValueConverter
+public class OutputStyleConverter: IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return value is not double ? value : $"{value:F3}";
+        return value is bool boolValue
+            ? boolValue ? FontStyle.Italic : FontStyle.Normal
+            : value;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

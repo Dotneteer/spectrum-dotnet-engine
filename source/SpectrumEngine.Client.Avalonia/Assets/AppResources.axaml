@@ -13,4 +13,8 @@
     <devTools:PanelsDockConverter x:Key="PanelsDockConverter" />
     <devTools:HexConverter x:Key="HexConverter" />
     <devTools:FlagConverter x:Key="FlagConverter" />
+    <devTools:OutputForegroundConverter x:Key="OutputColorConverter" />
+    <devTools:OutputWeightConverter x:Key="OutputWeightConverter" />
+    <devTools:OutputStyleConverter x:Key="OutputStyleConverter" />
+    <devTools:OutputDecorationsConverter x:Key="OutputDecorationsConverter" />
 </ResourceDictionary>

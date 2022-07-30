@@ -4,6 +4,7 @@ using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace SpectrumEngine.Client.Avalonia.Controls.Common;
 
@@ -11,7 +12,7 @@ namespace SpectrumEngine.Client.Avalonia.Controls.Common;
 /// A control with a header that has a collapsible content section.
 /// </summary>
 [PseudoClasses(":expanded", ":up", ":down", ":left", ":right")]
-public class SiteBarExpander : HeaderedContentControl
+public sealed class SiteBarExpander : HeaderedContentControl
 {
         public static readonly StyledProperty<IPageTransition?> ContentTransitionProperty =
             AvaloniaProperty.Register<SiteBarExpander, IPageTransition?>(nameof(ContentTransition));
@@ -31,7 +32,7 @@ public class SiteBarExpander : HeaderedContentControl
 
         static SiteBarExpander()
         {
-            IsExpandedProperty.Changed.AddClassHandler<SiteBarExpander>((x, e) => x.OnIsExpandedChanged(e));
+            IsExpandedProperty.Changed.AddClassHandler<SiteBarExpander>((x, _) => x.OnIsExpandedChanged());
         }
 
         public SiteBarExpander()
@@ -61,24 +62,25 @@ public class SiteBarExpander : HeaderedContentControl
             }
         }
 
-        protected virtual async void OnIsExpandedChanged(AvaloniaPropertyChangedEventArgs e)
+        private async void OnIsExpandedChanged()
         {
-            if (Content != null && ContentTransition != null && Presenter is Visual visualContent)
+            if (Content == null || ContentTransition == null || Presenter is not Visual visualContent)
             {
-                bool forward = ExpandDirection == ExpandDirection.Left ||
-                                ExpandDirection == ExpandDirection.Up;
+                return;
+            }
+            
+            var forward = ExpandDirection is ExpandDirection.Left or ExpandDirection.Up;
 
-                _lastTransitionCts?.Cancel();
-                _lastTransitionCts = new CancellationTokenSource();
+            _lastTransitionCts?.Cancel();
+            _lastTransitionCts = new CancellationTokenSource();
 
-                if (IsExpanded)
-                {
-                    await ContentTransition.Start(null, visualContent, forward, _lastTransitionCts.Token);
-                }
-                else
-                {
-                    await ContentTransition.Start(visualContent, null, forward, _lastTransitionCts.Token);
-                }
+            if (IsExpanded)
+            {
+                await ContentTransition.Start(null, visualContent, forward, _lastTransitionCts.Token);
+            }
+            else
+            {
+                await ContentTransition.Start(visualContent, null, forward, _lastTransitionCts.Token);
             }
         }
 
@@ -100,8 +102,3 @@ public class SiteBarExpander : HeaderedContentControl
             PseudoClasses.Set(":right", d == ExpandDirection.Right);
         }
 }
-
-// Left:     <Setter Property="Data" Value="M 7 0 L 0 7 L 7 14" />
-// Up:     <Setter Property="Data" Value="M 0 7 L 7 0 L 14 7" />
-// Right:     <Setter Property="Data" Value="M 0 0 L 7 7 L 0 14" />
-// Down:     <Setter Property="Data" Value="M 0 0 L 7 7 L 14 0" />

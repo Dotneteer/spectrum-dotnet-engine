@@ -5,6 +5,9 @@ using Avalonia.Media;
 
 namespace SpectrumEngine.Client.Avalonia.Controls;
 
+/// <summary>
+/// This control implements a status label (used in a status bar)
+/// </summary>
 public class StatusLabel : TemplatedControl
 {
     public static readonly StyledProperty<Brush> FillProperty = 

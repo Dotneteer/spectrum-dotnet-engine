@@ -327,7 +327,7 @@
                 IsVisible="{Binding EmuViewOptions.ShowKeyboard}"
                 Height="300"
                 DockPanel.Dock="Bottom" />
-            <local:SplitterPanel 
+            <local:Splitter 
                 IsVisible="{Binding EmuViewOptions.ShowKeyboard}"
                 Orientation="Vertical"
                 ResizeNext="False"

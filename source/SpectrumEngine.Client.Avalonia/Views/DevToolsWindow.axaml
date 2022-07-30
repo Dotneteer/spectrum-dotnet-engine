@@ -220,7 +220,7 @@
             DockPanel.Dock="{Binding DevToolsViewOptions.SiteBarOnLeft, Converter={StaticResource VerticalDockConverter}}"
             IsVisible="{Binding DevToolsViewOptions.ShowSiteBar}"
             Width="320" />
-        <controls:SplitterPanel 
+        <controls:Splitter 
             DockPanel.Dock="{Binding DevToolsViewOptions.SiteBarOnLeft, Converter={StaticResource VerticalDockConverter}}"
             IsVisible="{Binding DevToolsViewOptions.ShowSiteBar}"
             Orientation="Horizontal"
@@ -234,7 +234,7 @@
                 DockPanel.Dock="{Binding DevToolsViewOptions.PanelsAtBottom, Converter={StaticResource PanelsDockConverter}}"
                 IsVisible="{Binding DevToolsViewOptions.ShowPanels}"
                 Height="240" />
-            <controls:SplitterPanel 
+            <controls:Splitter 
                 DockPanel.Dock="{Binding DevToolsViewOptions.PanelsAtBottom, Converter={StaticResource PanelsDockConverter}}"
                 IsVisible="{Binding DevToolsViewOptions.ShowPanels}"
                 Orientation="Vertical"

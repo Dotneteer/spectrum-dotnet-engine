@@ -50,21 +50,21 @@
             </WrapPanel>
             <devTools:PanelSeparatorControl />
             <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
-            <devTools:KeyLineControl Reg="KL0" Value="{Binding Ula.KeyboardLine0}" Comment="(1..2)"/>
+            <devTools:KeyLineControl Reg="KL0" Value="{Binding Ula.KeyboardLine0}" Comment="(CS Z X C V)"/>
             <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
-            <devTools:KeyLineControl Reg="KL1" Value="{Binding Ula.KeyboardLine1}" Comment="(1..2)"/>
+            <devTools:KeyLineControl Reg="KL1" Value="{Binding Ula.KeyboardLine1}" Comment="(A S D F G)"/>
             <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
-            <devTools:KeyLineControl Reg="KL2" Value="{Binding Ula.KeyboardLine2}" Comment="(Q.. T)"/>
+            <devTools:KeyLineControl Reg="KL2" Value="{Binding Ula.KeyboardLine2}" Comment="(Q W E R T)"/>
             <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
-            <devTools:KeyLineControl Reg="KL3" Value="{Binding Ula.KeyboardLine3}" Comment="(1.. 5)"/>
+            <devTools:KeyLineControl Reg="KL3" Value="{Binding Ula.KeyboardLine3}" Comment="(1 2 3 4 5)"/>
             <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
-            <devTools:KeyLineControl Reg="KL4" Value="{Binding Ula.KeyboardLine4}" Comment="(0 ..6)"/>
+            <devTools:KeyLineControl Reg="KL4" Value="{Binding Ula.KeyboardLine4}" Comment="(0 9 8 7 6)"/>
             <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
-            <devTools:KeyLineControl Reg="KL5" Value="{Binding Ula.KeyboardLine5}" Comment="(Y ..P)"/>
+            <devTools:KeyLineControl Reg="KL5" Value="{Binding Ula.KeyboardLine5}" Comment="(P O I U Y)"/>
             <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
-            <devTools:KeyLineControl Reg="KL6" Value="{Binding Ula.KeyboardLine6}" Comment="(1..2)"/>
+            <devTools:KeyLineControl Reg="KL6" Value="{Binding Ula.KeyboardLine6}" Comment="(ENT L K J H )"/>
             <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
-            <devTools:KeyLineControl Reg="KL7" Value="{Binding Ula.KeyboardLine7}" Comment="(1..2)"/>
+            <devTools:KeyLineControl Reg="KL7" Value="{Binding Ula.KeyboardLine7}" Comment="(SPC SS M N B)"/>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
