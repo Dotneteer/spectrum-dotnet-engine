@@ -28,7 +28,7 @@
         <Setter Property="Padding" Value="12 0"/>
     </Style>
 
-    <Style Selector=":is(Button), :is(controls|SplitterPanel), :is(controls|SpectrumDisplayControl)">
+    <Style Selector=":is(Button), :is(controls|Splitter), :is(controls|SpectrumDisplayControl)">
         <Setter Property="FocusAdorner">
             <FocusAdornerTemplate>
                 <Border BorderThickness="1"

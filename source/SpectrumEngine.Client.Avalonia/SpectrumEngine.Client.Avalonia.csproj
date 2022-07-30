@@ -78,7 +78,7 @@
         <DependentUpon>SpectrumDisplayControl.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Controls\Common\SplitterPanel.axaml.cs">
+      <Compile Update="Controls\Common\Splitter.axaml.cs">
         <DependentUpon>SplitterPanel.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>

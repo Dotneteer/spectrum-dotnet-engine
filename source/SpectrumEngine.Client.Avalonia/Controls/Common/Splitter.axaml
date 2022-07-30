@@ -3,11 +3,11 @@
         xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
     <Design.PreviewWith>
         <Panel Width="120" Height="100">
-            <controls:SplitterPanel HorizontalAlignment="Stretch"/>
+            <controls:Splitter HorizontalAlignment="Stretch"/>
         </Panel>
     </Design.PreviewWith>
 
-    <Style Selector="controls|SplitterPanel">
+    <Style Selector="controls|Splitter">
         <!-- Set Defaults -->
         <Setter Property="Focusable" Value="True" />
         <Setter Property="MinWidth" Value="4" />
@@ -25,7 +25,7 @@
         </Setter>
     </Style>
     
-    <Style Selector="controls|SplitterPanel /template/ Border:pointerover">
+    <Style Selector="controls|Splitter /template/ Border:pointerover">
         <Setter Property="Background" Value="{DynamicResource SplitterBackgroundBrush}"/>
     </Style>
 </Styles>

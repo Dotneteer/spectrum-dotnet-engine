@@ -7,6 +7,10 @@ using SpectrumEngine.Emu;
 
 namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
+/// <summary>
+/// This control is the base class for all other controls (information panels) that depend on the status of the
+/// emulated machine.
+/// </summary>
 public abstract class MachineStatusUserControl: UserControl
 {
     private int _counter;
@@ -14,12 +18,18 @@ public abstract class MachineStatusUserControl: UserControl
     public static readonly StyledProperty<int> RefreshRateProperty =
         AvaloniaProperty.Register<MachineStatusUserControl, int>(nameof(RefreshRate), 5);
 
+    /// <summary>
+    /// Refresh rate of the information, given in frame counts
+    /// </summary>
     public int RefreshRate
     {
         get => GetValue(RefreshRateProperty);
         set => SetValue(RefreshRateProperty, value);
     }
 
+    /// <summary>
+    /// Bind this control to the machine events when the data context changes. 
+    /// </summary>
     protected override void OnDataContextChanged(EventArgs e)
     {
         base.OnDataContextChanged(e);
@@ -32,7 +42,7 @@ public abstract class MachineStatusUserControl: UserControl
         }
         
         // --- Respond to machine controller changes
-        vm.Machine.ControllerChanged += (sender, tuple) =>
+        vm.Machine.ControllerChanged += (_, tuple) =>
         {
             var (oldController, newController) = tuple;
             if (oldController != null)
@@ -48,8 +58,14 @@ public abstract class MachineStatusUserControl: UserControl
         };
     }
 
+    /// <summary>
+    /// Override this event to refresh the contents of the information panel
+    /// </summary>
     protected abstract void RefreshPanel();
     
+    /// <summary>
+    /// Refresh the panel state whenever the machine's state changes
+    /// </summary>
     private void OnStateChanged(object? sender, (MachineControllerState OldState, MachineControllerState NewState) e)
     {
         Dispatcher.UIThread.InvokeAsync(() =>
@@ -59,6 +75,9 @@ public abstract class MachineStatusUserControl: UserControl
         });
     }
 
+    /// <summary>
+    /// Refresh the panel state when the specified number of frames are displayed
+    /// </summary>
     private void OnFrameCompleted(object? sender, bool e)
     {
         Dispatcher.UIThread.InvokeAsync(() =>
