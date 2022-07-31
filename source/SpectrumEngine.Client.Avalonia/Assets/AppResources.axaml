@@ -17,4 +17,8 @@
     <devTools:OutputWeightConverter x:Key="OutputWeightConverter" />
     <devTools:OutputStyleConverter x:Key="OutputStyleConverter" />
     <devTools:OutputDecorationsConverter x:Key="OutputDecorationsConverter" />
+    <controls:CountsVisibleConverter x:Key="CountsVisibleConverter" />
+    <controls:CountsHiddenConverter x:Key="CountsHiddenConverter" />
+    <devTools:IsActiveBreakpointConverter x:Key="IsActiveBreakpointConverter" />
+    <devTools:IsInactiveBreakpointConverter x:Key="IsInactiveBreakpointConverter" />
 </ResourceDictionary>

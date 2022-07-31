@@ -39,7 +39,7 @@
             IsVisible="{Binding SiteBarViewOptions.ShowBreakpoints}"
             Header="Breakpoints"
             PropertyChanged="OnBreakpointsPropertyChanged">
-            This is Breakpoints
+            <devTools:BreakpointsPanel RefreshRate="10" />
         </common:SiteBarExpander>
     </Grid>        
 </UserControl>

@@ -3,9 +3,13 @@ namespace SpectrumEngine.Emu;
 /// <summary>
 /// Represents a breakpoint
 /// </summary>
-/// <param name="Address"></param>
-public record BreakpointInfo(ushort Address)
+public record BreakpointInfo
 {
+    /// <summary>
+    /// Breakpoint address
+    /// </summary>
+    public ushort Address { get; set; }
+    
     /// <summary>
     /// Optional partition (reserved for future use)
     /// </summary>

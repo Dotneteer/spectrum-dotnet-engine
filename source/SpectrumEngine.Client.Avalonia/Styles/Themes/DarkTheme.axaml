@@ -55,6 +55,9 @@
         <Color x:Key="ConsoleBrightCyan">#29B8DB</Color>
         <Color x:Key="ConsoleWhite">#E5E5E5</Color>
         <Color x:Key="ConsoleBrightWhite">#ffffff</Color>
+        
+        <Color x:Key="InactiveBreakpointColor">#e51400</Color>
+        <Color x:Key="ActiveBreakpointColor">#E5E510</Color>
 
         <SolidColorBrush x:Key="AppBackground" Color="{DynamicResource DarkGray}"/>
         <SolidColorBrush x:Key="MenuText" Color="{DynamicResource TextGray}"/>
@@ -92,5 +95,8 @@
         <SolidColorBrush x:Key="DiagLabelTextBrush" Color="{DynamicResource DiagLabelTextColor}" />
         <SolidColorBrush x:Key="DiagValueTextBrush" Color="{DynamicResource DiagValueTextColor}" />
         <SolidColorBrush x:Key="DiagSecondaryTextBrush" Color="{DynamicResource DiagSecondaryTextColor}" />
+        
+        <SolidColorBrush x:Key="InactiveBreakpointBrush" Color="{DynamicResource InactiveBreakpointColor}" />
+        <SolidColorBrush x:Key="ActiveBreakpointBrush" Color="{DynamicResource ActiveBreakpointColor}" />
     </Styles.Resources>
 </Styles>
