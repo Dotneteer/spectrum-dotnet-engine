@@ -3,7 +3,6 @@
 
 using Avalonia;
 using Avalonia.Platform;
-using SpectrumEngine.Tools.Output;
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels;
 
@@ -77,6 +76,7 @@ public class MainWindowViewModel : ViewModelBase
         };
 
         Commands = new CommandsPanelViewModel();
+        Debugger = new DebugViewModel();
     }
     
     /// <summary>
@@ -129,5 +129,13 @@ public class MainWindowViewModel : ViewModelBase
     /// </summary>
     public UlaPanelViewModel? Ula { get; private set; }
     
-    public CommandsPanelViewModel Commands { get; private set; }
+    /// <summary>
+    /// Represents the view model of the Commands panel
+    /// </summary>
+    public CommandsPanelViewModel Commands { get; }
+    
+    /// <summary>
+    /// Represents the Debugger's view model
+    /// </summary>
+    public DebugViewModel Debugger { get; }
 }

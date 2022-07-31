@@ -43,7 +43,10 @@
     </UserControl.Styles>
     
     <Grid RowDefinitions="*, Auto">
-        <ScrollViewer Grid.Row="0" x:Name="Scroller">
+        <ScrollViewer
+            Grid.Row="0"
+            x:Name="Scroller"
+            Margin="0,0,0,8">
             <ItemsRepeater Items="{Binding Commands.Buffer}">
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate>
@@ -73,7 +76,7 @@
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>
         </ScrollViewer>
-        <Border Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="Silver">
+        <Border Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ExpanderBorderBrush}">
             <Grid ColumnDefinitions="Auto, *">
                 <TextBlock Classes="Prompt" Text=">" VerticalAlignment="Center"/>
                 <TextBox 

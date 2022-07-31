@@ -10,5 +10,10 @@ public interface IDebugSupport
     /// instruction of a program.
     /// </summary>
     ushort? LastStartupBreakpoint { get; set; }
+    
+    /// <summary>
+    /// The list of current breakpoints
+    /// </summary>
+    List<BreakpointInfo>? Breakpoints { get; }
 }
 

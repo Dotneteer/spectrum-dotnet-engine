@@ -5,8 +5,7 @@
 /// </summary>
 public abstract class Z80MachineBase : 
     Z80Cpu,
-    IZ80Machine, 
-    IDebugSupport
+    IZ80Machine 
 {
     // --- Store the start tact of the next machine frame
     private ulong _nextFrameStartTact;
@@ -150,12 +149,6 @@ public abstract class Z80MachineBase :
     }
 
     /// <summary>
-    /// This member stores the last startup breakpoint to check. It allows setting a breakpoint to the first
-    /// instruction of a program.
-    /// </summary>
-    public ushort? LastStartupBreakpoint { get; set; }
-
-    /// <summary>
     /// Executes the machine loop using the current execution context.
     /// </summary>
     /// <returns>
@@ -287,7 +280,7 @@ public abstract class Z80MachineBase :
         var instructionsExecuted = 0;
 
         // --- Check the startup breakpoint
-        if (Regs.PC != LastStartupBreakpoint)
+        if (Regs.PC != ExecutionContext.DebugSupport?.LastStartupBreakpoint)
         {
             // --- Check startup breakpoint
             if (CheckBreakpoints())
@@ -298,13 +291,19 @@ public abstract class Z80MachineBase :
             {
                 // --- The code execution has stopped at the startup breakpoint.
                 // --- Sign that fact so that the next time the code do not stop
-                LastStartupBreakpoint = Regs.PC;
+                if (ExecutionContext.DebugSupport != null)
+                {
+                    ExecutionContext.DebugSupport.LastStartupBreakpoint = Regs.PC;
+                }
                 return ExecutionContext.LastTerminationReason.Value;
             }
         }
 
         // --- Remove the startup breakpoint
-        LastStartupBreakpoint = null;
+        if (ExecutionContext.DebugSupport != null)
+        {
+            ExecutionContext.DebugSupport.LastStartupBreakpoint = null;
+        }
 
         // --- Execute the machine loop until the frame is completed or the loop is interrupted because of any other
         // --- completion reason, like reaching a breakpoint, etc.
@@ -368,7 +367,10 @@ public abstract class Z80MachineBase :
             {
                 // --- The code execution has stopped at the startup breakpoint.
                 // --- Sign that fact so that the next time the code do not stop
-                LastStartupBreakpoint = Regs.PC;
+                if (ExecutionContext.DebugSupport != null)
+                {
+                    ExecutionContext.DebugSupport.LastStartupBreakpoint = Regs.PC;
+                }
                 return ExecutionContext.LastTerminationReason.Value;
             }
 
