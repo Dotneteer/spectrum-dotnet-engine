@@ -1,4 +1,6 @@
-﻿namespace SpectrumEngine.Emu;
+﻿using System.Collections;
+
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class is intended to be a reusable base class for emulators using the Z80 CPU.
@@ -14,6 +16,9 @@ public abstract class Z80MachineBase :
 
     // --- Store machine-specific properties here
     private readonly Dictionary<string, object> _machineProps = new(StringComparer.InvariantCultureIgnoreCase);
+
+    // --- Bit array to store breakpoints for each address
+    private readonly BitArray _breakpoints = new BitArray(0x1_0000);
     
     /// <summary>
     /// The folder where the ROM files are stored
@@ -278,6 +283,7 @@ public abstract class Z80MachineBase :
         // --- Sign that the loop execution is in progress
         ExecutionContext.LastTerminationReason = null;
         var instructionsExecuted = 0;
+        CreateBreakpointMap();
 
         // --- Check the startup breakpoint
         if (Regs.PC != ExecutionContext.DebugSupport?.LastStartupBreakpoint)
@@ -329,6 +335,9 @@ public abstract class Z80MachineBase :
 
                 // --- Calculate the start tact of the next machine frame
                 _nextFrameStartTact = currentFrameStart + (ulong)(TactsInFrame * ClockMultiplier);
+                
+                // --- Refresh breakpoints
+                CreateBreakpointMap();
             }
 
             // --- Set the interrupt signal, if required so
@@ -387,16 +396,80 @@ public abstract class Z80MachineBase :
         // --- to suspend the loop.
         bool CheckBreakpoints()
         {
+            // --- The machine must support debugging
+            var debugSupport = ExecutionContext.DebugSupport;
+            if (debugSupport == null) return false;
+            
+            // --- Stop according to the current debug mode strategy
             switch (ExecutionContext.DebugStepMode)
             {
                 case DebugStepMode.StepInto:
-                    return instructionsExecuted > 0;        
-                case DebugStepMode.StepOver:
+                    // --- Stop right after the first executed instruction
+                    return instructionsExecuted > 0;
+                
+                case DebugStepMode.StopAtBreakpoint:
+                    if (_breakpoints[Regs.PC] && (instructionsExecuted > 0 
+                        || debugSupport.LastBreakpoint == null
+                        || debugSupport.LastBreakpoint != Regs.PC))
+                    {
+                        // --- Stop when reach a breakpoint
+                        debugSupport.LastBreakpoint = Regs.PC;
+                        return true;
+                    }
                     break;
+                
+                case DebugStepMode.StepOver:
+                    if (debugSupport.ImminentBreakpoint != null)
+                    {
+                        // --- We also stop if an imminent breakpoint is reached, and also remove this breakpoint
+                        if (debugSupport.ImminentBreakpoint == Regs.PC)
+                        {
+                            debugSupport.ImminentBreakpoint = null;
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        var imminentJustCreated = false;
+
+                        // --- We check for a CALL-like instruction
+                        var length = GetCallInstructionLength();
+                        if (length > 0)
+                        {
+                            // --- Its a CALL-like instruction, create an imminent breakpoint
+                            debugSupport.ImminentBreakpoint = (ushort)(Regs.PC + length);
+                            imminentJustCreated = true;
+                        }
+
+                        // --- We stop, we executed at least one instruction and if there's no imminent 
+                        // --- breakpoint or we've just created one
+                        if (instructionsExecuted > 0
+                            && (debugSupport.ImminentBreakpoint == null || imminentJustCreated))
+                        {
+                            return true;
+                        }
+                    }
+                    
+                    break;
+                
                 case DebugStepMode.StepOut:
                     break;
             }
             return false;
+        }
+
+        // --- This method gets the current breakpoints and transforms them into a flagmap,
+        // --- a sibgle bit for each address in the 16-bit address space
+        void CreateBreakpointMap()
+        {
+            var debugSupport = ExecutionContext.DebugSupport;
+            if (debugSupport == null) return;
+            
+            _breakpoints.SetAll(false);
+            foreach (var bp in debugSupport.Breakpoints!.Where(bp => bp.Exec))
+            {
+                _breakpoints.Set(bp.Address, true);
+            }
         }
     }
 

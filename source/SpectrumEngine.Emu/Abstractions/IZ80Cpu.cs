@@ -140,6 +140,14 @@ public interface IZ80Cpu
     /// Handles the active RESET signal of the CPU.
     /// </summary>
     void Reset();
+    
+    /// <summary>
+    /// Checks if the next instruction to be executed is a call instruction or not
+    /// </summary>
+    /// <returns>
+    /// 0, if the next instruction is not a call; otherwise the length of the call instruction
+    /// </returns>
+    int GetCallInstructionLength();
 
     /// <summary>
     /// Call this method to execute a CPU instruction cycle.
