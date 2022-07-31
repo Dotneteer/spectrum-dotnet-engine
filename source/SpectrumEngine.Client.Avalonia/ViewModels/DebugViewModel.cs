@@ -26,6 +26,16 @@ public class DebugViewModel: ViewModelBase, IDebugSupport
     /// </summary>
     public List<BreakpointInfo> Breakpoints { get; } = new();
 
+    /// <summary>
+    /// The last breakpoint we stopped in the frame
+    /// </summary>
+    public ushort? LastBreakpoint { get; set; }
+
+    /// <summary>
+    /// Breakpoint used for step-out debugging mode
+    /// </summary>
+    public ushort? ImminentBreakpoint { get; set; }
+
     public List<BreakpointInfo> BreakpointsOrdered => Breakpoints.OrderBy(bp => bp.Address).ToList();  
     
     /// <summary>

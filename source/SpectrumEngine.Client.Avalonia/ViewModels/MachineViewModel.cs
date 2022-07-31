@@ -139,10 +139,10 @@ public class MachineViewModel: ViewModelBase
     /// <summary>
     /// Execute the Start command
     /// </summary>
-    public void Start()
+    public Task Start()
     {
-        Controller?.Start();
         RaiseCommandExecuted();
+        return Controller!.Start();
     }
 
     /// <summary>
@@ -213,10 +213,10 @@ public class MachineViewModel: ViewModelBase
     /// <summary>
     /// Execute the StartDebug command
     /// </summary>
-    public void StartDebug()
+    public Task StartDebug()
     {
         RaiseCommandExecuted();
-        Controller!.StartDebug();
+        return Controller!.StartDebug();
     }
 
     /// <summary>

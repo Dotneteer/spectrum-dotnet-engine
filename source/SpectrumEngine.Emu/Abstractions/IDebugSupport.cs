@@ -15,5 +15,15 @@ public interface IDebugSupport
     /// The list of current breakpoints
     /// </summary>
     List<BreakpointInfo>? Breakpoints { get; }
+    
+    /// <summary>
+    /// The last breakpoint we stopped in the frame
+    /// </summary>
+    ushort? LastBreakpoint { get; set; }
+    
+    /// <summary>
+    /// Breakpoint used for step-out debugging mode
+    /// </summary>
+    ushort? ImminentBreakpoint { get; set; }
 }
 

@@ -80,19 +80,26 @@ public class MachineController
     /// <summary>
     /// Start the machine in normal mode.
     /// </summary>
-    public void Start()
+    public async Task Start()
     {
         IsDebugging = false;
         Run();
+        await CompleteExecutionLoop();
     }
 
     /// <summary>
     /// Start the machine in debug mode.
     /// </summary>
-    public void StartDebug()
+    public async Task StartDebug()
     {
         IsDebugging = true;
         Run(FrameTerminationMode.DebugEvent, DebugStepMode.StopAtBreakpoint);
+        await CompleteExecutionLoop();
+        if (Context.LastTerminationReason == FrameTerminationMode.DebugEvent)
+        {
+            // --- We are about to pause because of a debug event
+            await FinishExecutionLoop(MachineControllerState.Pausing, MachineControllerState.Paused);
+        }
     }
     
     /// <summary>
@@ -117,13 +124,22 @@ public class MachineController
             throw new InvalidOperationException("The machine is not running");
         }
 
+        // --- Stop the machine
         IsDebugging = false;
         await FinishExecutionLoop(MachineControllerState.Stopping, MachineControllerState.Stopped);
+        
+        // --- Reset frame statistics
         FrameStats.FrameCount = 0;
         FrameStats.LastCpuFrameTimeInMs = 0.0;
         FrameStats.AvgFrameTimeInMs = 0.0;
         FrameStats.LastFrameTimeInMs = 0.0;
         FrameStats.AvgFrameTimeInMs = 0.0;
+        
+        // --- Reset the imminent breakpoint
+        if (Context.DebugSupport != null)
+        {
+            Context.DebugSupport.ImminentBreakpoint = null;
+        }
     }
 
     /// <summary>
@@ -133,7 +149,7 @@ public class MachineController
     {
         await Stop();
         Machine.HardReset();
-        Start();
+        await Start();
     }
 
     /// <summary>
