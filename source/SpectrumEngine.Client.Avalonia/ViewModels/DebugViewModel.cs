@@ -26,10 +26,16 @@ public class DebugViewModel: ViewModelBase, IDebugSupport
     /// </summary>
     public List<BreakpointInfo> Breakpoints { get; } = new();
 
+    public List<BreakpointInfo> BreakpointsOrdered => Breakpoints.OrderBy(bp => bp.Address).ToList();  
+    
     /// <summary>
     /// Erases all breakpoints
     /// </summary>
-    public void EraseAllBreakpoints() => Breakpoints.Clear();
+    public void EraseAllBreakpoints()
+    {
+        Breakpoints.Clear();
+        SignStateChanged();
+    }
 
     /// <summary>
     /// Adds a breakpoint to the list of existing ones
@@ -45,7 +51,11 @@ public class DebugViewModel: ViewModelBase, IDebugSupport
             Breakpoints.Remove(existingBp);
             newBp = false;
         }
-        Breakpoints.Add(new BreakpointInfo(address));
+        Breakpoints.Add(new BreakpointInfo()
+        {
+            Address = address
+        });
+        SignStateChanged();
         return newBp;
     }
 
@@ -59,6 +69,13 @@ public class DebugViewModel: ViewModelBase, IDebugSupport
         var existingBp = Breakpoints.FirstOrDefault(bp => bp.Address == address);
         if (existingBp == null) return false;
         Breakpoints.Remove(existingBp);
+        SignStateChanged();
         return true;
+    }
+
+    public void SignStateChanged()
+    {
+        RaisePropertyChanged(nameof(Breakpoints));
+        RaisePropertyChanged(nameof(BreakpointsOrdered));
     }
 }
