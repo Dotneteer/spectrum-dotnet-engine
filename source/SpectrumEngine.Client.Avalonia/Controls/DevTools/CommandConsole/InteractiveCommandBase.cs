@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SpectrumEngine.Tools.Commands;
 using SpectrumEngine.Tools.Output;
@@ -93,6 +92,11 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
         Description = description.Value;
     }
 
+    /// <summary>
+    /// Executes the command in the specified context
+    /// </summary>
+    /// <param name="context">Command execution context</param>
+    /// <returns>The result of the command</returns>
     public async Task<InteractiveCommandResult> Execute(IInteractiveCommandContext context)
     {
         // --- Validate the input arguments
@@ -104,22 +108,19 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
         foreach (var msg in validation)
         {
             output?.ResetFormat();
-            var color = OutputColors.Cyan;
             switch (msg.Type)
             {
-                case TraceMessageType.Error:
+                case ValidationMessageType.Error:
                     errorFound = true;
-                    color = OutputColors.Red;
+                    WriteError(context, msg.Message);
                     break;
-                case TraceMessageType.Warning:
-                    color = OutputColors.Yellow;
+                case ValidationMessageType.Warning:
+                    WriteWarning(context, msg.Message);
+                    break;
+                case ValidationMessageType.Info:
+                    WriteInfo(context, msg.Message);
                     break;
             }
-
-            if (output == null) continue;
-
-            output.Color = color;
-            output.WriteLine(msg.Message);
         }
 
         if (errorFound)
@@ -135,28 +136,54 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
         return await DoExecute(context);
     }
 
-    protected virtual Task<List<TraceMessage>> ValidateArgs(List<Token> args)
+    /// <summary>
+    /// Validates command arguments
+    /// </summary>
+    /// <param name="args">Arguments to validate</param>
+    /// <returns>List of validation messages</returns>
+    protected virtual Task<List<ValidationMessage>> ValidateArgs(List<Token> args)
     {
-        return Task.FromResult(new List<TraceMessage>());
+        return Task.FromResult(new List<ValidationMessage>());
     }
 
+    /// <summary>
+    /// Executes the commands body. Override this method in derived command classes
+    /// </summary>
+    /// <param name="context">Command execution context</param>
+    /// <returns>The result of the command</returns>
     protected abstract Task<InteractiveCommandResult> DoExecute(IInteractiveCommandContext context);
 
     /// <summary>
     /// Returns a successful validation message
     /// </summary>
-    public static Task<List<TraceMessage>> SuccessMessage => Task.FromResult(new List<TraceMessage>());
+    public static Task<List<ValidationMessage>> SuccessMessage => Task.FromResult(new List<ValidationMessage>());
 
     /// <summary>
     /// Returns a success result
     /// </summary>
     public static Task<InteractiveCommandResult> SuccessResult => Task.FromResult(new InteractiveCommandResult(true));
-    
-    public static List<TraceMessage> ExpectArgs(int count)
+
+    /// <summary>
+    /// Creates a message with the specified count as the expected number of arguments.
+    /// </summary>
+    /// <param name="count"></param>
+    /// <returns></returns>
+    public static List<ValidationMessage> ExpectArgs(int count)
     {
-        return new List<TraceMessage>
+        return new List<ValidationMessage>
         {
-            new(TraceMessageType.Error, $"This command expects {count} argument{(count > 1 ? "s" : "")}")
+            new(ValidationMessageType.Error, $"This command expects {count} argument{(count > 1 ? "s" : "")}")
+        };
+    }
+    
+    /// <summary>
+    /// Creates a message indicating that the command expects no arguments.
+    /// </summary>
+    public static List<ValidationMessage> ExpectNoArgs()
+    {
+        return new List<ValidationMessage>
+        {
+            new(ValidationMessageType.Error, "This command does not expects any arguments")
         };
     }
     
@@ -165,7 +192,7 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
     /// </summary>
     /// <param name="token">Token to convert</param>
     /// <returns>Integer value if conversion successful; otherwise, null</returns>
-    public static (int?, List<TraceMessage>?) GetNumericTokenValue(Token token) {
+    public static (int?, List<ValidationMessage>?) GetNumericTokenValue(Token token) {
         var plainText = token.Text.Replace("'", "").Replace("_", "");
         try
         {
@@ -183,9 +210,9 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
         }
         catch
         {
-            return (null, new List<TraceMessage>
+            return (null, new List<ValidationMessage>
             {
-                new(TraceMessageType.Error, "Invalid numeric value")
+                new(ValidationMessageType.Error, "Invalid numeric value")
             });
         }
     }
@@ -195,17 +222,71 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
     /// </summary>
     /// <param name="token">Token to convert</param>
     /// <returns>16-bit value if conversion successful; otherwise, null</returns>
-    public static (ushort?, List<TraceMessage>?) GetAddressValue(Token token)
+    public static (ushort?, List<ValidationMessage>?) GetAddressValue(Token token)
     {
         var (value, message) = GetNumericTokenValue(token);
         return value switch
         {
             null => (null, message),
             < 0 or > ushort.MaxValue => (null,
-                new List<TraceMessage> {new(TraceMessageType.Error, "Invalid 16-bit address value")}),
+                new List<ValidationMessage> {new(ValidationMessageType.Error, "Invalid 16-bit address value")}),
             _ => ((ushort) value.Value, null)
         };
     }
+
+    /// <summary>
+    /// Write an informational message to the current output
+    /// </summary>
+    /// <param name="context">Command execution context</param>
+    /// <param name="message">Message to write</param>
+    public static void WriteInfo(IInteractiveCommandContext context, string message)
+        => WriteWithColor(context, message, OutputColors.BrightCyan);
+
+    /// <summary>
+    /// Write a warning message to the current output
+    /// </summary>
+    /// <param name="context">Command execution context</param>
+    /// <param name="message">Message to write</param>
+    public static void WriteWarning(IInteractiveCommandContext context, string message)
+        => WriteWithColor(context, message, OutputColors.Yellow);
+
+    /// <summary>
+    /// Write an error message to the current output
+    /// </summary>
+    /// <param name="context">Command execution context</param>
+    /// <param name="message">Message to write</param>
+    public static void WriteError(IInteractiveCommandContext context, string message)
+        => WriteWithColor(context, message, OutputColors.Red);
+
+    /// <summary>
+    /// Write a success message to the current output
+    /// </summary>
+    /// <param name="context">Command execution context</param>
+    /// <param name="message">Message to write</param>
+    public static void WriteSuccess(IInteractiveCommandContext context, string message)
+        => WriteWithColor(context, message, OutputColors.Green);
+    /// <summary>
+    /// Write a message to the current output with the specified color
+    /// </summary>
+    /// <param name="context">Command execution context</param>
+    /// <param name="message">Message to write</param>
+    /// <param name="color">Message color</param>
+    public static void WriteWithColor(IInteractiveCommandContext context, string message, OutputColors color)
+    {
+        var output = context.Output; 
+        if (output == null) return;
+        output.ResetFormat();
+        output.Color = color;
+        output.WriteLine(message);
+    }
+
+    /// <summary>
+    /// Returns an address string combining the hexadecimal, decimal, and binary representation
+    /// </summary>
+    /// <param name="address">Address to convert</param>
+    /// <returns>Combined representation</returns>
+    public static string CombinedAddress(int address)
+        => $"${address:X4} ({address}, %{Convert.ToString(address, 2)})";
 }
 
 /// <summary>
@@ -218,7 +299,7 @@ public record InteractiveCommandResult(bool Success, string? FinalMessage = null
 /// <summary>
 /// Available types of trace messages 
 /// </summary>
-public enum TraceMessageType {
+public enum ValidationMessageType {
     Info,
     Warning,
     Error,
@@ -229,5 +310,5 @@ public enum TraceMessageType {
 /// </summary>
 /// <param name="Type">Type of the message</param>
 /// <param name="Message">Message Text to display</param>
-public record TraceMessage(TraceMessageType Type, string Message);
+public record ValidationMessage(ValidationMessageType Type, string Message);
 
