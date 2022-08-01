@@ -51,7 +51,7 @@ public class DebugViewModel: ViewModelBase, IDebugSupport
     /// Adds a breakpoint to the list of existing ones
     /// </summary>
     /// <param name="address">Breakpoint address</param>
-    /// <returns>True, if a new breakpoint was added; otherwise, false</returns>
+    /// <returns>True, if a new breakpoint was added; otherwise, if an existing breakpoint was updates, false</returns>
     public bool AddBreakpoint(ushort address)
     {
         var existingBp = Breakpoints.FirstOrDefault(bp => bp.Address == address);
