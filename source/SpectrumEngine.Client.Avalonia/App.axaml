@@ -20,6 +20,7 @@
     
     <Application.Styles>
         <FluentTheme Mode="Dark"/>
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
         <StyleInclude Source="/Controls/Common/CheckedIndicator.axaml"/>
         <StyleInclude Source="/Controls/Common/IconButton.axaml"/>
         <StyleInclude Source="/Controls/Common/IconButtonSeparator.axaml"/>

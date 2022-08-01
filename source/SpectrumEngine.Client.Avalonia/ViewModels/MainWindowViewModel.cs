@@ -77,6 +77,7 @@ public class MainWindowViewModel : ViewModelBase
 
         Commands = new CommandsPanelViewModel();
         Debugger = new DebugViewModel();
+        Disassembler = new DisassemblyViewModel(this);
     }
     
     /// <summary>
@@ -138,4 +139,9 @@ public class MainWindowViewModel : ViewModelBase
     /// Represents the Debugger's view model
     /// </summary>
     public DebugViewModel Debugger { get; }
+    
+    /// <summary>
+    /// Represents the disassembler's view model
+    /// </summary>
+    public DisassemblyViewModel Disassembler { get; }
 }

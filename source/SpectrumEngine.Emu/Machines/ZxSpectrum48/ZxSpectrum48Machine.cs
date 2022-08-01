@@ -63,6 +63,9 @@ public sealed class ZxSpectrum48Machine :
 
         // --- Initialize the machine's ROM (Roms/ZxSpectrum48/ZxSpectrum48.rom)
         UploadRomBytes(LoadRomFromResource(DefaultRomResource));
+        
+        // --- Allow access to the 64Kbyte of memory
+        SetMachineProperty(MachinePropNames.MemoryFlat, _memory);
     }
 
     /// <summary>

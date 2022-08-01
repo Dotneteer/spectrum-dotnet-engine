@@ -2,7 +2,106 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
+             xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.DisassemblyViewPanel">
-    Disassembly View
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.DisassemblyViewPanel"
+             Initialized="OnInitialized"
+             GotFocus="OnGotFocus">
+    
+    <Design.DataContext>
+        <!-- ReSharper disable once Xaml.ConstructorWarning -->
+        <viewModels:MainWindowViewModel/>
+    </Design.DataContext>
+    
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="Monaco, Courier, Courier New, Consolas"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Height" Value="16" />
+        </Style>
+    </UserControl.Styles>
+    
+    <Grid RowDefinitions="Auto, *">
+        <Panel Grid.Row="0">
+            <TextBlock>Disassembly Header</TextBlock>
+        </Panel>
+        <DataGrid 
+            Grid.Row="1" 
+            Items="{Binding Disassembler.DisassItems}"
+            RowHeight="22"
+            HeadersVisibility="None"
+            AutoGenerateColumns="False"
+            CellPointerPressed="OnCellPointerPressed">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Bp" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="x:Int32">
+                            <StackPanel Orientation="Horizontal">
+                                <Border 
+                                    Width="20"
+                                    IsVisible="{Binding HasNoBreakpoint}" />
+                                <controls:PlainIcon
+                                    IsVisible="{Binding HasActiveBreakpoint}"
+                                    Path="{DynamicResource IconActiveBreakpoint}"
+                                    Fill="{DynamicResource ActiveBreakpointBrush}"
+                                    VerticalAlignment="Center"
+                                    Width="18"
+                                    Height="18" />
+                                <controls:PlainIcon
+                                    IsVisible="{Binding HasDefinedBreakpoint}"
+                                    Path="{DynamicResource IconCircleFilled}" 
+                                    Fill="{DynamicResource InactiveBreakpointBrush}"
+                                    VerticalAlignment="Center"
+                                    Width="18"
+                                    Height="18" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Address" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="x:Int32">
+                            <TextBlock 
+                                Text="{Binding Address, StringFormat='{}{0:X4}'}"
+                                Width="48"
+                                Foreground="{DynamicResource DiagLabelTextColor}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="OpCodes" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="x:String">
+                            <TextBlock 
+                                Text="{Binding OpCodes}" 
+                                Foreground="{DynamicResource DiagValueTextColor}" 
+                                Width="112" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Label" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="x:String">
+                            <TextBlock 
+                                Text="{Binding Label}" 
+                                Foreground="{DynamicResource ConsoleBrightMagenta}" 
+                                Width="112" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Instruction" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="x:String">
+                            <TextBlock 
+                                Text="{Binding Instruction}" 
+                                Foreground="{DynamicResource ConsoleBrightCyan}" 
+                                Width="180" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+
 </UserControl>

@@ -42,7 +42,7 @@
         <TabItem 
             Header="Disassembly"
             IsVisible="{Binding PanelsViewOptions.ShowDisassembly}">
-            <devTools:DisassemblyViewPanel />
+            <devTools:DisassemblyViewPanel  RefreshRate="25"/>
         </TabItem>
         <TabItem
             Header="Watch"
