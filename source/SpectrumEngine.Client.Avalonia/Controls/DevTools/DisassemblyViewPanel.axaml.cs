@@ -38,8 +38,8 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
         e.PointerPressedEventArgs.Handled = true;
     }
 
-    protected override void RefreshPanel()
+    protected override void Refresh()
     {
-        Vm?.Disassembler.SignChanged();
+        Vm?.Disassembler.ApplyNewPc(Vm.Cpu!.PC);
     }
 }

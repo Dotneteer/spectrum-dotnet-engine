@@ -9,9 +9,9 @@ public partial class BreakpointsPanel : MachineStatusUserControl
         InitializeComponent();
     }
 
-    protected override void RefreshPanel()
+    protected override void Refresh()
     {
         if (DataContext is not MainWindowViewModel vm) return;
-        vm.Debugger.SignStateChanged();
+        vm.Debugger.SignStateChanged(null);
     }
 }

@@ -76,8 +76,12 @@ public class MainWindowViewModel : ViewModelBase
         };
 
         Commands = new CommandsPanelViewModel();
-        Debugger = new DebugViewModel();
         Disassembler = new DisassemblyViewModel(this);
+        Debugger = new DebugViewModel();
+        Debugger.BreakpointsChanged += (_, bpInfo) =>
+        {
+            Disassembler.ApplyBreakpointChanges(bpInfo.OldBps, bpInfo.NewBps);
+        };
     }
     
     /// <summary>
