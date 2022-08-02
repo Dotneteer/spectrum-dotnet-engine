@@ -45,5 +45,11 @@
       <None Remove="bass.dll" />
       <None Remove="BassResources\libbass.dylib" />
       <EmbeddedResource Include="BassResources\libbass.dylib" />
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Update="Controls\DevTools\Disassembly\DisassemblyViewPanel.axaml.cs">
+        <DependentUpon>DisassemblyViewPanel.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>   
 </Project>

@@ -25,7 +25,11 @@
     
     <Grid RowDefinitions="Auto, *">
         <Panel Grid.Row="0">
-            <TextBlock>Disassembly Header</TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <controls:IconButton Path="{DynamicResource IconFollowPc}"/>
+                <controls:IconButton Path="{DynamicResource IconStartFromPc}"/>
+                <controls:IconButton Path="{DynamicResource IconCircleSlash}"/>
+            </StackPanel>
         </Panel>
         <DataGrid 
             Grid.Row="1" 

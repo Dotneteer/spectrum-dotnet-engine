@@ -16,8 +16,8 @@ public class SetBreakpointCommand: CommandWithSingleAddressBase
     {
         if (context.Model != null)
         {
-            context.Model.Debugger.AddBreakpoint(Address);
-            WriteInfo(context, $"Breakpoint set at {CombinedAddress(Address)}");
+            var added = context.Model.Debugger.AddBreakpoint(Address);
+            WriteInfo(context, $"Breakpoint {(added ? "set": "updated")} at {CombinedAddress(Address)}");
         }
         return SuccessResult;
     }
