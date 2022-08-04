@@ -47,61 +47,61 @@
                 Path="{DynamicResource IconRestart}"
                 Fill="{DynamicResource IconPlayBrush}"
                 Command="{Binding Machine.Restart}"
-                Hint="Stop" />
+                Hint="Restart" />
             <controls:IconButtonSeparator />
             <controls:IconButton
                 Path="{DynamicResource IconStartDebug}"
                 Fill="{DynamicResource IconPlayBrush}"
                 Command="{Binding Machine.StartDebug}"
-                Hint="Stop" />
+                Hint="Start with Debugging" />
             <controls:IconButton
                 Path="{DynamicResource IconStepInto}"
                 Fill="{DynamicResource IconPauseBrush}"
                 Command="{Binding Machine.StepInto}"
-                Hint="Pause" />
+                Hint="Step Into" />
             <controls:IconButton
                 Path="{DynamicResource IconStepOver}"
                 Fill="{DynamicResource IconPauseBrush}"
                 Command="{Binding Machine.StepOver}"
-                Hint="Pause" />
+                Hint="Step Over" />
             <controls:IconButton
                 Path="{DynamicResource IconStepOut}"
                 Fill="{DynamicResource IconPauseBrush}"
                 Command="{Binding Machine.StepOut}"
-                Hint="Pause" />
+                Hint="Step Out" />
             <controls:IconButtonSeparator />
             <controls:IconButton
                 IsChecked="{Binding EmuViewOptions.ShowKeyboard}"
                 Path="{DynamicResource IconKeyboard}"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Command="{Binding EmuViewOptions.ToggleShowKeyboard}"
-                Hint="Pause" />
+                Hint="Show Keyboard" />
             <controls:IconButtonSeparator />
             <controls:IconButton
                 IsVisible="{Binding !EmuViewOptions.IsMuted}"
                 Path="{DynamicResource IconMute}"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Command="{Binding EmuViewOptions.ToggleMuted}"
-                Hint="Pause" />
+                Hint="Mute Sound" />
             <controls:IconButton
                 IsVisible="{Binding EmuViewOptions.IsMuted}"
                 Path="{DynamicResource IconUnmute}"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Command="{Binding EmuViewOptions.ToggleMuted}"
-                Hint="Pause" />
+                Hint="Unmute Sound" />
             <controls:IconButtonSeparator />
             <controls:IconButton
                 IsChecked="{Binding Machine.AllowFastLoad}"
                 Path="{DynamicResource IconFastLoad}"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Command="{Binding Machine.ToggleFastLoad}"
-                Hint="Pause" />
+                Hint="Enable Fast Load" />
             <controls:IconButton
                 IsEnabled="{Binding !Machine.TapeMode, Converter={StaticResource TapeModeVisibilityConverter}}"
                 Path="{DynamicResource IconRewind}"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Command="{Binding Machine.Rewind}"
-                Hint="Pause" />
+                Hint="Rewind tape" />
         </StackPanel>
     </Border>
 </UserControl>

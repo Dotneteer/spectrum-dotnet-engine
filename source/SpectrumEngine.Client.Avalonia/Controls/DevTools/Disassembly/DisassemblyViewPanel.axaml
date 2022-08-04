@@ -6,8 +6,7 @@
              xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.DisassemblyViewPanel"
-             Initialized="OnInitialized"
-             GotFocus="OnGotFocus">
+             Initialized="OnInitialized">
     
     <Design.DataContext>
         <!-- ReSharper disable once Xaml.ConstructorWarning -->
@@ -23,20 +22,63 @@
         </Style>
     </UserControl.Styles>
     
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, *" >
         <Panel Grid.Row="0">
-            <StackPanel Orientation="Horizontal">
-                <controls:IconButton Path="{DynamicResource IconFollowPc}"/>
-                <controls:IconButton Path="{DynamicResource IconStartFromPc}"/>
-                <controls:IconButton Path="{DynamicResource IconCircleSlash}"/>
-            </StackPanel>
+            <Border Padding="2">
+                <StackPanel Orientation="Horizontal">
+                    <controls:IconButton
+                        IsChecked="{Binding Disassembler.IsFlatMode}"
+                        Path="{DynamicResource IconListFlat}" 
+                        Command="{Binding Disassembler.SetFlatMode}" 
+                        Hint="Normal Mode"/>
+                    <controls:IconButton 
+                        IsChecked="{Binding Disassembler.IsFollowPcMode}"
+                        Path="{DynamicResource IconFollowPc}" 
+                        Command="{Binding Disassembler.SetFollowPcMode}" 
+                        Hint="Follow the current value of PC"/>
+                    <controls:IconButton 
+                        IsChecked="{Binding Disassembler.IsStartFromPcMode}"
+                        Path="{DynamicResource IconStartFromPc}" 
+                        Command="{Binding Disassembler.SetStartFromPcMode}" 
+                        Hint="Disassembly from the current PC"/>
+                    <StackPanel 
+                        IsVisible="{Binding Disassembler.CanDisplayDisassembly}"
+                        Orientation="Horizontal" 
+                        VerticalAlignment="Center"
+                        Margin="8,0,0,0">
+                        <TextBlock 
+                            Text="{Binding Disassembler.RangeFrom, StringFormat='{}{0:X4}'}" 
+                            Foreground="{DynamicResource DiagLabelTextColor}" />
+                        <TextBlock 
+                            Text="-"
+                            Foreground="{DynamicResource DiagLabelTextColor}" />
+                        <TextBlock
+                            Text="{Binding Disassembler.RangeTo, StringFormat='{}{0:X4}'}" 
+                            Foreground="{DynamicResource DiagLabelTextColor}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
         </Panel>
+        <StackPanel
+            Grid.Row="1"
+            IsVisible="{Binding !Disassembler.CanDisplayDisassembly}"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center">
+            <TextBlock>
+                (Pause the machine to show disassembly) 
+            </TextBlock>
+        </StackPanel>
         <DataGrid 
             Grid.Row="1" 
+            IsVisible="{Binding Disassembler.CanDisplayDisassembly}"
             Items="{Binding Disassembler.DisassItems}"
             RowHeight="22"
+            BorderThickness="0"
+            HorizontalGridLinesBrush="Transparent"
             HeadersVisibility="None"
             AutoGenerateColumns="False"
+            GridLinesVisibility="None"
+            SelectionMode="Single"
             CellPointerPressed="OnCellPointerPressed">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Bp" IsReadOnly="True">

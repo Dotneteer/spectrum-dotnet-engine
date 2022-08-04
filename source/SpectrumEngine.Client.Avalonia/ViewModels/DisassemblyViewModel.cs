@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Microsoft.VisualBasic.CompilerServices;
 using SpectrumEngine.Emu;
 using SpectrumEngine.Tools.Disassembler;
 
@@ -14,30 +13,113 @@ public class DisassemblyViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _parent;
     private ushort? _lastPc;
-
     private ObservableCollection<DisassemblyItemViewModel>? _disassItems;
+    private DisassemblyMode _disassemblyMode = DisassemblyMode.Normal;
+    private ushort _fullRangeFrom;
+    private ushort _fullRangeTo;
+    private ushort _currentRangeFrom;
+    private ushort _currentRangeTo;
 
+    /// <summary>
+    /// Initializes the view model with the specified parent
+    /// </summary>
+    /// <param name="parent">Parent view model</param>
     public DisassemblyViewModel(MainWindowViewModel parent)
     {
         _parent = parent;
     }
 
+    /// <summary>
+    /// Disassembly items to show
+    /// </summary>
     public ObservableCollection<DisassemblyItemViewModel>? DisassItems
     {
         get => _disassItems;
         set => SetProperty(ref _disassItems, value);
     }
 
+    /// <summary>
+    /// Current disassembly mode
+    /// </summary>
+    public DisassemblyMode DisassemblyMode
+    {
+        get => _disassemblyMode;
+        set
+        {
+            SetProperty(ref _disassemblyMode, value);
+            RefreshRangeFlags();
+        }
+    }
+
+    /// <summary>
+    /// Start of the disassembly range when full range is displayed
+    /// </summary>
+    public ushort FullRangeFrom
+    {
+        get => _fullRangeFrom;
+        set => SetProperty(ref _fullRangeFrom, value);
+    }
+    
+    /// <summary>
+    /// End of the disassembly range (inclusinve) when full range is displayed
+    /// </summary>
+    public ushort FullRangeTo
+    {
+        get => _fullRangeTo;
+        set => SetProperty(ref _fullRangeTo, value);
+    }
+    
+    /// <summary>
+    /// Start of the disassembly range when in StartFromPC mode
+    /// </summary>
+    public ushort CurrentRangeFrom
+    {
+        get => _currentRangeFrom;
+        set => SetProperty(ref _currentRangeFrom, value);
+    }
+
+    /// <summary>
+    /// End of the disassembly range (inclusive) when in StartFromPC mode
+    /// </summary>
+    public ushort CurrentRangeTo
+    {
+        get => _currentRangeTo;
+        set => SetProperty(ref _currentRangeTo, value);
+    }
+
+    /// <summary>
+    /// The effective start address of the range
+    /// </summary>
+    public ushort RangeFrom => _disassemblyMode == DisassemblyMode.StartFromPc ? _currentRangeFrom : _fullRangeFrom;
+    
+    /// <summary>
+    /// The effective end address of the range
+    /// </summary>
+    public ushort RangeTo => _disassemblyMode == DisassemblyMode.StartFromPc ? _currentRangeTo : _fullRangeTo;
+    
+    public bool IsFlatMode => _disassemblyMode == DisassemblyMode.Normal;
+    public bool IsFollowPcMode => _disassemblyMode == DisassemblyMode.FollowPc;
+    public bool IsStartFromPcMode => _disassemblyMode == DisassemblyMode.StartFromPc;
+    public bool CanDisplayDisassembly 
+        => _disassemblyMode != DisassemblyMode.StartFromPc 
+           || _parent.Machine.Controller?.State != MachineControllerState.Running;
+
     public void RefreshDisassembly(byte[] opCodes)
     {
         var map = new MemoryMap
         {
-            new(0x0000, 0x3fff)
+            new(RangeFrom, RangeTo)
         };
         var disassembler = new Z80Disassembler(map, opCodes);
         DisassItems = new ObservableCollection<DisassemblyItemViewModel>(disassembler.Disassemble().OutputItems
             .Select(oi => new DisassemblyItemViewModel {Item = oi, Parent = _parent}).ToList());
     }
+
+    public void SetFlatMode() => DisassemblyMode = DisassemblyMode.Normal;
+
+    public void SetFollowPcMode() => DisassemblyMode = DisassemblyMode.FollowPc;
+
+    public void SetStartFromPcMode() => DisassemblyMode = DisassemblyMode.StartFromPc;
 
     // --- Invoke this method when PC changes so the UI get refreshed
     public void ApplyNewPc(ushort pc)
@@ -45,6 +127,7 @@ public class DisassemblyViewModel : ViewModelBase
         RefreshItemAtAddress(_lastPc);
         RefreshItemAtAddress(pc);
         _lastPc = pc;
+        RefreshRangeFlags();
     }
 
     public void ApplyBreakpointChanges(List<BreakpointInfo> oldBps, List<BreakpointInfo> newBps)
@@ -87,4 +170,22 @@ public class DisassemblyViewModel : ViewModelBase
         }
         return null;
     }
+
+    private void RefreshRangeFlags()
+    {
+        RaisePropertyChanged(nameof(IsFlatMode));
+        RaisePropertyChanged(nameof(IsFollowPcMode));
+        RaisePropertyChanged(nameof(IsStartFromPcMode));
+        RaisePropertyChanged(nameof(CanDisplayDisassembly));
+    }
+}
+
+/// <summary>
+/// Defines the current disassembly view mode
+/// </summary>
+public enum DisassemblyMode
+{
+    Normal, 
+    FollowPc,
+    StartFromPc
 }

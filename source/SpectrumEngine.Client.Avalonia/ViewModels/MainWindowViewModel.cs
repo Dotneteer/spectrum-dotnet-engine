@@ -76,7 +76,11 @@ public class MainWindowViewModel : ViewModelBase
         };
 
         Commands = new CommandsPanelViewModel();
-        Disassembler = new DisassemblyViewModel(this);
+        Disassembler = new DisassemblyViewModel(this)
+        {
+            FullRangeFrom = 0x0000,
+            FullRangeTo = 0x3fff
+        };
         Debugger = new DebugViewModel();
         Debugger.BreakpointsChanged += (_, bpInfo) =>
         {

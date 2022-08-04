@@ -34,15 +34,15 @@
         SelectedIndex="{Binding PanelsViewOptions.SelectedIndex, Mode=TwoWay}"
         VerticalAlignment="Stretch"
         HorizontalAlignment="Stretch">
-        <TabItem
-            Header="Memory"
-            IsVisible="{Binding PanelsViewOptions.ShowMemory}">
-            <devTools:MemoryViewPanel />
-        </TabItem>
         <TabItem 
             Header="Disassembly"
             IsVisible="{Binding PanelsViewOptions.ShowDisassembly}">
             <devTools:DisassemblyViewPanel  RefreshRate="25"/>
+        </TabItem>
+        <TabItem
+            Header="Memory"
+            IsVisible="{Binding PanelsViewOptions.ShowMemory}">
+            <devTools:MemoryViewPanel />
         </TabItem>
         <TabItem
             Header="Watch"

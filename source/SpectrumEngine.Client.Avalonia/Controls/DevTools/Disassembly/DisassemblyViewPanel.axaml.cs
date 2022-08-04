@@ -21,16 +21,19 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
         RefreshDisassembly();
     }
 
-    private void OnGotFocus(object? sender, GotFocusEventArgs e)
-    {
-        RefreshDisassembly();
-    }
-
     private void RefreshDisassembly()
     {
-        var machine = Vm?.Machine.Controller?.Machine as ZxSpectrum48Machine;
-        if (machine?.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[] memory) return;
-        Vm?.Disassembler.RefreshDisassembly(memory.AsSpan(0x0000, 0x4000).ToArray());
+        if (Vm == null) return;
+        var machine = Vm.Machine.Controller?.Machine as ZxSpectrum48Machine;
+        if (machine == null || machine.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[] memory)
+        {
+            return;
+        }
+        
+        Vm.Disassembler.RefreshDisassembly(memory.AsSpan(
+                Vm.Disassembler.RangeFrom, 
+                Vm.Disassembler.RangeTo - Vm.Disassembler.RangeFrom + 1)
+                .ToArray());
     }
 
     private void OnCellPointerPressed(object? sender, DataGridCellPointerPressedEventArgs e)
