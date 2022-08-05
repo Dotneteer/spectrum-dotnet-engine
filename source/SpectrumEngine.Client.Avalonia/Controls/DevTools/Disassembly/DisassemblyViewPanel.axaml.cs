@@ -1,6 +1,5 @@
 using System;
 using Avalonia.Controls;
-using Avalonia.Input;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 // ReSharper disable UnusedParameter.Local
@@ -19,6 +18,13 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
     private void OnInitialized(object? sender, EventArgs e)
     {
         RefreshDisassembly();
+        if (Vm != null)
+        {
+            Vm.Disassembler.RangeChanged += (_, _) =>
+            {
+                RefreshDisassembly();
+            };
+        }
     }
 
     private void RefreshDisassembly()
@@ -30,10 +36,7 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
             return;
         }
         
-        Vm.Disassembler.RefreshDisassembly(memory.AsSpan(
-                Vm.Disassembler.RangeFrom, 
-                Vm.Disassembler.RangeTo - Vm.Disassembler.RangeFrom + 1)
-                .ToArray());
+        Vm.Disassembler.RefreshDisassembly(memory);
     }
 
     private void OnCellPointerPressed(object? sender, DataGridCellPointerPressedEventArgs e)

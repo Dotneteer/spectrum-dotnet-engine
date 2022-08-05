@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -57,25 +58,37 @@ public class DisassemblyViewModel : ViewModelBase
     public ushort FullRangeFrom
     {
         get => _fullRangeFrom;
-        set => SetProperty(ref _fullRangeFrom, value);
+        set
+        {
+            SetProperty(ref _fullRangeFrom, value);
+            RefreshRangeValues();
+        }
     }
-    
+
     /// <summary>
     /// End of the disassembly range (inclusinve) when full range is displayed
     /// </summary>
     public ushort FullRangeTo
     {
         get => _fullRangeTo;
-        set => SetProperty(ref _fullRangeTo, value);
+        set
+        {
+            SetProperty(ref _fullRangeTo, value);
+            RefreshRangeValues();
+        }
     }
-    
+
     /// <summary>
     /// Start of the disassembly range when in StartFromPC mode
     /// </summary>
     public ushort CurrentRangeFrom
     {
         get => _currentRangeFrom;
-        set => SetProperty(ref _currentRangeFrom, value);
+        set
+        {
+            SetProperty(ref _currentRangeFrom, value);
+            RefreshRangeValues();
+        }
     }
 
     /// <summary>
@@ -84,7 +97,11 @@ public class DisassemblyViewModel : ViewModelBase
     public ushort CurrentRangeTo
     {
         get => _currentRangeTo;
-        set => SetProperty(ref _currentRangeTo, value);
+        set
+        {
+            SetProperty(ref _currentRangeTo, value);
+            RefreshRangeValues();
+        }
     }
 
     /// <summary>
@@ -96,14 +113,47 @@ public class DisassemblyViewModel : ViewModelBase
     /// The effective end address of the range
     /// </summary>
     public ushort RangeTo => _disassemblyMode == DisassemblyMode.StartFromPc ? _currentRangeTo : _fullRangeTo;
+
+    /// <summary>
+    /// Raised when the disassembly range changes
+    /// </summary>
+    public event EventHandler? RangeChanged;
     
+    /// <summary>
+    /// Sign that disassembly range has been changed
+    /// </summary>
+    public void RaiseRangeChanged()
+    {
+        RangeChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Indicates if disassembly is in Flat mode
+    /// </summary>
     public bool IsFlatMode => _disassemblyMode == DisassemblyMode.Normal;
+
+    /// <summary>
+    /// Indicates if disassembly is in Follow PC mode
+    /// </summary>
     public bool IsFollowPcMode => _disassemblyMode == DisassemblyMode.FollowPc;
+    
+    /// <summary>
+    /// Indicates if disassembly is in Start from PC mode
+    /// </summary>
+
     public bool IsStartFromPcMode => _disassemblyMode == DisassemblyMode.StartFromPc;
+    
+    /// <summary>
+    /// Indicates if disassembly info should be displayed
+    /// </summary>
     public bool CanDisplayDisassembly 
         => _disassemblyMode != DisassemblyMode.StartFromPc 
            || _parent.Machine.Controller?.State != MachineControllerState.Running;
 
+    /// <summary>
+    /// Refreshes the disassembly
+    /// </summary>
+    /// <param name="opCodes">Op codes to disassembly</param>
     public void RefreshDisassembly(byte[] opCodes)
     {
         var map = new MemoryMap
@@ -114,6 +164,8 @@ public class DisassemblyViewModel : ViewModelBase
         DisassItems = new ObservableCollection<DisassemblyItemViewModel>(disassembler.Disassemble().OutputItems
             .Select(oi => new DisassemblyItemViewModel {Item = oi, Parent = _parent}).ToList());
     }
+
+    public void Refresh() => RaiseRangeChanged();
 
     public void SetFlatMode() => DisassemblyMode = DisassemblyMode.Normal;
 
@@ -177,6 +229,12 @@ public class DisassemblyViewModel : ViewModelBase
         RaisePropertyChanged(nameof(IsFollowPcMode));
         RaisePropertyChanged(nameof(IsStartFromPcMode));
         RaisePropertyChanged(nameof(CanDisplayDisassembly));
+    }
+    
+    private void RefreshRangeValues()
+    {
+        RaisePropertyChanged(nameof(RangeFrom));
+        RaisePropertyChanged(nameof(RangeTo));
     }
 }
 

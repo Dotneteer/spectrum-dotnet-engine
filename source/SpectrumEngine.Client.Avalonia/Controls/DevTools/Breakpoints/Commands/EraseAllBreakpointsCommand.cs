@@ -11,13 +11,8 @@ namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 [CommandAliases("erase-bp")]
 [CommandDescription("Erases all breakpoints")]
 [CommandUsage("eab")]
-public class EraseAllBreakpointsCommand: InteractiveCommandBase
+public class EraseAllBreakpointsCommand: CommandWithNoArgBase
 {
-    protected override Task<List<ValidationMessage>> ValidateArgs(List<Token> args)
-    {
-        return args.Count != 0 ? Task.FromResult(ExpectNoArgs()) : SuccessMessage;
-    }
-
     protected override Task<InteractiveCommandResult> DoExecute(IInteractiveCommandContext context)
     {
         if (context.Model != null)

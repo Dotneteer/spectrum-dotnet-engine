@@ -27,6 +27,11 @@
             <Border Padding="2">
                 <StackPanel Orientation="Horizontal">
                     <controls:IconButton
+                        Path="{DynamicResource IconRefresh}" 
+                        Command="{Binding Disassembler.Refresh}" 
+                        Hint="Refresh"/>
+                    <controls:IconButtonSeparator />
+                    <controls:IconButton
                         IsChecked="{Binding Disassembler.IsFlatMode}"
                         Path="{DynamicResource IconListFlat}" 
                         Command="{Binding Disassembler.SetFlatMode}" 
