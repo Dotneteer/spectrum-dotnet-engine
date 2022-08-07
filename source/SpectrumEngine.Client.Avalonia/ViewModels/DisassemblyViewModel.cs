@@ -156,22 +156,68 @@ public class DisassemblyViewModel : ViewModelBase
     /// <param name="opCodes">Op codes to disassembly</param>
     public void RefreshDisassembly(byte[] opCodes)
     {
+        // --- Refresh the view items if the disassebly to show
         var map = new MemoryMap
         {
             new(RangeFrom, RangeTo)
         };
         var disassembler = new Z80Disassembler(map, opCodes);
-        DisassItems = new ObservableCollection<DisassemblyItemViewModel>(disassembler.Disassemble().OutputItems
-            .Select(oi => new DisassemblyItemViewModel {Item = oi, Parent = _parent}).ToList());
+        var disassViewItems = disassembler.Disassemble().OutputItems
+            .Select(oi => new DisassemblyItemViewModel {Item = oi, Parent = _parent}).ToList();
+
+        if (!IsStartFromPcMode)
+        {
+            // --- Ensure we have a valid collection for DisassItems
+            DisassItems ??= new ObservableCollection<DisassemblyItemViewModel>();
+            if (DisassItems.Count > disassViewItems.Count)
+            {
+                // --- Remove unnecessary tail items
+                for (var i = 0; i < DisassItems.Count - disassViewItems.Count; i++)
+                {
+                    DisassItems.RemoveAt(DisassItems.Count);
+                }
+            }
+        
+            // --- Copy the items into the new collection
+            for (var i = 0; i < disassViewItems.Count; i++)
+            {
+                if (i >= DisassItems.Count)
+                {
+                    DisassItems.Add(disassViewItems[i]);
+                }
+                else
+                {
+                    DisassItems[i] = disassViewItems[i];
+                }
+            }
+        }
+        else
+        {
+            DisassItems = new ObservableCollection<DisassemblyItemViewModel>(disassViewItems);
+        }
     }
 
     public void Refresh() => RaiseRangeChanged();
 
-    public void SetFlatMode() => DisassemblyMode = DisassemblyMode.Normal;
+    public void SetFlatMode()
+    {
+        DisassemblyMode = DisassemblyMode.Normal;
+        Refresh();
+    }
 
-    public void SetFollowPcMode() => DisassemblyMode = DisassemblyMode.FollowPc;
+    public void SetFollowPcMode()
+    {
+        DisassemblyMode = DisassemblyMode.FollowPc;
+        Refresh();
+    }
 
-    public void SetStartFromPcMode() => DisassemblyMode = DisassemblyMode.StartFromPc;
+    public void SetStartFromPcMode()
+    {
+        DisassemblyMode = DisassemblyMode.StartFromPc;
+        CurrentRangeFrom = _parent.Cpu!.PC;
+        CurrentRangeTo = (ushort)(CurrentRangeFrom + 256);
+        Refresh();
+    }
 
     // --- Invoke this method when PC changes so the UI get refreshed
     public void ApplyNewPc(ushort pc)
