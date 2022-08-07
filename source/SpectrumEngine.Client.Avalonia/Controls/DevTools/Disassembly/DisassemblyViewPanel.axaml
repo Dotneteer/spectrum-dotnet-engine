@@ -13,20 +13,6 @@
         <viewModels:MainWindowViewModel/>
     </Design.DataContext>
     
-    <UserControl.Resources>
-        <SolidColorBrush x:Key="DataGridRowSelectedBackgroundBrush" Color="{DynamicResource ActiveBreakpointBrush}" />
-        <SolidColorBrush x:Key="DataGridRowSelectedHoveredBackgroundBrush" Color="{DynamicResource ActiveBreakpointBrush}" />
-        <SolidColorBrush x:Key="DataGridRowSelectedUnfocusedBackgroundBrush" Color="{DynamicResource ActiveBreakpointBrush}" />
-        <SolidColorBrush x:Key="DataGridRowSelectedHoveredUnfocusedBackgroundBrush"
-                         Color="{DynamicResource ActiveBreakpointBrush}" />
-        <SolidColorBrush x:Key="DataGridRowHoveredBackgroundColor" Color="{DynamicResource ActiveBreakpointBrush}" />
-        <SolidColorBrush x:Key="DataGridRowInvalidBrush" Color="{DynamicResource ActiveBreakpointBrush}" />
-        
-        <SolidColorBrush x:Key="DataGridCellFocusVisualPrimaryBrush" Color="{DynamicResource ActiveBreakpointBrush}" />
-        <SolidColorBrush x:Key="DataGridCellFocusVisualSecondaryBrush" Color="{DynamicResource ActiveBreakpointBrush}" />
-        <SolidColorBrush x:Key="DataGridCellInvalidBrush" Color="{DynamicResource ActiveBreakpointBrush}" />
-    </UserControl.Resources>
-    
     <UserControl.Styles>
         <Style Selector="TextBlock">
             <Setter Property="FontFamily" Value="Monaco, Courier, Courier New, Consolas"/>
@@ -78,19 +64,9 @@
                 </StackPanel>
             </Border>
         </Panel>
-        <StackPanel
-            Grid.Row="1"
-            IsVisible="{Binding !Disassembler.CanDisplayDisassembly}"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Center">
-            <TextBlock>
-                (Pause the machine to show disassembly) 
-            </TextBlock>
-        </StackPanel>
         <DataGrid 
             x:Name="Dg"
             Grid.Row="1" 
-            IsVisible="{Binding Disassembler.CanDisplayDisassembly}"
             Items="{Binding Disassembler.DisassItems}"
             RowHeight="22"
             BorderThickness="0"

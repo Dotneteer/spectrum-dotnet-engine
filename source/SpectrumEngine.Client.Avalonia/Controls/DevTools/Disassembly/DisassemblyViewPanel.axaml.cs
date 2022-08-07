@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
@@ -35,7 +36,9 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
         {
             return;
         }
+        Dg.BeginBatchUpdate();
         Vm.Disassembler.RefreshDisassembly(memory);
+        Dg.EndBatchUpdate();
     }
 
     private void OnCellPointerPressed(object? sender, DataGridCellPointerPressedEventArgs e)
@@ -43,7 +46,7 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
         e.PointerPressedEventArgs.Handled = true;
     }
 
-    protected override void RefreshOnStateChanged()
+    protected override async void RefreshOnStateChanged()
     {
         if (Vm == null) return;
         if (Vm.Machine.Controller!.State != MachineControllerState.Paused) return;
@@ -51,6 +54,7 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
         Vm.Disassembler.CurrentRangeFrom = Vm.Cpu!.PC;
         Vm.Disassembler.CurrentRangeTo = (ushort)(Vm.Disassembler.CurrentRangeFrom + 256);
         RefreshDisassembly();
+        await Task.Delay(50);
         Dg.SelectedIndex = 0;
     }
 
@@ -61,7 +65,12 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
         // --- Make sure to display the current execution point indicator
         Vm.Disassembler.ApplyNewPc(Vm.Cpu!.PC);
 
-        if (!Vm.Disassembler.IsFollowPcMode) return;
+        if (!Vm.Disassembler.IsFollowPcMode)
+        {
+            // --- Always scroll to the top item
+            Dg.ScrollIntoView(Vm.Disassembler.DisassItems![0], null);
+            return;
+        }
         
         // --- Find the first item with the PC address
         DisassemblyItemViewModel? pcItem = null;
