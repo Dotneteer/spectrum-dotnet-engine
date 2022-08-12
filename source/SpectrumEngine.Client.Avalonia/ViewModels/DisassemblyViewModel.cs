@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using AvaloniaEdit.Folding;
 using SpectrumEngine.Emu;
 using SpectrumEngine.Tools.Disassembler;
 
@@ -49,8 +50,14 @@ public class DisassemblyViewModel : ViewModelBase
         {
             SetProperty(ref _disassemblyMode, value);
             RefreshRangeFlags();
+            DisassemblyModeChanged?.Invoke(this, EventArgs.Empty);
         }
     }
+
+    /// <summary>
+    /// Fired when the disassembly mode changes
+    /// </summary>
+    public event EventHandler? DisassemblyModeChanged;
 
     /// <summary>
     /// Start of the disassembly range when full range is displayed
@@ -125,6 +132,7 @@ public class DisassemblyViewModel : ViewModelBase
     public void RaiseRangeChanged()
     {
         RangeChanged?.Invoke(this, EventArgs.Empty);
+        RefreshRangeValues();
     }
 
     /// <summary>
@@ -201,13 +209,17 @@ public class DisassemblyViewModel : ViewModelBase
 
     public void SetFlatMode()
     {
+        var oldMode = DisassemblyMode;
         DisassemblyMode = DisassemblyMode.Normal;
+        if (oldMode is DisassemblyMode.Normal or DisassemblyMode.FollowPc) return;
         Refresh();
     }
 
     public void SetFollowPcMode()
     {
+        var oldMode = DisassemblyMode;
         DisassemblyMode = DisassemblyMode.FollowPc;
+        if (oldMode is DisassemblyMode.Normal or DisassemblyMode.FollowPc) return;
         Refresh();
     }
 

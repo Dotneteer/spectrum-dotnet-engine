@@ -25,6 +25,10 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
             {
                 RefreshDisassembly();
             };
+            Vm.Disassembler.DisassemblyModeChanged += (_, _) =>
+            {
+                Refresh();
+            };
         }
     }
 
@@ -50,29 +54,36 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
     {
         if (Vm == null) return;
         if (Vm.Machine.Controller!.State != MachineControllerState.Paused) return;
-        
-        Vm.Disassembler.CurrentRangeFrom = Vm.Cpu!.PC;
-        Vm.Disassembler.CurrentRangeTo = (ushort)(Vm.Disassembler.CurrentRangeFrom + 256);
-        RefreshDisassembly();
-        await Task.Delay(50);
-        Dg.SelectedIndex = 0;
+        if (Vm.Disassembler.DisassemblyMode == DisassemblyMode.StartFromPc)
+        {
+            await RefreshFromPc();
+        }
     }
 
-    protected override void Refresh()
+    protected override async void Refresh()
     {
         if (Vm == null) return;
         
         // --- Make sure to display the current execution point indicator
         Vm.Disassembler.ApplyNewPc(Vm.Cpu!.PC);
 
-        if (!Vm.Disassembler.IsFollowPcMode)
+        // --- Flat mode: Keep the disassembly list as it is
+        if (Vm.Disassembler.IsFlatMode)
         {
+            return;
+        }
+        
+        // --- Start from PC mode: Disassemble and position to the top
+        if (Vm.Disassembler.IsStartFromPcMode)
+        {
+            await RefreshFromPc();
+
             // --- Always scroll to the top item
             Dg.ScrollIntoView(Vm.Disassembler.DisassItems![0], null);
             return;
         }
-        
-        // --- Find the first item with the PC address
+
+        // --- Follow PC mode: Find the first item with the PC address
         DisassemblyItemViewModel? pcItem = null;
         for (var i = 0; i < Vm.Disassembler.DisassItems!.Count; i++)
         {
@@ -83,6 +94,14 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
         }
         Dg.ScrollIntoView(pcItem, null);
     }
-    
-    
+
+    private async Task RefreshFromPc()
+    {
+        if (Vm == null) return;
+        Vm.Disassembler.CurrentRangeFrom = Vm.Cpu!.PC;
+        Vm.Disassembler.CurrentRangeTo = (ushort)(Vm.Disassembler.CurrentRangeFrom + 256);
+        RefreshDisassembly();
+        await Task.Delay(50);
+        Dg.SelectedIndex = 0;
+    }
 }

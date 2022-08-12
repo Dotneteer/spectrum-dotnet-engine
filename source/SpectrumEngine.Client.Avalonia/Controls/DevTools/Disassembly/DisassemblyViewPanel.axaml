@@ -80,9 +80,8 @@
                 <DataGridTemplateColumn Header="Bp" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="x:Int32">
-                            <StackPanel Orientation="Horizontal">
+                            <Panel Width="20">
                                 <Border 
-                                    Width="20"
                                     IsVisible="{Binding HasNoBreakpoint}" />
                                 <controls:PlainIcon
                                     IsVisible="{Binding HasActiveBreakpoint}"
@@ -98,7 +97,7 @@
                                     VerticalAlignment="Center"
                                     Width="18"
                                     Height="18" />
-                            </StackPanel>
+                            </Panel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
