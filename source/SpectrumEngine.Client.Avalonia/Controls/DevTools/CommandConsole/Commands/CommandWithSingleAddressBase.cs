@@ -5,7 +5,7 @@ using SpectrumEngine.Tools.Commands;
 namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
 /// <summary>
-/// Common base class fro commands with a single address
+/// Common base class for commands with a single address
 /// </summary>
 public abstract class CommandWithSingleAddressBase: InteractiveCommandBase
 {

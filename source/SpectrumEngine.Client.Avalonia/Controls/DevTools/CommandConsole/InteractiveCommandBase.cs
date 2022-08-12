@@ -221,15 +221,17 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
     /// Converts a token to a 16-bit address value
     /// </summary>
     /// <param name="token">Token to convert</param>
+    /// <param name="name">Optional argument name</param>
     /// <returns>16-bit value if conversion successful; otherwise, null</returns>
-    public static (ushort?, List<ValidationMessage>?) GetAddressValue(Token token)
+    public static (ushort?, List<ValidationMessage>?) GetAddressValue(Token token, string? name = null)
     {
         var (value, message) = GetNumericTokenValue(token);
         return value switch
         {
             null => (null, message),
             < 0 or > ushort.MaxValue => (null,
-                new List<ValidationMessage> {new(ValidationMessageType.Error, "Invalid 16-bit address value")}),
+                new List<ValidationMessage> {new(ValidationMessageType.Error, 
+                    $"Invalid 16-bit address value{(name == null ? "" : $" ({name})")}")}),
             _ => ((ushort) value.Value, null)
         };
     }

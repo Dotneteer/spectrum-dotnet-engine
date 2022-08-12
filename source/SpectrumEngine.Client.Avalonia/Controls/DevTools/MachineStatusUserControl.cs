@@ -61,7 +61,20 @@ public abstract class MachineStatusUserControl: UserControl
     /// <summary>
     /// Override this event to refresh the contents of the information panel
     /// </summary>
-    protected abstract void RefreshPanel();
+    protected virtual void Refresh()
+    {
+        // --- Add some task in derived classes
+    }
+
+    protected virtual void RefreshOnStateChanged()
+    {
+        // --- Add some task in derived classes
+    }
+
+    protected virtual void RefreshOnFrameCompleted()
+    {
+        // --- Add some task in derived classes
+    }
     
     /// <summary>
     /// Refresh the panel state whenever the machine's state changes
@@ -71,7 +84,8 @@ public abstract class MachineStatusUserControl: UserControl
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             _counter = 0;
-            RefreshPanel();
+            RefreshOnStateChanged();
+            Refresh();
         });
     }
 
@@ -83,10 +97,9 @@ public abstract class MachineStatusUserControl: UserControl
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             _counter++;
-            if (RefreshRate <= 0 || _counter % RefreshRate == 0)
-            {
-                RefreshPanel();
-            }
+            if (RefreshRate > 0 && _counter % RefreshRate != 0) return;
+            RefreshOnFrameCompleted();
+            Refresh();
         });
     }
 }

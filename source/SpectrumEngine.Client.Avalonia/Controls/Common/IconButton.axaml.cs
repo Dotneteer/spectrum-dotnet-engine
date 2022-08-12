@@ -1,6 +1,7 @@
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Media;
 
 namespace SpectrumEngine.Client.Avalonia.Controls;
@@ -28,6 +29,18 @@ public class IconButton : TemplatedControl
     public static readonly StyledProperty<bool> IsCheckedProperty =
         AvaloniaProperty.Register<IconButton, bool>(nameof(IsChecked));
     
+    public static readonly StyledProperty<bool> IsDisabledProperty =
+        AvaloniaProperty.Register<IconButton, bool>(nameof(IsDisabledProperty));
+
+    /// <summary>
+    /// HACK: We need this method to display an extra border so we can display the tooltip when the underlying button
+    /// is disabled.
+    /// </summary>
+    protected override void OnPointerEnter(PointerEventArgs e)
+    {
+        IsDisabled = !(Command?.CanExecute(null) ?? true);
+    }
+
     /// <summary>
     /// Fill brush for the button icon
     /// </summary>
@@ -80,5 +93,11 @@ public class IconButton : TemplatedControl
     {
         get => GetValue(IsCheckedProperty);
         set => SetValue(IsCheckedProperty, value);
+    }
+
+    public bool IsDisabled
+    {
+        get => GetValue(IsDisabledProperty);
+        set => SetValue(IsDisabledProperty, value);
     }
 }

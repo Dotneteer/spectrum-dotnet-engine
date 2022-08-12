@@ -12,7 +12,7 @@ public partial class UlaPanel : MachineStatusUserControl
         InitializeComponent();
     }
 
-    protected override void RefreshPanel()
+    protected override void Refresh()
     {
         if (DataContext is not MainWindowViewModel vm) return;
         vm.Ula?.SignStateChanged();

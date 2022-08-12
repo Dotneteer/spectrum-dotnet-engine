@@ -10,4 +10,5 @@ public static class MachinePropNames
     public const string TapeSaver = "TapeSaver";
     public const string TapeData = "TapeData";
     public const string TapeMode = "TapeMode";
+    public const string MemoryFlat = "MemoryFlat";
 }

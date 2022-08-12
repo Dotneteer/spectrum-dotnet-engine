@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using SpectrumEngine.Emu;
@@ -36,15 +37,21 @@ public class DebugViewModel: ViewModelBase, IDebugSupport
     /// </summary>
     public ushort? ImminentBreakpoint { get; set; }
 
-    public List<BreakpointInfo> BreakpointsOrdered => Breakpoints.OrderBy(bp => bp.Address).ToList();  
+    public List<BreakpointInfo> BreakpointsOrdered => Breakpoints.OrderBy(bp => bp.Address).ToList();
+
+    /// <summary>
+    /// Raise this event when the collection of breakpoints has changed.
+    /// </summary>
+    public event EventHandler<(List<BreakpointInfo> OldBps, List<BreakpointInfo> NewBps)>? BreakpointsChanged;
     
     /// <summary>
     /// Erases all breakpoints
     /// </summary>
     public void EraseAllBreakpoints()
     {
+        var oldBps = new List<BreakpointInfo>(Breakpoints);
         Breakpoints.Clear();
-        SignStateChanged();
+        SignStateChanged(oldBps);
     }
 
     /// <summary>
@@ -54,6 +61,7 @@ public class DebugViewModel: ViewModelBase, IDebugSupport
     /// <returns>True, if a new breakpoint was added; otherwise, if an existing breakpoint was updates, false</returns>
     public bool AddBreakpoint(ushort address)
     {
+        var oldBps = new List<BreakpointInfo>(Breakpoints);
         var existingBp = Breakpoints.FirstOrDefault(bp => bp.Address == address);
         var newBp = true;
         if (existingBp != null)
@@ -65,7 +73,7 @@ public class DebugViewModel: ViewModelBase, IDebugSupport
         {
             Address = address
         });
-        SignStateChanged();
+        SignStateChanged(oldBps);
         return newBp;
     }
 
@@ -76,16 +84,21 @@ public class DebugViewModel: ViewModelBase, IDebugSupport
     /// <returns>True, if the breakpoint has just been removed; otherwise, false</returns>
     public bool RemoveBreakpoint(ushort address)
     {
+        var oldBps = new List<BreakpointInfo>(Breakpoints);
         var existingBp = Breakpoints.FirstOrDefault(bp => bp.Address == address);
         if (existingBp == null) return false;
         Breakpoints.Remove(existingBp);
-        SignStateChanged();
+        SignStateChanged(oldBps);
         return true;
     }
 
-    public void SignStateChanged()
+    public void SignStateChanged(List<BreakpointInfo>? oldBps = null)
     {
         RaisePropertyChanged(nameof(Breakpoints));
         RaisePropertyChanged(nameof(BreakpointsOrdered));
+        if (oldBps != null)
+        {
+            BreakpointsChanged?.Invoke(this, (oldBps, Breakpoints));
+        }
     }
 }

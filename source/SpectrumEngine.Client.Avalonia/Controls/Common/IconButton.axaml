@@ -17,33 +17,41 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Template">
             <ControlTemplate>
-                <Border
-                    IsEnabled="{TemplateBinding IsEnabled}"
-                    Background="{TemplateBinding IsChecked, Converter={StaticResource IconButtonBackgroundConverter}}"
-                    BorderBrush="{TemplateBinding IsChecked, Converter={StaticResource IconButtonBorderBrushConverter}}"
-                    BorderThickness="1"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center">
-                    <Button 
-                        x:Name="Button"
-                        HorizontalAlignment="Center"
+                <Panel>
+                    <Border
+                        IsEnabled="{TemplateBinding IsEnabled}"
+                        Background="{TemplateBinding IsChecked, Converter={StaticResource IconButtonBackgroundConverter}}"
+                        BorderBrush="{TemplateBinding IsChecked, Converter={StaticResource IconButtonBorderBrushConverter}}"
+                        BorderThickness="1"
                         VerticalAlignment="Center"
-                        Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        Padding="{TemplateBinding Padding}"
-                        Width="{TemplateBinding Width}"
-                        Height="{TemplateBinding Height}"
-                        Command="{TemplateBinding Command}"
-                        CommandParameter="{TemplateBinding CommandParameter}">
-                        <Path
-                            Margin="{TemplateBinding Margin}"
+                        HorizontalAlignment="Center">
+                        <Button 
+                            x:Name="Button"
+                            ToolTip.Tip="{TemplateBinding Hint}"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Stretch="Uniform"
-                            Fill="{TemplateBinding Fill}"
-                            Data="{TemplateBinding Path}" />
-                    </Button>
-                </Border>
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Padding="{TemplateBinding Padding}"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}"
+                            Command="{TemplateBinding Command}"
+                            CommandParameter="{TemplateBinding CommandParameter}">
+                            <Path
+                                Margin="{TemplateBinding Margin}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Stretch="Uniform"
+                                Fill="{TemplateBinding Fill}"
+                                Data="{TemplateBinding Path}" />
+                        </Button>
+                    </Border>
+                    <!-- HACK: We use this border to show the button hint when the button is disabled -->
+                    <Border
+                        Background="Transparent"
+                        IsVisible="{TemplateBinding IsDisabled}"    
+                        ToolTip.Tip="{TemplateBinding Hint}"/>
+                </Panel>
             </ControlTemplate>
         </Setter>
     </Style>
