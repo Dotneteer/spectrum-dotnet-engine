@@ -1,0 +1,65 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
+             xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.MemoryViewPanel">
+
+    <Design.DataContext>
+        <!-- ReSharper disable once Xaml.ConstructorWarning -->
+        <viewModels:MainWindowViewModel/>
+    </Design.DataContext>
+    
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="Monaco, Courier, Courier New, Consolas"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Height" Value="16" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto, *" >
+        <Panel Grid.Row="0">
+            <Border Padding="2">
+                <StackPanel Orientation="Horizontal">
+                    <controls:IconButton
+                        Path="{DynamicResource IconRefresh}" 
+                        Command="{Binding Disassembler.Refresh}" 
+                        Hint="Refresh"/>
+                    <StackPanel 
+                        Orientation="Horizontal" 
+                        VerticalAlignment="Center"
+                        Margin="8,0,0,0">
+                        <TextBlock 
+                            Text="{Binding Disassembler.RangeFrom, StringFormat='{}{0:X4}'}" 
+                            Foreground="{DynamicResource DiagLabelTextColor}" />
+                        <TextBlock 
+                            Text="-"
+                            Foreground="{DynamicResource DiagLabelTextColor}" />
+                        <TextBlock
+                            Text="{Binding Disassembler.RangeTo, StringFormat='{}{0:X4}'}" 
+                            Foreground="{DynamicResource DiagLabelTextColor}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Panel>
+        <DataGrid 
+            x:Name="Dg"
+            Grid.Row="1" 
+            Items="{Binding MemoryViewer.MemoryItems}"
+            RowHeight="22"
+            BorderThickness="0"
+            HorizontalGridLinesBrush="Transparent"
+            HeadersVisibility="None"
+            AutoGenerateColumns="False"
+            GridLinesVisibility="None"
+            SelectionMode="Single" >
+            <DataGrid.Columns>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+
+</UserControl>
