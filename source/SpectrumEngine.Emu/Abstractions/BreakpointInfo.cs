@@ -39,4 +39,9 @@ public record BreakpointInfo
     /// Indicates an I/O write breakpoint
     /// </summary>
     public bool IoWrite { get; set; } = false;
+
+    /// <summary>
+    /// Optional Disassembly
+    /// </summary>
+    public string? Disassembly { get; set; }
 }
