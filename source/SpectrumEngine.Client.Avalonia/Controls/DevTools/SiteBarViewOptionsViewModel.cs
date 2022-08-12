@@ -1,7 +1,8 @@
 using System;
 using Avalonia.Controls;
+using SpectrumEngine.Client.Avalonia.ViewModels;
 
-namespace SpectrumEngine.Client.Avalonia.ViewModels;
+namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
 public class SiteBarViewOptionsViewModel: ViewModelBase
 {

@@ -3,6 +3,8 @@
 
 using Avalonia;
 using Avalonia.Platform;
+using SpectrumEngine.Client.Avalonia.Controls.DevTools;
+using SpectrumEngine.Client.Avalonia.Controls.Emulators;
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels;
 
@@ -86,6 +88,12 @@ public class MainWindowViewModel : ViewModelBase
         {
             Disassembler.ApplyBreakpointChanges(bpInfo.OldBps, bpInfo.NewBps);
         };
+
+        MemoryViewer = new MemoryViewModel(this)
+        {
+            RangeFrom = 0x0000,
+            RangeTo = 0xffff
+        };
     }
     
     /// <summary>
@@ -152,4 +160,9 @@ public class MainWindowViewModel : ViewModelBase
     /// Represents the disassembler's view model
     /// </summary>
     public DisassemblyViewModel Disassembler { get; }
+    
+    /// <summary>
+    /// Represents the memory viewer's view model
+    /// </summary>
+    public MemoryViewModel MemoryViewer { get; }
 }

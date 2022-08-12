@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SpectrumEngine.Client.Avalonia.Controls.DevTools;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 using SpectrumEngine.Tools.Disassembler;

@@ -1,8 +1,9 @@
 using System.Linq;
+using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 using SpectrumEngine.Tools.Disassembler;
 
-namespace SpectrumEngine.Client.Avalonia.ViewModels;
+namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
 /// <summary>
 /// This class represents the view model of a single disassembly item

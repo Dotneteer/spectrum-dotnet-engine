@@ -1,4 +1,6 @@
-namespace SpectrumEngine.Client.Avalonia.ViewModels;
+using SpectrumEngine.Client.Avalonia.ViewModels;
+
+namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
 public class PanelsViewOptionsViewModel: ViewModelBase
 {

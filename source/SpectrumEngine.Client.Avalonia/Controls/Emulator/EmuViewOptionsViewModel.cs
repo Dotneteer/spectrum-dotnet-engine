@@ -1,4 +1,6 @@
-﻿namespace SpectrumEngine.Client.Avalonia.ViewModels;
+﻿using SpectrumEngine.Client.Avalonia.ViewModels;
+
+namespace SpectrumEngine.Client.Avalonia.Controls.Emulators;
 
 public class EmuViewOptionsViewModel : ViewModelBase
 {

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using SpectrumEngine.Client.Avalonia.Controls.DevTools;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 // ReSharper disable UnusedParameter.Local

@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using AvaloniaEdit.Folding;
+using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 using SpectrumEngine.Tools.Disassembler;
 
-namespace SpectrumEngine.Client.Avalonia.ViewModels;
+namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
 /// <summary>
 /// Represents the Z80 Disassembly view model

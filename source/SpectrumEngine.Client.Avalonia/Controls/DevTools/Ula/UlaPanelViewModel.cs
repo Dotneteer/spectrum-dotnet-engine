@@ -1,6 +1,7 @@
+using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 
-namespace SpectrumEngine.Client.Avalonia.ViewModels;
+namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
 public class UlaPanelViewModel: ViewModelBase
 {

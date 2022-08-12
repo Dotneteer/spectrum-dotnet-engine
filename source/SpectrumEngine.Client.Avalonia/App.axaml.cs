@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using SpectrumEngine.Client.Avalonia.Styles;
+using SpectrumEngine.Client.Avalonia.Controls.DevTools;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Client.Avalonia.Views;
 

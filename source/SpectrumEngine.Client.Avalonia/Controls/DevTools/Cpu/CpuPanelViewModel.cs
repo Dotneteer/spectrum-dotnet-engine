@@ -1,7 +1,8 @@
+using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 // ReSharper disable InconsistentNaming
 
-namespace SpectrumEngine.Client.Avalonia.ViewModels;
+namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
 public class CpuPanelViewModel: ViewModelBase
 {

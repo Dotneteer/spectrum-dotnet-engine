@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Tools.Output;
 
-namespace SpectrumEngine.Client.Avalonia.ViewModels;
+namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
 public class CommandsPanelViewModel: ViewModelBase
 {

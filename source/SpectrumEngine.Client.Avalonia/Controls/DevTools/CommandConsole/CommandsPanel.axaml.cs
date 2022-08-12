@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
+using SpectrumEngine.Client.Avalonia.Controls.DevTools;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Tools.Commands;
 using SpectrumEngine.Tools.Output;
