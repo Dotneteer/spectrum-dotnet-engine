@@ -54,12 +54,16 @@
                                     Text="{Binding Address, Converter={StaticResource HexConverter}}" 
                                     VerticalAlignment="Center"
                                     Foreground="{DynamicResource DiagValueTextColor}"
-                                    Margin="4,0,0,0"/>
+                                    Width = "40" />
                                 <TextBlock 
                                     Text="{Binding Address}" 
                                     VerticalAlignment="Center"
                                     Foreground="{DynamicResource DiagSecondaryTextColor}"
-                                    Margin="8,0,0,0"/>
+                                    Width = "52" />
+                                <TextBlock 
+                                    Text="{Binding Disassembly}" 
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource ConsoleBrightCyan}" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
