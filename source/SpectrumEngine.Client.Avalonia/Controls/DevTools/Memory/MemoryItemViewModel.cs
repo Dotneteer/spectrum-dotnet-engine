@@ -295,14 +295,52 @@ public class MemoryItemViewModel: ViewModelBase
         byte GetRegFlags(ushort address)
         {
             var flags = 0;
-            // if (address == cpu.BC) flags |= 0x01;
-            // if (address == cpu.DE) flags |= 0x02;
-            // if (address == cpu.HL) flags |= 0x04;
-            // if (address == cpu.SP) flags |= 0x08;
-            // if (address == cpu.IX) flags |= 0x10;
-            // if (address == cpu.IY) flags |= 0x20;
-            // if (address == cpu.PC) flags |= 0x40;
+            if (address == cpu.BC) flags |= 0x01;
+            if (address == cpu.DE) flags |= 0x02;
+            if (address == cpu.HL) flags |= 0x04;
+            if (address == cpu.SP) flags |= 0x08;
+            if (address == cpu.IX) flags |= 0x10;
+            if (address == cpu.IY) flags |= 0x20;
+            if (address == cpu.PC) flags |= 0x40;
             return (byte) flags;
         }
+    }
+
+    public void CopyInto(MemoryItemViewModel other)
+    {
+        other._address = _address;
+        other._address2 = _address2;
+        other._b0 = _b0;
+        other._b0RegFlags = _b0RegFlags;
+        other._b1 = _b1;
+        other._b1RegFlags = _b1RegFlags;
+        other._b2 = _b2;
+        other._b2RegFlags = _b2RegFlags;
+        other._b3 = _b3;
+        other._b3RegFlags = _b3RegFlags;
+        other._b4 = _b4;
+        other._b4RegFlags = _b4RegFlags;
+        other._b5 = _b5;
+        other._b5RegFlags = _b5RegFlags;
+        other._b6 = _b6;
+        other._b6RegFlags = _b6RegFlags;
+        other._b7 = _b7;
+        other._b7RegFlags = _b7RegFlags;
+        other._b8 = _b8;
+        other._b8RegFlags = _b8RegFlags;
+        other._b9 = _b9;
+        other._b9RegFlags = _b9RegFlags;
+        other._ba = _ba;
+        other._baRegFlags = _baRegFlags;
+        other._bb = _bb;
+        other._bbRegFlags = _bbRegFlags;
+        other._bc = _bc;
+        other._bcRegFlags = _bcRegFlags;
+        other._bd = _bd;
+        other._bdRegFlags = _bdRegFlags;
+        other._be = _be;
+        other._beRegFlags = _beRegFlags;
+        other._bf = _bf;
+        other._bfRegFlags = _bfRegFlags;
     }
 }

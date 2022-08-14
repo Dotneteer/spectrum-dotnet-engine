@@ -60,6 +60,14 @@ public abstract class MachineStatusUserControl: UserControl
     }
 
     /// <summary>
+    /// Prepares the refresh in the background thread
+    /// </summary>
+    protected virtual void PrepareRefresh()
+    {
+        // --- Add some task in derived classes
+    }
+    
+    /// <summary>
     /// Override this event to refresh the contents of the information panel
     /// </summary>
     protected virtual void Refresh()
@@ -82,6 +90,7 @@ public abstract class MachineStatusUserControl: UserControl
     /// </summary>
     private void OnStateChanged(object? sender, (MachineControllerState OldState, MachineControllerState NewState) e)
     {
+        PrepareRefresh();
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             if (_isRefreshing) return;

@@ -89,7 +89,9 @@ public class MemoryViewModel: ViewModelBase
     /// Refreshes the memory contents dump
     /// </summary>
     /// <param name="memory">Contents of the memory</param>
-    public void RefreshMemory(byte[] memory)
+    /// <param name="top">Top memory line</param>
+    /// <param name="height">Number of lines</param>
+    public void RefreshMemory(byte[] memory, int top, int height)
     {
         // --- Calculate the visible range
         var rangeFrom = RangeFrom & 0xfff0;
@@ -107,9 +109,13 @@ public class MemoryViewModel: ViewModelBase
             {
                 MemoryItems.Add(memItem);
             }
-            else
+            else if (index >= top && index <= top + height)
             {
                 MemoryItems[index] = memItem;
+            }
+            else
+            {
+                memItem.CopyInto(MemoryItems[index]);
             }
         }
     }

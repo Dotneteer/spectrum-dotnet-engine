@@ -23,7 +23,7 @@ public partial class MemoryViewPanel : MachineStatusUserControl
         Vm.MemoryViewer.TopAddressChanged += (_, addr) => ScrollToTopAddress(addr);
     }
 
-    protected override void RefreshOnStateChanged()
+    protected override void Refresh()
     {
         RefreshMemory();
     }
@@ -41,7 +41,8 @@ public partial class MemoryViewPanel : MachineStatusUserControl
         {
             return;
         }
-        Vm.MemoryViewer.RefreshMemory(memory);
+        var position = Dg.GetViewportInfo(Vm?.MemoryViewer.MemoryItems?.Count ?? 0);
+        Vm!.MemoryViewer.RefreshMemory(memory, position.Top, position.Height + 1);
     }
 
     private async void ScrollToTopAddress(ushort address)

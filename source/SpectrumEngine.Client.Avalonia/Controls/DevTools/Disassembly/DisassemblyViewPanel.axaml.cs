@@ -1,7 +1,10 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
+using SpectrumEngine.Tools.Disassembler;
+
 // ReSharper disable UnusedParameter.Local
 
 namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
@@ -32,9 +35,16 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
         {
             return;
         }
-        Dg.BeginBatchUpdate();
-        Vm.Disassembler.RefreshDisassembly(memory);
-        Dg.EndBatchUpdate();
+        
+        var position = Dg.GetViewportInfo(Vm?.Disassembler.DisassItems?.Count ?? 0);
+        var map = new MemoryMap
+        {
+            new(Vm!.Disassembler.RangeFrom, Vm.Disassembler.RangeTo)
+        };
+        var disassembler = new Z80Disassembler(map, memory);
+        Vm!.Disassembler.BackgroundDisassemblyItems = disassembler.Disassemble().OutputItems
+            .Select(oi => new DisassemblyItemViewModel {Item = oi, Parent = Vm}).ToList();
+        Vm!.Disassembler.RefreshDisassembly(position.Top, position.Height + 1);
     }
 
     private void OnCellPointerPressed(object? sender, DataGridCellPointerPressedEventArgs e)
@@ -50,6 +60,10 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
         {
             await RefreshFromPc();
         }
+    }
+
+    protected override void PrepareRefresh()
+    {
     }
 
     protected override async void Refresh()
