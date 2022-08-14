@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
              xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
+             xmlns:memory="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools.Memory"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.MemoryViewPanel">
 
@@ -61,11 +62,8 @@
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Bp" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate DataType="x:Int32">
-                            <TextBlock 
-                                Text="{Binding Address, StringFormat='{}{0:X4}'}"
-                                Width="48"
-                                Foreground="{DynamicResource DiagLabelTextColor}" />
+                        <DataTemplate>
+                            <memory:MemoryLineControl />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

@@ -37,12 +37,12 @@
         <TabItem 
             Header="Disassembly"
             IsVisible="{Binding PanelsViewOptions.ShowDisassembly}">
-            <devTools:DisassemblyViewPanel  RefreshRate="25"/>
+            <devTools:DisassemblyViewPanel RefreshRate="25" />
         </TabItem>
         <TabItem
             Header="Memory"
             IsVisible="{Binding PanelsViewOptions.ShowMemory}">
-            <devTools:MemoryViewPanel />
+            <devTools:MemoryViewPanel RefreshRate="100" />
         </TabItem>
         <TabItem
             Header="Watch"

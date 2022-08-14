@@ -98,5 +98,7 @@
         
         <SolidColorBrush x:Key="InactiveBreakpointBrush" Color="{DynamicResource InactiveBreakpointColor}" />
         <SolidColorBrush x:Key="ActiveBreakpointBrush" Color="{DynamicResource ActiveBreakpointColor}" />
+        
+        <SolidColorBrush x:Key="RegMemoryBrush" Color="#40ffffff" />
     </Styles.Resources>
 </Styles>

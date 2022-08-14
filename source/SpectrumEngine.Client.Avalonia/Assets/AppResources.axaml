@@ -21,4 +21,5 @@
     <controls:CountsHiddenConverter x:Key="CountsHiddenConverter" />
     <devTools:IsActiveBreakpointConverter x:Key="IsActiveBreakpointConverter" />
     <devTools:IsInactiveBreakpointConverter x:Key="IsInactiveBreakpointConverter" />
+    <devTools:MemoryByteBackgroundConverter x:Key="MemoryByteBackgroundConverter" />
 </ResourceDictionary>

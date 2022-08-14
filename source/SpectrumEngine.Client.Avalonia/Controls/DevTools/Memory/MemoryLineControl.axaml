@@ -1,0 +1,98 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:devTools="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.Memory.MemoryLineControl">
+    
+    <Design.DataContext>
+        <!-- ReSharper disable once Xaml.ConstructorWarning -->
+        <devTools:MemoryItemViewModel/>
+    </Design.DataContext>
+    
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="Margin" Value="1,0"/>
+        </Style>
+    </UserControl.Styles>
+    
+    <StackPanel Orientation="Horizontal">
+        <TextBlock 
+            Text="{Binding Address, StringFormat='{}{0:X4}'}"
+            Margin="8,0,0,0"
+            Width="40"
+            Foreground="{DynamicResource DiagLabelTextColor}" />
+        <TextBlock 
+            Text="{Binding B0}"
+            Width="22"
+            Background="{Binding B0RegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding B1, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding B2, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding B3, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding B4, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding B5, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding B6, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding B7, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding Address2, StringFormat='{}{0:X4}'}"
+            Margin="8,0,0,0"
+            Width="40"
+            Foreground="{DynamicResource DiagLabelTextColor}" />
+        <TextBlock 
+            Text="{Binding B8, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding B9, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding Ba, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding Bb, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding Bc, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding Bd, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding Be, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+        <TextBlock 
+            Text="{Binding Bf, StringFormat='{}{0:X2}'}"
+            Width="22"
+            Foreground="{DynamicResource DiagValueTextColor}" />
+    </StackPanel>
+</UserControl>

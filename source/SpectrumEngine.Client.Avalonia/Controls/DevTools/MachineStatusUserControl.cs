@@ -14,6 +14,7 @@ namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 public abstract class MachineStatusUserControl: UserControl
 {
     private int _counter;
+    private bool _isRefreshing;
     
     public static readonly StyledProperty<int> RefreshRateProperty =
         AvaloniaProperty.Register<MachineStatusUserControl, int>(nameof(RefreshRate), 5);
@@ -75,7 +76,7 @@ public abstract class MachineStatusUserControl: UserControl
     {
         // --- Add some task in derived classes
     }
-    
+
     /// <summary>
     /// Refresh the panel state whenever the machine's state changes
     /// </summary>
@@ -83,9 +84,18 @@ public abstract class MachineStatusUserControl: UserControl
     {
         Dispatcher.UIThread.InvokeAsync(() =>
         {
-            _counter = 0;
-            RefreshOnStateChanged();
-            Refresh();
+            if (_isRefreshing) return;
+            _isRefreshing = true;
+            try
+            {
+                _counter = 0;
+                RefreshOnStateChanged();
+                Refresh();
+            }
+            finally
+            {
+                _isRefreshing = false;
+            }
         });
     }
 

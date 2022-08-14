@@ -19,14 +19,9 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
     {
         RefreshDisassembly();
         if (Vm == null) return;
-        Vm.Disassembler.RangeChanged += (_, _) =>
-        {
-            RefreshDisassembly();
-        };
-        Vm.Disassembler.DisassemblyModeChanged += (_, _) =>
-        {
-            Refresh();
-        };
+        
+        Vm.Disassembler.RangeChanged += (_, _) => RefreshDisassembly();
+        Vm.Disassembler.DisassemblyModeChanged += (_, _) => Refresh();
     }
 
     private void RefreshDisassembly()

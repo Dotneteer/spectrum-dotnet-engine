@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
@@ -16,13 +17,20 @@ public partial class MemoryViewPanel : MachineStatusUserControl
     protected override void OnInitialized()
     {
         RefreshMemory();
-        if (Vm != null)
-        {
-            Vm.MemoryViewer.RangeChanged += (_, _) =>
-            {
-                RefreshMemory();
-            };
-        }
+        if (Vm == null) return;
+        
+        Vm.MemoryViewer.RangeChanged += (_, _) => RefreshMemory();
+        Vm.MemoryViewer.TopAddressChanged += (_, addr) => ScrollToTopAddress(addr);
+    }
+
+    protected override void RefreshOnStateChanged()
+    {
+        RefreshMemory();
+    }
+
+    private void OnCellPointerPressed(object? sender, DataGridCellPointerPressedEventArgs e)
+    {
+        e.PointerPressedEventArgs.Handled = true;
     }
 
     private void RefreshMemory()
@@ -33,18 +41,21 @@ public partial class MemoryViewPanel : MachineStatusUserControl
         {
             return;
         }
-        Dg.BeginBatchUpdate();
         Vm.MemoryViewer.RefreshMemory(memory);
-        Dg.EndBatchUpdate();
     }
 
-    private void OnCellPointerPressed(object? sender, DataGridCellPointerPressedEventArgs e)
+    private async void ScrollToTopAddress(ushort address)
     {
-        e.PointerPressedEventArgs.Handled = true;
-    }
+        if (Vm?.MemoryViewer.MemoryItems == null) return;
 
-    protected override void Refresh()
-    {
-        RefreshMemory();        
-    }
+        foreach (var item in Vm.MemoryViewer.MemoryItems)
+        {
+            if (item.Address >= address - 15 && item.Address <= address)
+            {
+                Dg.ScrollIntoView(item, null);
+                await Task.Delay(50);
+                Dg.SelectedItem = item;
+            }
+        }
+    }   
 }

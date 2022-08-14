@@ -73,26 +73,39 @@ public class MemoryViewModel: ViewModelBase
     }
 
     /// <summary>
+    /// Raised when the address to show at the top has changed
+    /// </summary>
+    public event EventHandler<ushort>? TopAddressChanged;
+
+    /// <summary>
+    /// Signs that the address to show at the top has changed
+    /// </summary>
+    public void RaiseTopAddressChanged(ushort topAddress)
+    {
+        TopAddressChanged?.Invoke(this, topAddress);
+    }
+
+    /// <summary>
     /// Refreshes the memory contents dump
     /// </summary>
     /// <param name="memory">Contents of the memory</param>
     public void RefreshMemory(byte[] memory)
     {
         // --- Calculate the visible range
-        var rangeFrom = RangeFrom & 0xfff8;
-        var rangeTo = (RangeTo + 8) & 0xffff8;
+        var rangeFrom = RangeFrom & 0xfff0;
+        var rangeTo = (RangeTo + 15) & 0xffff0;
 
         // --- Ensure memory items
         MemoryItems ??= new ObservableCollection<MemoryItemViewModel>();
 
         var index = 0;
-        for (var addr = rangeFrom; addr < rangeTo; addr += 8, index++)
+        for (var addr = rangeFrom; addr < rangeTo; addr += 16, index++)
         {
-            var memItem = new MemoryItemViewModel { Address = (ushort)addr };
+            var memItem = new MemoryItemViewModel {Address = (ushort) addr};
             memItem.RefreshFrom(memory, _parent.Cpu!);
             if (index >= MemoryItems.Count)
             {
-              MemoryItems.Add(memItem);  
+                MemoryItems.Add(memItem);
             }
             else
             {
@@ -100,6 +113,6 @@ public class MemoryViewModel: ViewModelBase
             }
         }
     }
-    
+
     public void Refresh() => RaiseRangeChanged();
 }
