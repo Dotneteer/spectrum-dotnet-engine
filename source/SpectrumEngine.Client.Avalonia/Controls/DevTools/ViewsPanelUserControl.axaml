@@ -31,6 +31,7 @@
     
     <TabControl
         DockPanel.Dock="Left"
+        Padding="0"
         SelectedIndex="{Binding PanelsViewOptions.SelectedIndex, Mode=TwoWay}"
         VerticalAlignment="Stretch"
         HorizontalAlignment="Stretch">

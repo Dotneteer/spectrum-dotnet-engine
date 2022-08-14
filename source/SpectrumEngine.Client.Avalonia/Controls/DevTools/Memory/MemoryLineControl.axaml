@@ -11,6 +11,10 @@
         <devTools:MemoryItemViewModel/>
     </Design.DataContext>
     
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="DataGridGridLinesBrush" Color="Transparent" />
+    </UserControl.Resources>
+
     <UserControl.Styles>
         <Style Selector="TextBlock">
             <Setter Property="TextAlignment" Value="Center" />

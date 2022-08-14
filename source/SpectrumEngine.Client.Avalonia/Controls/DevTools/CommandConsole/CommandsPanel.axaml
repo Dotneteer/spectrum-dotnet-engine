@@ -12,6 +12,10 @@
     <Design.DataContext>
         <viewModels:MainWindowViewModel/>
     </Design.DataContext>
+    
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="DataGridGridLinesBrush" Color="Transparent" />
+    </UserControl.Resources>
 
     <UserControl.Styles>
         <Style Selector="TextBlock.Prompt">
@@ -43,7 +47,6 @@
     </UserControl.Styles>
     
     <Grid RowDefinitions="*, Auto">
-        
         <DataGrid 
             x:Name="OutputGrid"
             Grid.Row="0"
@@ -89,7 +92,6 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        
         <Border Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ExpanderBorderBrush}">
             <Grid ColumnDefinitions="Auto, *">
                 <TextBlock Classes="Prompt" Text=">" VerticalAlignment="Center"/>

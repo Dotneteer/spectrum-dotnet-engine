@@ -11,7 +11,11 @@
         <!-- ReSharper disable once Xaml.ConstructorWarning -->
         <viewModels:MainWindowViewModel/>
     </Design.DataContext>
-    
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="DataGridGridLinesBrush" Color="Transparent" />
+    </UserControl.Resources>
+
     <UserControl.Styles>
         <Style Selector="TextBlock">
             <Setter Property="FontFamily" Value="Monaco, Courier, Courier New, Consolas"/>
@@ -23,7 +27,10 @@
     
     <Grid RowDefinitions="Auto, *" >
         <Panel Grid.Row="0">
-            <Border Padding="2">
+            <Border 
+                Padding="2,0,0,3" 
+                BorderBrush="{DynamicResource ToolbarGray}"
+                BorderThickness="0,0,0,1" >
                 <StackPanel Orientation="Horizontal">
                     <controls:IconButton
                         Path="{DynamicResource IconRefresh}" 
@@ -65,6 +72,7 @@
         </Panel>
         <DataGrid 
             x:Name="Dg"
+            Margin="0,2,0,0"
             Grid.Row="1" 
             Items="{Binding Disassembler.DisassItems}"
             RowHeight="22"
