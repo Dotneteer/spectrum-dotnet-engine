@@ -43,39 +43,53 @@
     </UserControl.Styles>
     
     <Grid RowDefinitions="*, Auto">
-        <ScrollViewer
+        
+        <DataGrid 
+            x:Name="OutputGrid"
             Grid.Row="0"
-            x:Name="Scroller"
-            Margin="0,0,0,8">
-            <ItemsRepeater Items="{Binding Commands.Buffer}">
-                <ItemsRepeater.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <ItemsRepeater Items="{Binding}">
-                                <Design.DataContext>
-                                    <output:OutputSection/>
-                                </Design.DataContext>
-                                <ItemsRepeater.Layout>
-                                    <StackLayout Orientation="Horizontal" />
-                                </ItemsRepeater.Layout>
-                                <ItemsRepeater.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock  
-                                            Classes="Display"
-                                            Text="{Binding Text}"
-                                            Foreground="{Binding Color, Converter={StaticResource OutputColorConverter}}" 
-                                            Background="{Binding Background, Converter={StaticResource OutputColorConverter}}"
-                                            FontWeight="{Binding Bold, Converter={StaticResource OutputWeightConverter}}"
-                                            FontStyle="{Binding Italic, Converter={StaticResource OutputStyleConverter}}"
-                                            TextDecorations="{Binding Converter={StaticResource OutputDecorationsConverter}}"/>
-                                    </DataTemplate>
-                                </ItemsRepeater.ItemTemplate>
-                            </ItemsRepeater>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsRepeater.ItemTemplate>
-            </ItemsRepeater>
-        </ScrollViewer>
+            Items="{Binding Commands.Buffer}"
+            RowHeight="20"
+            BorderThickness="0"
+            HorizontalGridLinesBrush="Transparent"
+            HeadersVisibility="None"
+            AutoGenerateColumns="False"
+            GridLinesVisibility="None"
+            SelectionMode="Single" 
+            CellPointerPressed="OnCellPointerPressed" >
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Bp" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <ItemsRepeater 
+                                    Items="{Binding}">
+                                    <Design.DataContext>
+                                        <output:OutputSection/>
+                                    </Design.DataContext>
+                                    <ItemsRepeater.Layout>
+                                        <StackLayout Orientation="Horizontal" />
+                                    </ItemsRepeater.Layout>
+                                    <ItemsRepeater.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock  
+                                                Classes="Display"
+                                                VerticalAlignment="Center"
+                                                Text="{Binding Text}"
+                                                Foreground="{Binding Color, Converter={StaticResource OutputColorConverter}}" 
+                                                Background="{Binding Background, Converter={StaticResource OutputColorConverter}}"
+                                                FontWeight="{Binding Bold, Converter={StaticResource OutputWeightConverter}}"
+                                                FontStyle="{Binding Italic, Converter={StaticResource OutputStyleConverter}}"
+                                                TextDecorations="{Binding Converter={StaticResource OutputDecorationsConverter}}"/>
+                                        </DataTemplate>
+                                    </ItemsRepeater.ItemTemplate>
+                                </ItemsRepeater>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        
         <Border Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ExpanderBorderBrush}">
             <Grid ColumnDefinitions="Auto, *">
                 <TextBlock Classes="Prompt" Text=">" VerticalAlignment="Center"/>

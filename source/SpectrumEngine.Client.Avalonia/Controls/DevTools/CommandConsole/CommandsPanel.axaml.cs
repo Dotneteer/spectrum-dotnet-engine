@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
-using SpectrumEngine.Client.Avalonia.Controls.DevTools;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Tools.Commands;
 using SpectrumEngine.Tools.Output;
+// ReSharper disable UnusedParameter.Local
 
 namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
@@ -72,7 +72,11 @@ public partial class CommandsPanel : UserControl
                     _buffer.ResetFormat();
                 }
                 await Task.Delay(50);
-                Scroller.ScrollToEnd();
+                var itemCount = Vm?.Commands.Buffer?.Count ?? 0;
+                if (itemCount > 0)
+                {
+                    OutputGrid.ScrollIntoView(Vm!.Commands.Buffer![itemCount - 1], null);
+                }
                 Prompt.Text = "";
                 _lastCommandIndex = _commandHistory.Count;
                 break;
@@ -144,5 +148,12 @@ public partial class CommandsPanel : UserControl
         {
             return new InteractiveCommandResult(false, ex.Message);
         }
+    }
+
+    private async void OnCellPointerPressed(object? _, DataGridCellPointerPressedEventArgs e)
+    {
+        e.PointerPressedEventArgs.Handled = true;
+        await Task.Delay(20);
+        OutputGrid.SelectedIndex = -1;
     }
 }
