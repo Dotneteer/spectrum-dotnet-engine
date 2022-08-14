@@ -78,6 +78,28 @@ public class MemoryViewModel: ViewModelBase
     /// <param name="memory">Contents of the memory</param>
     public void RefreshMemory(byte[] memory)
     {
-        
+        // --- Calculate the visible range
+        var rangeFrom = RangeFrom & 0xfff8;
+        var rangeTo = (RangeTo + 8) & 0xffff8;
+
+        // --- Ensure memory items
+        MemoryItems ??= new ObservableCollection<MemoryItemViewModel>();
+
+        var index = 0;
+        for (var addr = rangeFrom; addr < rangeTo; addr += 8, index++)
+        {
+            var memItem = new MemoryItemViewModel { Address = (ushort)addr };
+            memItem.RefreshFrom(memory, _parent.Cpu!);
+            if (index >= MemoryItems.Count)
+            {
+              MemoryItems.Add(memItem);  
+            }
+            else
+            {
+                MemoryItems[index] = memItem;
+            }
+        }
     }
+    
+    public void Refresh() => RaiseRangeChanged();
 }

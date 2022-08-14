@@ -27,20 +27,20 @@
                 <StackPanel Orientation="Horizontal">
                     <controls:IconButton
                         Path="{DynamicResource IconRefresh}" 
-                        Command="{Binding Disassembler.Refresh}" 
+                        Command="{Binding MemoryViewer.Refresh}" 
                         Hint="Refresh"/>
                     <StackPanel 
                         Orientation="Horizontal" 
                         VerticalAlignment="Center"
                         Margin="8,0,0,0">
                         <TextBlock 
-                            Text="{Binding Disassembler.RangeFrom, StringFormat='{}{0:X4}'}" 
+                            Text="{Binding MemoryViewer.RangeFrom, StringFormat='{}{0:X4}'}" 
                             Foreground="{DynamicResource DiagLabelTextColor}" />
                         <TextBlock 
                             Text="-"
                             Foreground="{DynamicResource DiagLabelTextColor}" />
                         <TextBlock
-                            Text="{Binding Disassembler.RangeTo, StringFormat='{}{0:X4}'}" 
+                            Text="{Binding MemoryViewer.RangeTo, StringFormat='{}{0:X4}'}" 
                             Foreground="{DynamicResource DiagLabelTextColor}" />
                     </StackPanel>
                 </StackPanel>
@@ -56,8 +56,19 @@
             HeadersVisibility="None"
             AutoGenerateColumns="False"
             GridLinesVisibility="None"
-            SelectionMode="Single" >
+            SelectionMode="Single" 
+            CellPointerPressed="OnCellPointerPressed" >
             <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Bp" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="x:Int32">
+                            <TextBlock 
+                                Text="{Binding Address, StringFormat='{}{0:X4}'}"
+                                Width="48"
+                                Foreground="{DynamicResource DiagLabelTextColor}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

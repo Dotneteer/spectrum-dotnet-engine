@@ -1,7 +1,5 @@
-using System;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using SpectrumEngine.Client.Avalonia.Controls.DevTools;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 // ReSharper disable UnusedParameter.Local
@@ -17,20 +15,18 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
 
     private MainWindowViewModel? Vm => DataContext as MainWindowViewModel;
 
-    private void OnInitialized(object? sender, EventArgs e)
+    protected override void OnInitialized()
     {
         RefreshDisassembly();
-        if (Vm != null)
+        if (Vm == null) return;
+        Vm.Disassembler.RangeChanged += (_, _) =>
         {
-            Vm.Disassembler.RangeChanged += (_, _) =>
-            {
-                RefreshDisassembly();
-            };
-            Vm.Disassembler.DisassemblyModeChanged += (_, _) =>
-            {
-                Refresh();
-            };
-        }
+            RefreshDisassembly();
+        };
+        Vm.Disassembler.DisassemblyModeChanged += (_, _) =>
+        {
+            Refresh();
+        };
     }
 
     private void RefreshDisassembly()

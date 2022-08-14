@@ -5,8 +5,7 @@
              xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
              xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.DisassemblyViewPanel"
-             Initialized="OnInitialized">
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.DisassemblyViewPanel">
     
     <Design.DataContext>
         <!-- ReSharper disable once Xaml.ConstructorWarning -->

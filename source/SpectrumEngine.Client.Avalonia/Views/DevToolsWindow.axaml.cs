@@ -12,9 +12,6 @@ public partial class DevToolsWindow : Window
     public DevToolsWindow()
     {
         InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
     }
 
     private MainWindowViewModel? Vm => DataContext as MainWindowViewModel; 
