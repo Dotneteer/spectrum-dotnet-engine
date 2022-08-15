@@ -20,30 +20,25 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
 
     protected override void OnInitialized()
     {
+        PrepareRefresh();
         RefreshDisassembly();
         if (Vm == null) return;
         
-        Vm.Disassembler.RangeChanged += (_, _) => RefreshDisassembly();
-        Vm.Disassembler.DisassemblyModeChanged += (_, _) => Refresh();
+        Vm.Disassembler.RangeChanged += (_, _) =>
+        {
+            PrepareRefresh();
+            RefreshDisassembly();
+        };
+        Vm.Disassembler.DisassemblyModeChanged += (_, _) =>
+        {
+            Refresh();
+        };
     }
 
     private void RefreshDisassembly()
     {
         if (Vm == null) return;
-        var machine = Vm.Machine.Controller?.Machine as ZxSpectrum48Machine;
-        if (machine == null || machine.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[] memory)
-        {
-            return;
-        }
-        
         var position = Dg.GetViewportInfo(Vm?.Disassembler.DisassItems?.Count ?? 0);
-        var map = new MemoryMap
-        {
-            new(Vm!.Disassembler.RangeFrom, Vm.Disassembler.RangeTo)
-        };
-        var disassembler = new Z80Disassembler(map, memory);
-        Vm!.Disassembler.BackgroundDisassemblyItems = disassembler.Disassemble().OutputItems
-            .Select(oi => new DisassemblyItemViewModel {Item = oi, Parent = Vm}).ToList();
         Vm!.Disassembler.RefreshDisassembly(position.Top, position.Height + 1);
     }
 
@@ -64,11 +59,25 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
 
     protected override void PrepareRefresh()
     {
+        if (Vm == null) return;
+        var machine = Vm.Machine.Controller?.Machine as ZxSpectrum48Machine;
+        if (machine == null || machine.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[] memory)
+        {
+            return;
+        }
+        
+        var map = new MemoryMap
+        {
+            new(Vm!.Disassembler.RangeFrom, Vm.Disassembler.RangeTo)
+        };
+        var disassembler = new Z80Disassembler(map, memory);
+        Vm!.Disassembler.BackgroundDisassemblyItems = disassembler.Disassemble().OutputItems
+            .Select(oi => new DisassemblyItemViewModel {Item = oi, Parent = Vm}).ToList();
     }
 
     protected override async void Refresh()
     {
-        if (Vm == null) return;
+        if (Vm?.Disassembler.DisassItems == null) return;
         
         // --- Make sure to display the current execution point indicator
         Vm.Disassembler.ApplyNewPc(Vm.Cpu!.PC);
@@ -106,6 +115,7 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
         if (Vm == null) return;
         Vm.Disassembler.CurrentRangeFrom = Vm.Cpu!.PC;
         Vm.Disassembler.CurrentRangeTo = (ushort)(Vm.Disassembler.CurrentRangeFrom + 256);
+        PrepareRefresh();
         RefreshDisassembly();
         await Task.Delay(50);
         Dg.SelectedIndex = 0;
