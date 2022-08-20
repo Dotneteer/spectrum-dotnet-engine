@@ -1,4 +1,4 @@
-using SpectrumEngine.Client.Avalonia.Controls.DevTools;
+using System.Threading.Tasks;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 
 namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
@@ -13,9 +13,12 @@ public partial class UlaPanel : MachineStatusUserControl
         InitializeComponent();
     }
 
-    protected override void Refresh()
+    protected override Task Refresh()
     {
-        if (DataContext is not MainWindowViewModel vm) return;
-        vm.Ula?.SignStateChanged();
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.Ula?.SignStateChanged();
+        }
+        return Task.FromResult(0);
     }
 }

@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 using SpectrumEngine.Tools.Disassembler;
@@ -18,28 +19,35 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
 
     private MainWindowViewModel? Vm => DataContext as MainWindowViewModel;
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
-        PrepareRefresh();
-        RefreshDisassembly();
+        await PrepareRefresh();
+        await RefreshDisassembly();
         if (Vm == null) return;
         
-        Vm.Disassembler.RangeChanged += (_, _) =>
+        Vm.Disassembler.RangeChanged += async (_, _) =>
         {
-            PrepareRefresh();
-            RefreshDisassembly();
+            await PrepareRefresh();
+            await RefreshDisassembly();
         };
-        Vm.Disassembler.DisassemblyModeChanged += (_, _) =>
+        Vm.Disassembler.DisassemblyModeChanged += async (_, _) =>
         {
-            Refresh();
+            await Refresh();
         };
     }
 
-    private void RefreshDisassembly()
+    private Task RefreshDisassembly()
     {
-        if (Vm == null) return;
-        var position = Dg.GetViewportInfo(Vm?.Disassembler.DisassItems?.Count ?? 0);
-        Vm!.Disassembler.RefreshDisassembly(position.Top, position.Height + 1);
+        var vm = Vm;
+        if (vm != null)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                var position = Dg.GetViewportInfo(Vm?.Disassembler.DisassItems?.Count ?? 0);
+                vm.Disassembler.RefreshDisassembly(position.Top, position.Height + 1);
+            });
+        }
+        return Task.FromResult(0);
     }
 
     private void OnCellPointerPressed(object? sender, DataGridCellPointerPressedEventArgs e)
@@ -47,7 +55,7 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
         e.PointerPressedEventArgs.Handled = true;
     }
 
-    protected override async void RefreshOnStateChanged()
+    protected override async Task RefreshOnStateChanged()
     {
         if (Vm == null) return;
         if (Vm.Machine.Controller!.State != MachineControllerState.Paused) return;
@@ -57,25 +65,29 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
         }
     }
 
-    protected override void PrepareRefresh()
+    protected override async Task PrepareRefresh()
     {
-        if (Vm == null) return;
-        var machine = Vm.Machine.Controller?.Machine as ZxSpectrum48Machine;
-        if (machine == null || machine.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[] memory)
+        var vm = Vm;
+        if (vm == null) return;
+        await Task.Run(() =>
         {
-            return;
-        }
+            var machine = vm.Machine.Controller?.Machine as ZxSpectrum48Machine;
+            if (machine?.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[] memory)
+            {
+                return;
+            }
         
-        var map = new MemoryMap
-        {
-            new(Vm!.Disassembler.RangeFrom, Vm.Disassembler.RangeTo)
-        };
-        var disassembler = new Z80Disassembler(map, memory);
-        Vm!.Disassembler.BackgroundDisassemblyItems = disassembler.Disassemble().OutputItems
-            .Select(oi => new DisassemblyItemViewModel {Item = oi, Parent = Vm}).ToList();
+            var map = new MemoryMap
+            {
+                new(vm.Disassembler.RangeFrom, vm.Disassembler.RangeTo)
+            };
+            var disassembler = new Z80Disassembler(map, memory);
+            vm.Disassembler.BackgroundDisassemblyItems = disassembler.Disassemble().OutputItems
+                .Select(oi => new DisassemblyItemViewModel {Item = oi, Parent = vm}).ToList();
+        });
     }
 
-    protected override async void Refresh()
+    protected override async Task Refresh()
     {
         if (Vm?.Disassembler.DisassItems == null) return;
         
@@ -115,8 +127,8 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
         if (Vm == null) return;
         Vm.Disassembler.CurrentRangeFrom = Vm.Cpu!.PC;
         Vm.Disassembler.CurrentRangeTo = (ushort)(Vm.Disassembler.CurrentRangeFrom + 256);
-        PrepareRefresh();
-        RefreshDisassembly();
+        await PrepareRefresh();
+        await RefreshDisassembly();
         await Task.Delay(50);
         Dg.SelectedIndex = 0;
     }

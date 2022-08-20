@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 
@@ -16,24 +17,25 @@ public partial class MemoryViewPanel : MachineStatusUserControl
 
     private MainWindowViewModel? Vm => DataContext as MainWindowViewModel;
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
-        PrepareRefresh();
+        await PrepareRefresh();
         Vm!.MemoryViewer.MemoryItems =
             new ObservableCollection<MemoryItemViewModel>(Vm.MemoryViewer.BackgroundMemoryItems!);
         if (Vm == null) return;
         
-        Vm.MemoryViewer.RangeChanged += (_, _) =>
+        Vm.MemoryViewer.RangeChanged += async (_, _) =>
         {
-            PrepareRefresh();
-            RefreshMemory();
+            await PrepareRefresh();
+            await RefreshMemory();
         };
         Vm.MemoryViewer.TopAddressChanged += (_, addr) => ScrollToTopAddress(addr);
     }
 
-    protected override void Refresh()
+    protected override async Task Refresh()
     {
-        RefreshMemory();
+        await PrepareRefresh();
+        await RefreshMemory();
     }
 
     private void OnCellPointerPressed(object? sender, DataGridCellPointerPressedEventArgs e)
@@ -41,40 +43,52 @@ public partial class MemoryViewPanel : MachineStatusUserControl
         e.PointerPressedEventArgs.Handled = true;
     }
 
-    protected override void PrepareRefresh()
+    protected override async Task PrepareRefresh()
     {
-        if (Vm == null) return;
-        var machine = Vm.Machine.Controller?.Machine as ZxSpectrum48Machine;
-        if (machine == null || machine.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[] memory)
+        var vm = Vm;
+        if (vm == null) return;
+        await Task.Run(() =>
         {
-            return;
-        }
-        // --- Calculate the visible range
-        var rangeFrom = Vm.MemoryViewer.RangeFrom & 0xfff0;
-        var rangeTo = (Vm.MemoryViewer.RangeTo + 15) & 0xffff0;
+            var machine = vm.Machine.Controller?.Machine as ZxSpectrum48Machine;
+            if (machine?.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[] memory)
+            {
+                return;
+            }
+            // --- Calculate the visible range
+            var rangeFrom = vm.MemoryViewer.RangeFrom & 0xfff0;
+            var rangeTo = (vm.MemoryViewer.RangeTo + 15) & 0xffff0;
 
-        // --- Ensure memory items
-        var memItems = new List<MemoryItemViewModel>();
+            // --- Ensure memory items
+            var memItems = new List<MemoryItemViewModel>();
 
-        for (var addr = rangeFrom; addr < rangeTo; addr += 16)
-        {
-            var memItem = new MemoryItemViewModel {Address = (ushort) addr};
-            memItem.RefreshFrom(memory, Vm.Cpu!);
-            memItems.Add(memItem);
-        }
-        Vm.MemoryViewer.BackgroundMemoryItems = memItems;
+            for (var addr = rangeFrom; addr < rangeTo; addr += 16)
+            {
+                var memItem = new MemoryItemViewModel {Address = (ushort) addr};
+                memItem.RefreshFrom(memory, vm.Cpu!);
+                memItems.Add(memItem);
+            }
+            vm.MemoryViewer.BackgroundMemoryItems = memItems;
+        });
     }
 
-    private void RefreshMemory()
+    private async Task RefreshMemory()
     {
-        if (Vm == null) return;
-        var machine = Vm.Machine.Controller?.Machine as ZxSpectrum48Machine;
-        if (machine == null || machine.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[] memory)
+        var vm = Vm;
+        if (vm == null) return;
+        await Task.Run(() =>
         {
-            return;
-        }
-        var position = Dg.GetViewportInfo(Vm?.MemoryViewer.MemoryItems?.Count ?? 0);
-        Vm!.MemoryViewer.RefreshMemory(position.Top, position.Height + 1);
+            var machine = vm.Machine.Controller?.Machine as ZxSpectrum48Machine;
+            if (machine?.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[])
+            {
+                return;
+            }
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                var position = Dg.GetViewportInfo(vm?.MemoryViewer.MemoryItems?.Count ?? 0);
+                vm!.MemoryViewer.RefreshMemory(position.Top, position.Height + 1);
+            });
+        });
     }
 
     private async void ScrollToTopAddress(ushort address)

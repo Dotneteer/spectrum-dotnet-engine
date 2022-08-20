@@ -164,7 +164,6 @@ public class DisassemblyViewModel : ViewModelBase
     /// <summary>
     /// Refreshes the disassembly
     /// </summary>
-    /// <param name="opCodes">Op codes to disassembly</param>
     /// <param name="top">Top disassembly line</param>
     /// <param name="height">Number of lines</param>
     public void RefreshDisassembly(int top, int height)
