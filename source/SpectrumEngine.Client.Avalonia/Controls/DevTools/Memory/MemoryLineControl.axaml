@@ -38,6 +38,7 @@
         <TextBlock 
             Text="{Binding B1}"
             Width="22"
+            Background="{Binding B1RegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding B1RegFlags}" />
@@ -46,6 +47,7 @@
         <TextBlock 
             Text="{Binding B2}"
             Width="22"
+            Background="{Binding B2RegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding B2RegFlags}" />
@@ -54,6 +56,7 @@
         <TextBlock 
             Text="{Binding B3}"
             Width="22"
+            Background="{Binding B3RegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding B3RegFlags}" />
@@ -62,6 +65,7 @@
         <TextBlock 
             Text="{Binding B4}"
             Width="22"
+            Background="{Binding B4RegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding B4RegFlags}" />
@@ -70,6 +74,7 @@
         <TextBlock 
             Text="{Binding B5}"
             Width="22"
+            Background="{Binding B5RegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding B5RegFlags}" />
@@ -78,6 +83,7 @@
         <TextBlock 
             Text="{Binding B6}"
             Width="22"
+            Background="{Binding B6RegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding B6RegFlags}" />
@@ -86,6 +92,7 @@
         <TextBlock 
             Text="{Binding B7}"
             Width="22"
+            Background="{Binding B7RegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding B7RegFlags}" />
@@ -105,6 +112,7 @@
         <TextBlock 
             Text="{Binding B8}"
             Width="22"
+            Background="{Binding B8RegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding B8RegFlags}" />
@@ -113,6 +121,7 @@
         <TextBlock 
             Text="{Binding B9}"
             Width="22"
+            Background="{Binding B9RegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding B9RegFlags}" />
@@ -121,6 +130,7 @@
         <TextBlock 
             Text="{Binding Ba}"
             Width="22"
+            Background="{Binding BaRegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding BaRegFlags}" />
@@ -129,6 +139,7 @@
         <TextBlock 
             Text="{Binding Bb}"
             Width="22"
+            Background="{Binding BbRegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding BbRegFlags}" />
@@ -137,6 +148,7 @@
         <TextBlock 
             Text="{Binding Bc}"
             Width="22"
+            Background="{Binding BcRegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding BcRegFlags}" />
@@ -145,6 +157,7 @@
         <TextBlock 
             Text="{Binding Bd}"
             Width="22"
+            Background="{Binding BdRegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding BdRegFlags}" />
@@ -153,6 +166,7 @@
         <TextBlock 
             Text="{Binding Be}"
             Width="22"
+            Background="{Binding BeRegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding BeRegFlags}" />
@@ -161,6 +175,7 @@
         <TextBlock 
             Text="{Binding Bf}"
             Width="22"
+            Background="{Binding BfRegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
             Foreground="{DynamicResource DiagValueTextColor}">
             <ToolTip.Tip>
                 <memory:MemoryValueToolTip Value="{Binding BfRegFlags}" />

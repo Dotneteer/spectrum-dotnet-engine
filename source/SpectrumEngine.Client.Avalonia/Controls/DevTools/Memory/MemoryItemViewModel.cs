@@ -1,3 +1,6 @@
+#pragma warning disable CS0659
+
+using System;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 // ReSharper disable MemberCanBePrivate.Global
 
@@ -6,7 +9,7 @@ namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 /// <summary>
 /// Represents a memory line (8 bytes)
 /// </summary>
-public class MemoryItemViewModel: ViewModelBase
+public class MemoryItemViewModel: ViewModelBase, IEquatable<MemoryItemViewModel>
 {
     public ushort Address { get; set; }
     public ushort Address2 { get; set; }
@@ -120,4 +123,38 @@ public class MemoryItemViewModel: ViewModelBase
 
         string ConverChar(byte value) => value is < 0x20 or > 0x7f ? "." : ((char) value).ToString();
     }
+
+    public bool Equals(MemoryItemViewModel? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return 
+            Address == other.Address && 
+            Address2 == other.Address2 && 
+            B0RegFlags == other.B0RegFlags && 
+            B1RegFlags == other.B1RegFlags && 
+            B2RegFlags == other.B2RegFlags && 
+            B3RegFlags == other.B3RegFlags && 
+            B4RegFlags == other.B4RegFlags && 
+            B5RegFlags == other.B5RegFlags && 
+            B6RegFlags == other.B6RegFlags && 
+            B7RegFlags == other.B7RegFlags && 
+            B8RegFlags == other.B8RegFlags && 
+            B9RegFlags == other.B9RegFlags && 
+            BaRegFlags == other.BaRegFlags && 
+            BbRegFlags == other.BbRegFlags && 
+            BcRegFlags == other.BcRegFlags && 
+            BdRegFlags == other.BdRegFlags && 
+            BeRegFlags == other.BeRegFlags && 
+            BfRegFlags == other.BfRegFlags;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        return obj.GetType() == GetType() && Equals((MemoryItemViewModel) obj);
+    }
 }
+
+#pragma warning restore CS0659

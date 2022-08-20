@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 
 namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
@@ -101,8 +100,11 @@ public class MemoryViewModel: ViewModelBase
     {
         if (BackgroundMemoryItems == null || MemoryItems == null) return;
         for (var i = top; i <= top + height; i++)
-        { 
-            MemoryItems[i] = BackgroundMemoryItems[i];
+        {
+            if (!MemoryItems[i].Equals(BackgroundMemoryItems[i]))
+            {
+                MemoryItems[i] = BackgroundMemoryItems[i];
+            }
         }
     }
 
