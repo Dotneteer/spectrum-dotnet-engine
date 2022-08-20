@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using SpectrumEngine.Client.Avalonia.Controls.DevTools;
+using System.Threading.Tasks;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 using SpectrumEngine.Tools.Disassembler;
@@ -33,34 +33,39 @@ public partial class BreakpointsPanel : MachineStatusUserControl
         _prevDc = DataContext;
     }
 
-    private void DebuggerOnBreakpointsChanged(object? sender, (List<BreakpointInfo> OldBps, List<BreakpointInfo> NewBps) e)
+    private async void DebuggerOnBreakpointsChanged(object? sender, 
+        (List<BreakpointInfo> OldBps, List<BreakpointInfo> NewBps) e)
     {
-        Refresh();
+        await Refresh();
     }
 
-    protected override void Refresh()
+    protected override async Task Refresh()
     {
-        if (Vm == null) return;
-        var machine = Vm.Machine.Controller?.Machine as ZxSpectrum48Machine;
-        if (machine?.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[] memory)
+        var vm = Vm;
+        if (vm == null) return;
+        await Task.Run(() =>
         {
-            return;
-        }
-
-        // --- Disassemble the contents of each breakpoint
-        foreach (var bpItem in Vm.Debugger.Breakpoints)
-        {
-            var map = new MemoryMap
+            var machine = vm.Machine.Controller?.Machine as ZxSpectrum48Machine;
+            if (machine?.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[] memory)
             {
-                new(bpItem.Address, (ushort)(bpItem.Address + 4))
-            };
-            var disassembler = new Z80Disassembler(map, memory);
-            var disassViewItems = disassembler.Disassemble().OutputItems;
-            if (disassViewItems.Count > 0)
-            {
-                bpItem.Disassembly = disassViewItems[0].Instruction;
+                return;
             }
-        }
-        Vm.Debugger.SignStateChanged();
+
+            // --- Disassemble the contents of each breakpoint
+            foreach (var bpItem in vm.Debugger.Breakpoints)
+            {
+                var map = new MemoryMap
+                {
+                    new(bpItem.Address, (ushort)(bpItem.Address + 4))
+                };
+                var disassembler = new Z80Disassembler(map, memory);
+                var disassViewItems = disassembler.Disassemble().OutputItems;
+                if (disassViewItems.Count > 0)
+                {
+                    bpItem.Disassembly = disassViewItems[0].Instruction;
+                }
+            }
+            vm.Debugger.SignStateChanged();
+        });
     }
 }

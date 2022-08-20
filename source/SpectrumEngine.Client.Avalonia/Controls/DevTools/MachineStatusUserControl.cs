@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
@@ -60,29 +61,42 @@ public abstract class MachineStatusUserControl: UserControl
     }
 
     /// <summary>
+    /// Prepares the refresh in the background thread
+    /// </summary>
+    protected virtual Task PrepareRefresh()
+    {
+        // --- Add some task in derived classes
+        return Task.FromResult(0);
+    }
+    
+    /// <summary>
     /// Override this event to refresh the contents of the information panel
     /// </summary>
-    protected virtual void Refresh()
+    protected virtual Task Refresh()
     {
         // --- Add some task in derived classes
+        return Task.FromResult(0);
     }
 
-    protected virtual void RefreshOnStateChanged()
+    protected virtual Task RefreshOnStateChanged()
     {
         // --- Add some task in derived classes
+        return Task.FromResult(0);
     }
 
-    protected virtual void RefreshOnFrameCompleted()
+    protected virtual Task RefreshOnFrameCompleted()
     {
         // --- Add some task in derived classes
+        return Task.FromResult(0);
     }
 
     /// <summary>
     /// Refresh the panel state whenever the machine's state changes
     /// </summary>
-    private void OnStateChanged(object? sender, (MachineControllerState OldState, MachineControllerState NewState) e)
+    private async void OnStateChanged(object? sender, (MachineControllerState OldState, MachineControllerState NewState) e)
     {
-        Dispatcher.UIThread.InvokeAsync(() =>
+        await PrepareRefresh();
+        await Dispatcher.UIThread.InvokeAsync(() =>
         {
             if (_isRefreshing) return;
             _isRefreshing = true;
@@ -102,14 +116,23 @@ public abstract class MachineStatusUserControl: UserControl
     /// <summary>
     /// Refresh the panel state when the specified number of frames are displayed
     /// </summary>
-    private void OnFrameCompleted(object? sender, bool e)
+    private async void OnFrameCompleted(object? sender, bool e)
     {
-        Dispatcher.UIThread.InvokeAsync(() =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
-            _counter++;
-            if (RefreshRate > 0 && _counter % RefreshRate != 0) return;
-            RefreshOnFrameCompleted();
-            Refresh();
+            if (_isRefreshing) return;
+            _isRefreshing = true;
+            try
+            {
+                _counter++;
+                if (RefreshRate > 0 && _counter % RefreshRate != 0) return;
+                await RefreshOnFrameCompleted();
+                await Refresh();
+            }
+            finally
+            {
+                _isRefreshing = false;
+            }
         });
     }
 }

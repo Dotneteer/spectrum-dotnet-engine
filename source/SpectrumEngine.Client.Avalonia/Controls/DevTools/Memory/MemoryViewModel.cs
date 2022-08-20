@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 
@@ -33,6 +34,11 @@ public class MemoryViewModel: ViewModelBase
         set => SetProperty(ref _memoryItems, value);
     }
 
+    /// <summary>
+    /// Items created during background refresh
+    /// </summary>
+    public List<MemoryItemViewModel>? BackgroundMemoryItems { get; set; }
+    
     /// <summary>
     /// The start address of the memory range
     /// </summary>
@@ -88,31 +94,22 @@ public class MemoryViewModel: ViewModelBase
     /// <summary>
     /// Refreshes the memory contents dump
     /// </summary>
-    /// <param name="memory">Contents of the memory</param>
-    public void RefreshMemory(byte[] memory)
+    /// <param name="top">Top memory line</param>
+    /// <param name="height">Number of lines</param>
+    public void RefreshMemory(int top, int height)
     {
-        // --- Calculate the visible range
-        var rangeFrom = RangeFrom & 0xfff0;
-        var rangeTo = (RangeTo + 15) & 0xffff0;
-
-        // --- Ensure memory items
-        MemoryItems ??= new ObservableCollection<MemoryItemViewModel>();
-
-        var index = 0;
-        for (var addr = rangeFrom; addr < rangeTo; addr += 16, index++)
+        if (BackgroundMemoryItems == null || MemoryItems == null) return;
+        for (var i = top; i <= top + height; i++)
         {
-            var memItem = new MemoryItemViewModel {Address = (ushort) addr};
-            memItem.RefreshFrom(memory, _parent.Cpu!);
-            if (index >= MemoryItems.Count)
+            if (!MemoryItems[i].Equals(BackgroundMemoryItems[i]))
             {
-                MemoryItems.Add(memItem);
-            }
-            else
-            {
-                MemoryItems[index] = memItem;
+                MemoryItems[i] = BackgroundMemoryItems[i];
             }
         }
     }
 
-    public void Refresh() => RaiseRangeChanged();
+    public void Refresh()
+    {
+        RaiseRangeChanged();
+    }
 }

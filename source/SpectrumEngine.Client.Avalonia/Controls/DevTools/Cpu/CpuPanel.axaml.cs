@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 
 namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
@@ -12,9 +13,12 @@ public partial class CpuPanel : MachineStatusUserControl
         InitializeComponent();
     }
 
-    protected override void Refresh()
+    protected override Task Refresh()
     {
-        if (DataContext is not MainWindowViewModel vm) return;
-        vm.Cpu?.SignStateChanged();
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.Cpu?.SignStateChanged();
+        }
+        return Task.FromResult(0);
     }
 }

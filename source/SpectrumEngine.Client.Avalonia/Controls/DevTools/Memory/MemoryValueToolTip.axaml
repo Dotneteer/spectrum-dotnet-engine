@@ -1,0 +1,24 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls.DevTools.Memory">
+    <Design.PreviewWith>
+        <controls:MemoryValueToolTip />
+    </Design.PreviewWith>
+
+    <Style Selector="controls|MemoryValueToolTip">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <StackPanel>
+                    <TextBlock
+                        HorizontalAlignment="Left"
+                        Text="{TemplateBinding Value, Converter={StaticResource MemoryValueToolTipConverter}}" />
+                    <TextBlock
+                        IsVisible="{TemplateBinding Value, Converter={StaticResource MemoryRegisterRefVisibleConverter}}"
+                        HorizontalAlignment="Left"
+                        Text="{TemplateBinding Value, Converter={StaticResource MemoryRegisterRefToolTipConverter}}" />
+                </StackPanel>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

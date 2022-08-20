@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
-using SpectrumEngine.Tools.Disassembler;
 
 namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
@@ -40,6 +38,11 @@ public class DisassemblyViewModel : ViewModelBase
         set => SetProperty(ref _disassItems, value);
     }
 
+    /// <summary>
+    /// Items created during background disassembly
+    /// </summary>
+    public List<DisassemblyItemViewModel>? BackgroundDisassemblyItems { get; set; }
+    
     /// <summary>
     /// Current disassembly mode
     /// </summary>
@@ -161,18 +164,13 @@ public class DisassemblyViewModel : ViewModelBase
     /// <summary>
     /// Refreshes the disassembly
     /// </summary>
-    /// <param name="opCodes">Op codes to disassembly</param>
-    public void RefreshDisassembly(byte[] opCodes)
+    /// <param name="top">Top disassembly line</param>
+    /// <param name="height">Number of lines</param>
+    public void RefreshDisassembly(int top, int height)
     {
-        // --- Refresh the view items if the disassebly to show
-        var map = new MemoryMap
-        {
-            new(RangeFrom, RangeTo)
-        };
-        var disassembler = new Z80Disassembler(map, opCodes);
-        var disassViewItems = disassembler.Disassemble().OutputItems
-            .Select(oi => new DisassemblyItemViewModel {Item = oi, Parent = _parent}).ToList();
-
+        var disassViewItems = BackgroundDisassemblyItems;
+        if (disassViewItems == null) return;
+        
         if (!IsStartFromPcMode)
         {
             // --- Ensure we have a valid collection for DisassItems
@@ -193,9 +191,15 @@ public class DisassemblyViewModel : ViewModelBase
                 {
                     DisassItems.Add(disassViewItems[i]);
                 }
-                else
+                else if (i >= top && i <= top + height)
                 {
                     DisassItems[i] = disassViewItems[i];
+                }
+                else
+                {
+                    var item = DisassItems[i];
+                    item.Item = disassViewItems[i].Item;
+                    item.Parent = disassViewItems[i].Parent;
                 }
             }
         }

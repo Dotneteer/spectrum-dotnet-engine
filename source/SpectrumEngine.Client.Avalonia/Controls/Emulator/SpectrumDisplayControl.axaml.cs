@@ -99,7 +99,7 @@ public partial class SpectrumDisplayControl : UserControl
                 display.OverlayMessage = "Start the machine";
                 break;
             case MachineControllerState.Running:
-                display.OverlayMessage = display.IsDebugging ? "Debug mode" : "Running";
+                display.OverlayMessage = display.IsDebugging ? "Debug mode" : null;
                 _audioProvider?.Play();
                 break;
             case MachineControllerState.Paused:
