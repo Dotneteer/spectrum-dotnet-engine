@@ -22,4 +22,8 @@
     <devTools:IsActiveBreakpointConverter x:Key="IsActiveBreakpointConverter" />
     <devTools:IsInactiveBreakpointConverter x:Key="IsInactiveBreakpointConverter" />
     <devTools:MemoryByteBackgroundConverter x:Key="MemoryByteBackgroundConverter" />
+    <devTools:AddressTooltipConverter x:Key="AddressTooltipConverter" />
+    <devTools:MemoryValueToolTipConverter x:Key="MemoryValueToolTipConverter" />
+    <devTools:MemoryRegisterRefVisibleConverter x:Key="MemoryRegisterRefVisibleConverter" />
+    <devTools:MemoryRegisterRefToolTipConverter x:Key="MemoryRegisterRefToolTipConverter" />
 </ResourceDictionary>

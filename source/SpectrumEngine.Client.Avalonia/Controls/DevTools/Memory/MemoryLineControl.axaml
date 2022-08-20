@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:devTools="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools"
+             xmlns:memory="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools.Memory"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.Memory.MemoryLineControl">
     
@@ -11,10 +12,6 @@
         <devTools:MemoryItemViewModel/>
     </Design.DataContext>
     
-    <UserControl.Resources>
-        <SolidColorBrush x:Key="DataGridGridLinesBrush" Color="Transparent" />
-    </UserControl.Resources>
-
     <UserControl.Styles>
         <Style Selector="TextBlock">
             <Setter Property="TextAlignment" Value="Center" />
@@ -27,76 +24,152 @@
             Text="{Binding Address, StringFormat='{}{0:X4}'}"
             Margin="8,0,0,0"
             Width="40"
-            Foreground="{DynamicResource DiagLabelTextColor}" />
+            Foreground="{DynamicResource DiagLabelTextColor}"
+            ToolTip.Tip="{Binding Address, Converter={StaticResource AddressTooltipConverter}}" />
         <TextBlock 
             Text="{Binding B0}"
             Width="22"
             Background="{Binding B0RegFlags, Converter={StaticResource MemoryByteBackgroundConverter}}"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}" >
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding B0RegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
         <TextBlock 
-            Text="{Binding B1, StringFormat='{}{0:X2}'}"
+            Text="{Binding B1}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding B1RegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
         <TextBlock 
-            Text="{Binding B2, StringFormat='{}{0:X2}'}"
+            Text="{Binding B2}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding B2RegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
         <TextBlock 
-            Text="{Binding B3, StringFormat='{}{0:X2}'}"
+            Text="{Binding B3}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding B3RegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
         <TextBlock 
-            Text="{Binding B4, StringFormat='{}{0:X2}'}"
+            Text="{Binding B4}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding B4RegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
         <TextBlock 
-            Text="{Binding B5, StringFormat='{}{0:X2}'}"
+            Text="{Binding B5}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding B5RegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
         <TextBlock 
-            Text="{Binding B6, StringFormat='{}{0:X2}'}"
+            Text="{Binding B6}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding B6RegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
         <TextBlock 
-            Text="{Binding B7, StringFormat='{}{0:X2}'}"
+            Text="{Binding B7}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding B7RegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
+        <TextBlock 
+            Text="{Binding CharLine}"
+            Margin="8,0,0,0"
+            Width="64"
+            Foreground="{DynamicResource DiagSecondaryTextColor}" />
         <TextBlock 
             Text="{Binding Address2, StringFormat='{}{0:X4}'}"
             Margin="8,0,0,0"
             Width="40"
-            Foreground="{DynamicResource DiagLabelTextColor}" />
+            Foreground="{DynamicResource DiagLabelTextColor}"
+            ToolTip.Tip="{Binding Address2, Converter={StaticResource AddressTooltipConverter}}" />
         <TextBlock 
-            Text="{Binding B8, StringFormat='{}{0:X2}'}"
+            Text="{Binding B8}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding B8RegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
         <TextBlock 
-            Text="{Binding B9, StringFormat='{}{0:X2}'}"
+            Text="{Binding B9}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding B9RegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
         <TextBlock 
-            Text="{Binding Ba, StringFormat='{}{0:X2}'}"
+            Text="{Binding Ba}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding BaRegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
         <TextBlock 
-            Text="{Binding Bb, StringFormat='{}{0:X2}'}"
+            Text="{Binding Bb}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding BbRegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
         <TextBlock 
-            Text="{Binding Bc, StringFormat='{}{0:X2}'}"
+            Text="{Binding Bc}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding BcRegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
         <TextBlock 
-            Text="{Binding Bd, StringFormat='{}{0:X2}'}"
+            Text="{Binding Bd}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding BdRegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
         <TextBlock 
-            Text="{Binding Be, StringFormat='{}{0:X2}'}"
+            Text="{Binding Be}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding BeRegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
         <TextBlock 
-            Text="{Binding Bf, StringFormat='{}{0:X2}'}"
+            Text="{Binding Bf}"
             Width="22"
-            Foreground="{DynamicResource DiagValueTextColor}" />
+            Foreground="{DynamicResource DiagValueTextColor}">
+            <ToolTip.Tip>
+                <memory:MemoryValueToolTip Value="{Binding BfRegFlags}" />
+            </ToolTip.Tip>
+        </TextBlock>
+        <TextBlock 
+            Text="{Binding CharLine2}"
+            Margin="8,0,0,0"
+            Width="64"
+            Foreground="{DynamicResource DiagSecondaryTextColor}" />
     </StackPanel>
 </UserControl>

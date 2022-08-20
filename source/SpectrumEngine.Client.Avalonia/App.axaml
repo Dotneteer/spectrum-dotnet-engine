@@ -28,5 +28,6 @@
         <StyleInclude Source="/Controls/Common/Splitter.axaml"/>
         <StyleInclude Source="/Controls/Common/StatusLabel.axaml"/>
         <StyleInclude Source="/Controls/Common/SiteBarExpander.axaml"/>
+        <StyleInclude Source="/Controls/DevTools/Memory/MemoryValueToolTip.axaml"/>
     </Application.Styles>
 </Application>

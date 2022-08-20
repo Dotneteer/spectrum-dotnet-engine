@@ -11,8 +11,8 @@ public class MemoryByteBackgroundConverter: IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is not byte byteValue) return value;
-        if (byteValue == 0) return new SolidColorBrush(Colors.Transparent);
+        if (value is not ushort byteValue) return value;
+        if ((byteValue & 0xff) == 0) return new SolidColorBrush(Colors.Transparent);
             
         Brush? brush = new SolidColorBrush(Colors.White);
         if (Application.Current!.TryFindResource("RegMemoryBrush", out var res))
