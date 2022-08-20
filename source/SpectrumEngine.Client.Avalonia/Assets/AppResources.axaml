@@ -8,6 +8,7 @@
     <controls:MachineStateOverlayVisibilityConverter x:Key="MachineStateOverlayVisibilityConverter" />
     <controls:TapeModeVisibilityConverter x:Key="TapeModeVisibilityConverter" />
     <controls:ClockMultiplierConverter x:Key="ClockMultiplierConverter" />
+    <controls:MachineTypeVisibilityConverter x:Key="MachineTypeVisibilityConverter" />
     <controls:FixedDecimalConverter x:Key="FixedDecimalConverter" />
     <devTools:VerticalDockConverter x:Key="VerticalDockConverter" />
     <devTools:PanelsDockConverter x:Key="PanelsDockConverter" />

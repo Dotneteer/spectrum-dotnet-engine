@@ -1,9 +1,10 @@
-﻿namespace SpectrumEngine.Emu;
+﻿// ReSharper disable VirtualMemberCallInConstructor
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class represents the emulator of a ZX Spectrum 48 machine.
 /// </summary>
-public sealed class ZxSpectrum48Machine :
+public class ZxSpectrum48Machine :
     Z80MachineBase,
     IZxSpectrum48Machine
 {
@@ -42,6 +43,16 @@ public sealed class ZxSpectrum48Machine :
     #endregion
 
     #region Initialization and Properties
+
+    /// <summary>
+    /// The unique identifier of the machine type
+    /// </summary>
+    public override string MachineId => "sp48";
+
+    /// <summary>
+    /// The name of the machine type to display
+    /// </summary>
+    public override string DisplayName => "ZX Spectrum 48K";
 
     /// <summary>
     /// Initialize the machine

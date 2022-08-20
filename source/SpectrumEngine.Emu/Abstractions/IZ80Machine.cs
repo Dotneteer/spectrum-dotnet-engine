@@ -7,6 +7,16 @@
 public interface IZ80Machine : IZ80Cpu
 {
     /// <summary>
+    /// The unique identifier of the machine type
+    /// </summary>
+    string MachineId { get; }
+    
+    /// <summary>
+    /// The name of the machine type to display
+    /// </summary>
+    string DisplayName { get; }
+    
+    /// <summary>
     /// This property stores the execution context where the emulated machine runs its execution loop.
     /// </summary>
     ExecutionContext ExecutionContext { get; }

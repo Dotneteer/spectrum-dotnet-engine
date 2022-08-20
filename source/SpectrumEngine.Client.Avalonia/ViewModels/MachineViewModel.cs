@@ -79,6 +79,16 @@ public class MachineViewModel: ViewModelBase
 
     public MachineController? Controller { get; private set; }
 
+    /// <summary>
+    /// The ID of the machine
+    /// </summary>
+    public string Id => Controller?.Machine.MachineId ?? "";
+
+    /// <summary>
+    /// The display name of the machine
+    /// </summary>
+    public string DisplayName => Controller?.Machine.DisplayName ?? "";
+    
     public event EventHandler<(MachineController? OldController, MachineController? NewController)>? ControllerChanged; 
 
     public FrameStats FrameStats
@@ -135,6 +145,25 @@ public class MachineViewModel: ViewModelBase
     {
         CommandExecuted?.Invoke(this, EventArgs.Empty);
     }
+
+    /// <summary>
+    /// Selects the specified machine type
+    /// </summary>
+    /// <param name="machineType"></param>
+    /// <returns></returns>
+    public Task SelectMachineType(object? machineType)
+    {
+        return Task.FromResult(0);
+    }
+    
+    /// <summary>
+    /// Enable/disable the Start command
+    /// </summary>
+    /// <param name="parameter">Unused</param>
+    /// <returns>Is the command enabled?</returns>
+    [DependsOn(nameof(MachineControllerState))]
+    private bool CanSelectMachineType(object? parameter)
+        => parameter is "sp48" or "sp128"; 
     
     /// <summary>
     /// Execute the Start command
