@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Metadata;
+using SpectrumEngine.Client.Avalonia.Utility;
 using SpectrumEngine.Emu;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
@@ -45,6 +46,8 @@ public class MachineViewModel: ViewModelBase
         Controller.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
         ClockMultiplier = Controller.Machine.TargetClockMultiplier;
         RaisePropertyChanged(nameof(Controller));
+        RaisePropertyChanged(nameof(Id));
+        RaisePropertyChanged(nameof(DisplayName));
         ControllerChanged?.Invoke(this, (oldController, Controller));
         OnStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
 
@@ -151,11 +154,26 @@ public class MachineViewModel: ViewModelBase
     /// </summary>
     /// <param name="machineType"></param>
     /// <returns></returns>
-    public Task SelectMachineType(object? machineType)
+    public async Task SelectMachineType(object? machineType)
     {
-        return Task.FromResult(0);
+        if (machineType is string machineId &&
+            string.Compare(machineId, Id, StringComparison.OrdinalIgnoreCase) != 0)
+        {
+            if (MachineControllerState is MachineControllerState.Paused
+                or MachineControllerState.Pausing
+                or MachineControllerState.Running)
+            {
+                await Stop();
+            }
+            if (MachineFactory.CreateMachine(machineId) == null)
+            {
+                var msgBox = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxStandardWindow("Error",
+                    $"Cannot find or instantiate machine with ID '{machineId}'");
+                await msgBox.Show();
+            }
+        }
     }
-    
+
     /// <summary>
     /// Enable/disable the Start command
     /// </summary>

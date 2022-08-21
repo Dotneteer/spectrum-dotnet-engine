@@ -198,32 +198,56 @@ public partial class SpectrumDisplayControl : UserControl
     {
         // --- Release the events of the old controller
         var oldVm = _prevDataContext as MainWindowViewModel;
-        if (oldVm?.Machine.Controller != null)
+        if (oldVm?.Machine != null)
         {
-            var oldController = oldVm.Machine.Controller;
-            oldController.FrameCompleted -= OnControllerFrameCompleted;
-            oldController.StateChanged -= OnControllerStateChanged;
-            oldController.Machine.MachinePropertyChanged -= OnMachinePropertyChanged;
+            oldVm.Machine.ControllerChanged -= MachineOnControllerChanged;
         }
 
         // --- Setup the events of the new controller
         var newVm = DataContext as MainWindowViewModel;
         
-        if (newVm?.Machine.Controller != null)
+        if (newVm?.Machine != null)
         {
-            var newController = newVm.Machine.Controller;
-            newController.FrameCompleted += OnControllerFrameCompleted;
-            newController.StateChanged += OnControllerStateChanged;
-            newController.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
-            if (newController.Machine is ZxSpectrum48Machine zxMachine)
-            {
-                _audioProvider = new BassAudioProvider(zxMachine.BeeperDevice);
-            }
-            
-            OnControllerStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
+            newVm.Machine.ControllerChanged += MachineOnControllerChanged;
         }
         _prevDataContext = DataContext;
+        
+        // --- When the initial data context is set, we let this control to respond controller changes
+        if (oldVm == null && newVm != null)
+        {
+            MachineOnControllerChanged(this, (null, newVm.Machine.Controller));
+            OnControllerStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
+        }
     }
+
+    private void MachineOnControllerChanged(object? sender, (MachineController? OldController, MachineController? NewController) e)
+    {
+        // --- Remove old controller events
+        if (e.OldController != null)
+        {
+            e.OldController.FrameCompleted -= OnControllerFrameCompleted;
+            e.OldController.StateChanged -= OnControllerStateChanged;
+            e.OldController.Machine.MachinePropertyChanged -= OnMachinePropertyChanged;
+        }
+
+        // --- Done, if no new conrtoller
+        if (e.NewController == null) return;
+        
+        // --- Det up new controller events
+        e.NewController.FrameCompleted += OnControllerFrameCompleted;
+        e.NewController.StateChanged += OnControllerStateChanged;
+        e.NewController.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
+        
+        // TODO: Refactor initializing the audio 
+        if (e.NewController.Machine is ZxSpectrum48Machine zxMachine)
+        {
+            _audioProvider = new BassAudioProvider(zxMachine.BeeperDevice);
+        }
+        
+        // --- Reset the machine to its initial state
+        OnControllerStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
+    }
+
 
     private void OnKeyDown(object? sender, KeyEventArgs e)
     {

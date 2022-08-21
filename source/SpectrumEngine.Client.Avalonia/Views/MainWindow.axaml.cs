@@ -3,9 +3,8 @@ using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using SpectrumEngine.Client.Avalonia.Providers;
+using SpectrumEngine.Client.Avalonia.Utility;
 using SpectrumEngine.Client.Avalonia.ViewModels;
-using SpectrumEngine.Emu;
 // ReSharper disable UnusedParameter.Local
 
 namespace SpectrumEngine.Client.Avalonia.Views
@@ -35,13 +34,12 @@ namespace SpectrumEngine.Client.Avalonia.Views
         {
             if (Vm == null) return;
 
-            var machine = new ZxSpectrum48Machine();
-            machine.SetMachineProperty(MachinePropNames.TapeSaver, new DefaultTapeSaver());
-            var controller = new MachineController(machine)
+            const string DEFAULT_ID = "sp48"; 
+            var machine = MachineFactory.CreateMachine(DEFAULT_ID);
+            if (machine == null)
             {
-                DebugSupport = Vm.Debugger
-            };
-            Vm.Machine.SetMachineController(controller);
+                throw new InvalidOperationException($"Cannot find or instantiate machine with ID '{DEFAULT_ID}'");
+            }
             Vm.Machine.CommandExecuted += (s, args) =>
             {
                 FocusManager.Instance?.Focus(SpectrumDisplay);
