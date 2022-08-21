@@ -61,6 +61,66 @@ public partial class SpectrumDisplayControl : UserControl
     private MainWindowViewModel? Vm => DataContext as MainWindowViewModel;
   
     /// <summary>
+    /// Set up the control when the data context changes
+    /// </summary>
+    private void OnDataContextChanged(object? sender, EventArgs e)
+    {
+        // --- Release the events of the old controller
+        var oldVm = _prevDataContext as MainWindowViewModel;
+        if (oldVm?.Machine != null)
+        {
+            oldVm.Machine.ControllerChanged -= MachineOnControllerChanged;
+        }
+
+        // --- Setup the events of the new controller
+        var newVm = DataContext as MainWindowViewModel;
+        
+        if (newVm?.Machine != null)
+        {
+            newVm.Machine.ControllerChanged += MachineOnControllerChanged;
+        }
+        _prevDataContext = DataContext;
+        
+        // --- When the initial data context is set, we let this control to respond controller changes
+        if (oldVm != null || newVm == null) return;
+        
+        MachineOnControllerChanged(this, (null, newVm.Machine.Controller));
+        OnControllerStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
+    }
+
+    /// <summary>
+    /// Changing the machine type changes the controller. Here, we set up the new controller
+    /// </summary>
+    private void MachineOnControllerChanged(object? sender, 
+        (MachineController? OldController, MachineController? NewController) e)
+    {
+        // --- Remove old controller events
+        if (e.OldController != null)
+        {
+            e.OldController.FrameCompleted -= OnControllerFrameCompleted;
+            e.OldController.StateChanged -= OnControllerStateChanged;
+            e.OldController.Machine.MachinePropertyChanged -= OnMachinePropertyChanged;
+        }
+
+        // --- Done, if no new conrtoller
+        if (e.NewController == null) return;
+        
+        // --- Det up new controller events
+        e.NewController.FrameCompleted += OnControllerFrameCompleted;
+        e.NewController.StateChanged += OnControllerStateChanged;
+        e.NewController.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
+        
+        // TODO: Refactor initializing the audio 
+        if (e.NewController.Machine is ZxSpectrum48Machine zxMachine)
+        {
+            _audioProvider = new BassAudioProvider(zxMachine.BeeperDevice);
+        }
+        
+        // --- Reset the machine to its initial state
+        OnControllerStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
+    }
+
+    /// <summary>
     /// Change the view model properties when the user control is resized.
     /// </summary>
     /// <remarks>
@@ -113,6 +173,9 @@ public partial class SpectrumDisplayControl : UserControl
         }
     }
 
+    /// <summary>
+    /// Refresh the screen and produce sound when a new frame has been completed
+    /// </summary>
     private void OnControllerFrameCompleted(object? sender, bool e)
     {
         var machine = (sender as MachineController)?.Machine;
@@ -190,64 +253,9 @@ public partial class SpectrumDisplayControl : UserControl
                     display.OverlayMessage = "SAVE mode";
                     break;
             }
-            Vm?.RaisePropertyChanged(nameof(Vm.Machine.Controller));
+            Vm.Machine.RaisePropertyChanged(nameof(Vm.Machine.Controller));
         });
     }   
-
-    private void OnDataContextChanged(object? sender, EventArgs e)
-    {
-        // --- Release the events of the old controller
-        var oldVm = _prevDataContext as MainWindowViewModel;
-        if (oldVm?.Machine != null)
-        {
-            oldVm.Machine.ControllerChanged -= MachineOnControllerChanged;
-        }
-
-        // --- Setup the events of the new controller
-        var newVm = DataContext as MainWindowViewModel;
-        
-        if (newVm?.Machine != null)
-        {
-            newVm.Machine.ControllerChanged += MachineOnControllerChanged;
-        }
-        _prevDataContext = DataContext;
-        
-        // --- When the initial data context is set, we let this control to respond controller changes
-        if (oldVm == null && newVm != null)
-        {
-            MachineOnControllerChanged(this, (null, newVm.Machine.Controller));
-            OnControllerStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
-        }
-    }
-
-    private void MachineOnControllerChanged(object? sender, (MachineController? OldController, MachineController? NewController) e)
-    {
-        // --- Remove old controller events
-        if (e.OldController != null)
-        {
-            e.OldController.FrameCompleted -= OnControllerFrameCompleted;
-            e.OldController.StateChanged -= OnControllerStateChanged;
-            e.OldController.Machine.MachinePropertyChanged -= OnMachinePropertyChanged;
-        }
-
-        // --- Done, if no new conrtoller
-        if (e.NewController == null) return;
-        
-        // --- Det up new controller events
-        e.NewController.FrameCompleted += OnControllerFrameCompleted;
-        e.NewController.StateChanged += OnControllerStateChanged;
-        e.NewController.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
-        
-        // TODO: Refactor initializing the audio 
-        if (e.NewController.Machine is ZxSpectrum48Machine zxMachine)
-        {
-            _audioProvider = new BassAudioProvider(zxMachine.BeeperDevice);
-        }
-        
-        // --- Reset the machine to its initial state
-        OnControllerStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
-    }
-
 
     private void OnKeyDown(object? sender, KeyEventArgs e)
     {
