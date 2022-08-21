@@ -5,7 +5,7 @@ namespace SpectrumEngine.Emu;
 /// <summary>
 /// This class implements the ZX Spectrum screen device.
 /// </summary>
-public sealed class ScreenDevice : IScreenDevice, IDisposable
+public sealed class CommonScreenDevice : IScreenDevice, IDisposable
 {
     // --- These are the default memory contention values we use
     private static byte[] DefaultContentionValues = new byte[] { 6, 5, 4, 3, 2, 1, 0, 0 };
@@ -65,15 +65,15 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     };
 
     /// <summary>
-    /// Define the screen configuration attributes of ZX Spectrum 48K (NTSC)
+    /// Define the screen configuration attributes of ZX Spectrum 48K (PAL)
     /// </summary>
-    public static readonly ScreenConfiguration ZxSpectrum48NtscScreenConfiguration = new()
+    public static readonly ScreenConfiguration ZxSpectrum128ScreenConfiguration = new()
     {
         VerticalSyncLines = 8,
-        NonVisibleBorderTopLines = 16,
-        BorderTopLines = 24,
-        BorderBottomLines = 24,
-        NonVisibleBorderBottomLines = 0,
+        NonVisibleBorderTopLines = 7,
+        BorderTopLines = 49,
+        BorderBottomLines = 48,
+        NonVisibleBorderBottomLines = 8,
         DisplayLines = 192,
         BorderLeftTime = 24,
         BorderRightTime = 24,
@@ -143,10 +143,11 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     /// Initialize the screen device and assign it to its host machine.
     /// </summary>
     /// <param name="machine">The machine hosting this device</param>
-    public ScreenDevice(IZxSpectrum48Machine machine)
+    /// <param name="config">Screen configuration to use</param>
+    public CommonScreenDevice(IZxSpectrum48Machine machine, ScreenConfiguration config)
     {
         Machine = machine;
-        _configuration = ZxSpectrum48ScreenConfiguration;
+        _configuration = config;
         _flashFlag = false;
     }
 
