@@ -81,4 +81,9 @@ public sealed class ScreenConfiguration
     /// Given in Z80 clock cycles.
     /// </summary>
     public int AttributeDataPrefetchTime { get; set; }
+
+    /// <summary>
+    /// Sets the contention values to be used with the device
+    /// </summary>
+    public byte[] ContentionValues { get; init; } = Array.Empty<byte>();
 }

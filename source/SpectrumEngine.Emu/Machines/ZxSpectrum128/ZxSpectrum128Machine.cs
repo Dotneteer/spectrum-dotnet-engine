@@ -37,9 +37,9 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
         
         // --- Create and initialize devices
         KeyboardDevice = new KeyboardDevice(this);
-        ScreenDevice = new CommonScreenDevice(this, CommonScreenDevice.ZxSpectrum48ScreenConfiguration);
+        ScreenDevice = new CommonScreenDevice(this, CommonScreenDevice.ZxSpectrum128ScreenConfiguration);
         BeeperDevice = new BeeperDevice(this);
-        FloatingBusDevice = new ZxSpectrum48FloatingBusDevice(this);
+        FloatingBusDevice = new ZxSpectrum128FloatingBusDevice(this);
         TapeDevice = new TapeDevice(this);
         Reset();
 

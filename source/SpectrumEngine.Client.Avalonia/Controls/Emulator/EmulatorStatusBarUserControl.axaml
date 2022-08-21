@@ -45,7 +45,7 @@
                     <controls:StatusLabel 
                         ShowIcon="false"
                         Margin="-8 0 0 0"
-                        Text="{Binding Cpu.PC, Converter={StaticResource HexConverter}}" />
+                        Text="{Binding Cpu.PC, StringFormat='{}{0:X4}'}" />
                 </StackPanel>
             </StackPanel>
         </Panel>

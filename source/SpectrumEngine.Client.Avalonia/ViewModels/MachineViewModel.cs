@@ -48,6 +48,8 @@ public class MachineViewModel: ViewModelBase
         RaisePropertyChanged(nameof(Controller));
         RaisePropertyChanged(nameof(Id));
         RaisePropertyChanged(nameof(DisplayName));
+        
+        
         ControllerChanged?.Invoke(this, (oldController, Controller));
         OnStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
 

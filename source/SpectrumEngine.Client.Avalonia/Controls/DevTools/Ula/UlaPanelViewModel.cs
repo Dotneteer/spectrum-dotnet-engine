@@ -5,11 +5,11 @@ namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
 public class UlaPanelViewModel: ViewModelBase
 {
-    private readonly ZxSpectrum48Machine? _machine;
+    private readonly ZxSpectrumBase? _machine;
 
     public UlaPanelViewModel(MachineController controller)
     {
-        _machine = controller.Machine as ZxSpectrum48Machine;
+        _machine = controller.Machine as ZxSpectrumBase;
     }
 
     public void SignStateChanged()
