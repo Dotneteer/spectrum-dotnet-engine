@@ -70,6 +70,35 @@
             </NativeMenuItem>
             <NativeMenuItem Header="Machine">
                 <NativeMenu>
+                    <NativeMenuItem Header="Machine Type">
+                        <NativeMenu>
+                            <NativeMenuItem
+                                Header="ZX Spectrum 48K"
+                                Command="{Binding Machine.SelectMachineType}"
+                                CommandParameter="sp48"
+                                ToggleType="CheckBox"
+                                IsChecked="{Binding Machine.Id, Converter={StaticResource MachineTypeVisibilityConverter}, ConverterParameter='sp48'}" />
+                            <NativeMenuItem
+                                Header="ZX Spectrum 128K"
+                                Command="{Binding Machine.SelectMachineType}"
+                                CommandParameter="sp128"
+                                ToggleType="CheckBox"
+                                IsChecked="{Binding Machine.Id, Converter={StaticResource MachineTypeVisibilityConverter}, ConverterParameter='sp128'}" />
+                            <NativeMenuItem
+                                Header="ZX Spectrum +3E"
+                                Command="{Binding Machine.SelectMachineType}"
+                                CommandParameter="sp3e"
+                                ToggleType="CheckBox"
+                                IsChecked="{Binding Machine.Id, Converter={StaticResource MachineTypeVisibilityConverter}, ConverterParameter='sp3e'}" />
+                            <NativeMenuItem
+                                Header="ZX Spectrum Next"
+                                Command="{Binding Machine.SelectMachineType}"
+                                CommandParameter="spnext"
+                                ToggleType="CheckBox"
+                                IsChecked="{Binding Machine.Id, Converter={StaticResource MachineTypeVisibilityConverter}, ConverterParameter='spnext'}" />
+                        </NativeMenu>
+                    </NativeMenuItem>
+                    <NativeMenuItemSeparator />
                     <NativeMenuItem Header="Start" Command="{Binding Machine.Start} "/>
                     <NativeMenuItem Header="Pause" Command="{Binding Machine.Pause} "/>
                     <NativeMenuItem Header="Stop" Command="{Binding Machine.Stop} "/>
@@ -202,6 +231,45 @@
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Machine">
+                    <MenuItem Header="Machine Type">
+                        <MenuItem
+                            Header="ZX Spectrum 48K"
+                            Command="{Binding Machine.SelectMachineType}"
+                            CommandParameter="sp48">
+                            <MenuItem.Icon>
+                                <local:CheckedIndicator 
+                                    IsChecked="{Binding Machine.Id, Converter={StaticResource MachineTypeVisibilityConverter}, ConverterParameter='sp48'}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Header="ZX Spectrum 128K"
+                            Command="{Binding Machine.SelectMachineType}"
+                            CommandParameter="sp128">
+                            <MenuItem.Icon>
+                                <local:CheckedIndicator 
+                                    IsChecked="{Binding Machine.Id, Converter={StaticResource MachineTypeVisibilityConverter}, ConverterParameter='sp128'}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Header="ZX Spectrum +3E"
+                            Command="{Binding Machine.SelectMachineType}"
+                            CommandParameter="sp3e">
+                            <MenuItem.Icon>
+                                <local:CheckedIndicator 
+                                    IsChecked="{Binding Machine.Id, Converter={StaticResource MachineTypeVisibilityConverter}, ConverterParameter='sp3e'}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Header="ZX Spectrum Next"
+                            Command="{Binding Machine.SelectMachineType}"
+                            CommandParameter="spnext">
+                            <MenuItem.Icon>
+                                <local:CheckedIndicator 
+                                    IsChecked="{Binding Machine.Id, Converter={StaticResource MachineTypeVisibilityConverter}, ConverterParameter='spnext'}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                    <Separator />
                     <MenuItem Header="Start" Command="{Binding Machine.Start}" />
                     <MenuItem Header="Pause" Command="{Binding Machine.Pause}" />
                     <MenuItem Header="Stop" Command="{Binding Machine.Stop}" />

@@ -40,7 +40,12 @@
             </StackPanel>
         </Panel>
         <Panel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <controls:PlainIcon Path="{DynamicResource IconVm}"/>
+            <StackPanel Orientation="Horizontal">
+                <controls:PlainIcon Path="{DynamicResource IconVm}"/>
+                <controls:StatusLabel 
+                    ShowIcon="false"
+                    Text="{Binding Machine.DisplayName}" />
+            </StackPanel>
         </Panel>
     </Grid>
 </UserControl>

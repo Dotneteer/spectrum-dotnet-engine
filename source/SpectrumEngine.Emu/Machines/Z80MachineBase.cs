@@ -26,6 +26,16 @@ public abstract class Z80MachineBase :
     private const string ROM_RESOURCE_FOLDER = "Roms";
 
     /// <summary>
+    /// The unique identifier of the machine type
+    /// </summary>
+    public abstract string MachineId { get; }
+
+    /// <summary>
+    /// The name of the machine type to display
+    /// </summary>
+    public abstract string DisplayName { get; }
+
+    /// <summary>
     /// This property stores the execution context where the emulated machine runs its execution loop.
     /// </summary>
     public ExecutionContext ExecutionContext { get; } = new();

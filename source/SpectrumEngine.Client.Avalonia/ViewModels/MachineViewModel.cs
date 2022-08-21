@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Metadata;
+using SpectrumEngine.Client.Avalonia.Utility;
 using SpectrumEngine.Emu;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
@@ -45,6 +46,8 @@ public class MachineViewModel: ViewModelBase
         Controller.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
         ClockMultiplier = Controller.Machine.TargetClockMultiplier;
         RaisePropertyChanged(nameof(Controller));
+        RaisePropertyChanged(nameof(Id));
+        RaisePropertyChanged(nameof(DisplayName));
         ControllerChanged?.Invoke(this, (oldController, Controller));
         OnStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
 
@@ -79,6 +82,16 @@ public class MachineViewModel: ViewModelBase
 
     public MachineController? Controller { get; private set; }
 
+    /// <summary>
+    /// The ID of the machine
+    /// </summary>
+    public string Id => Controller?.Machine.MachineId ?? "";
+
+    /// <summary>
+    /// The display name of the machine
+    /// </summary>
+    public string DisplayName => Controller?.Machine.DisplayName ?? "";
+    
     public event EventHandler<(MachineController? OldController, MachineController? NewController)>? ControllerChanged; 
 
     public FrameStats FrameStats
@@ -135,6 +148,40 @@ public class MachineViewModel: ViewModelBase
     {
         CommandExecuted?.Invoke(this, EventArgs.Empty);
     }
+
+    /// <summary>
+    /// Selects the specified machine type
+    /// </summary>
+    /// <param name="machineType"></param>
+    /// <returns></returns>
+    public async Task SelectMachineType(object? machineType)
+    {
+        if (machineType is string machineId &&
+            string.Compare(machineId, Id, StringComparison.OrdinalIgnoreCase) != 0)
+        {
+            if (MachineControllerState is MachineControllerState.Paused
+                or MachineControllerState.Pausing
+                or MachineControllerState.Running)
+            {
+                await Stop();
+            }
+            if (MachineFactory.CreateMachine(machineId) == null)
+            {
+                var msgBox = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxStandardWindow("Error",
+                    $"Cannot find or instantiate machine with ID '{machineId}'");
+                await msgBox.Show();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Enable/disable the Start command
+    /// </summary>
+    /// <param name="parameter">Unused</param>
+    /// <returns>Is the command enabled?</returns>
+    [DependsOn(nameof(MachineControllerState))]
+    private bool CanSelectMachineType(object? parameter)
+        => parameter is "sp48" or "sp128"; 
     
     /// <summary>
     /// Execute the Start command

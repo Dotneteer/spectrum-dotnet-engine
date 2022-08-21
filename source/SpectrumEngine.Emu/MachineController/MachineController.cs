@@ -46,7 +46,7 @@ public class MachineController
     public MachineControllerState State
     {
         get => _machineState;
-        private set
+        set
         {
             if (_machineState == value) return;
             
