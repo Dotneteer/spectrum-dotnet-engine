@@ -3,11 +3,11 @@ namespace SpectrumEngine.Emu;
 /// <summary>
 /// The common core functionality for all ZX Spectrum machines 
 /// </summary>
-public abstract class ZxSpectrumBase: Z80MachineBase
+public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
 {
     #region Private members
 
-    private const int AUDIO_SAMPLE_RATE = 48_000;
+    protected const int AUDIO_SAMPLE_RATE = 48_000;
 
     // --- This byte array stores the contention values associated with a particular machine frame tact.
     private byte[] _contentionValues = Array.Empty<byte>();
@@ -25,7 +25,7 @@ public abstract class ZxSpectrumBase: Z80MachineBase
     private ulong _portBit4ChangedFrom1Tacts;
 
     // --- Stores the key strokes to emulate
-    private readonly Queue<EmulatedKeyStroke> _emulatedKeyStrokes =
+    protected readonly Queue<EmulatedKeyStroke> EmulatedKeyStrokes =
         new Queue<EmulatedKeyStroke>();
 
     #endregion
@@ -100,6 +100,11 @@ public abstract class ZxSpectrumBase: Z80MachineBase
         TotalContentionDelaySinceStart += delay;
         ContentionDelaySincePause += delay;
     }
+
+    /// <summary>
+    /// Gets the ULA issue number of the ZX Spectrum model (2 or 3)
+    /// </summary>
+    public abstract int UlaIssue { get; set; }
 
     /// <summary>
     /// This method allocates storage for the memory contention values.
@@ -354,16 +359,16 @@ public abstract class ZxSpectrumBase: Z80MachineBase
     public override void EmulateKeystroke()
     {
         // --- Exit, if no keystroke to emulate
-        lock (_emulatedKeyStrokes)
+        lock (EmulatedKeyStrokes)
         {
-            if (_emulatedKeyStrokes.Count == 0) return;
+            if (EmulatedKeyStrokes.Count == 0) return;
         }
 
         // --- Check the next keystroke
         EmulatedKeyStroke keyStroke;
-        lock (_emulatedKeyStrokes)
+        lock (EmulatedKeyStrokes)
         {
-            keyStroke = _emulatedKeyStrokes.Peek();
+            keyStroke = EmulatedKeyStrokes.Peek();
         }
 
         // --- Time has not come
@@ -379,7 +384,7 @@ public abstract class ZxSpectrumBase: Z80MachineBase
             }
 
             // --- Remove the keystroke from the queue
-            lock (_emulatedKeyStrokes) _emulatedKeyStrokes.Dequeue();
+            lock (EmulatedKeyStrokes) EmulatedKeyStrokes.Dequeue();
             return;
         }
 
@@ -405,18 +410,18 @@ public abstract class ZxSpectrumBase: Z80MachineBase
         SpectrumKeyCode primary, 
         SpectrumKeyCode? secondary)
     {
-        lock (_emulatedKeyStrokes)
+        lock (EmulatedKeyStrokes)
         {
             var startTact = (ulong)startFrame * (ulong)TactsInFrame * (ulong)ClockMultiplier;
             var endTact = startTact + (ulong)frames * (ulong)TactsInFrame * (ulong)ClockMultiplier;
             var keypress = new EmulatedKeyStroke(startTact, endTact, primary, secondary);
-            if (_emulatedKeyStrokes.Count == 0)
+            if (EmulatedKeyStrokes.Count == 0)
             {
-                _emulatedKeyStrokes.Enqueue(keypress);
+                EmulatedKeyStrokes.Enqueue(keypress);
                 return;
             }
 
-            var last = _emulatedKeyStrokes.Peek();
+            var last = EmulatedKeyStrokes.Peek();
             if (last.PrimaryCode == keypress.PrimaryCode
                 && last.SecondaryCode == keypress.SecondaryCode)
             {
@@ -428,7 +433,7 @@ public abstract class ZxSpectrumBase: Z80MachineBase
                     return;
                 }
             }
-            _emulatedKeyStrokes.Enqueue(keypress);
+            EmulatedKeyStrokes.Enqueue(keypress);
         }
     }
 

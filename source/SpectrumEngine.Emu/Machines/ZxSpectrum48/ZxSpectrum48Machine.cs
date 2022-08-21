@@ -5,19 +5,12 @@ namespace SpectrumEngine.Emu;
 /// This class represents the emulator of a ZX Spectrum 48 machine.
 /// </summary>
 public class ZxSpectrum48Machine :
-    ZxSpectrumBase,
-    IZxSpectrum48Machine
+    ZxSpectrumBase
 {
     #region Private members
 
-    private const int AUDIO_SAMPLE_RATE = 48_000;
-
     // --- This byte array represents the 64K memory, including the 16K ROM and 48K RAM.
     private readonly byte[] _memory = new byte[0x1_0000];
-
-    // --- Stores the key strokes to emulate
-    private readonly Queue<EmulatedKeyStroke> _emulatedKeyStrokes =
-        new Queue<EmulatedKeyStroke>();
 
     #endregion
 
@@ -66,7 +59,7 @@ public class ZxSpectrum48Machine :
     /// <summary>
     /// Gets the ULA issue number of the ZX Spectrum model (2 or 3)
     /// </summary>
-    public int UlaIssue { get; set; } = 3;
+    public override int UlaIssue { get; set; } = 3;
 
     /// <summary>
     /// Emulates turning on a machine (after it has been turned off).
@@ -107,7 +100,7 @@ public class ZxSpectrum48Machine :
         LastRenderedFrameTact = -0;
 
         // --- Empty the queue of emulated keystrokes
-        lock (_emulatedKeyStrokes) { _emulatedKeyStrokes.Clear(); }
+        lock (EmulatedKeyStrokes) { EmulatedKeyStrokes.Clear(); }
     }
 
     /// <summary>
@@ -268,104 +261,6 @@ public class ZxSpectrum48Machine :
 
     #endregion
     
-    #region Keyboard
-    
-    /// <summary>
-    /// Set the status of the specified ZX Spectrum key.
-    /// </summary>
-    /// <param name="key">Key code</param>
-    /// <param name="isDown">Indicates if the key is pressed down.</param>
-    public override void SetKeyStatus(SpectrumKeyCode key, bool isDown)
-    {
-        KeyboardDevice.SetStatus(key, isDown);
-    }
-
-    /// <summary>
-    /// Emulates queued key strokes as if those were pressed by the user
-    /// </summary>
-    public override void EmulateKeystroke()
-    {
-        // --- Exit, if no keystroke to emulate
-        lock (_emulatedKeyStrokes)
-        {
-            if (_emulatedKeyStrokes.Count == 0) return;
-        }
-
-        // --- Check the next keystroke
-        EmulatedKeyStroke keyStroke;
-        lock (_emulatedKeyStrokes)
-        {
-            keyStroke = _emulatedKeyStrokes.Peek();
-        }
-
-        // --- Time has not come
-        if (keyStroke.StartTact > Tacts) return;
-
-        if (keyStroke.EndTact < Tacts)
-        {
-            // --- End emulation of this very keystroke
-            KeyboardDevice.SetStatus(keyStroke.PrimaryCode, false);
-            if (keyStroke.SecondaryCode.HasValue)
-            {
-                KeyboardDevice.SetStatus(keyStroke.SecondaryCode.Value, false);
-            }
-
-            // --- Remove the keystroke from the queue
-            lock (_emulatedKeyStrokes) _emulatedKeyStrokes.Dequeue();
-            return;
-        }
-
-        // --- Emulate this very keystroke, and leave it in the queue
-        KeyboardDevice.SetStatus(keyStroke.PrimaryCode, true);
-        if (keyStroke.SecondaryCode.HasValue)
-        {
-            KeyboardDevice.SetStatus(keyStroke.SecondaryCode.Value, true);
-        }
-    }
-
-    /// <summary>
-    /// Adds an emulated keypress to the queue of the provider.
-    /// </summary>
-    /// <param name="startFrame">Frame count to start the emulation</param>
-    /// <param name="frames">Number of frames to hold the emulation</param>
-    /// <param name="primary">Primary key code</param>
-    /// <param name="secondary">Optional secondary key code</param>
-    /// <remarks>The provider can play back emulated key strokes</remarks>
-    public override void QueueKeystroke(
-        int startFrame, 
-        int frames, 
-        SpectrumKeyCode primary, 
-        SpectrumKeyCode? secondary)
-    {
-        lock (_emulatedKeyStrokes)
-        {
-            var startTact = (ulong)startFrame * (ulong)TactsInFrame * (ulong)ClockMultiplier;
-            var endTact = startTact + (ulong)frames * (ulong)TactsInFrame * (ulong)ClockMultiplier;
-            var keypress = new EmulatedKeyStroke(startTact, endTact, primary, secondary);
-            if (_emulatedKeyStrokes.Count == 0)
-            {
-                _emulatedKeyStrokes.Enqueue(keypress);
-                return;
-            }
-
-            var last = _emulatedKeyStrokes.Peek();
-            if (last.PrimaryCode == keypress.PrimaryCode
-                && last.SecondaryCode == keypress.SecondaryCode)
-            {
-                // --- The same key has been clicked
-                if (keypress.StartTact >= last.StartTact && keypress.StartTact <= last.EndTact)
-                {
-                    // --- Old and new click ranges overlap, lengthen the old click
-                    last.EndTact = keypress.EndTact;
-                    return;
-                }
-            }
-            _emulatedKeyStrokes.Enqueue(keypress);
-        }
-    }
-
-    #endregion
-
     /// <summary>
     /// Uploades the specified ROM information to the ZX Spectrum 48 ROM memory
     /// </summary>

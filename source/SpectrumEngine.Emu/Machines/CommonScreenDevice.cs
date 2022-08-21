@@ -144,7 +144,7 @@ public sealed class CommonScreenDevice : IScreenDevice, IDisposable
     /// </summary>
     /// <param name="machine">The machine hosting this device</param>
     /// <param name="config">Screen configuration to use</param>
-    public CommonScreenDevice(IZxSpectrum48Machine machine, ScreenConfiguration config)
+    public CommonScreenDevice(IZxSpectrumMachine machine, ScreenConfiguration config)
     {
         Machine = machine;
         _configuration = config;
@@ -161,7 +161,7 @@ public sealed class CommonScreenDevice : IScreenDevice, IDisposable
     /// <summary>
     /// Get the machine that hosts the device.
     /// </summary>
-    public IZxSpectrum48Machine Machine { get; }
+    public IZxSpectrumMachine Machine { get; }
 
     /// <summary>
     /// Reset the device to its initial state.

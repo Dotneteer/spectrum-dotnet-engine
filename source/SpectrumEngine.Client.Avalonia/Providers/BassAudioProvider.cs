@@ -1,5 +1,4 @@
 ﻿using ManagedBass;
-using SpectrumEngine.Emu;
 using System;
 using System.Linq;
 
@@ -7,15 +6,14 @@ namespace SpectrumEngine.Client.Avalonia.Providers
 {
     public class BassAudioProvider : IAudioProvider
     {
-        public const int SAMPLE_RATE = 48000;
-
+        private readonly int _sampleRate;
         private float _volume;
         private int? _streamHandle;
         private bool _disposedValue;
 
-        public BassAudioProvider(IAudioDevice audioDevice)
+        public BassAudioProvider(int sampleRate)
         {
-            AudioDevice = audioDevice;
+            _sampleRate = sampleRate;
         }
 
         ~BassAudioProvider()
@@ -23,11 +21,6 @@ namespace SpectrumEngine.Client.Avalonia.Providers
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
-
-        /// <summary>
-        /// Tha audio device of the emulated machine
-        /// </summary>
-        public IAudioDevice AudioDevice { get; }
 
         /// <summary>
         /// Volume for audio 0 (silent) to 1 (max).
@@ -52,26 +45,6 @@ namespace SpectrumEngine.Client.Avalonia.Providers
             var bytes = samples.Select(item => (short)(item * short.MaxValue * _volume)).ToArray();
 
             _ = Bass.StreamPutData(_streamHandle.Value, bytes, samples.Length * 2);
-        }
-
-        /// <summary>
-        /// Restes the audio provider
-        /// </summary>
-        public void Reset()
-        {
-            if (!_streamHandle.HasValue) return;
-
-            try
-            {
-                Bass.Stop();
-                Bass.Free();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex);
-            }
-
-            InitializeDevice();
         }
 
         /// <summary>
@@ -107,7 +80,7 @@ namespace SpectrumEngine.Client.Avalonia.Providers
             Bass.ChannelStop(_streamHandle.Value);
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!_disposedValue)
             {
@@ -136,7 +109,7 @@ namespace SpectrumEngine.Client.Avalonia.Providers
             Bass.UpdatePeriod = 10;
 
             // initialize default output device (and measure latency)
-            if (!Bass.Init(-1, SAMPLE_RATE, DeviceInitFlags.Latency))
+            if (!Bass.Init(-1, _sampleRate, DeviceInitFlags.Latency))
             {
                 System.Diagnostics.Debug.WriteLine("Can't initialize audio device");
             }
@@ -150,7 +123,7 @@ namespace SpectrumEngine.Client.Avalonia.Providers
             }
 
             // create stream and play it
-            _streamHandle = Bass.CreateStream(SAMPLE_RATE, 1, BassFlags.Default | BassFlags.Mono, StreamProcedureType.Push);
+            _streamHandle = Bass.CreateStream(_sampleRate, 1, BassFlags.Default | BassFlags.Mono, StreamProcedureType.Push);
             Bass.ChannelPlay(_streamHandle.Value);
         }
     }

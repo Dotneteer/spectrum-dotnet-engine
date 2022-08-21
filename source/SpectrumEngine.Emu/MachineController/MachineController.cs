@@ -127,6 +127,7 @@ public class MachineController
         // --- Stop the machine
         IsDebugging = false;
         await FinishExecutionLoop(MachineControllerState.Stopping, MachineControllerState.Stopped);
+        Machine.OnStop();
         
         // --- Reset frame statistics
         FrameStats.FrameCount = 0;

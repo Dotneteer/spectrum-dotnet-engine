@@ -3,7 +3,7 @@
 /// <summary>
 /// This interface defines the properties and operations of the ZX Spectrum's keyboard device.
 /// </summary>
-public interface IKeyboardDevice: IGenericDevice<IZxSpectrum48Machine>
+public interface IKeyboardDevice: IGenericDevice<IZxSpectrumMachine>
 {
     /// <summary>
     /// Set the status of the specified ZX Spectrum key.

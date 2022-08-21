@@ -9,7 +9,7 @@ public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice
     /// Initialize the floating port device and assign it to its host machine.
     /// </summary>
     /// <param name="machine">The machine hosting this device</param>
-    public ZxSpectrum48FloatingBusDevice(IZxSpectrum48Machine machine)
+    public ZxSpectrum48FloatingBusDevice(IZxSpectrumMachine machine)
     {
         Machine = machine;
     }
@@ -24,7 +24,7 @@ public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice
     /// <summary>
     /// Get the machine that hosts the device.
     /// </summary>
-    public IZxSpectrum48Machine Machine { get; }
+    public IZxSpectrumMachine Machine { get; }
 
     /// <summary>
     /// Reset the device to its initial state.

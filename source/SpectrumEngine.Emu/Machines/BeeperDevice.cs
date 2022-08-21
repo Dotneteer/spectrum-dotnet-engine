@@ -7,6 +7,7 @@ public sealed class BeeperDevice : IBeeperDevice
 {
     private const int GATE = 100_000;
 
+    private int _audioSampleRate;
     private int _audioSampleLength;
     private int _audioLowerGate;
     private int _audioGateValue;
@@ -17,7 +18,7 @@ public sealed class BeeperDevice : IBeeperDevice
     /// Initialize the beeper device and assign it to its host machine.
     /// </summary>
     /// <param name="machine">The machine hosting this device</param>
-    public BeeperDevice(IZxSpectrum48Machine machine)
+    public BeeperDevice(IZxSpectrumMachine machine)
     {
         Machine = machine;
     }
@@ -32,7 +33,7 @@ public sealed class BeeperDevice : IBeeperDevice
     /// <summary>
     /// Get the machine that hosts the device.
     /// </summary>
-    public IZxSpectrum48Machine Machine { get; }
+    public IZxSpectrumMachine Machine { get; }
 
     /// <summary>
     /// Reset the device to its initial state.
@@ -45,11 +46,17 @@ public sealed class BeeperDevice : IBeeperDevice
     }
 
     /// <summary>
+    /// Gets the audio sample rate
+    /// </summary>
+    public int GetAudioSampleRate() => _audioSampleRate;
+
+    /// <summary>
     /// Sets up the sample rate to use with this device
     /// </summary>
     /// <param name="sampleRate">Audio sample rate</param>
     public void SetAudioSampleRate(int sampleRate)
     {
+        _audioSampleRate = sampleRate;
         var sampleLength = (double)Machine.BaseClockFrequency * Machine.ClockMultiplier / sampleRate;
         _audioSampleLength = (int)sampleLength;
         _audioLowerGate = (int)((sampleLength - _audioSampleLength) * GATE);

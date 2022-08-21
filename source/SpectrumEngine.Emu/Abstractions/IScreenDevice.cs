@@ -3,7 +3,7 @@
 /// <summary>
 /// This interface defines the properties and operations of the ZX Spectrum's screen device.
 /// </summary>
-public interface IScreenDevice: IGenericDevice<IZxSpectrum48Machine>
+public interface IScreenDevice: IGenericDevice<IZxSpectrumMachine>
 {
     /// <summary>
     /// Get or set the configuration of this device.

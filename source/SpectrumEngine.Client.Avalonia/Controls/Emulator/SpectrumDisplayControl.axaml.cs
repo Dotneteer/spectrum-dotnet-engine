@@ -111,10 +111,9 @@ public partial class SpectrumDisplayControl : UserControl
         e.NewController.StateChanged += OnControllerStateChanged;
         e.NewController.Machine.MachinePropertyChanged += OnMachinePropertyChanged;
         
-        // TODO: Refactor initializing the audio 
-        if (e.NewController.Machine is ZxSpectrum48Machine zxMachine)
+        if (e.NewController.Machine is ZxSpectrumBase zxMachine)
         {
-            _audioProvider = new BassAudioProvider(zxMachine.BeeperDevice);
+            _audioProvider = new BassAudioProvider(zxMachine.BeeperDevice.GetAudioSampleRate());
         }
         
         // --- Reset the machine to its initial state
@@ -170,6 +169,7 @@ public partial class SpectrumDisplayControl : UserControl
             case MachineControllerState.Stopped:
                 display.OverlayMessage = "Stopped";
                 _audioProvider?.Stop();
+                _audioProvider?.Dispose();
                 break;
         }
     }
@@ -183,7 +183,7 @@ public partial class SpectrumDisplayControl : UserControl
         if (machine == null) return;
 
         // --- Add sound samples
-        var samples = (machine as ZxSpectrum48Machine)?.BeeperDevice.GetAudioSamples();
+        var samples = (machine as ZxSpectrumBase)?.BeeperDevice.GetAudioSamples();
         if (samples != null)
         {
             _audioProvider?.AddSamples(samples.Select(s => s * _volume).ToArray());
