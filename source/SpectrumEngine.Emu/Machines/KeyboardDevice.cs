@@ -16,7 +16,7 @@ public sealed class KeyboardDevice: IKeyboardDevice, IDisposable
     /// Initialize the keyboard device and assign it to its host machine.
     /// </summary>
     /// <param name="machine">The machine hosting this device</param>
-    public KeyboardDevice(IZxSpectrum48Machine machine)
+    public KeyboardDevice(IZxSpectrumMachine machine)
     {
         Machine = machine;
     }
@@ -31,7 +31,7 @@ public sealed class KeyboardDevice: IKeyboardDevice, IDisposable
     /// <summary>
     /// Get the machine that hosts the device.
     /// </summary>
-    public IZxSpectrum48Machine Machine { get; }
+    public IZxSpectrumMachine Machine { get; }
 
     /// <summary>
     /// Reset the device to its initial state.

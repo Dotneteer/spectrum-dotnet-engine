@@ -1,15 +1,15 @@
-﻿namespace SpectrumEngine.Emu;
+namespace SpectrumEngine.Emu.ZxSpectrum128;
 
 /// <summary>
-/// This class implements the ZX Spectrum 48 floating bus device.
+/// This class implements the ZX Spectrum 128 floating bus device.
 /// </summary>
-public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice
+public class ZxSpectrum128FloatingBusDevice: IFloatingBusDevice
 {
     /// <summary>
     /// Initialize the floating port device and assign it to its host machine.
     /// </summary>
     /// <param name="machine">The machine hosting this device</param>
-    public ZxSpectrum48FloatingBusDevice(IZxSpectrumMachine machine)
+    public ZxSpectrum128FloatingBusDevice(IZxSpectrumMachine machine)
     {
         Machine = machine;
     }
@@ -41,7 +41,7 @@ public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice
     public byte ReadFloatingBus()
     {
         var screen = Machine.ScreenDevice;
-        var renderTact = (Machine.CurrentFrameTact - 5 + Machine.TactsInFrame) % Machine.TactsInFrame;
+        var renderTact = (Machine.CurrentFrameTact - 3 + Machine.TactsInFrame) % Machine.TactsInFrame;
         var renderingTact = screen.RenderingTactTable[renderTact];
         switch (renderingTact.Phase)
         {
@@ -58,4 +58,3 @@ public sealed class ZxSpectrum48FloatingBusDevice : IFloatingBusDevice
         }
     }
 }
-

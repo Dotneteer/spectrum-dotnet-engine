@@ -113,15 +113,6 @@ public abstract class Z80MachineBase :
     }
 
     /// <summary>
-    /// This method provides a way to configure (or reconfigure) the emulated machine after changing the properties
-    /// of its components.
-    /// </summary>
-    public virtual void Configure()
-    {
-        // --- Implement this method in derived classes
-    }
-
-    /// <summary>
     /// This method emulates resetting a machine with a hardware reset button.
     /// </summary>
     public override void Reset()
@@ -174,6 +165,15 @@ public abstract class Z80MachineBase :
         return ExecutionContext.FrameTerminationMode == FrameTerminationMode.Normal
             ? ExecuteMachineLoopWithNoDebug()
             : ExecuteMachineLoopWithDebug();
+    }
+
+    /// <summary>
+    /// Clean up machine resources on stop
+    /// </summary>
+    public virtual void OnStop()
+    {
+        SetMachineProperty(MachinePropNames.TapeMode, TapeMode.Passive);
+        SetMachineProperty(MachinePropNames.RewindRequested, null);
     }
 
     /// <summary>

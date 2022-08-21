@@ -71,7 +71,7 @@ public partial class DisassemblyViewPanel : MachineStatusUserControl
         if (vm == null) return;
         await Task.Run(() =>
         {
-            var machine = vm.Machine.Controller?.Machine as ZxSpectrum48Machine;
+            var machine = vm.Machine.Controller?.Machine as ZxSpectrumBase;
             if (machine?.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[] memory)
             {
                 return;

@@ -3,7 +3,7 @@
 /// <summary>
 /// This interface defines the properties and operations of the ZX Spectrum's tape device.
 /// </summary>
-public interface ITapeDevice: IGenericDevice<IZxSpectrum48Machine>
+public interface ITapeDevice: IGenericDevice<IZxSpectrumMachine>
 {
     /// <summary>
     /// Get the current operation mode of the tape device.

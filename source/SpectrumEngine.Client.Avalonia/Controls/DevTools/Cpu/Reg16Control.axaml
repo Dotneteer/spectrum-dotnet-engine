@@ -13,7 +13,7 @@
         <TextBlock
             Grid.Column="1"
             Foreground="{DynamicResource DiagValueTextColor}"
-            Text="{Binding ElementName=UserControl, Path=Value, Converter={StaticResource HexConverter}}"/>
+            Text="{Binding ElementName=UserControl, Path=Value, StringFormat='{}{0:X4}'}"/>
         <TextBlock
             Grid.Column="2"
             Foreground="{DynamicResource DiagSecondaryTextColor}"

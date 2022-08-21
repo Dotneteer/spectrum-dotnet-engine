@@ -25,7 +25,9 @@ public class MainWindowViewModel : ViewModelBase
         {
             if (change.NewController == null) return;
             Cpu = new CpuPanelViewModel(change.NewController);
+            RaisePropertyChanged(nameof(Cpu));
             Ula = new UlaPanelViewModel(change.NewController);
+            RaisePropertyChanged(nameof(Ula));
         };
         
         // --- Spectrum Display

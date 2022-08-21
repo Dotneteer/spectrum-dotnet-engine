@@ -51,7 +51,7 @@
                                     Width="20"
                                     Height="20" />
                                 <TextBlock 
-                                    Text="{Binding Address, Converter={StaticResource HexConverter}}" 
+                                    Text="{Binding Address, StringFormat='{}{0:X4}'}" 
                                     VerticalAlignment="Center"
                                     Foreground="{DynamicResource DiagValueTextColor}"
                                     Width = "40" />

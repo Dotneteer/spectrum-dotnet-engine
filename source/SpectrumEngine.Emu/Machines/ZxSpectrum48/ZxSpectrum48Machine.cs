@@ -5,40 +5,12 @@ namespace SpectrumEngine.Emu;
 /// This class represents the emulator of a ZX Spectrum 48 machine.
 /// </summary>
 public class ZxSpectrum48Machine :
-    Z80MachineBase,
-    IZxSpectrum48Machine
+    ZxSpectrumBase
 {
     #region Private members
 
-    private const int AUDIO_SAMPLE_RATE = 48_000;
-
     // --- This byte array represents the 64K memory, including the 16K ROM and 48K RAM.
     private readonly byte[] _memory = new byte[0x1_0000];
-
-    // --- This byte array stores the contention values associated with a particular machine frame tact.
-    private byte[] _contentionValues = Array.Empty<byte>();
-
-    // --- Stores the last rendered machine frame tact.
-    private int _lastRenderedFrameTact;
-
-    // --- Last value of bit 3 on port $FE
-    private bool _portBit3LastValue;
-
-    // --- Last value of bit 4 on port $FE
-    private bool _portBit4LastValue;
-
-    // --- Tacts value when last time bit 4 of $fe changed from 0 to 1
-    private ulong _portBit4ChangedFrom0Tacts;
-
-    // --- Tacts value when last time bit 4 of $fe changed from 1 to 0
-    private ulong _portBit4ChangedFrom1Tacts;
-
-    // --- The clock multiplier value used in the previous machine frame;
-    private int _oldClockMultiplier;
-
-    // --- Stores the key strokes to emulate
-    private readonly Queue<EmulatedKeyStroke> _emulatedKeyStrokes =
-        new Queue<EmulatedKeyStroke>();
 
     #endregion
 
@@ -66,7 +38,7 @@ public class ZxSpectrum48Machine :
         
         // --- Create and initialize devices
         KeyboardDevice = new KeyboardDevice(this);
-        ScreenDevice = new ScreenDevice(this);
+        ScreenDevice = new CommonScreenDevice(this, CommonScreenDevice.ZxSpectrum48ScreenConfiguration);
         BeeperDevice = new BeeperDevice(this);
         FloatingBusDevice = new ZxSpectrum48FloatingBusDevice(this);
         TapeDevice = new TapeDevice(this);
@@ -87,37 +59,7 @@ public class ZxSpectrum48Machine :
     /// <summary>
     /// Gets the ULA issue number of the ZX Spectrum model (2 or 3)
     /// </summary>
-    public int UlaIssue { get; set; } = 3;
-
-    /// <summary>
-    /// Represents the keyboard device of ZX Spectrum 48K
-    /// </summary>
-    public IKeyboardDevice KeyboardDevice { get; }
-
-    /// <summary>
-    /// Represents the screen device of ZX Spectrum 48K
-    /// </summary>
-    public IScreenDevice ScreenDevice { get; }
-
-    /// <summary>
-    /// Represents the beeper device of ZX Spectrum 48K
-    /// </summary>
-    public IBeeperDevice BeeperDevice { get; }
-
-    /// <summary>
-    /// Represents the floating port device of ZX Spectrum 48K
-    /// </summary>
-    public IFloatingBusDevice FloatingBusDevice { get; }
-
-    /// <summary>
-    /// Represents the tape device of ZX Spectrum 48K
-    /// </summary>
-    public ITapeDevice TapeDevice { get; }
-
-    /// <summary>
-    /// Indicates if the currently selected ROM is the ZX Spectrum 48 ROM
-    /// </summary>
-    public bool IsSpectrum48RomSelected => true;
+    public override int UlaIssue { get; set; } = 3;
 
     /// <summary>
     /// Emulates turning on a machine (after it has been turned off).
@@ -150,15 +92,15 @@ public class ZxSpectrum48Machine :
         SetMachineProperty(MachinePropNames.RewindRequested, null);
 
         // --- Unknown clock multiplier in the previous frame
-        _oldClockMultiplier = -1;
+        OldClockMultiplier = -1;
 
         // --- Prepare for running a new machine loop
         ClockMultiplier = TargetClockMultiplier;
         ExecutionContext.LastTerminationReason = null;
-        _lastRenderedFrameTact = -0;
+        LastRenderedFrameTact = -0;
 
         // --- Empty the queue of emulated keystrokes
-        lock (_emulatedKeyStrokes) { _emulatedKeyStrokes.Clear(); }
+        lock (EmulatedKeyStrokes) { EmulatedKeyStrokes.Clear(); }
     }
 
     /// <summary>
@@ -239,45 +181,10 @@ public class ZxSpectrum48Machine :
         if ((address & 0xc000) != 0x4000) return;
         
         // --- We read from contended memory
-        var delay = _contentionValues[CurrentFrameTact / ClockMultiplier];
+        var delay = GetContentionValue(CurrentFrameTact / ClockMultiplier);
         TactPlusN(delay);
         TotalContentionDelaySinceStart += delay;
         ContentionDelaySincePause += delay;
-    }
-
-    /// <summary>
-    /// This method allocates storage for the memory contention values.
-    /// </summary>
-    /// <param name="tactsInFrame">Number of tacts in a machine frame</param>
-    /// <remarks>
-    /// Each machine frame tact that renders a display pixel may have a contention delay. If the CPU reads or writes
-    /// data or uses an I/O port in that particular frame tact, the memory operation may be delayed. When the machine's
-    /// screen device is initialized, it calculates the number of tacts in a frame and calls this method to allocate
-    /// storage for the contention values.
-    /// </remarks>
-    public void AllocateContentionValues(int tactsInFrame)
-    {
-        _contentionValues = new byte[tactsInFrame];
-    }
-
-    /// <summary>
-    /// This method sets the contention value associated with the specified machine frame tact.
-    /// </summary>
-    /// <param name="tact">Machine frame tact</param>
-    /// <param name="value">Contention value</param>
-    public void SetContentionValue(int tact, byte value)
-    {
-        _contentionValues[tact] = value;
-    }
-
-    /// <summary>
-    /// This method gets the contention value for the specified machine frame tact.
-    /// </summary>
-    /// <param name="tact">Machine frame tact</param>
-    /// <returns>The contention value associated with the specified tact.</returns>
-    public byte GetContentionValue(int tact)
-    {
-        return _contentionValues[tact];
     }
 
     #endregion
@@ -333,161 +240,6 @@ public class ZxSpectrum48Machine :
     /// </remarks>
     public override void DelayPortWrite(ushort address) => DelayContendedIo(address);
 
-    /// <summary>
-    /// Reads a byte from the ZX Spectrum generic input port.
-    /// </summary>
-    /// <param name="address">Port address</param>
-    /// <returns>Byte value read from the generic port</returns>
-    private byte ReadPort0Xfe(ushort address)
-    {
-        var portValue = KeyboardDevice.GetKeyLineStatus(address);
-
-        // --- Check for LOAD mode
-        if (TapeDevice.TapeMode == TapeMode.Load)
-        {
-            var earBit = TapeDevice.GetTapeEarBit();
-            BeeperDevice.SetEarBit(earBit);
-            portValue = (byte)((portValue & 0xbf) | (earBit ? 0x40 : 0));
-        }
-        else
-        {
-            // --- Handle analog EAR bit
-            var bit4Sensed = _portBit4LastValue;
-            if (!bit4Sensed)
-            {
-                // --- Changed later to 1 from 0 than to 0 from 1?
-                var chargeTime = _portBit4ChangedFrom1Tacts - _portBit4ChangedFrom0Tacts;
-                if (chargeTime > 0)
-                {
-                    // --- Yes, calculate charge time
-                    chargeTime = chargeTime > 700 ? 2800 : 4 * chargeTime;
-
-                    // --- Calculate time ellapsed since last change from 1 to 0
-                    bit4Sensed = Tacts - _portBit4ChangedFrom1Tacts < chargeTime;
-                }
-            }
-
-            // --- Calculate bit 6 value
-            var bit6Value = _portBit3LastValue
-              ? 0x40
-              : bit4Sensed
-                ? 0x40
-                : 0x00;
-
-            // --- Check for ULA 3
-            if (UlaIssue == 3 && _portBit3LastValue && !bit4Sensed)
-            {
-                bit6Value = 0x00;
-            }
-
-            // --- Merge bit 6 with port value
-            portValue = (byte)((portValue & 0xbf) | bit6Value);
-        }
-        return portValue;
-    }
-
-    /// <summary>
-    /// Wites the specified data byte to the ZX Spectrum generic output port.
-    /// </summary>
-    /// <param name="value">Data byte to write</param>
-    // ReSharper disable once InconsistentNaming
-    private void WritePort0xFE(byte value)
-    {
-        // --- Extract bthe border color
-        ScreenDevice.BorderColor = value & 0x07;
-
-        // --- Store the last EAR bit
-        var bit4 = value & 0x10;
-        BeeperDevice.SetEarBit(bit4 != 0);
-
-        // --- Set the last value of bit3
-        _portBit3LastValue = (value & 0x08) != 0;
-
-        // --- Instruct the tape device process the MIC bit
-        TapeDevice.ProcessMicBit(_portBit3LastValue);
-
-        // --- Manage bit 4 value
-        if (_portBit4LastValue)
-        {
-            // --- Bit 4 was 1, is it now 0?
-            if (bit4 == 0)
-            {
-                _portBit4ChangedFrom1Tacts = Tacts;
-                _portBit4LastValue = false;
-            }
-        }
-        else
-        {
-            // --- Bit 4 was 0, is it now 1?
-            if (bit4 != 0)
-            {
-                _portBit4ChangedFrom0Tacts = Tacts;
-                _portBit4LastValue = true;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Delays the I/O access according to address bus contention
-    /// </summary>
-    /// <param name="address"></param>
-    private void DelayContendedIo(ushort address)
-    {
-        var lowbit = (address & 0x0001) != 0;
-
-        // --- Check for contended range
-        if ((address & 0xc000) == 0x4000)
-        {
-            if (lowbit)
-            {
-                // --- Low bit set, C:1, C:1, C:1, C:1
-                ApplyContentionDelay();
-                TactPlus1();
-                ApplyContentionDelay();
-                TactPlus1();
-                ApplyContentionDelay();
-                TactPlus1();
-                ApplyContentionDelay();
-                TactPlus1();
-            }
-            else
-            {
-                // --- Low bit reset, C:1, C:3
-                ApplyContentionDelay();
-                TactPlus1();
-                ApplyContentionDelay();
-                TactPlus3();
-            }
-        }
-        else
-        {
-            if (lowbit)
-            {
-                // --- Low bit set, N:4
-                TactPlus4();
-            }
-            else
-            {
-                // --- Low bit reset, C:1, C:3
-                TactPlus1();
-                ApplyContentionDelay();
-                TactPlus3();
-            }
-        }
-        
-        TotalContentionDelaySinceStart += 4;
-        ContentionDelaySincePause += 4;
-
-        // --- Apply I/O contention
-        void ApplyContentionDelay()
-        {
-            var delay = GetContentionValue(CurrentFrameTact / ClockMultiplier);
-            TactPlusN(delay);
-            TotalContentionDelaySinceStart += delay;
-            ContentionDelaySincePause += delay;
-        }
-    }
-
     #endregion
 
     #region Display
@@ -509,159 +261,6 @@ public class ZxSpectrum48Machine :
 
     #endregion
     
-    #region Keyboard
-    
-    /// <summary>
-    /// Set the status of the specified ZX Spectrum key.
-    /// </summary>
-    /// <param name="key">Key code</param>
-    /// <param name="isDown">Indicates if the key is pressed down.</param>
-    public override void SetKeyStatus(SpectrumKeyCode key, bool isDown)
-    {
-        KeyboardDevice.SetStatus(key, isDown);
-    }
-
-    /// <summary>
-    /// Emulates queued key strokes as if those were pressed by the user
-    /// </summary>
-    public override void EmulateKeystroke()
-    {
-        // --- Exit, if no keystroke to emulate
-        lock (_emulatedKeyStrokes)
-        {
-            if (_emulatedKeyStrokes.Count == 0) return;
-        }
-
-        // --- Check the next keystroke
-        EmulatedKeyStroke keyStroke;
-        lock (_emulatedKeyStrokes)
-        {
-            keyStroke = _emulatedKeyStrokes.Peek();
-        }
-
-        // --- Time has not come
-        if (keyStroke.StartTact > Tacts) return;
-
-        if (keyStroke.EndTact < Tacts)
-        {
-            // --- End emulation of this very keystroke
-            KeyboardDevice.SetStatus(keyStroke.PrimaryCode, false);
-            if (keyStroke.SecondaryCode.HasValue)
-            {
-                KeyboardDevice.SetStatus(keyStroke.SecondaryCode.Value, false);
-            }
-
-            // --- Remove the keystroke from the queue
-            lock (_emulatedKeyStrokes) _emulatedKeyStrokes.Dequeue();
-            return;
-        }
-
-        // --- Emulate this very keystroke, and leave it in the queue
-        KeyboardDevice.SetStatus(keyStroke.PrimaryCode, true);
-        if (keyStroke.SecondaryCode.HasValue)
-        {
-            KeyboardDevice.SetStatus(keyStroke.SecondaryCode.Value, true);
-        }
-    }
-
-    /// <summary>
-    /// Adds an emulated keypress to the queue of the provider.
-    /// </summary>
-    /// <param name="startFrame">Frame count to start the emulation</param>
-    /// <param name="frames">Number of frames to hold the emulation</param>
-    /// <param name="primary">Primary key code</param>
-    /// <param name="secondary">Optional secondary key code</param>
-    /// <remarks>The provider can play back emulated key strokes</remarks>
-    public override void QueueKeystroke(
-        int startFrame, 
-        int frames, 
-        SpectrumKeyCode primary, 
-        SpectrumKeyCode? secondary)
-    {
-        lock (_emulatedKeyStrokes)
-        {
-            var startTact = (ulong)startFrame * (ulong)TactsInFrame * (ulong)ClockMultiplier;
-            var endTact = startTact + (ulong)frames * (ulong)TactsInFrame * (ulong)ClockMultiplier;
-            var keypress = new EmulatedKeyStroke(startTact, endTact, primary, secondary);
-            if (_emulatedKeyStrokes.Count == 0)
-            {
-                _emulatedKeyStrokes.Enqueue(keypress);
-                return;
-            }
-
-            var last = _emulatedKeyStrokes.Peek();
-            if (last.PrimaryCode == keypress.PrimaryCode
-                && last.SecondaryCode == keypress.SecondaryCode)
-            {
-                // --- The same key has been clicked
-                if (keypress.StartTact >= last.StartTact && keypress.StartTact <= last.EndTact)
-                {
-                    // --- Old and new click ranges overlap, lengthen the old click
-                    last.EndTact = keypress.EndTact;
-                    return;
-                }
-            }
-            _emulatedKeyStrokes.Enqueue(keypress);
-        }
-    }
-
-    #endregion
-
-    /// <summary>
-    /// The machine's execution loop calls this method when it is about to initialize a new frame.
-    /// </summary>
-    /// <param name="clockMultiplierChanged">
-    /// Indicates if the clock multiplier has been changed since the execution of the previous frame.
-    /// </param>
-    protected override void OnInitNewFrame(bool clockMultiplierChanged)
-    {
-        // --- No screen tact rendered in this frame
-        _lastRenderedFrameTact = 0;
-
-        // --- Prepare the screen device for the new machine frame
-        ScreenDevice.OnNewFrame();
-
-        // --- Handle audio sample recalculations when the actual clock frequency changes
-        if (_oldClockMultiplier != ClockMultiplier)
-        {
-            BeeperDevice.SetAudioSampleRate(AUDIO_SAMPLE_RATE);
-            _oldClockMultiplier = ClockMultiplier;
-        }
-
-        // --- Prepare the beeper device for the new frame
-        BeeperDevice.OnNewFrame();
-    }
-
-    /// <summary>
-    /// Tests if the machine should raise a Z80 maskable interrupt
-    /// </summary>
-    /// <returns>
-    /// True, if the INT signal should be active; otherwise, false.
-    /// </returns>
-    protected override bool ShouldRaiseInterrupt() => CurrentFrameTact / ClockMultiplier < 32;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    protected override void AfterInstructionExecuted()
-    {
-        TapeDevice.UpdateTapeMode();
-    }
-
-    /// <summary>
-    /// Every time the CPU clock is incremented, this function is executed.
-    /// </summary>
-    /// <param name="increment">The tact increment value</param>
-    public override void OnTactIncremented(int increment)
-    {
-        var machineTact = CurrentFrameTact / ClockMultiplier;
-        while (_lastRenderedFrameTact <= machineTact)
-        {
-            ScreenDevice.RenderTact(_lastRenderedFrameTact++);
-        }
-        BeeperDevice.RenderBeeperSample();
-    }
-
     /// <summary>
     /// Uploades the specified ROM information to the ZX Spectrum 48 ROM memory
     /// </summary>

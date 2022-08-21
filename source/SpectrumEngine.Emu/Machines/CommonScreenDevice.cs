@@ -5,15 +5,8 @@ namespace SpectrumEngine.Emu;
 /// <summary>
 /// This class implements the ZX Spectrum screen device.
 /// </summary>
-public sealed class ScreenDevice : IScreenDevice, IDisposable
+public sealed class CommonScreenDevice : IScreenDevice
 {
-    // --- These are the default memory contention values we use
-    private static byte[] DefaultContentionValues = new byte[] { 6, 5, 4, 3, 2, 1, 0, 0 };
-
-    // --- We use this reference for the default contention values so that in the future, we can configure it (for
-    // --- example, when implementing ZX Spectrum +2/+3)
-    private byte[] _contentionValues = DefaultContentionValues;
-
     // --- The current configuration
     private ScreenConfiguration _configuration;
 
@@ -61,33 +54,35 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
         HorizontalBlankingTime = 40,
         NonVisibleBorderRightTime = 8,
         PixelDataPrefetchTime = 2,
-        AttributeDataPrefetchTime = 1
+        AttributeDataPrefetchTime = 1,
+        ContentionValues = new byte[] { 6, 5, 4, 3, 2, 1, 0, 0 }
     };
 
     /// <summary>
-    /// Define the screen configuration attributes of ZX Spectrum 48K (NTSC)
+    /// Define the screen configuration attributes of ZX Spectrum 48K (PAL)
     /// </summary>
-    public static readonly ScreenConfiguration ZxSpectrum48NtscScreenConfiguration = new()
+    public static readonly ScreenConfiguration ZxSpectrum128ScreenConfiguration = new()
     {
         VerticalSyncLines = 8,
-        NonVisibleBorderTopLines = 16,
-        BorderTopLines = 24,
-        BorderBottomLines = 24,
-        NonVisibleBorderBottomLines = 0,
+        NonVisibleBorderTopLines = 7,
+        BorderTopLines = 48,
+        BorderBottomLines = 48,
+        NonVisibleBorderBottomLines = 8,
         DisplayLines = 192,
         BorderLeftTime = 24,
         BorderRightTime = 24,
         DisplayLineTime = 128,
         HorizontalBlankingTime = 40,
-        NonVisibleBorderRightTime = 8,
+        NonVisibleBorderRightTime = 12,
         PixelDataPrefetchTime = 2,
-        AttributeDataPrefetchTime = 1
+        AttributeDataPrefetchTime = 1,
+        ContentionValues = new byte[] { 4, 3, 2, 1, 0, 0, 6, 5 }
     };
 
     /// <summary>
     /// This table defines the ARGB colors for the 16 available colors on the ZX Spectrum 48K model.
     /// </summary>
-    public static readonly ReadOnlyCollection<uint> SpectrumColors = new(new List<uint>
+    private static readonly ReadOnlyCollection<uint> s_SpectrumColors = new(new List<uint>
     {
         0xFF000000, // Black
         0xFF0000AA, // Blue
@@ -107,6 +102,10 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
         0xFFFFFFFF, // Bright White
     });
 
+    // --- We use this reference for the default contention values so that in the future, we can configure it (for
+    // --- example, when implementing ZX Spectrum +2/+3)
+    private byte[] ContentionValues => _configuration.ContentionValues;
+
     /// <summary>
     /// Get or set the current border color.
     /// </summary>
@@ -120,7 +119,7 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     /// <summary>
     /// This buffer stores the bitmap of the screen being rendered. Each 32-bit value represents an ARGB pixel.
     /// </summary>
-    public uint[] PixelBuffer = Array.Empty<uint>();
+    private uint[] _pixelBuffer = Array.Empty<uint>();
 
     /// <summary>
     /// This value shows the refresh rate calculated from the base clock frequency of the CPU and the screen
@@ -143,10 +142,11 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     /// Initialize the screen device and assign it to its host machine.
     /// </summary>
     /// <param name="machine">The machine hosting this device</param>
-    public ScreenDevice(IZxSpectrum48Machine machine)
+    /// <param name="config">Screen configuration to use</param>
+    public CommonScreenDevice(IZxSpectrumMachine machine, ScreenConfiguration config)
     {
         Machine = machine;
-        _configuration = ZxSpectrum48ScreenConfiguration;
+        _configuration = config;
         _flashFlag = false;
     }
 
@@ -160,7 +160,7 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     /// <summary>
     /// Get the machine that hosts the device.
     /// </summary>
-    public IZxSpectrum48Machine Machine { get; }
+    public IZxSpectrumMachine Machine { get; }
 
     /// <summary>
     /// Reset the device to its initial state.
@@ -229,7 +229,7 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     /// Gets the buffer that stores the rendered pixels
     /// </summary>
     /// <returns></returns>
-    public uint[] GetPixelBuffer() => PixelBuffer;
+    public uint[] GetPixelBuffer() => _pixelBuffer;
 
     /// <summary>
     /// This method signs that a new screen frame has been started
@@ -271,7 +271,7 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
 
             // --- Use normal paper and ink colors when flash is on and normal flash phase is active
             // --- Exchange paper and ink colors when flash is on and inverted flash phase is active
-            _paperColorFlashOn[attr] = (attr & 0x80) != 0 ? ink : paper; ;
+            _paperColorFlashOn[attr] = (attr & 0x80) != 0 ? ink : paper;
             _inkColorFlashOn[attr] = (attr & 0x80) != 0 ? paper : ink;
         }
     }
@@ -308,7 +308,7 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
             _configuration.BorderRightTime);
 
         // --- Prepare the pixel buffer to store the rendered screen bitmap
-        PixelBuffer = new uint[(ScreenLines+4) * ScreenWidth];
+        _pixelBuffer = new uint[(ScreenLines+4) * ScreenWidth];
 
         // --- Calculate the entire rendering time of a single screen line
         var screenLineTime =
@@ -378,7 +378,7 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
                     {
                         currentTact.Phase = RenderingPhase.Border;
                         currentTact.RenderingAction = RenderTactBorder;
-                        Machine.SetContentionValue(tact, _contentionValues[6]);
+                        Machine.SetContentionValue(tact, ContentionValues[6]);
                         calculated = true;
                     }
                     else if (tactInLine == borderPixelFetchTact)
@@ -387,7 +387,7 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
                         currentTact.Phase = RenderingPhase.BorderFetchPixel;
                         currentTact.PixelAddress = CalcPixelAddress(line + 1, 0);
                         currentTact.RenderingAction = RenderTactBorderFetchPixel;
-                        Machine.SetContentionValue(tact, _contentionValues[7]);
+                        Machine.SetContentionValue(tact, ContentionValues[7]);
                         calculated = true;
                     }
                     else if (tactInLine == borderAttrFetchTact)
@@ -395,7 +395,7 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
                         currentTact.Phase = RenderingPhase.BorderFetchAttr;
                         currentTact.AttributeAddress = CalcAttrAddress(line + 1, 0);
                         currentTact.RenderingAction = RenderTactBorderFetchAttr;
-                        Machine.SetContentionValue(tact, _contentionValues[0]);
+                        Machine.SetContentionValue(tact, ContentionValues[0]);
                         calculated = true;
                     }
                 }
@@ -418,33 +418,33 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
                                 currentTact.Phase = RenderingPhase.DisplayB1FetchB2;
                                 currentTact.PixelAddress = CalcPixelAddress(line, tactInLine + 4);
                                 currentTact.RenderingAction = RenderTactDislayByte1FetchByte2;
-                                Machine.SetContentionValue(tact, _contentionValues[1]);
+                                Machine.SetContentionValue(tact, ContentionValues[1]);
                                 break;
                             case 1:
                                 currentTact.Phase = RenderingPhase.DisplayB1FetchA2;
                                 currentTact.AttributeAddress = CalcAttrAddress(line, tactInLine + 3);
                                 currentTact.RenderingAction = RenderTactDislayByte1FetchAttr2;
-                                Machine.SetContentionValue(tact, _contentionValues[2]);
+                                Machine.SetContentionValue(tact, ContentionValues[2]);
                                 break;
                             case 2:
                                 currentTact.Phase = RenderingPhase.DisplayB1;
                                 currentTact.RenderingAction = RenderTactDislayByte1;
-                                Machine.SetContentionValue(tact, _contentionValues[3]);
+                                Machine.SetContentionValue(tact, ContentionValues[3]);
                                 break;
                             case 3:
                                 currentTact.Phase = RenderingPhase.DisplayB1;
                                 currentTact.RenderingAction = RenderTactDislayByte1;
-                                Machine.SetContentionValue(tact, _contentionValues[4]);
+                                Machine.SetContentionValue(tact, ContentionValues[4]);
                                 break;
                             case 4:
                                 currentTact.Phase = RenderingPhase.DisplayB2;
                                 currentTact.RenderingAction = RenderTactDislayByte2;
-                                Machine.SetContentionValue(tact, _contentionValues[5]);
+                                Machine.SetContentionValue(tact, ContentionValues[5]);
                                 break;
                             case 5:
                                 currentTact.Phase = RenderingPhase.DisplayB2;
                                 currentTact.RenderingAction = RenderTactDislayByte2;
-                                Machine.SetContentionValue(tact, _contentionValues[6]);
+                                Machine.SetContentionValue(tact, ContentionValues[6]);
                                 break;
                             case 6:
                                 // --- Test, if there are more pixels to display in this line
@@ -454,7 +454,7 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
                                     currentTact.Phase = RenderingPhase.DisplayB2FetchB1;
                                     currentTact.PixelAddress = CalcPixelAddress(line, tactInLine + _configuration.PixelDataPrefetchTime);
                                     currentTact.RenderingAction = RenderTactDislayByte2FetchByte1;
-                                    Machine.SetContentionValue(tact, _contentionValues[7]);
+                                    Machine.SetContentionValue(tact, ContentionValues[7]);
                                 }
                                 else
                                 {
@@ -471,7 +471,7 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
                                     currentTact.Phase = RenderingPhase.DisplayB2FetchA1;
                                     currentTact.AttributeAddress = CalcAttrAddress(line, tactInLine + _configuration.AttributeDataPrefetchTime);
                                     currentTact.RenderingAction = RenderTactDislayByte2FetchAttr1;
-                                    Machine.SetContentionValue(tact, _contentionValues[0]);
+                                    Machine.SetContentionValue(tact, ContentionValues[0]);
                                 }
                                 else
                                 {
@@ -500,14 +500,14 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
                                 currentTact.Phase = RenderingPhase.BorderFetchPixel;
                                 currentTact.PixelAddress = CalcPixelAddress(line + 1, 0);
                                 currentTact.RenderingAction = RenderTactBorderFetchPixel;
-                                Machine.SetContentionValue(tact, _contentionValues[7]);
+                                Machine.SetContentionValue(tact, ContentionValues[7]);
                             }
                             else if (tactInLine == borderAttrFetchTact)
                             {
                                 currentTact.Phase = RenderingPhase.BorderFetchAttr;
                                 currentTact.AttributeAddress = CalcAttrAddress(line + 1, 0);
                                 currentTact.RenderingAction = RenderTactBorderFetchAttr;
-                                Machine.SetContentionValue(tact, _contentionValues[0]);
+                                Machine.SetContentionValue(tact, ContentionValues[0]);
                             }
                         }
                     }
@@ -590,8 +590,8 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     /// <param name="attr">Attribute byte to use</param>
     /// <returns>ARGB color to display</returns>
     private uint GetPixelColor(int pixel, byte attr) => pixel != 0
-        ? (_flashFlag ? SpectrumColors[_inkColorFlashOn[attr]] : SpectrumColors[_inkColorFlashOff[attr]])
-        : (_flashFlag ? SpectrumColors[_paperColorFlashOn[attr]] : SpectrumColors[_paperColorFlashOff[attr]]);
+        ? (_flashFlag ? s_SpectrumColors[_inkColorFlashOn[attr]] : s_SpectrumColors[_inkColorFlashOff[attr]])
+        : (_flashFlag ? s_SpectrumColors[_paperColorFlashOn[attr]] : s_SpectrumColors[_paperColorFlashOff[attr]]);
 
     /// <summary>
     /// Render a border pixel.
@@ -600,8 +600,8 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     private void RenderTactBorder(RenderingTact rt)
     {
         var addr = rt.PixelBufferIndex;
-        PixelBuffer[addr] = SpectrumColors[BorderColor];
-        PixelBuffer[addr + 1] = SpectrumColors[BorderColor];
+        _pixelBuffer[addr] = s_SpectrumColors[BorderColor];
+        _pixelBuffer[addr + 1] = s_SpectrumColors[BorderColor];
     }
 
     /// <summary>
@@ -611,8 +611,8 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     private void RenderTactBorderFetchPixel(RenderingTact rt)
     {
         var addr = rt.PixelBufferIndex;
-        PixelBuffer[addr] = SpectrumColors[BorderColor];
-        PixelBuffer[addr + 1] = SpectrumColors[BorderColor];
+        _pixelBuffer[addr] = s_SpectrumColors[BorderColor];
+        _pixelBuffer[addr + 1] = s_SpectrumColors[BorderColor];
         _pixelByte1 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
     }
 
@@ -623,8 +623,8 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     private void RenderTactBorderFetchAttr(RenderingTact rt)
     {
         var addr = rt.PixelBufferIndex;
-        PixelBuffer[addr] = SpectrumColors[BorderColor];
-        PixelBuffer[addr + 1] = SpectrumColors[BorderColor];
+        _pixelBuffer[addr] = s_SpectrumColors[BorderColor];
+        _pixelBuffer[addr + 1] = s_SpectrumColors[BorderColor];
         _attrByte1 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
     }
 
@@ -635,8 +635,8 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     private void RenderTactDislayByte1(RenderingTact rt)
     {
         var addr = rt.PixelBufferIndex;
-        PixelBuffer[addr] = GetPixelColor(_pixelByte1 & 0x80, _attrByte1);
-        PixelBuffer[addr + 1] = GetPixelColor(_pixelByte1 & 0x40, _attrByte1);
+        _pixelBuffer[addr] = GetPixelColor(_pixelByte1 & 0x80, _attrByte1);
+        _pixelBuffer[addr + 1] = GetPixelColor(_pixelByte1 & 0x40, _attrByte1);
         _pixelByte1 <<= 2;
     }
 
@@ -647,8 +647,8 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     private void RenderTactDislayByte1FetchByte2(RenderingTact rt)
     {
         var addr = rt.PixelBufferIndex;
-        PixelBuffer[addr] = GetPixelColor(_pixelByte1 & 0x80, _attrByte1);
-        PixelBuffer[addr + 1] = GetPixelColor(_pixelByte1 & 0x40, _attrByte1);
+        _pixelBuffer[addr] = GetPixelColor(_pixelByte1 & 0x80, _attrByte1);
+        _pixelBuffer[addr + 1] = GetPixelColor(_pixelByte1 & 0x40, _attrByte1);
         _pixelByte1 <<= 2;
         _pixelByte2 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
     }
@@ -660,8 +660,8 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     private void RenderTactDislayByte1FetchAttr2(RenderingTact rt)
     {
         var addr = rt.PixelBufferIndex;
-        PixelBuffer[addr] = GetPixelColor(_pixelByte1 & 0x80, _attrByte1);
-        PixelBuffer[addr + 1] = GetPixelColor(_pixelByte1 & 0x40, _attrByte1);
+        _pixelBuffer[addr] = GetPixelColor(_pixelByte1 & 0x80, _attrByte1);
+        _pixelBuffer[addr + 1] = GetPixelColor(_pixelByte1 & 0x40, _attrByte1);
         _pixelByte1 <<= 2;
         _attrByte2 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
     }
@@ -673,8 +673,8 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     private void RenderTactDislayByte2(RenderingTact rt)
     {
         var addr = rt.PixelBufferIndex;
-        PixelBuffer[addr] = GetPixelColor(_pixelByte2 & 0x80, _attrByte2);
-        PixelBuffer[addr + 1] = GetPixelColor(_pixelByte2 & 0x40, _attrByte2);
+        _pixelBuffer[addr] = GetPixelColor(_pixelByte2 & 0x80, _attrByte2);
+        _pixelBuffer[addr + 1] = GetPixelColor(_pixelByte2 & 0x40, _attrByte2);
         _pixelByte2 <<= 2;
     }
 
@@ -685,8 +685,8 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     private void RenderTactDislayByte2FetchByte1(RenderingTact rt)
     {
         var addr = rt.PixelBufferIndex;
-        PixelBuffer[addr] = GetPixelColor(_pixelByte2 & 0x80, _attrByte2);
-        PixelBuffer[addr + 1] = GetPixelColor(_pixelByte2 & 0x40, _attrByte2);
+        _pixelBuffer[addr] = GetPixelColor(_pixelByte2 & 0x80, _attrByte2);
+        _pixelBuffer[addr + 1] = GetPixelColor(_pixelByte2 & 0x40, _attrByte2);
         _pixelByte2 <<= 2;
         _pixelByte1 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.PixelAddress));
     }
@@ -698,8 +698,8 @@ public sealed class ScreenDevice : IScreenDevice, IDisposable
     private void RenderTactDislayByte2FetchAttr1(RenderingTact rt)
     {
         var addr = rt.PixelBufferIndex;
-        PixelBuffer[addr] = GetPixelColor(_pixelByte2 & 0x80, _attrByte2);
-        PixelBuffer[addr + 1] = GetPixelColor(_pixelByte2 & 0x40, _attrByte2);
+        _pixelBuffer[addr] = GetPixelColor(_pixelByte2 & 0x80, _attrByte2);
+        _pixelBuffer[addr + 1] = GetPixelColor(_pixelByte2 & 0x40, _attrByte2);
         _pixelByte2 <<= 2;
         _attrByte1 = Machine.DoReadMemory((ushort)(MemoryScreenOffset + rt.AttributeAddress));
     }

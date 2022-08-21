@@ -55,12 +55,6 @@ public interface IZ80Machine : IZ80Cpu
     int TargetClockMultiplier { get; set; }
 
     /// <summary>
-    /// This method provides a way to configure (or reconfigure) the emulated machine after changing the properties
-    /// of its components.
-    /// </summary>
-    void Configure();
-
-    /// <summary>
     /// Executes the machine frame using the current execution context.
     /// </summary>
     /// <returns>
@@ -68,6 +62,11 @@ public interface IZ80Machine : IZ80Cpu
     /// </returns>
     FrameTerminationMode ExecuteMachineFrame();
 
+    /// <summary>
+    /// Clean up machine resources on stop
+    /// </summary>
+    void OnStop();
+    
     /// <summary>
     /// Width of the screen in native machine screen pixels
     /// </summary>

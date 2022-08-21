@@ -3,8 +3,13 @@
 /// <summary>
 /// This interface represents anaudio device that creates sound samples according to a particular sample rate.
 /// </summary>
-public interface IAudioDevice : IGenericDevice<IZxSpectrum48Machine>
+public interface IAudioDevice : IGenericDevice<IZxSpectrumMachine>
 {
+    /// <summary>
+    /// Gets the audio sample rate
+    /// </summary>
+    int GetAudioSampleRate();
+    
     /// <summary>
     /// Sets up the sample rate to use with this device
     /// </summary>
