@@ -22,6 +22,7 @@ public partial class SpectrumDisplayControl : UserControl
     private object? _prevDataContext;
     private int _zoomFactor = 1;
     private IAudioProvider? _audioProvider;
+    private float _volume;
 
     public SpectrumDisplayControl()
     {
@@ -185,7 +186,7 @@ public partial class SpectrumDisplayControl : UserControl
         var samples = (machine as ZxSpectrum48Machine)?.BeeperDevice.GetAudioSamples();
         if (samples != null)
         {
-            _audioProvider?.AddSamples(samples);
+            _audioProvider?.AddSamples(samples.Select(s => s * _volume).ToArray());
         }
 
         // --- Display the new screen frame
@@ -232,6 +233,9 @@ public partial class SpectrumDisplayControl : UserControl
             {
                 Vm?.Cpu?.SignStateChanged();
             }
+
+            // --- Store the current volume
+            _volume = Vm?.EmuViewOptions.IsMuted ?? false ? 0.0f : 1.0f;
         });
     }
 
@@ -281,4 +285,3 @@ public partial class SpectrumDisplayControl : UserControl
         base.OnPropertyChanged(change);
     }
 }
-
