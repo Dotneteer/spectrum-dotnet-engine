@@ -1,17 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Roms\ZxSpectrum48\ZxSpectrum48.rom" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Roms\ZxSpectrum48\ZxSpectrum48.rom" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Roms\ZxSpectrum48\ZxSpectrum48.rom" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Roms\ZxSpectrum48\ZxSpectrum48.rom" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<Compile Update="Machines/Disk/NECUPD765.*.cs" DependentUpon="NECUPD765.cs" />
+		<Compile Update="Machines/Disk/NECUPS765.Static.cs" DependentUpon="NECUPD765.cs" />
+	</ItemGroup>
+
 
 </Project>
