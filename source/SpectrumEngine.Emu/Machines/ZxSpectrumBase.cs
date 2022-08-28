@@ -82,6 +82,34 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
     #region Memory Device
 
     /// <summary>
+    /// This function implements the memory read delay of the CPU.
+    /// </summary>
+    /// <param name="address">Memory address to read</param>
+    /// <remarks>
+    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
+    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
+    /// the CPU tacts at least with 3 T-states!
+    /// </remarks>
+    public override void DelayMemoryRead(ushort address)
+    {
+        DelayAddressBusAccess(address);
+        TactPlus3();
+        TotalContentionDelaySinceStart += 3;
+        ContentionDelaySincePause += 3;
+    }
+
+    /// <summary>
+    /// This function implements the memory write delay of the CPU.
+    /// </summary>
+    /// <param name="address">Memory address to write</param>
+    /// <remarks>
+    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
+    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
+    /// the CPU tacts at least with 3 T-states!
+    /// </remarks>
+    public override void DelayMemoryWrite(ushort address) => DelayMemoryRead(address);
+
+    /// <summary>
     /// This method implements memory operation delays.
     /// </summary>
     /// <param name="address"></param>
