@@ -73,6 +73,13 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
     public virtual bool IsSpectrum48RomSelected => true;
 
     /// <summary>
+    /// Reads the screen memory byte
+    /// </summary>
+    /// <param name="offset">Offset from the beginning of the screen memory</param>
+    /// <returns>The byte at the specified screen memory location</returns>
+    public abstract byte ReadScreenMemory(ushort offset);
+
+    /// <summary>
     /// Get the number of T-states in a display line (use -1, if this info is not available)
     /// </summary>
     public override int TactsInDisplayLine => ScreenDevice.ScreenWidth;

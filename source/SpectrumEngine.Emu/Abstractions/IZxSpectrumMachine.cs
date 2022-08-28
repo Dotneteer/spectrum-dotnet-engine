@@ -66,5 +66,12 @@ public interface IZxSpectrumMachine : IZ80Machine
     /// Indicates if the currently selected ROM is the ZX Spectrum 48 ROM
     /// </summary>
     bool IsSpectrum48RomSelected { get; }
+
+    /// <summary>
+    /// Reads the screen memory byte
+    /// </summary>
+    /// <param name="offset">Offset from the beginning of the screen memory</param>
+    /// <returns>The byte at the specified screen memory location</returns>
+    byte ReadScreenMemory(ushort offset);
 }
 
