@@ -14,9 +14,7 @@
         Background="{DynamicResource AppBackground}"
         WindowState="Maximized"
         Closing="OnClosing"
-        DataContextChanged="OnDataContextChanged"
-        KeyUp="MainWindowOnKeyUp"
-        KeyDown="MainWindowOnKeyDown">
+        DataContextChanged="OnDataContextChanged">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
