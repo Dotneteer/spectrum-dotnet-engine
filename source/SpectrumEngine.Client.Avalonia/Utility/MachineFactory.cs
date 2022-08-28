@@ -23,7 +23,7 @@ public static class MachineFactory
         if (machine == null) return null;
         
         // --- Set up the machine, provided it supports a particular machine property
-        machine.SetMachineProperty(MachinePropNames.TapeSaver, new DefaultTapeSaver());
+        machine.SetMachineProperty(MachinePropNames.TAPE_SAVER, new DefaultTapeSaver());
         
         // --- Create a controller for the machine and let the main view model to know it
         var vm = App.AppViewModel;

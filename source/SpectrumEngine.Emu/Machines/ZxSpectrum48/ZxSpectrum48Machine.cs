@@ -46,9 +46,6 @@ public class ZxSpectrum48Machine :
 
         // --- Initialize the machine's ROM (Roms/ZxSpectrum48/sp48.rom)
         UploadRomBytes(LoadRomFromResource(MachineId));
-        
-        // --- Allow access to the 64Kbyte of memory
-        SetMachineProperty(MachinePropNames.MemoryFlat, _memory);
     }
 
     /// <summary>
@@ -83,8 +80,8 @@ public class ZxSpectrum48Machine :
         TapeDevice.Reset();
         
         // --- Set default property values
-        SetMachineProperty(MachinePropNames.TapeMode, TapeMode.Passive);
-        SetMachineProperty(MachinePropNames.RewindRequested, null);
+        SetMachineProperty(MachinePropNames.TAPE_MODE, TapeMode.Passive);
+        SetMachineProperty(MachinePropNames.REWIND_REQUESTED, null);
 
         // --- Unknown clock multiplier in the previous frame
         OldClockMultiplier = -1;
@@ -106,6 +103,29 @@ public class ZxSpectrum48Machine :
     public override byte ReadScreenMemory(ushort offset)
     {
         return _memory[0x4000 + (offset & 0x3fff)];
+    }
+
+    /// <summary>
+    /// Get the 64K of addressable memory of the ZX Spectrum computer
+    /// </summary>
+    /// <returns>Bytes of the flat memory</returns>
+    public override byte[] Get64KFlatMemory()
+    {
+        return _memory;
+    }
+
+    /// <summary>
+    /// Get the specified 16K partition (page or bank) of the ZX Spectrum computer
+    /// </summary>
+    /// <param name="index">Partition index</param>
+    /// <returns>Bytes of the partition</returns>
+    /// <remarks>
+    /// Less than zero: ROM pages
+    /// 0..7: RAM bank with the specified index
+    /// </remarks>
+    public override byte[] Get16KPartition(int index)
+    {
+        throw new NotSupportedException();
     }
 
     /// <summary>

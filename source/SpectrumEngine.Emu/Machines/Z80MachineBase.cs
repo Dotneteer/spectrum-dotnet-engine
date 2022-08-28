@@ -167,8 +167,8 @@ public abstract class Z80MachineBase :
     /// </summary>
     public virtual void OnStop()
     {
-        SetMachineProperty(MachinePropNames.TapeMode, TapeMode.Passive);
-        SetMachineProperty(MachinePropNames.RewindRequested, null);
+        SetMachineProperty(MachinePropNames.TAPE_MODE, TapeMode.Passive);
+        SetMachineProperty(MachinePropNames.REWIND_REQUESTED, null);
     }
 
     /// <summary>
