@@ -167,26 +167,6 @@ public class ZxSpectrum48Machine :
         ContentionDelaySincePause += 3;
     }
 
-    /// <summary>
-    /// This method implements memory operation delays.
-    /// </summary>
-    /// <param name="address"></param>
-    /// <remarks>
-    /// Whenever the CPU accesses the 0x4000-0x7fff memory range, it contends with the ULA. We keep the contention
-    /// delay values for a particular machine frame tact in _contentionValues.Independently of the memory address, 
-    /// the Z80 CPU takes 3 T-states to read or write the memory contents.
-    /// </remarks>
-    public override void DelayAddressBusAccess(ushort address)
-    {
-        if ((address & 0xc000) != 0x4000) return;
-        
-        // --- We read from contended memory
-        var delay = GetContentionValue(CurrentFrameTact / ClockMultiplier);
-        TactPlusN(delay);
-        TotalContentionDelaySinceStart += delay;
-        ContentionDelaySincePause += delay;
-    }
-
     #endregion
 
     #region I/O port handling

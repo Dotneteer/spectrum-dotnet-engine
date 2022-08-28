@@ -11,6 +11,12 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     // --- This byte array represents the 64K memory, including the 16K ROM and 48K RAM.
     private readonly byte[] _memory = new byte[0x1_0000];
 
+    // --- Stores the memory information of the ROM pages
+    private readonly byte[][] _romPages;
+    private readonly byte[][] _ramBanks;
+    private int _selectedRom = 0;
+    private int _selectedBank = 0;
+
     #endregion
 
     #region Initialization and Properties
@@ -31,10 +37,24 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     public ZxSpectrum128Machine()
     {
         // --- Set up machine attributes
-        BaseClockFrequency = 3_500_000;
+        BaseClockFrequency = 3_546_900;
         ClockMultiplier = 1;
         DelayedAddressBus = true;
         
+        // --- Initialize the memory contents
+        _romPages = new byte[2][];
+        _romPages[0] = new byte[0x4000];
+        _romPages[1] = new byte[0x4000];
+        _ramBanks = new byte[8][];
+        for (var i = 0; i < 8; i++)
+        {
+            _ramBanks[i] = new byte[0x4000];
+        }
+
+        // --- Select the default ROM page and RAM bank
+        _selectedRom = 0;
+        _selectedBank = 0;
+         
         // --- Create and initialize devices
         KeyboardDevice = new KeyboardDevice(this);
         ScreenDevice = new CommonScreenDevice(this, CommonScreenDevice.ZxSpectrum128ScreenConfiguration);
@@ -66,7 +86,13 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     public override void HardReset()
     {
         base.HardReset();
-        for (var i = 0x4000; i < _memory.Length; i++) _memory[i] = 0;
+        for (var bank = 0; bank < 8; bank++)
+        {
+            for (var i = 0; i < 0x4000; i++)
+            {
+                _ramBanks[bank][i] = 0;
+            }
+        }        
         Reset();
     }
 
@@ -78,6 +104,10 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
         // --- Reset the CPU
         base.Reset();
 
+        // --- Reset the ROM page and the RAM bank
+        _selectedRom = 0;
+        _selectedBank = 0;
+        
         // --- Reset and setup devices
         KeyboardDevice.Reset();
         ScreenDevice.Reset();
@@ -117,7 +147,16 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     /// <param name="address">16-bit memory address</param>
     /// <returns>The byte read from the memory</returns>
     public override byte DoReadMemory(ushort address)
-        => _memory[address];
+    {
+        var memIndex = address & 0x3FFF;
+        return (address & 0xC000) switch
+        {
+            0x0000 => _romPages[_selectedRom][memIndex],
+            0x4000 => _ramBanks[5][memIndex],
+            0x8000 => _ramBanks[2][memIndex],
+            _ => _ramBanks[_selectedBank][memIndex]
+        };
+    }
 
     /// <summary>
     /// This function implements the memory read delay of the CPU.
@@ -177,7 +216,8 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     /// </remarks>
     public override void DelayAddressBusAccess(ushort address)
     {
-        if ((address & 0xc000) != 0x4000) return;
+        var page = address & 0xc000;
+        if (page != 0x4000 && (page != 0xc000 || (_selectedBank & 0x01) != 1)) return;
         
         // --- We read from contended memory
         var delay = GetContentionValue(CurrentFrameTact / ClockMultiplier);

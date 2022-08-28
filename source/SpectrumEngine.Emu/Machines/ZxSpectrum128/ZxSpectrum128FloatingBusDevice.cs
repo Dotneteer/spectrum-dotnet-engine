@@ -1,4 +1,4 @@
-namespace SpectrumEngine.Emu.ZxSpectrum128;
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// This class implements the ZX Spectrum 128 floating bus device.
