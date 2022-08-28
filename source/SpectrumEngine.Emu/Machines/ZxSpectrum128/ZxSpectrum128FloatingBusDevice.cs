@@ -48,11 +48,11 @@ public class ZxSpectrum128FloatingBusDevice: IFloatingBusDevice
             case RenderingPhase.BorderFetchPixel:
             case RenderingPhase.DisplayB1FetchB2:
             case RenderingPhase.DisplayB2FetchB1:
-                return Machine.DoReadMemory((ushort)(screen.MemoryScreenOffset + renderingTact.PixelAddress));
+                return Machine.ReadScreenMemory(renderingTact.PixelAddress);
             case RenderingPhase.BorderFetchAttr:
             case RenderingPhase.DisplayB1FetchA2:
             case RenderingPhase.DisplayB2FetchA1:
-                return Machine.DoReadMemory((ushort)(screen.MemoryScreenOffset + renderingTact.AttributeAddress));
+                return Machine.ReadScreenMemory(renderingTact.AttributeAddress);
             default:
                 return 0xff;
         }

@@ -99,6 +99,16 @@ public class ZxSpectrum48Machine :
     }
 
     /// <summary>
+    /// Reads the screen memory byte
+    /// </summary>
+    /// <param name="offset">Offset from the beginning of the screen memory</param>
+    /// <returns>The byte at the specified screen memory location</returns>
+    public override byte ReadScreenMemory(ushort offset)
+    {
+        return _memory[0x4000 + (offset & 0x3fff)];
+    }
+
+    /// <summary>
     /// Get the number of T-states in a display line (use -1, if this info is not available)
     /// </summary>
     public override int TactsInDisplayLine => ScreenDevice.ScreenWidth;
