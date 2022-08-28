@@ -8,14 +8,13 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
 {
     #region Private members
 
-    // --- This byte array represents the 64K memory, including the 16K ROM and 48K RAM.
-    private readonly byte[] _memory = new byte[0x1_0000];
-
     // --- Stores the memory information of the ROM pages
     private readonly byte[][] _romPages;
     private readonly byte[][] _ramBanks;
-    private int _selectedRom = 0;
-    private int _selectedBank = 0;
+    private int _selectedRom;
+    private int _selectedBank;
+    private bool _pagingEnabled;
+    private bool _useShadowScreen;
 
     #endregion
 
@@ -54,6 +53,12 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
         // --- Select the default ROM page and RAM bank
         _selectedRom = 0;
         _selectedBank = 0;
+        
+        // --- Memory paging is enabled
+        _pagingEnabled = true;
+        
+        // --- Shadow screen is disabled
+        _useShadowScreen = false;
          
         // --- Create and initialize devices
         KeyboardDevice = new KeyboardDevice(this);
@@ -64,16 +69,12 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
         Reset();
 
         // --- Initialize the machine's ROM (Roms/ZxSpectrum48/ZxSpectrum48.rom)
-        UploadRomBytes(LoadRomFromResource(DefaultRomResource));
+        UploadRomBytes(0, LoadRomFromResource(MachineId, 0));
+        UploadRomBytes(1, LoadRomFromResource(MachineId, 1));
         
         // --- Allow access to the 64Kbyte of memory
-        SetMachineProperty(MachinePropNames.MemoryFlat, _memory);
+        // SetMachineProperty(MachinePropNames.MemoryFlat, _memory);
     }
-
-    /// <summary>
-    /// Specify the name of the default ROM's resource file within this assembly.
-    /// </summary>
-    protected override string DefaultRomResource => "ZxSpectrum48";
 
     /// <summary>
     /// Gets the ULA issue number of the ZX Spectrum model (2 or 3)
@@ -108,6 +109,12 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
         _selectedRom = 0;
         _selectedBank = 0;
         
+        // --- Enable memory paging
+        _pagingEnabled = true;
+        
+        // --- Shadow screen is disabled
+        _useShadowScreen = false;
+
         // --- Reset and setup devices
         KeyboardDevice.Reset();
         ScreenDevice.Reset();
@@ -159,50 +166,27 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     }
 
     /// <summary>
-    /// This function implements the memory read delay of the CPU.
-    /// </summary>
-    /// <param name="address">Memory address to read</param>
-    /// <remarks>
-    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
-    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
-    /// the CPU tacts at least with 3 T-states!
-    /// </remarks>
-    public override void DelayMemoryRead(ushort address)
-    {
-        DelayAddressBusAccess(address);
-        TactPlus3();
-        TotalContentionDelaySinceStart += 3;
-        ContentionDelaySincePause += 3;
-    }
-
-    /// <summary>
     /// Write the given byte to the specified memory address.
     /// </summary>
     /// <param name="address">16-bit memory address</param>
     /// <param name="value">Byte to write into the memory</param>
     public override void DoWriteMemory(ushort address, byte value)
     {
-        if ((address & 0xc000) != 0x0000)
+        var memIndex = address & 0x3FFF;
+        switch (address & 0xc000)
         {
-            _memory[address] = value;
+            case 0x0000:
+                return;
+            case 0x4000:
+                _ramBanks[5][memIndex] = value;
+                return;
+            case 0x8000:
+                _ramBanks[2][memIndex] = value;
+                return;
+            default:
+                _ramBanks[_selectedBank][memIndex] = value;
+                return;
         }
-    }
-
-    /// <summary>
-    /// This function implements the memory write delay of the CPU.
-    /// </summary>
-    /// <param name="address">Memory address to write</param>
-    /// <remarks>
-    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
-    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
-    /// the CPU tacts at least with 3 T-states!
-    /// </remarks>
-    public override void DelayMemoryWrite(ushort address)
-    {
-        DelayAddressBusAccess(address);
-        TactPlus3();
-        TotalContentionDelaySinceStart += 3;
-        ContentionDelaySincePause += 3;
     }
 
     /// <summary>
@@ -263,9 +247,30 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     /// </remarks>
     public override void DoWritePort(ushort address, byte value)
     {
+        // --- Standard ZX Spectrum 48 port
         if ((address & 0x0001) == 0)
         {
             WritePort0xFE(value);
+            return;
+        }
+
+        // --- Memory paging port
+        if ((address & 0xc002) == 0x4000)
+        {
+            // --- Abort if paging is not enabled
+            if (!_pagingEnabled) return;
+            
+            // --- Choose the RAM bank for Slot 3 (0xc000-0xffff)
+            _selectedBank = value & 0x07;
+
+            // --- Choose screen (Bank 5 or 7)
+            _useShadowScreen = ((value >> 3) & 0x01) == 0x01;
+
+            // --- Choose ROM bank for Slot 0 (0x0000-0x3fff)
+            _selectedRom = (value >> 4) & 0x01;
+
+            // --- Enable/disable paging
+            _pagingEnabled = (value & 0x20) == 0x00;
         }
     }
 
@@ -299,16 +304,17 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     public override uint[] GetPixelBuffer() => ScreenDevice.GetPixelBuffer();
 
     #endregion
-    
+
     /// <summary>
     /// Uploades the specified ROM information to the ZX Spectrum 48 ROM memory
     /// </summary>
+    /// <param name="pageIndex">ROM page index</param>
     /// <param name="data">ROM contents</param>
-    private void UploadRomBytes(byte[] data)
+    private void UploadRomBytes(int pageIndex, byte[] data)
     {
         for (var i = 0; i < data.Length; i++)
         {
-            _memory[i] = data[i];
+            _romPages[pageIndex][i] = data[i];
         }
     }
 }

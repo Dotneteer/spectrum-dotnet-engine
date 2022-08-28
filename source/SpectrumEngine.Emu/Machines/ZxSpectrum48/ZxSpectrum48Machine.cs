@@ -44,17 +44,12 @@ public class ZxSpectrum48Machine :
         TapeDevice = new TapeDevice(this);
         Reset();
 
-        // --- Initialize the machine's ROM (Roms/ZxSpectrum48/ZxSpectrum48.rom)
-        UploadRomBytes(LoadRomFromResource(DefaultRomResource));
+        // --- Initialize the machine's ROM (Roms/ZxSpectrum48/sp48.rom)
+        UploadRomBytes(LoadRomFromResource(MachineId));
         
         // --- Allow access to the 64Kbyte of memory
         SetMachineProperty(MachinePropNames.MemoryFlat, _memory);
     }
-
-    /// <summary>
-    /// Specify the name of the default ROM's resource file within this assembly.
-    /// </summary>
-    protected override string DefaultRomResource => "ZxSpectrum48";
 
     /// <summary>
     /// Gets the ULA issue number of the ZX Spectrum model (2 or 3)
@@ -121,23 +116,6 @@ public class ZxSpectrum48Machine :
         => _memory[address];
 
     /// <summary>
-    /// This function implements the memory read delay of the CPU.
-    /// </summary>
-    /// <param name="address">Memory address to read</param>
-    /// <remarks>
-    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
-    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
-    /// the CPU tacts at least with 3 T-states!
-    /// </remarks>
-    public override void DelayMemoryRead(ushort address)
-    {
-        DelayAddressBusAccess(address);
-        TactPlus3();
-        TotalContentionDelaySinceStart += 3;
-        ContentionDelaySincePause += 3;
-    }
-
-    /// <summary>
     /// Write the given byte to the specified memory address.
     /// </summary>
     /// <param name="address">16-bit memory address</param>
@@ -148,23 +126,6 @@ public class ZxSpectrum48Machine :
         {
             _memory[address] = value;
         }
-    }
-
-    /// <summary>
-    /// This function implements the memory write delay of the CPU.
-    /// </summary>
-    /// <param name="address">Memory address to write</param>
-    /// <remarks>
-    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
-    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
-    /// the CPU tacts at least with 3 T-states!
-    /// </remarks>
-    public override void DelayMemoryWrite(ushort address)
-    {
-        DelayAddressBusAccess(address);
-        TactPlus3();
-        TotalContentionDelaySinceStart += 3;
-        ContentionDelaySincePause += 3;
     }
 
     #endregion
