@@ -9,7 +9,7 @@ namespace SpectrumEngine.Client.Avalonia;
 /// <param name="Input"></param>
 /// <param name="Primary"></param>
 /// <param name="Secondary"></param>
-public record KeyMapping(Key Input, SpectrumKeyCode Primary, SpectrumKeyCode? Secondary = null) { }
+public record KeyMapping(Key Input, SpectrumKeyCode Primary, SpectrumKeyCode? Secondary = null);
 
 /// <summary>
 /// This class manages the mappings of physical key presses to ZX Spectrum keys
@@ -29,12 +29,16 @@ public static class KeyMappings
         new(Key.NumPad4, SpectrumKeyCode.N4),
         new(Key.D5, SpectrumKeyCode.N5),
         new(Key.NumPad5, SpectrumKeyCode.N5),
+        new(Key.Left, SpectrumKeyCode.N5, SpectrumKeyCode.CShift),
         new(Key.D6, SpectrumKeyCode.N6),
         new(Key.NumPad6, SpectrumKeyCode.N6),
+        new(Key.Down, SpectrumKeyCode.N6, SpectrumKeyCode.CShift),
         new(Key.D7, SpectrumKeyCode.N7),
         new(Key.NumPad7, SpectrumKeyCode.N7),
+        new(Key.Up, SpectrumKeyCode.N7, SpectrumKeyCode.CShift),
         new(Key.D8, SpectrumKeyCode.N8),
         new(Key.NumPad8, SpectrumKeyCode.N8),
+        new(Key.Right, SpectrumKeyCode.N8, SpectrumKeyCode.CShift),
         new(Key.D9, SpectrumKeyCode.N9),
         new(Key.NumPad9, SpectrumKeyCode.N9),
         new(Key.D0, SpectrumKeyCode.N0),
