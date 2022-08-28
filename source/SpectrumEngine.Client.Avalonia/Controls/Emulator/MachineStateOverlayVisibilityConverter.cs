@@ -18,7 +18,7 @@ public class MachineStateOverlayVisibilityConverter : IValueConverter
             {
                 return true;
             }
-            var tapeMode = mc.Machine.GetMachineProperty(MachinePropNames.TapeMode);
+            var tapeMode = mc.Machine.GetMachineProperty(MachinePropNames.TAPE_MODE);
             return tapeMode is TapeMode tp && tp != TapeMode.Passive && mc.State == MachineControllerState.Running;
         }
         return value;

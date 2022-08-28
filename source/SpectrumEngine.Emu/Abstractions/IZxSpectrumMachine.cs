@@ -73,5 +73,22 @@ public interface IZxSpectrumMachine : IZ80Machine
     /// <param name="offset">Offset from the beginning of the screen memory</param>
     /// <returns>The byte at the specified screen memory location</returns>
     byte ReadScreenMemory(ushort offset);
+
+    /// <summary>
+    /// Get the 64K of addressable memory of the ZX Spectrum computer
+    /// </summary>
+    /// <returns>Bytes of the flat memory</returns>
+    byte[] Get64KFlatMemory();
+
+    /// <summary>
+    /// Get the specified 16K partition (page or bank) of the ZX Spectrum computer
+    /// </summary>
+    /// <param name="index">Partition index</param>
+    /// <returns>Bytes of the partition</returns>
+    /// <remarks>
+    /// Less than zero: ROM pages
+    /// 0..7: RAM bank with the specified index
+    /// </remarks>
+    byte[] Get16KPartition(int index);
 }
 

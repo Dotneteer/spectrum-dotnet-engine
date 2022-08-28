@@ -244,7 +244,7 @@ public partial class SpectrumDisplayControl : UserControl
     {
         Dispatcher.UIThread.InvokeAsync(() =>
         {
-            if (args.key != MachinePropNames.TapeMode || args.value is not TapeMode tapeMode) return;
+            if (args.key != MachinePropNames.TAPE_MODE || args.value is not TapeMode tapeMode) return;
             if (Vm?.Machine.Controller == null) return;
 
             var display = Vm.Display;

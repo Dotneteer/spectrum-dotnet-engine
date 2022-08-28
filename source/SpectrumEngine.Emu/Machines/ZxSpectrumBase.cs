@@ -25,8 +25,7 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
     private ulong _portBit4ChangedFrom1Tacts;
 
     // --- Stores the key strokes to emulate
-    protected readonly Queue<EmulatedKeyStroke> EmulatedKeyStrokes =
-        new Queue<EmulatedKeyStroke>();
+    protected readonly Queue<EmulatedKeyStroke> EmulatedKeyStrokes = new();
 
     #endregion
 
@@ -78,6 +77,23 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
     /// <param name="offset">Offset from the beginning of the screen memory</param>
     /// <returns>The byte at the specified screen memory location</returns>
     public abstract byte ReadScreenMemory(ushort offset);
+
+    /// <summary>
+    /// Get the 64K of addressable memory of the ZX Spectrum computer
+    /// </summary>
+    /// <returns>Bytes of the flat memory</returns>
+    public abstract byte[] Get64KFlatMemory();
+
+    /// <summary>
+    /// Get the specified 16K partition (page or bank) of the ZX Spectrum computer
+    /// </summary>
+    /// <param name="index">Partition index</param>
+    /// <returns>Bytes of the partition</returns>
+    /// <remarks>
+    /// Less than zero: ROM pages
+    /// 0..7: RAM bank with the specified index
+    /// </remarks>
+    public abstract byte[] Get16KPartition(int index);
 
     /// <summary>
     /// Get the number of T-states in a display line (use -1, if this info is not available)

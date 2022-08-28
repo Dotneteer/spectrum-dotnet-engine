@@ -45,11 +45,8 @@ public partial class BreakpointsPanel : MachineStatusUserControl
         if (vm == null) return;
         await Task.Run(() =>
         {
-            var machine = vm.Machine.Controller?.Machine as ZxSpectrumBase;
-            if (machine?.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[] memory)
-            {
-                return;
-            }
+            var memory = (vm.Machine.Controller?.Machine as ZxSpectrumBase)?.Get64KFlatMemory();
+            if (memory == null) return;
 
             // --- Disassemble the contents of each breakpoint
             foreach (var bpItem in vm.Debugger.Breakpoints)

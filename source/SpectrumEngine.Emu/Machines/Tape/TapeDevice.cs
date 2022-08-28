@@ -168,7 +168,7 @@ public sealed class TapeDevice: ITapeDevice
         {
             if (_tapeMode == value) return;
             _tapeMode = value;
-            Machine.SetMachineProperty(MachinePropNames.TapeMode, value);
+            Machine.SetMachineProperty(MachinePropNames.TAPE_MODE, value);
         }
     }
 
@@ -210,7 +210,7 @@ public sealed class TapeDevice: ITapeDevice
                     NextTapeBlock();
                 
                     // --- Do we allow fast loading mode?
-                    var allowFastLoad = Machine.GetMachineProperty(MachinePropNames.FastLoad);
+                    var allowFastLoad = Machine.GetMachineProperty(MachinePropNames.FAST_LOAD);
                     if (allowFastLoad is not true) return;
                 
                     // --- Emulate loading the current block in fast mode.
@@ -667,14 +667,14 @@ public sealed class TapeDevice: ITapeDevice
     {
         switch (args.key)
         {
-            case MachinePropNames.TapeSaver:
+            case MachinePropNames.TAPE_SAVER:
                 if (args.value is ITapeSaver tapeSaver)
                 {
                     _tapeSaver = tapeSaver;
                 }
                 break;
             
-            case MachinePropNames.TapeData:
+            case MachinePropNames.TAPE_DATA:
                 if (args.value is List<TapeDataBlock> blocks)
                 {
                     _blocks = blocks;
@@ -683,13 +683,13 @@ public sealed class TapeDevice: ITapeDevice
                 }       
                 break;
             
-            case MachinePropNames.RewindRequested:
+            case MachinePropNames.REWIND_REQUESTED:
                 if (args.value is true)
                 {
                     _currentBlockIndex = -1;
                     _tapeEof = false;
                     _playPhase = PlayPhase.None;
-                    Machine.SetMachineProperty(MachinePropNames.RewindRequested, null);
+                    Machine.SetMachineProperty(MachinePropNames.REWIND_REQUESTED, null);
                 }
                 break;
         }

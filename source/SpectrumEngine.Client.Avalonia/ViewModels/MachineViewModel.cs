@@ -75,7 +75,7 @@ public class MachineViewModel: ViewModelBase
 
         void OnMachinePropertyChanged(object? sender, (string key, object? value) args)
         {
-            if (args.key == MachinePropNames.TapeMode && args.value is TapeMode tapeMode)
+            if (args.key == MachinePropNames.TAPE_MODE && args.value is TapeMode tapeMode)
             {
                 TapeMode = tapeMode;
             }
@@ -129,7 +129,7 @@ public class MachineViewModel: ViewModelBase
         set
         {
             SetProperty(ref _allowFastLoad, value);
-            Controller?.Machine.SetMachineProperty(MachinePropNames.FastLoad, value);
+            Controller?.Machine.SetMachineProperty(MachinePropNames.FAST_LOAD, value);
         }
     }
 
@@ -369,7 +369,7 @@ public class MachineViewModel: ViewModelBase
             {
                 // --- This is a .TZX format
                 var dataBlocks = tzxReader.DataBlocks.Select(b => b.GetDataBlock()).Where(b => b != null).ToList();
-                Controller?.Machine.SetMachineProperty(MachinePropNames.TapeData, dataBlocks);
+                Controller?.Machine.SetMachineProperty(MachinePropNames.TAPE_DATA, dataBlocks);
                 return;
             }
 
@@ -383,7 +383,7 @@ public class MachineViewModel: ViewModelBase
                 {
                     // --- This is a .TAP format
                     var dataBlocks = tapReader.DataBlocks.ToList();
-                    Controller?.Machine.SetMachineProperty(MachinePropNames.TapeData, dataBlocks);
+                    Controller?.Machine.SetMachineProperty(MachinePropNames.TAPE_DATA, dataBlocks);
                 }
                 else
                 {
@@ -393,7 +393,7 @@ public class MachineViewModel: ViewModelBase
             catch (Exception ex)
             {
                 // --- Perhaps wrong file format
-                Controller?.Machine.SetMachineProperty(MachinePropNames.TapeData, null);
+                Controller?.Machine.SetMachineProperty(MachinePropNames.TAPE_DATA, null);
                 var msgBox = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxStandardWindow("Error",
                     $"Cannot parse the contents of the specified file as a valid TZX or TAP file ({ex.Message})");
                 await msgBox.Show();
@@ -407,7 +407,7 @@ public class MachineViewModel: ViewModelBase
     /// </summary>
     public void Rewind()
     {
-        Controller?.Machine.SetMachineProperty(MachinePropNames.RewindRequested, true);
+        Controller?.Machine.SetMachineProperty(MachinePropNames.REWIND_REQUESTED, true);
         RaiseCommandExecuted();
     }
 

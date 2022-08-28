@@ -49,11 +49,10 @@ public partial class MemoryViewPanel : MachineStatusUserControl
         if (vm == null) return;
         await Task.Run(() =>
         {
-            var machine = vm.Machine.Controller?.Machine as ZxSpectrumBase;
-            if (machine?.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[] memory)
-            {
-                return;
-            }
+            // --- Obtain the flat memory contents
+            var memory = (vm.Machine.Controller?.Machine as ZxSpectrumBase)?.Get64KFlatMemory();
+            if (memory == null) return;
+            
             // --- Calculate the visible range
             var rangeFrom = vm.MemoryViewer.RangeFrom & 0xfff0;
             var rangeTo = (vm.MemoryViewer.RangeTo + 15) & 0xffff0;
@@ -77,11 +76,8 @@ public partial class MemoryViewPanel : MachineStatusUserControl
         if (vm == null) return;
         await Task.Run(() =>
         {
-            var machine = vm.Machine.Controller?.Machine as ZxSpectrumBase;
-            if (machine?.GetMachineProperty(MachinePropNames.MemoryFlat) is not byte[])
-            {
-                return;
-            }
+            var memory = (vm.Machine.Controller?.Machine as ZxSpectrumBase)?.Get64KFlatMemory();
+            if (memory == null) return;
 
             Dispatcher.UIThread.Post(() =>
             {
