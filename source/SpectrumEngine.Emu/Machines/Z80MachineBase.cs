@@ -123,11 +123,6 @@ public abstract class Z80MachineBase :
     }
 
     /// <summary>
-    /// Get the name of the default ROM's resource file within this assembly.
-    /// </summary>
-    protected abstract string DefaultRomResource { get; }
-
-    /// <summary>
     /// Load the specified ROM from the current assembly resource.
     /// </summary>
     /// <param name="romName">Name of the ROM file to load</param>
@@ -140,7 +135,7 @@ public abstract class Z80MachineBase :
     {
         var resourceName = page == -1 ? romName : $"{romName}-{page}";
         var currentAsm = typeof(Z80MachineBase).Assembly;
-        resourceName = $"{currentAsm.GetName().Name}.{ROM_RESOURCE_FOLDER}.{romName}.{resourceName}.rom";
+        resourceName = $"{currentAsm.GetName().Name}.{ROM_RESOURCE_FOLDER}.{resourceName}.rom";
         var resMan = currentAsm.GetManifestResourceStream(resourceName);
         if (resMan == null)
         {
@@ -172,8 +167,8 @@ public abstract class Z80MachineBase :
     /// </summary>
     public virtual void OnStop()
     {
-        SetMachineProperty(MachinePropNames.TapeMode, TapeMode.Passive);
-        SetMachineProperty(MachinePropNames.RewindRequested, null);
+        SetMachineProperty(MachinePropNames.TAPE_MODE, TapeMode.Passive);
+        SetMachineProperty(MachinePropNames.REWIND_REQUESTED, null);
     }
 
     /// <summary>

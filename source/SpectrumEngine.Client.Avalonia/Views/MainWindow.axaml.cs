@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -14,6 +15,8 @@ namespace SpectrumEngine.Client.Avalonia.Views
         public MainWindow()
         {
             InitializeComponent();
+            // AddHandler(KeyDownEvent, MainWindowOnKeyDown, RoutingStrategies.Tunnel);
+            // AddHandler(KeyUpEvent, MainWindowOnKeyUp, RoutingStrategies.Tunnel);
         }
 
         private void OnClosing(object? sender, CancelEventArgs e)
@@ -46,14 +49,24 @@ namespace SpectrumEngine.Client.Avalonia.Views
             };
         }
 
-        private void MainWindowOnKeyUp(object? sender, KeyEventArgs e)
-        {
-            e.Handled = SpectrumDisplay.HandleKeyboardEvent(e, false);
-        }
-
-        private void MainWindowOnKeyDown(object? sender, KeyEventArgs e)
+        protected override void OnKeyDown(KeyEventArgs e)
         {
             e.Handled = SpectrumDisplay.HandleKeyboardEvent(e, true);
+            if (e.Handled)
+            {
+                Debug.WriteLine($"Down: {e.Key}");
+            }
+            base.OnKeyDown(e);
+        }
+
+        protected override void OnKeyUp(KeyEventArgs e)
+        {
+            e.Handled = SpectrumDisplay.HandleKeyboardEvent(e, false);
+            if (e.Handled)
+            {
+                Debug.WriteLine($"Up: {e.Key}");
+            }
+            base.OnKeyUp(e);
         }
     }
 }

@@ -11,7 +11,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Roms\ZxSpectrum48\ZxSpectrum48.rom" />
+    <EmbeddedResource Include="Roms\sp48.rom" />
+    <None Remove="Roms\sp128-0.rom" />
+    <EmbeddedResource Include="Roms\sp128-0.rom" />
+    <None Remove="Roms\sp128-1.rom" />
+    <EmbeddedResource Include="Roms\sp128-1.rom" />
 	</ItemGroup>
 
 

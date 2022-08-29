@@ -3,6 +3,7 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -243,7 +244,7 @@ public partial class SpectrumDisplayControl : UserControl
     {
         Dispatcher.UIThread.InvokeAsync(() =>
         {
-            if (args.key != MachinePropNames.TapeMode || args.value is not TapeMode tapeMode) return;
+            if (args.key != MachinePropNames.TAPE_MODE || args.value is not TapeMode tapeMode) return;
             if (Vm?.Machine.Controller == null) return;
 
             var display = Vm.Display;
@@ -260,16 +261,6 @@ public partial class SpectrumDisplayControl : UserControl
             Vm.Machine.RaisePropertyChanged(nameof(Vm.Machine.Controller));
         });
     }   
-
-    private void OnKeyDown(object? sender, KeyEventArgs e)
-    {
-        e.Handled = HandleKeyboardEvent(e, true);
-    }
-
-    private void OnKeyUp(object? sender, KeyEventArgs e)
-    {
-        e.Handled = HandleKeyboardEvent(e, false);
-    }
 
     private void OnViewportChanged(object? sender, EffectiveViewportChangedEventArgs e)
     {

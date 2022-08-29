@@ -53,15 +53,6 @@ public interface IScreenDevice: IGenericDevice<IZxSpectrumMachine>
     int ScreenLines { get; }
 
     /// <summary>
-    /// Gets the memory address that specifies the screen address in the memory.
-    /// </summary>
-    /// <remarks>
-    /// The ZX Spectrum 48K screen memory address is always $4000. However, the ZX Spectrum 128 and later models 
-    /// support the shadow screen feature, where this address may be different.
-    /// </remarks>
-    int MemoryScreenOffset { get; }
-
-    /// <summary>
     /// Render the pixel pair belonging to the specified frame tact.
     /// </summary>
     /// <param name="tact">Frame tact to render</param>

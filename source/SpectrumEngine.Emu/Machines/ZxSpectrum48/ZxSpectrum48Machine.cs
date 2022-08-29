@@ -44,17 +44,9 @@ public class ZxSpectrum48Machine :
         TapeDevice = new TapeDevice(this);
         Reset();
 
-        // --- Initialize the machine's ROM (Roms/ZxSpectrum48/ZxSpectrum48.rom)
-        UploadRomBytes(LoadRomFromResource(DefaultRomResource));
-        
-        // --- Allow access to the 64Kbyte of memory
-        SetMachineProperty(MachinePropNames.MemoryFlat, _memory);
+        // --- Initialize the machine's ROM (Roms/ZxSpectrum48/sp48.rom)
+        UploadRomBytes(LoadRomFromResource(MachineId));
     }
-
-    /// <summary>
-    /// Specify the name of the default ROM's resource file within this assembly.
-    /// </summary>
-    protected override string DefaultRomResource => "ZxSpectrum48";
 
     /// <summary>
     /// Gets the ULA issue number of the ZX Spectrum model (2 or 3)
@@ -88,8 +80,8 @@ public class ZxSpectrum48Machine :
         TapeDevice.Reset();
         
         // --- Set default property values
-        SetMachineProperty(MachinePropNames.TapeMode, TapeMode.Passive);
-        SetMachineProperty(MachinePropNames.RewindRequested, null);
+        SetMachineProperty(MachinePropNames.TAPE_MODE, TapeMode.Passive);
+        SetMachineProperty(MachinePropNames.REWIND_REQUESTED, null);
 
         // --- Unknown clock multiplier in the previous frame
         OldClockMultiplier = -1;
@@ -101,6 +93,39 @@ public class ZxSpectrum48Machine :
 
         // --- Empty the queue of emulated keystrokes
         lock (EmulatedKeyStrokes) { EmulatedKeyStrokes.Clear(); }
+    }
+
+    /// <summary>
+    /// Reads the screen memory byte
+    /// </summary>
+    /// <param name="offset">Offset from the beginning of the screen memory</param>
+    /// <returns>The byte at the specified screen memory location</returns>
+    public override byte ReadScreenMemory(ushort offset)
+    {
+        return _memory[0x4000 + (offset & 0x3fff)];
+    }
+
+    /// <summary>
+    /// Get the 64K of addressable memory of the ZX Spectrum computer
+    /// </summary>
+    /// <returns>Bytes of the flat memory</returns>
+    public override byte[] Get64KFlatMemory()
+    {
+        return _memory;
+    }
+
+    /// <summary>
+    /// Get the specified 16K partition (page or bank) of the ZX Spectrum computer
+    /// </summary>
+    /// <param name="index">Partition index</param>
+    /// <returns>Bytes of the partition</returns>
+    /// <remarks>
+    /// Less than zero: ROM pages
+    /// 0..7: RAM bank with the specified index
+    /// </remarks>
+    public override byte[] Get16KPartition(int index)
+    {
+        throw new NotSupportedException();
     }
 
     /// <summary>
@@ -121,23 +146,6 @@ public class ZxSpectrum48Machine :
         => _memory[address];
 
     /// <summary>
-    /// This function implements the memory read delay of the CPU.
-    /// </summary>
-    /// <param name="address">Memory address to read</param>
-    /// <remarks>
-    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
-    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
-    /// the CPU tacts at least with 3 T-states!
-    /// </remarks>
-    public override void DelayMemoryRead(ushort address)
-    {
-        DelayAddressBusAccess(address);
-        TactPlus3();
-        TotalContentionDelaySinceStart += 3;
-        ContentionDelaySincePause += 3;
-    }
-
-    /// <summary>
     /// Write the given byte to the specified memory address.
     /// </summary>
     /// <param name="address">16-bit memory address</param>
@@ -148,43 +156,6 @@ public class ZxSpectrum48Machine :
         {
             _memory[address] = value;
         }
-    }
-
-    /// <summary>
-    /// This function implements the memory write delay of the CPU.
-    /// </summary>
-    /// <param name="address">Memory address to write</param>
-    /// <remarks>
-    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
-    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
-    /// the CPU tacts at least with 3 T-states!
-    /// </remarks>
-    public override void DelayMemoryWrite(ushort address)
-    {
-        DelayAddressBusAccess(address);
-        TactPlus3();
-        TotalContentionDelaySinceStart += 3;
-        ContentionDelaySincePause += 3;
-    }
-
-    /// <summary>
-    /// This method implements memory operation delays.
-    /// </summary>
-    /// <param name="address"></param>
-    /// <remarks>
-    /// Whenever the CPU accesses the 0x4000-0x7fff memory range, it contends with the ULA. We keep the contention
-    /// delay values for a particular machine frame tact in _contentionValues.Independently of the memory address, 
-    /// the Z80 CPU takes 3 T-states to read or write the memory contents.
-    /// </remarks>
-    public override void DelayAddressBusAccess(ushort address)
-    {
-        if ((address & 0xc000) != 0x4000) return;
-        
-        // --- We read from contended memory
-        var delay = GetContentionValue(CurrentFrameTact / ClockMultiplier);
-        TactPlusN(delay);
-        TotalContentionDelaySinceStart += delay;
-        ContentionDelaySincePause += delay;
     }
 
     #endregion

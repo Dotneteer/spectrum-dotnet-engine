@@ -25,8 +25,7 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
     private ulong _portBit4ChangedFrom1Tacts;
 
     // --- Stores the key strokes to emulate
-    protected readonly Queue<EmulatedKeyStroke> EmulatedKeyStrokes =
-        new Queue<EmulatedKeyStroke>();
+    protected readonly Queue<EmulatedKeyStroke> EmulatedKeyStrokes = new();
 
     #endregion
 
@@ -73,6 +72,30 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
     public virtual bool IsSpectrum48RomSelected => true;
 
     /// <summary>
+    /// Reads the screen memory byte
+    /// </summary>
+    /// <param name="offset">Offset from the beginning of the screen memory</param>
+    /// <returns>The byte at the specified screen memory location</returns>
+    public abstract byte ReadScreenMemory(ushort offset);
+
+    /// <summary>
+    /// Get the 64K of addressable memory of the ZX Spectrum computer
+    /// </summary>
+    /// <returns>Bytes of the flat memory</returns>
+    public abstract byte[] Get64KFlatMemory();
+
+    /// <summary>
+    /// Get the specified 16K partition (page or bank) of the ZX Spectrum computer
+    /// </summary>
+    /// <param name="index">Partition index</param>
+    /// <returns>Bytes of the partition</returns>
+    /// <remarks>
+    /// Less than zero: ROM pages
+    /// 0..7: RAM bank with the specified index
+    /// </remarks>
+    public abstract byte[] Get16KPartition(int index);
+
+    /// <summary>
     /// Get the number of T-states in a display line (use -1, if this info is not available)
     /// </summary>
     public override int TactsInDisplayLine => ScreenDevice.ScreenWidth;
@@ -80,6 +103,34 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
     #endregion
 
     #region Memory Device
+
+    /// <summary>
+    /// This function implements the memory read delay of the CPU.
+    /// </summary>
+    /// <param name="address">Memory address to read</param>
+    /// <remarks>
+    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
+    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
+    /// the CPU tacts at least with 3 T-states!
+    /// </remarks>
+    public override void DelayMemoryRead(ushort address)
+    {
+        DelayAddressBusAccess(address);
+        TactPlus3();
+        TotalContentionDelaySinceStart += 3;
+        ContentionDelaySincePause += 3;
+    }
+
+    /// <summary>
+    /// This function implements the memory write delay of the CPU.
+    /// </summary>
+    /// <param name="address">Memory address to write</param>
+    /// <remarks>
+    /// Normally, it is exactly 3 T-states; however, it may be higher in particular hardware. If you do not set your
+    /// action, the Z80 CPU will use its default 3-T-state delay. If you use custom delay, take care that you increment
+    /// the CPU tacts at least with 3 T-states!
+    /// </remarks>
+    public override void DelayMemoryWrite(ushort address) => DelayMemoryRead(address);
 
     /// <summary>
     /// This method implements memory operation delays.
