@@ -1,20 +1,21 @@
 ﻿using SpectrumEngine.Emu.Extensions;
+using SpectrumEngine.Emu.Machines.FloppyDiskDrives.FloppyDisks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace SpectrumEngine.Emu.Machines.Disk
 {
-	/// <summary>
-	/// FDC State and Methods
-	/// </summary>
-	/*
+    /// <summary>
+    /// FDC State and Methods
+    /// </summary>
+    /*
         Implementation based on the information contained here:
         http://www.cpcwiki.eu/index.php/765_FDC
         and here:
         http://www.cpcwiki.eu/imgs/f/f3/UPD765_Datasheet_OCRed.pdf
     */
-	public partial class NECUPD765
+    public partial class NECUPD765
 	{
 		/// <summary>
 		/// Signs whether the drive is active

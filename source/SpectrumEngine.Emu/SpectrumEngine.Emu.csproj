@@ -17,7 +17,7 @@
 
 	<ItemGroup>
 		<Compile Update="Machines/Disk/NECUPD765.*.cs" DependentUpon="NECUPD765.cs" />
-		<Compile Update="Machines/Disk/NECUPS765.Static.cs" DependentUpon="NECUPD765.cs" />
+		<Compile Update="Machines\Disk\Controllers\NECUPS765.Static.cs" DependentUpon="NECUPD765.cs" />
 	</ItemGroup>
 
 
