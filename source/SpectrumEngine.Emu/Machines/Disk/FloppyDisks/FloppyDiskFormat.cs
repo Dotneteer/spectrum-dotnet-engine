@@ -1,4 +1,4 @@
-﻿namespace SpectrumEngine.Emu.Machines.FloppyDiskDrives.FloppyDisks;
+﻿namespace SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
 
 /// <summary>
 /// Disk formats supports

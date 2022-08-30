@@ -1,4 +1,4 @@
-﻿using SpectrumEngine.Emu.Machines.FloppyDiskDrives.FloppyDisks;
+﻿using SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
 
 namespace SpectrumEngine.Emu.Abstractions
 {
@@ -8,23 +8,24 @@ namespace SpectrumEngine.Emu.Abstractions
     public interface IFlopyDiskDriveDevice
     {
         /// <summary>
-        /// The current disk
+        /// Loaded floppy disk
         /// </summary>
-        FloppyDisk Disk { get; set; }
-
-        /// <summary>
-        /// load a new disk into drive
-        /// </summary>
-        void LoadDisk(byte[] diskData);
-
-        /// <summary>
-        /// Ejects the current disk
-        /// </summary>
-        void EjectDisk();
+        FloppyDisk? Disk { get; }
 
         /// <summary>
         /// Signs whether is disk loaded
         /// </summary>   
         bool IsDiskLoaded { get; }
+
+        /// <summary>
+        /// Load floppy disk data
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Invalid disk data</exception>
+        void LoadDisk(byte[] diskData);
+
+        /// <summary>
+        /// Ejects floppy disk
+        /// </summary>
+        void EjectDisk();
     }
 }

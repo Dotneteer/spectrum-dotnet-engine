@@ -1,7 +1,7 @@
-﻿using SpectrumEngine.Emu.Machines.FloppyDiskDrives.Controllers;
+﻿using SpectrumEngine.Emu.Machines.Disk.Controllers;
 using System.Text;
 
-namespace SpectrumEngine.Emu.Machines.FloppyDiskDrives.FloppyDisks;
+namespace SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
 
 /// <summary>
 /// Abstract class with logical floppy disk
