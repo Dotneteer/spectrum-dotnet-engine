@@ -93,6 +93,7 @@ namespace SpectrumEngine.Client.Avalonia.Providers
                 Bass.Stop();
                 Bass.Free();
                 _disposedValue = true;
+                _streamHandle = null;
             }
         }
 
