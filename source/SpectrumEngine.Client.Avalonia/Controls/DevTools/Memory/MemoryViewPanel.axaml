@@ -30,7 +30,9 @@
                         Path="{DynamicResource IconRefresh}" 
                         Command="{Binding MemoryViewer.Refresh}" 
                         Hint="Refresh"/>
-                    <StackPanel 
+                    <!-- Full view header-->
+                    <StackPanel
+                        IsVisible="{Binding MemoryViewer.InFullMode}"
                         Orientation="Horizontal" 
                         VerticalAlignment="Center"
                         Margin="8,0,0,0">
@@ -42,6 +44,28 @@
                             Foreground="{DynamicResource DiagLabelTextColor}" />
                         <TextBlock
                             Text="{Binding MemoryViewer.RangeTo, StringFormat='{}{0:X4}'}" 
+                            Foreground="{DynamicResource DiagLabelTextColor}" />
+                    </StackPanel>
+                    <!-- ROM page view header-->
+                    <StackPanel
+                        IsVisible="{Binding MemoryViewer.InRomPageMode}"
+                        Orientation="Horizontal" 
+                        VerticalAlignment="Center"
+                        Margin="8,0,0,0">
+                        <TextBlock Text="ROM " Foreground="{DynamicResource DiagLabelTextColor}" />
+                        <TextBlock 
+                            Text="{Binding MemoryViewer.RomPage}" 
+                            Foreground="{DynamicResource DiagLabelTextColor}" />
+                    </StackPanel>
+                    <!-- RAM bank view header-->
+                    <StackPanel
+                        IsVisible="{Binding MemoryViewer.InRamBankMode}"
+                        Orientation="Horizontal" 
+                        VerticalAlignment="Center"
+                        Margin="8,0,0,0">
+                        <TextBlock Text="BANK " Foreground="{DynamicResource DiagLabelTextColor}" />
+                        <TextBlock 
+                            Text="{Binding MemoryViewer.RamBank}" 
                             Foreground="{DynamicResource DiagLabelTextColor}" />
                     </StackPanel>
                 </StackPanel>
