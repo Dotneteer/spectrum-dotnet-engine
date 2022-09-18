@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
              xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
+             xmlns:common="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.Common"
              xmlns:memory="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools.Memory"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.MemoryViewPanel">
@@ -68,31 +69,55 @@
                             Text="{Binding MemoryViewer.RamBank}" 
                             Foreground="{DynamicResource DiagLabelTextColor}" />
                     </StackPanel>
+                    <TextBlock Text="{Binding MemoryViewer.MemoryItems.Count}" Foreground="{DynamicResource DiagLabelTextColor}" />
                 </StackPanel>
             </Border>
         </Panel>
-        <DataGrid 
-            x:Name="Dg"
+        
+        <ListBox
             Grid.Row="1" 
-            Items="{Binding MemoryViewer.MemoryItems}"
-            RowHeight="22"
-            BorderThickness="0"
-            HorizontalGridLinesBrush="Transparent"
-            HeadersVisibility="None"
-            AutoGenerateColumns="False"
-            GridLinesVisibility="None"
-            SelectionMode="Single" 
-            CellPointerPressed="OnCellPointerPressed" >
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Bp" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <memory:MemoryLineControl />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+            Items="{Binding MemoryViewer.MemoryItems}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <memory:MemoryLineControl />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+        <!-- <common:VirtualizedList -->
+        <!--     Grid.Row="1" -->
+        <!--     Focusable="True" -->
+        <!--     Items="{Binding MemoryViewer.MemoryItems}" -->
+        <!--     ItemHeight="25"> -->
+        <!--     <common:VirtualizedList.ItemTemplate> -->
+        <!--         <DataTemplate> -->
+        <!--             <memory:MemoryLineControl /> -->
+        <!--         </DataTemplate> -->
+        <!--     </common:VirtualizedList.ItemTemplate> -->
+        <!-- </common:VirtualizedList> -->
+
+        <!-- <DataGrid  -->
+        <!--     x:Name="Dg" -->
+        <!--     Grid.Row="1"  -->
+        <!--     Items="{Binding MemoryViewer.MemoryItems}" -->
+        <!--     RowHeight="22" -->
+        <!--     BorderThickness="0" -->
+        <!--     HorizontalGridLinesBrush="Transparent" -->
+        <!--     HeadersVisibility="None" -->
+        <!--     AutoGenerateColumns="False" -->
+        <!--     GridLinesVisibility="None" -->
+        <!--     SelectionMode="Single"  -->
+        <!--     CellPointerPressed="OnCellPointerPressed" > -->
+        <!--     <DataGrid.Columns> -->
+        <!--         <DataGridTemplateColumn Header="Bp" IsReadOnly="True"> -->
+        <!--             <DataGridTemplateColumn.CellTemplate> -->
+        <!--                 <DataTemplate> -->
+        <!--                     <memory:MemoryLineControl /> -->
+        <!--                 </DataTemplate> -->
+        <!--             </DataGridTemplateColumn.CellTemplate> -->
+        <!--         </DataGridTemplateColumn> -->
+        <!--     </DataGrid.Columns> -->
+        <!-- </DataGrid> -->
     </Grid>
 
 </UserControl>
