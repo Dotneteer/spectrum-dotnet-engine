@@ -15,9 +15,4 @@ public interface IBeeperDevice: IAudioDevice
     /// </summary>
     /// <param name="value">EAR bit value to set</param>
     void SetEarBit(bool value);
-
-    /// <summary>
-    /// Renders the subsequent beeper sample according to the current EAR bit value
-    /// </summary>
-    void RenderBeeperSample();
 }

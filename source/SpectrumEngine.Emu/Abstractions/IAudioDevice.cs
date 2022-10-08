@@ -26,5 +26,10 @@ public interface IAudioDevice : IGenericDevice<IZxSpectrumMachine>
     /// This method signs that a new machine frame has been started
     /// </summary>
     void OnNewFrame();
+
+    /// <summary>
+    /// Renders the subsequent beeper sample according to the current EAR bit value
+    /// </summary>
+    void SetNextAudioSample();
 }
 

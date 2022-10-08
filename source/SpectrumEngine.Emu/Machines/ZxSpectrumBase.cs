@@ -542,6 +542,6 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
         {
             ScreenDevice.RenderTact(LastRenderedFrameTact++);
         }
-        BeeperDevice.RenderBeeperSample();
+        BeeperDevice.SetNextAudioSample();
     }
 }
