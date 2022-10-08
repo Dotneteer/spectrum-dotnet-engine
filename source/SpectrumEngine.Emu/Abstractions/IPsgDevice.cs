@@ -15,7 +15,7 @@ public interface IPsgDevice: IAudioDevice
     /// Reads the value of the PSG register addressed with the las SetPsgRegisterIndex operation
     /// </summary>
     /// <returns>The value of the PSG register</returns>
-    byte ReadPsgRegister();
+    byte ReadPsgRegisterValue();
 
     /// <summary>
     /// Writes the value of the PSG register addressed with the las SetPsgRegisterIndex operation

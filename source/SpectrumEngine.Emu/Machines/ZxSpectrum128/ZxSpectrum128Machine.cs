@@ -1,4 +1,7 @@
 // ReSharper disable VirtualMemberCallInConstructor
+
+using SpectrumEngine.Emu.Machines.ZxSpectrum128;
+
 namespace SpectrumEngine.Emu.ZxSpectrum128;
 
 /// <summary>
@@ -30,6 +33,11 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     /// </summary>
     public override string DisplayName => "ZX Spectrum 128K";
 
+    /// <summary>
+    /// Represents the PSG device of ZX Spectrum 128
+    /// </summary>
+    public IPsgDevice PsgDevice { get; }
+    
     /// <summary>
     /// Initialize the machine
     /// </summary>
@@ -64,6 +72,7 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
         KeyboardDevice = new KeyboardDevice(this);
         ScreenDevice = new CommonScreenDevice(this, CommonScreenDevice.ZxSpectrum128ScreenConfiguration);
         BeeperDevice = new BeeperDevice(this);
+        PsgDevice = new ZxSpectrum128PsgDevice(this);
         FloatingBusDevice = new ZxSpectrum128FloatingBusDevice(this);
         TapeDevice = new TapeDevice(this);
         Reset();
@@ -147,6 +156,12 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     public override byte ReadScreenMemory(ushort offset)
     {
         return _ramBanks[_useShadowScreen ? 7 : 5][offset & 0x3fff];
+    }
+
+    protected override void AfterInstructionExecuted()
+    {
+        base.AfterInstructionExecuted();
+        PsgDevice.CalculateCurrentAudioValue();
     }
 
     /// <summary>
@@ -267,9 +282,25 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     /// </remarks>
     public override byte DoReadPort(ushort address)
     {
-        return (address & 0x0001) == 0 
-            ? ReadPort0Xfe(address)
-            : FloatingBusDevice.ReadFloatingBus();
+        if ((address & 0x0001) == 0)
+        {
+            // --- Standard ZX Spectrum 48 I/O read
+            return ReadPort0Xfe(address);
+        } 
+        
+        // --- Handle the Kempston port
+        if ((address & 0x00e0) != 0) {
+            // TODO: Implement Kempston port handling
+            return 0xff;
+        }
+        
+        // --- Handle the PSG register index port
+        if ((address & 0xc002) == 0xc000)
+        {
+            return PsgDevice.ReadPsgRegisterValue();
+        }
+
+        return FloatingBusDevice.ReadFloatingBus();
     }
 
     /// <summary>
@@ -315,6 +346,19 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
 
             // --- Enable/disable paging
             _pagingEnabled = (value & 0x20) == 0x00;
+
+            return;
+        }
+        
+        // --- Test for PSG register index port
+        if ((address & 0xc002) == 0xc000) {
+            PsgDevice.SetPsgRegisterIndex((byte)(value & 0x0f));
+            return;
+        }
+        
+        // --- Test for PSG register value port
+        if ((address & 0xc002) == 0x8000) {
+            PsgDevice.WritePsgRegisterValue(value);
         }
     }
 

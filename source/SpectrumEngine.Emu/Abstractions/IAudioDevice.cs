@@ -31,5 +31,13 @@ public interface IAudioDevice : IGenericDevice<IZxSpectrumMachine>
     /// Renders the subsequent beeper sample according to the current EAR bit value
     /// </summary>
     void SetNextAudioSample();
+
+    /// <summary>
+    /// Calculates the current audio value according to the CPU's clock
+    /// </summary>
+    /// <remarks>
+    /// We do not need to calculate the value, as it is always the value of the last EAR bit
+    /// </remarks>
+    void CalculateCurrentAudioValue();
 }
 

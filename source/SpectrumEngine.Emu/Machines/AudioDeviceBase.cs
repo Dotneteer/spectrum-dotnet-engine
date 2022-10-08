@@ -96,7 +96,7 @@ public class AudioDeviceBase: IAudioDevice
     /// <remarks>
     /// We do not need to calculate the value, as it is always the value of the last EAR bit
     /// </remarks>
-    protected virtual void CalculateCurrentAudioValue()
+    public virtual void CalculateCurrentAudioValue()
     {
         // --- Intentionally empty
     }
