@@ -88,41 +88,6 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        
-        <!-- <common:VirtualizedList -->
-        <!--     Grid.Row="1" -->
-        <!--     Focusable="True" -->
-        <!--     Items="{Binding MemoryViewer.MemoryItems}" -->
-        <!--     ItemHeight="25"> -->
-        <!--     <common:VirtualizedList.ItemTemplate> -->
-        <!--         <DataTemplate> -->
-        <!--             <memory:MemoryLineControl /> -->
-        <!--         </DataTemplate> -->
-        <!--     </common:VirtualizedList.ItemTemplate> -->
-        <!-- </common:VirtualizedList> -->
-
-        <!-- <DataGrid  -->
-        <!--     x:Name="Dg" -->
-        <!--     Grid.Row="1"  -->
-        <!--     Items="{Binding MemoryViewer.MemoryItems}" -->
-        <!--     RowHeight="22" -->
-        <!--     BorderThickness="0" -->
-        <!--     HorizontalGridLinesBrush="Transparent" -->
-        <!--     HeadersVisibility="None" -->
-        <!--     AutoGenerateColumns="False" -->
-        <!--     GridLinesVisibility="None" -->
-        <!--     SelectionMode="Single"  -->
-        <!--     CellPointerPressed="OnCellPointerPressed" > -->
-        <!--     <DataGrid.Columns> -->
-        <!--         <DataGridTemplateColumn Header="Bp" IsReadOnly="True"> -->
-        <!--             <DataGridTemplateColumn.CellTemplate> -->
-        <!--                 <DataTemplate> -->
-        <!--                     <memory:MemoryLineControl /> -->
-        <!--                 </DataTemplate> -->
-        <!--             </DataGridTemplateColumn.CellTemplate> -->
-        <!--         </DataGridTemplateColumn> -->
-        <!--     </DataGrid.Columns> -->
-        <!-- </DataGrid> -->
     </Grid>
 
 </UserControl>
