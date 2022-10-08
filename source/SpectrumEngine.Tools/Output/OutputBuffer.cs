@@ -240,6 +240,7 @@ public sealed class OutputBuffer
 
         // --- Extend the text of the last action
         lastSection.Text = (lastSection.Text ?? "") + message;
+        RaiseContentsChanged();
 
         void NewSection()
         {

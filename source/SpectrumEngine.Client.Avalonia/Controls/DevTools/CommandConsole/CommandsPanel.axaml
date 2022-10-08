@@ -7,7 +7,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.CommandsPanel"
              Padding="0,8,0,4"
-             Focusable="true">
+             Focusable="true"
+             GotFocus="OnCommandPanelGotFocus">
     
     <Design.DataContext>
         <viewModels:MainWindowViewModel/>
@@ -47,51 +48,47 @@
     </UserControl.Styles>
     
     <Grid RowDefinitions="*, Auto">
-        <DataGrid 
-            x:Name="OutputGrid"
+        <ListBox
             Grid.Row="0"
-            Items="{Binding Commands.Buffer}"
-            RowHeight="20"
-            BorderThickness="0"
-            HorizontalGridLinesBrush="Transparent"
-            HeadersVisibility="None"
-            AutoGenerateColumns="False"
-            GridLinesVisibility="None"
-            SelectionMode="Single" 
-            CellPointerPressed="OnCellPointerPressed" >
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Bp" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <ItemsRepeater 
-                                    Items="{Binding}">
-                                    <Design.DataContext>
-                                        <output:OutputSection/>
-                                    </Design.DataContext>
-                                    <ItemsRepeater.Layout>
-                                        <StackLayout Orientation="Horizontal" />
-                                    </ItemsRepeater.Layout>
-                                    <ItemsRepeater.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock  
-                                                Classes="Display"
-                                                VerticalAlignment="Center"
-                                                Text="{Binding Text}"
-                                                Foreground="{Binding Color, Converter={StaticResource OutputColorConverter}}" 
-                                                Background="{Binding Background, Converter={StaticResource OutputColorConverter}}"
-                                                FontWeight="{Binding Bold, Converter={StaticResource OutputWeightConverter}}"
-                                                FontStyle="{Binding Italic, Converter={StaticResource OutputStyleConverter}}"
-                                                TextDecorations="{Binding Converter={StaticResource OutputDecorationsConverter}}"/>
-                                        </DataTemplate>
-                                    </ItemsRepeater.ItemTemplate>
-                                </ItemsRepeater>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+            x:Name="OutputList"
+            Items="{Binding Commands.Buffer}" 
+            Background="Transparent"
+            SelectionChanged="OnSelectionChanged"
+            GotFocus="OnOutputListGotFocus">
+            <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="Padding" Value="0,2" />
+                </Style>
+            </ListBox.Styles>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <ItemsRepeater
+                            Items="{Binding}">
+                            <Design.DataContext>
+                                <output:OutputSection/>
+                            </Design.DataContext>
+                            <ItemsRepeater.Layout>
+                                <StackLayout Orientation="Horizontal" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        Classes="Display"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Text}"
+                                        Foreground="{Binding Color, Converter={StaticResource OutputColorConverter}}"
+                                        Background="{Binding Background, Converter={StaticResource OutputColorConverter}}"
+                                        FontWeight="{Binding Bold, Converter={StaticResource OutputWeightConverter}}"
+                                        FontStyle="{Binding Italic, Converter={StaticResource OutputStyleConverter}}"
+                                        TextDecorations="{Binding Converter={StaticResource OutputDecorationsConverter}}"/>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <Border Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ExpanderBorderBrush}">
             <Grid ColumnDefinitions="Auto, *">
                 <TextBlock Classes="Prompt" Text=">" VerticalAlignment="Center"/>

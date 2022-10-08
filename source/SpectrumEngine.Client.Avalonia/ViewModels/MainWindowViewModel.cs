@@ -91,10 +91,11 @@ public class MainWindowViewModel : ViewModelBase
             Disassembler.ApplyBreakpointChanges(bpInfo.OldBps, bpInfo.NewBps);
         };
 
-        MemoryViewer = new MemoryViewModel(this)
+        MemoryViewer = new MemoryViewModel
         {
             RangeFrom = 0x0000,
-            RangeTo = 0xffff
+            RangeTo = 0xffff,
+            LastSetTopPosition = -1
         };
     }
     

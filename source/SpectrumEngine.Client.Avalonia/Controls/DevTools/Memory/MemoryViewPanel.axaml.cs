@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
+// ReSharper disable UnusedParameter.Local
 
 namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 
@@ -29,18 +30,31 @@ public partial class MemoryViewPanel : MachineStatusUserControl
             await PrepareRefresh();
             await RefreshMemory();
         };
+        Vm.MemoryViewer.ModeChanged += async (_, _) =>
+        {
+            await PrepareRefresh();
+            await RefreshMemory();
+        }; 
         Vm.MemoryViewer.TopAddressChanged += (_, addr) => ScrollToTopAddress(addr);
+        SetPreferredTopPosition();
     }
 
+    /// <summary>
+    /// Sets the preferred top position (whenever the tab of the control gets activated)
+    /// </summary>
+    public void SetPreferredTopPosition()
+    {
+        if (Vm == null) return;
+        if (Vm.MemoryViewer.LastSetTopPosition != -1)
+        {
+            ScrollToTopAddress((ushort)Vm.MemoryViewer.LastSetTopPosition);
+        }
+    }
+    
     protected override async Task Refresh()
     {
         await PrepareRefresh();
         await RefreshMemory();
-    }
-
-    private void OnCellPointerPressed(object? sender, DataGridCellPointerPressedEventArgs e)
-    {
-        e.PointerPressedEventArgs.Handled = true;
     }
 
     protected override async Task PrepareRefresh()
@@ -50,13 +64,31 @@ public partial class MemoryViewPanel : MachineStatusUserControl
         await Task.Run(() =>
         {
             // --- Obtain the flat memory contents
-            var memory = (vm.Machine.Controller?.Machine as ZxSpectrumBase)?.Get64KFlatMemory();
+            byte[]? memory = null;
+            var rangeFrom = 0;
+            var rangeTo = 0;
+            switch (vm.MemoryViewer.DisplayMode)
+            {
+                case MemoryDisplayMode.Full:
+                    memory = (vm.Machine.Controller?.Machine as ZxSpectrumBase)?.Get64KFlatMemory();
+                    rangeFrom = vm.MemoryViewer.RangeFrom & 0xfff0;
+                    rangeTo = (vm.MemoryViewer.RangeTo + 15) & 0xffff0;
+                    break;
+                case MemoryDisplayMode.RomPage:
+                    memory = (vm.Machine.Controller?.Machine as ZxSpectrumBase)?
+                        .Get16KPartition(-vm.MemoryViewer.RomPage-1);
+                    rangeFrom = 0x0000;
+                    rangeTo = memory?.Length ?? 0;
+                    break;
+                case MemoryDisplayMode.RamBank:
+                    memory = (vm.Machine.Controller?.Machine as ZxSpectrumBase)?
+                        .Get16KPartition(vm.MemoryViewer.RamBank);
+                    rangeFrom = 0x0000;
+                    rangeTo = memory?.Length ?? 0;
+                    break;
+            }
             if (memory == null) return;
             
-            // --- Calculate the visible range
-            var rangeFrom = vm.MemoryViewer.RangeFrom & 0xfff0;
-            var rangeTo = (vm.MemoryViewer.RangeTo + 15) & 0xffff0;
-
             // --- Ensure memory items
             var memItems = new List<MemoryItemViewModel>();
 
@@ -81,24 +113,37 @@ public partial class MemoryViewPanel : MachineStatusUserControl
 
             Dispatcher.UIThread.Post(() =>
             {
-                var position = Dg.GetViewportInfo(vm?.MemoryViewer.MemoryItems?.Count ?? 0);
-                vm!.MemoryViewer.RefreshMemory(position.Top, position.Height + 1);
+                vm.MemoryViewer.MemoryItems =
+                    new ObservableCollection<MemoryItemViewModel>(vm.MemoryViewer.BackgroundMemoryItems!);
             });
         });
     }
 
+    /// <summary>
+    /// Scrolls the top of the memory view to the specified address
+    /// </summary>
+    /// <param name="address">Address to scroll to</param>
     private async void ScrollToTopAddress(ushort address)
     {
         if (Vm?.MemoryViewer.MemoryItems == null) return;
+        if (!(Vm?.MemoryViewer.MemoryPanelIsOnTop ?? false)) return;
 
-        foreach (var item in Vm.MemoryViewer.MemoryItems)
-        {
-            if (item.Address >= address - 15 && item.Address <= address)
-            {
-                Dg.ScrollIntoView(item, null);
-                await Task.Delay(50);
-                Dg.SelectedItem = item;
-            }
-        }
-    }   
+        // --- HACK: First, we need to scroll to the bottom item so that the later we can move the item to the top
+        MemoryList.ScrollIntoView(0x0fff);
+        
+        // --- Let's give time the control to render itself
+        await Task.Delay(20);
+        
+        // --- Now, navigate to the desired location
+        var itemIndex = address / 16;
+        MemoryList.ScrollIntoView(itemIndex);
+        
+        // --- Sign that we set the position
+        Vm.MemoryViewer.LastSetTopPosition = -1;
+    }
+
+    private void OnMemorySelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        MemoryList.SelectedItems.Clear();
+    }
 }

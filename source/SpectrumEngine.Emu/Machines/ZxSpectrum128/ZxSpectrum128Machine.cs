@@ -174,7 +174,13 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     /// </remarks>
     public override byte[] Get16KPartition(int index)
     {
-        throw new NotSupportedException();
+        return index switch
+        {
+            -1 => _romPages[0],
+            -2 => _romPages[1],
+            >= 0 and <= 7 => _ramBanks[index],
+            _ => throw new InvalidOperationException($"Invalid 16K partition index: {index}")
+        };
     }
 
     /// <summary>

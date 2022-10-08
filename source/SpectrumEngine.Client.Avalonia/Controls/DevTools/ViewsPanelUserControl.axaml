@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
              xmlns:devTools="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools"
+             xmlns:memory="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools.Memory"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.ViewsPanelUserControl"
              Background="{DynamicResource DevsBackground}">
@@ -34,7 +35,8 @@
         Padding="0"
         SelectedIndex="{Binding PanelsViewOptions.SelectedIndex, Mode=TwoWay}"
         VerticalAlignment="Stretch"
-        HorizontalAlignment="Stretch">
+        HorizontalAlignment="Stretch"
+        SelectionChanged="OnSelectedTabChanged">
         <TabItem 
             Header="Disassembly"
             IsVisible="{Binding PanelsViewOptions.ShowDisassembly}">
@@ -42,8 +44,10 @@
         </TabItem>
         <TabItem
             Header="Memory"
-            IsVisible="{Binding PanelsViewOptions.ShowMemory}">
-            <devTools:MemoryViewPanel RefreshRate="100" />
+            x:Name="MemoryTab"
+            IsVisible="{Binding PanelsViewOptions.ShowMemory}" 
+            GotFocus="OnMemoryPanelGotFocus">
+            <devTools:MemoryViewPanel x:Name="MemoryPanel" />
         </TabItem>
         <TabItem
             Header="Watch"
