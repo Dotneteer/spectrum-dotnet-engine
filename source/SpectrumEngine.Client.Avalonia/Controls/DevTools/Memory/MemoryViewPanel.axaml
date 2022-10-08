@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
              xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
-             xmlns:common="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.Common"
              xmlns:memory="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools.Memory"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.DevTools.MemoryViewPanel">
@@ -75,8 +74,15 @@
         </Panel>
         
         <ListBox
-            Grid.Row="1" 
-            Items="{Binding MemoryViewer.MemoryItems}">
+            Grid.Row="1"
+            x:Name="MemoryList"
+            Items="{Binding MemoryViewer.MemoryItems}"
+            SelectionChanged="OnMemorySelectionChanged">
+            <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="Padding" Value="0,2" />
+                </Style>
+            </ListBox.Styles>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <memory:MemoryLineControl />

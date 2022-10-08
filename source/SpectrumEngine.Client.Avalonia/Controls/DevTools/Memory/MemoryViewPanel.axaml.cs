@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
@@ -105,18 +106,27 @@ public partial class MemoryViewPanel : MachineStatusUserControl
         });
     }
 
-    private void ScrollToTopAddress(ushort address)
+    /// <summary>
+    /// Scrolls the top of the memory view to the specified address
+    /// </summary>
+    /// <param name="address">Address to scroll to</param>
+    private async void ScrollToTopAddress(ushort address)
     {
         if (Vm?.MemoryViewer.MemoryItems == null) return;
+        
+        // --- HACK: First, we need to scroll to the bottom item so that the later we can move the item to the top
+        MemoryList.ScrollIntoView(0x0fff);
+        
+        // --- Let's give time the control to render itself
+        await Task.Delay(20);
+        
+        // --- Now, navigate to the desired location
+        var itemIndex = address / 16;
+        MemoryList.ScrollIntoView(itemIndex);
+    }
 
-        foreach (var item in Vm.MemoryViewer.MemoryItems)
-        {
-            if (item.Address >= address - 15 && item.Address <= address)
-            {
-                // Dg.ScrollIntoView(item, null);
-                // await Task.Delay(50);
-                // Dg.SelectedItem = item;
-            }
-        }
-    }   
+    private void OnMemorySelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        MemoryList.SelectedItems.Clear();
+    }
 }
