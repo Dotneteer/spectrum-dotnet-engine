@@ -68,7 +68,6 @@
                             Text="{Binding MemoryViewer.RamBank}" 
                             Foreground="{DynamicResource DiagLabelTextColor}" />
                     </StackPanel>
-                    <TextBlock Text="{Binding MemoryViewer.MemoryItems.Count}" Foreground="{DynamicResource DiagLabelTextColor}" />
                 </StackPanel>
             </Border>
         </Panel>

@@ -10,23 +10,14 @@ namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 /// </summary>
 public class MemoryViewModel: ViewModelBase
 {
-    private readonly MainWindowViewModel _parent;
     private MemoryDisplayMode _displayMode;
     private int _romPage;
     private int _ramBank;
     private ushort _rangeFrom;
     private ushort _rangeTo;
+    private int _lasSetTopPosition;
     
     private ObservableCollection<MemoryItemViewModel>? _memoryItems;
-
-    /// <summary>
-    /// Initializes the view model with the specified parent
-    /// </summary>
-    /// <param name="parent">Parent view model</param>
-    public MemoryViewModel(MainWindowViewModel parent)
-    {
-        _parent = parent;
-    }
 
     /// <summary>
     /// Memory items to show
@@ -102,6 +93,20 @@ public class MemoryViewModel: ViewModelBase
         set => SetProperty(ref _rangeTo, value);
     }
 
+    /// <summary>
+    /// Indicates the las set but not refreshed top position. -1 means no such position.
+    /// </summary>
+    public int LastSetTopPosition
+    {
+        get => _lasSetTopPosition;
+        set => SetProperty(ref _lasSetTopPosition, value);
+    }
+
+    /// <summary>
+    /// Indicates that the mamory panel is on the top
+    /// </summary>
+    public bool MemoryPanelIsOnTop { get; set; }
+    
     public event EventHandler? ModeChanged;
     
     /// <summary>
@@ -138,6 +143,7 @@ public class MemoryViewModel: ViewModelBase
     /// </summary>
     public void RaiseTopAddressChanged(ushort topAddress)
     {
+        LastSetTopPosition = topAddress;
         TopAddressChanged?.Invoke(this, topAddress);
     }
 

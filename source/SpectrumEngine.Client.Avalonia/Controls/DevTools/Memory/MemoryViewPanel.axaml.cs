@@ -36,8 +36,21 @@ public partial class MemoryViewPanel : MachineStatusUserControl
             await RefreshMemory();
         }; 
         Vm.MemoryViewer.TopAddressChanged += (_, addr) => ScrollToTopAddress(addr);
+        SetPreferredTopPosition();
     }
 
+    /// <summary>
+    /// Sets the preferred top position (whenever the tab of the control gets activated)
+    /// </summary>
+    public void SetPreferredTopPosition()
+    {
+        if (Vm == null) return;
+        if (Vm.MemoryViewer.LastSetTopPosition != -1)
+        {
+            ScrollToTopAddress((ushort)Vm.MemoryViewer.LastSetTopPosition);
+        }
+    }
+    
     protected override async Task Refresh()
     {
         await PrepareRefresh();
@@ -113,7 +126,8 @@ public partial class MemoryViewPanel : MachineStatusUserControl
     private async void ScrollToTopAddress(ushort address)
     {
         if (Vm?.MemoryViewer.MemoryItems == null) return;
-        
+        if (!(Vm?.MemoryViewer.MemoryPanelIsOnTop ?? false)) return;
+
         // --- HACK: First, we need to scroll to the bottom item so that the later we can move the item to the top
         MemoryList.ScrollIntoView(0x0fff);
         
@@ -123,6 +137,9 @@ public partial class MemoryViewPanel : MachineStatusUserControl
         // --- Now, navigate to the desired location
         var itemIndex = address / 16;
         MemoryList.ScrollIntoView(itemIndex);
+        
+        // --- Sign that we set the position
+        Vm.MemoryViewer.LastSetTopPosition = -1;
     }
 
     private void OnMemorySelectionChanged(object? sender, SelectionChangedEventArgs e)
