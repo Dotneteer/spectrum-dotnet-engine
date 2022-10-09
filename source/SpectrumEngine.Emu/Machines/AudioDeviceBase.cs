@@ -72,7 +72,7 @@ public class AudioDeviceBase: IAudioDevice
     /// <summary>
     /// This method signs that a new machine frame has been started
     /// </summary>
-    public void OnNewFrame()
+    public virtual void OnNewFrame()
     {
         var cpuTactsInFrame = Machine.TactsInFrame * Machine.ClockMultiplier;
         if (_audioNextSampleTact != 0)

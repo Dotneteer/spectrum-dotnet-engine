@@ -52,20 +52,12 @@ namespace SpectrumEngine.Client.Avalonia.Views
         protected override void OnKeyDown(KeyEventArgs e)
         {
             e.Handled = SpectrumDisplay.HandleKeyboardEvent(e, true);
-            if (e.Handled)
-            {
-                Debug.WriteLine($"Down: {e.Key}");
-            }
             base.OnKeyDown(e);
         }
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
             e.Handled = SpectrumDisplay.HandleKeyboardEvent(e, false);
-            if (e.Handled)
-            {
-                Debug.WriteLine($"Up: {e.Key}");
-            }
             base.OnKeyUp(e);
         }
     }

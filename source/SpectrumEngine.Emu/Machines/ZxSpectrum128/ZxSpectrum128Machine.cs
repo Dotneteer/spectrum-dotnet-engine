@@ -1,5 +1,6 @@
 // ReSharper disable VirtualMemberCallInConstructor
 
+using System.Diagnostics;
 using SpectrumEngine.Emu.Machines.ZxSpectrum128;
 
 namespace SpectrumEngine.Emu.ZxSpectrum128;
@@ -129,6 +130,8 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
         ScreenDevice.Reset();
         BeeperDevice.Reset();
         BeeperDevice.SetAudioSampleRate(AUDIO_SAMPLE_RATE);
+        PsgDevice.Reset();
+        PsgDevice.SetAudioSampleRate(AUDIO_SAMPLE_RATE);
         FloatingBusDevice.Reset();
         TapeDevice.Reset();
         
@@ -158,10 +161,31 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
         return _ramBanks[_useShadowScreen ? 7 : 5][offset & 0x3fff];
     }
 
+    public override void OnTactIncremented(int increment)
+    {
+        base.OnTactIncremented(increment);
+        PsgDevice.SetNextAudioSample();
+    }
+
+    /// <summary>
+    /// Check for current tape mode
+    /// </summary>
     protected override void AfterInstructionExecuted()
     {
         base.AfterInstructionExecuted();
         PsgDevice.CalculateCurrentAudioValue();
+    }
+
+    /// <summary>
+    /// The machine's execution loop calls this method when it is about to initialize a new frame.
+    /// </summary>
+    /// <param name="clockMultiplierChanged">
+    /// Indicates if the clock multiplier has been changed since the execution of the previous frame.
+    /// </param>
+    protected override void OnInitNewFrame(bool clockMultiplierChanged)
+    {
+        base.OnInitNewFrame(clockMultiplierChanged);
+        PsgDevice.OnNewFrame();
     }
 
     /// <summary>
@@ -196,6 +220,28 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
             >= 0 and <= 7 => _ramBanks[index],
             _ => throw new InvalidOperationException($"Invalid 16K partition index: {index}")
         };
+    }
+
+    /// <summary>
+    /// Gets the audio sample rate
+    /// </summary>
+    public override int GetAudioSampleRate() => BeeperDevice.GetAudioSampleRate();
+
+    /// <summary>
+    /// Gets the audio samples rendered in the current frame
+    /// </summary>
+    /// <returns>Array with the audio samples</returns>
+    public override float[] GetAudioSamples()
+    {
+        var beeperSamples = BeeperDevice.GetAudioSamples();
+        var psgSamples = PsgDevice.GetAudioSamples();
+        var samplesCount = Math.Min(beeperSamples.Length, psgSamples.Length);
+        var sumSamples = new float[samplesCount];
+        for (var i = 0; i < samplesCount; i++)
+        {
+            sumSamples[i] = beeperSamples[i] + psgSamples[i];
+        }
+        return sumSamples;
     }
 
     /// <summary>

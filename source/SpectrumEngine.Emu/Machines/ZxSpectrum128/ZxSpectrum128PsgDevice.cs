@@ -10,7 +10,7 @@ public class ZxSpectrum128PsgDevice: AudioDeviceBase, IPsgDevice
 
     // --- The PsgChip instance that provides the sound sample calculation
     private readonly PsgChip _psg = new();
-    
+
     /// <summary>
     /// Initialize the beeper device and assign it to its host machine.
     /// </summary>
@@ -20,6 +20,24 @@ public class ZxSpectrum128PsgDevice: AudioDeviceBase, IPsgDevice
         // --- Set the first tact to create a sample for
         _psgNextClockTact = PSG_CLOCK_STEP;
     }
+
+    /// <summary>
+    /// Reads the value of the PSG register addressed with the las SetPsgRegisterIndex operation
+    /// </summary>
+    /// <returns>The value of the PSG register</returns>
+    public byte ReadPsgRegisterValue() => _psg.ReadPsgRegisterValue();
+
+    /// <summary>
+    /// Writes the value of the PSG register addressed with the las SetPsgRegisterIndex operation
+    /// </summary>
+    /// <param name="value">Value to set for the PSG register</param>
+    public void WritePsgRegisterValue(byte value) => _psg.WritePsgRegisterValue(value);
+
+    /// <summary>
+    /// Sets the PSG register index to read or write
+    /// </summary>
+    /// <param name="index">PSG register index</param>
+    public void SetPsgRegisterIndex(int index) => _psg.SetPsgRegisterIndex(index);
 
     /// <summary>
     /// Calculates the current audio value according to the CPU's clock
@@ -41,28 +59,25 @@ public class ZxSpectrum128PsgDevice: AudioDeviceBase, IPsgDevice
     /// <returns>Sound sample value</returns>
     protected override float GetCurrentSampleValue()
     {
-        // TODO: Implement this method
-        return 0.0f;
+        var value = _psg.OrphanSamples > 0
+            ? (float)_psg.OrphanSum / _psg.OrphanSamples / 65535
+            : 0.0f;
+        _psg.OrphanSum = 0;
+        _psg.OrphanSamples = 0;
+        return value;
     }
 
-
     /// <summary>
-    /// Sets the PSG register index to read or write
+    /// This method signs that a new machine frame has been started
     /// </summary>
-    /// <param name="index">PSG register index</param>
-    public void SetPsgRegisterIndex(int index) => _psg.SetPsgRegisterIndex(index);
-
-    /// <summary>
-    /// Reads the value of the PSG register addressed with the las SetPsgRegisterIndex operation
-    /// </summary>
-    /// <returns>The value of the PSG register</returns>
-    public byte ReadPsgRegisterValue() => _psg.ReadPsgRegisterValue();
-
-    /// <summary>
-    /// Writes the value of the PSG register addressed with the las SetPsgRegisterIndex operation
-    /// </summary>
-    /// <param name="value">Value to set for the PSG register</param>
-    public void WritePsgRegisterValue(byte value) => _psg.WritePsgRegisterValue(value);
+    public override void OnNewFrame()
+    {
+        base.OnNewFrame();
+        if (_psgNextClockTact >= Machine.TactsInFrame)
+        {
+            _psgNextClockTact -= Machine.TactsInFrame;
+        }
+    }
 
     /// <summary>
     /// Generates the current PSG output value according to current register settings

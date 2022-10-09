@@ -129,6 +129,17 @@ public class ZxSpectrum48Machine :
     }
 
     /// <summary>
+    /// Gets the audio sample rate
+    /// </summary>
+    public override int GetAudioSampleRate() => BeeperDevice.GetAudioSampleRate();
+
+    /// <summary>
+    /// Gets the audio samples rendered in the current frame
+    /// </summary>
+    /// <returns>Array with the audio samples</returns>
+    public override float[] GetAudioSamples() => BeeperDevice.GetAudioSamples();
+
+    /// <summary>
     /// Get the number of T-states in a display line (use -1, if this info is not available)
     /// </summary>
     public override int TactsInDisplayLine => ScreenDevice.ScreenWidth;

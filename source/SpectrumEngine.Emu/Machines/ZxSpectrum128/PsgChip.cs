@@ -61,11 +61,15 @@ public class PsgChip
     private ushort _cntEnv;
     private ushort _posEnv;
 
-    // --- Sum of orphan samples
-    private int _psgOrphanSum;
+    /// <summary>
+    /// Sum of orphan samples
+    /// </summary>
+    public int OrphanSum { get; set; }
     
-    // --- Number of orphan samples
-    private int _psgOrphanSamples;
+    /// <summary>
+    /// Number of orphan samples
+    /// </summary>
+    public int OrphanSamples { get; set; }
 
     public PsgChip()
     {
@@ -324,7 +328,7 @@ public class PsgChip
         {
             // --- It is time to generate the next noise sample
             _cntNoise = 0;
-            _noiseSeed = (_noiseSeed * 2 + 1) ^ ((_noiseSeed ^ (_noiseSeed >> 13)) & 0x01);
+            _noiseSeed = (_noiseSeed * 2 + 1) ^ (((_noiseSeed >> 16) ^ (_noiseSeed >> 13)) & 0x01);
             _bitNoise = ((_noiseSeed >> 16) & 0x01) != 0;
         }
 
@@ -390,7 +394,7 @@ public class PsgChip
             vol += _psgVolumeTable[(tmpVol & 0x1f) >> 1];
         }
 
-        _psgOrphanSum += vol;
-        _psgOrphanSamples += 1;
+        OrphanSum += vol;
+        OrphanSamples += 1;
     }
 }
