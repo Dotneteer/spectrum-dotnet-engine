@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -114,7 +115,7 @@ public partial class SpectrumDisplayControl : UserControl
         
         if (e.NewController.Machine is ZxSpectrumBase zxMachine)
         {
-            _audioProvider = new BassAudioProvider(zxMachine.BeeperDevice.GetAudioSampleRate());
+            _audioProvider = new BassAudioProvider(zxMachine.GetAudioSampleRate());
         }
         
         // --- Reset the machine to its initial state
@@ -184,7 +185,7 @@ public partial class SpectrumDisplayControl : UserControl
         if (machine == null) return;
 
         // --- Add sound samples
-        var samples = (machine as ZxSpectrumBase)?.BeeperDevice.GetAudioSamples();
+        var samples = (machine as ZxSpectrumBase)?.GetAudioSamples();
         if (samples != null)
         {
             _audioProvider?.AddSamples(samples.Select(s => s * _volume).ToArray());

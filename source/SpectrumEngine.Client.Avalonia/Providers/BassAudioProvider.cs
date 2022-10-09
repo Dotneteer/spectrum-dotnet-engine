@@ -116,7 +116,6 @@ namespace SpectrumEngine.Client.Avalonia.Providers
             }
 
             Bass.GetInfo(out BassInfo info);
-            System.Diagnostics.Debug.Write(info);
 
             if (_streamHandle.HasValue)
             {

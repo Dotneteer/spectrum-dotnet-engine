@@ -37,7 +37,6 @@ public partial class CommandsPanel : UserControl
                 Dispatcher.UIThread.Post(() =>
                 {
                     Vm.Commands.Buffer = _buffer.Clone().Contents;
-                    Debug.WriteLine($"Console items: {Vm.Commands.Buffer.Count}");
                 });
             }
         };

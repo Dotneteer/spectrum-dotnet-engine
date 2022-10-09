@@ -96,6 +96,17 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
     public abstract byte[] Get16KPartition(int index);
 
     /// <summary>
+    /// Gets the audio sample rate
+    /// </summary>
+    public abstract int GetAudioSampleRate();
+
+    /// <summary>
+    /// Gets the audio samples rendered in the current frame
+    /// </summary>
+    /// <returns>Array with the audio samples</returns>
+    public abstract float[] GetAudioSamples();
+
+    /// <summary>
     /// Get the number of T-states in a display line (use -1, if this info is not available)
     /// </summary>
     public override int TactsInDisplayLine => ScreenDevice.ScreenWidth;
@@ -542,6 +553,6 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
         {
             ScreenDevice.RenderTact(LastRenderedFrameTact++);
         }
-        BeeperDevice.RenderBeeperSample();
+        BeeperDevice.SetNextAudioSample();
     }
 }

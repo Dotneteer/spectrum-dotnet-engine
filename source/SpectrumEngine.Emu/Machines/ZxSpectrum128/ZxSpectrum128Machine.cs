@@ -1,4 +1,8 @@
 // ReSharper disable VirtualMemberCallInConstructor
+
+using System.Diagnostics;
+using SpectrumEngine.Emu.Machines.ZxSpectrum128;
+
 namespace SpectrumEngine.Emu.ZxSpectrum128;
 
 /// <summary>
@@ -30,6 +34,11 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     /// </summary>
     public override string DisplayName => "ZX Spectrum 128K";
 
+    /// <summary>
+    /// Represents the PSG device of ZX Spectrum 128
+    /// </summary>
+    public IPsgDevice PsgDevice { get; }
+    
     /// <summary>
     /// Initialize the machine
     /// </summary>
@@ -64,6 +73,7 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
         KeyboardDevice = new KeyboardDevice(this);
         ScreenDevice = new CommonScreenDevice(this, CommonScreenDevice.ZxSpectrum128ScreenConfiguration);
         BeeperDevice = new BeeperDevice(this);
+        PsgDevice = new ZxSpectrum128PsgDevice(this);
         FloatingBusDevice = new ZxSpectrum128FloatingBusDevice(this);
         TapeDevice = new TapeDevice(this);
         Reset();
@@ -120,6 +130,8 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
         ScreenDevice.Reset();
         BeeperDevice.Reset();
         BeeperDevice.SetAudioSampleRate(AUDIO_SAMPLE_RATE);
+        PsgDevice.Reset();
+        PsgDevice.SetAudioSampleRate(AUDIO_SAMPLE_RATE);
         FloatingBusDevice.Reset();
         TapeDevice.Reset();
         
@@ -147,6 +159,33 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     public override byte ReadScreenMemory(ushort offset)
     {
         return _ramBanks[_useShadowScreen ? 7 : 5][offset & 0x3fff];
+    }
+
+    public override void OnTactIncremented(int increment)
+    {
+        base.OnTactIncremented(increment);
+        PsgDevice.SetNextAudioSample();
+    }
+
+    /// <summary>
+    /// Check for current tape mode
+    /// </summary>
+    protected override void AfterInstructionExecuted()
+    {
+        base.AfterInstructionExecuted();
+        PsgDevice.CalculateCurrentAudioValue();
+    }
+
+    /// <summary>
+    /// The machine's execution loop calls this method when it is about to initialize a new frame.
+    /// </summary>
+    /// <param name="clockMultiplierChanged">
+    /// Indicates if the clock multiplier has been changed since the execution of the previous frame.
+    /// </param>
+    protected override void OnInitNewFrame(bool clockMultiplierChanged)
+    {
+        base.OnInitNewFrame(clockMultiplierChanged);
+        PsgDevice.OnNewFrame();
     }
 
     /// <summary>
@@ -181,6 +220,28 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
             >= 0 and <= 7 => _ramBanks[index],
             _ => throw new InvalidOperationException($"Invalid 16K partition index: {index}")
         };
+    }
+
+    /// <summary>
+    /// Gets the audio sample rate
+    /// </summary>
+    public override int GetAudioSampleRate() => BeeperDevice.GetAudioSampleRate();
+
+    /// <summary>
+    /// Gets the audio samples rendered in the current frame
+    /// </summary>
+    /// <returns>Array with the audio samples</returns>
+    public override float[] GetAudioSamples()
+    {
+        var beeperSamples = BeeperDevice.GetAudioSamples();
+        var psgSamples = PsgDevice.GetAudioSamples();
+        var samplesCount = Math.Min(beeperSamples.Length, psgSamples.Length);
+        var sumSamples = new float[samplesCount];
+        for (var i = 0; i < samplesCount; i++)
+        {
+            sumSamples[i] = beeperSamples[i] + psgSamples[i];
+        }
+        return sumSamples;
     }
 
     /// <summary>
@@ -267,9 +328,25 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     /// </remarks>
     public override byte DoReadPort(ushort address)
     {
-        return (address & 0x0001) == 0 
-            ? ReadPort0Xfe(address)
-            : FloatingBusDevice.ReadFloatingBus();
+        if ((address & 0x0001) == 0)
+        {
+            // --- Standard ZX Spectrum 48 I/O read
+            return ReadPort0Xfe(address);
+        } 
+        
+        // --- Handle the Kempston port
+        if ((address & 0x00e0) != 0) {
+            // TODO: Implement Kempston port handling
+            return 0xff;
+        }
+        
+        // --- Handle the PSG register index port
+        if ((address & 0xc002) == 0xc000)
+        {
+            return PsgDevice.ReadPsgRegisterValue();
+        }
+
+        return FloatingBusDevice.ReadFloatingBus();
     }
 
     /// <summary>
@@ -315,6 +392,19 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
 
             // --- Enable/disable paging
             _pagingEnabled = (value & 0x20) == 0x00;
+
+            return;
+        }
+        
+        // --- Test for PSG register index port
+        if ((address & 0xc002) == 0xc000) {
+            PsgDevice.SetPsgRegisterIndex((byte)(value & 0x0f));
+            return;
+        }
+        
+        // --- Test for PSG register value port
+        if ((address & 0xc002) == 0x8000) {
+            PsgDevice.WritePsgRegisterValue(value);
         }
     }
 

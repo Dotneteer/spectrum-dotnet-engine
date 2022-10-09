@@ -90,5 +90,16 @@ public interface IZxSpectrumMachine : IZ80Machine
     /// 0..7: RAM bank with the specified index
     /// </remarks>
     byte[] Get16KPartition(int index);
+    
+    /// <summary>
+    /// Gets the audio sample rate
+    /// </summary>
+    int GetAudioSampleRate();
+
+    /// <summary>
+    /// Gets the audio samples rendered in the current frame
+    /// </summary>
+    /// <returns>Array with the audio samples</returns>
+    float[] GetAudioSamples();
 }
 
