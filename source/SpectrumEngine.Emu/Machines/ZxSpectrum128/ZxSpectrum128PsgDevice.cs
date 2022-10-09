@@ -22,6 +22,15 @@ public class ZxSpectrum128PsgDevice: AudioDeviceBase, IPsgDevice
     }
 
     /// <summary>
+    /// Reset the device to its initial state.
+    /// </summary>
+    public override void Reset()
+    {
+        base.Reset();
+        _psg.Reset();
+    }
+
+    /// <summary>
     /// Reads the value of the PSG register addressed with the las SetPsgRegisterIndex operation
     /// </summary>
     /// <returns>The value of the PSG register</returns>
