@@ -62,6 +62,7 @@ public partial class Z80Cpu
         InterruptMode = 0;
         Iff1 = false;
         Iff2 = false;
+        Halted = false;
         ClockMultiplier = 1;
         F53Updated = false;
         PrevF53Updated = false;

@@ -71,12 +71,21 @@ public class PsgChip
     /// </summary>
     public int OrphanSamples { get; set; }
 
-    public PsgChip()
+    /// <summary>
+    /// Reset the device when creating it
+    /// </summary>
+    public PsgChip() => Reset();
+
+    /// <summary>
+    /// Resets the device to its initial state
+    /// </summary>
+    public void Reset()
     {
         InitSoundRegisters();
         InitEnvelopData();
     }
-
+    
+    
     /// <summary>
     /// Set the initial values of all sound registers and their internal representation
     /// </summary>
