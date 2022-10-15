@@ -25,6 +25,21 @@
         <Style Selector="Border.Pressed">
             <Setter Property="Background" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
         </Style>
+        <Style Selector="TextBlock.MouseOver">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="TextBlock.Pressed">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
+        <Style Selector="Ellipse">
+            <Setter Property="Fill" Value="{DynamicResource KeyboardButtonBackgroundColor}" />
+        </Style>
+        <Style Selector="Ellipse.MouseOver">
+            <Setter Property="Fill" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="Ellipse.Pressed">
+            <Setter Property="Fill" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
     </UserControl.Styles>
     
     <Border 
@@ -37,10 +52,16 @@
             <Ellipse
                 x:Name="ButtonBack"
                 Margin="0,3,0,0"
-                Fill="{DynamicResource KeyboardButtonBackgroundColor}"
-                Width="66" Height="66" StrokeThickness="0" 
+                Width="66" 
+                Height="66" 
+                StrokeThickness="0" 
                 HorizontalAlignment="Left" 
-                VerticalAlignment="Top" />
+                VerticalAlignment="Top" 
+                Cursor="Hand" 
+                PointerEnter="OnPointerEnter"
+                PointerLeave="OnPointerLeave"
+                PointerPressed="OnMainKeyMouseDown"
+                PointerReleased="OnMouseUp" />
             <StackPanel Orientation="Vertical">
                 <Border 
                     Width="66" 
@@ -57,8 +78,8 @@
                             CornerRadius="2" 
                             PointerPressed="OnExtKeyMouseDown"
                             PointerReleased="OnMouseUp"
-                            PointerEnter="OnMouseEnter"
-                            PointerLeave="OnMouseLeave"
+                            PointerEnter="OnPointerEnter"
+                            PointerLeave="OnPointerLeave"
                             Cursor="Hand">
                             <TextBlock 
                                 Classes="Sp128"
@@ -72,8 +93,8 @@
                             CornerRadius="2" 
                             PointerPressed="OnExtShiftKeyMouseDown"
                             PointerReleased="OnMouseUp"
-                            PointerEnter="OnMouseEnter"
-                            PointerLeave="OnMouseLeave"
+                            PointerEnter="OnPointerEnter"
+                            PointerLeave="OnPointerLeave"
                             Cursor="Hand">
                             <TextBlock 
                                 Classes="Sp128"
@@ -85,12 +106,7 @@
                 <Border 
                     Width="66" 
                     HorizontalAlignment="Left"
-                    Background="Transparent"
                     IsVisible="{Binding !SimpleMode}"
-                    PointerEnter="OnMouseEnter"
-                    PointerLeave="OnMouseLeave"
-                    PointerPressed="OnMainKeyMouseDown"
-                    PointerReleased="OnMouseUp"
                     Cursor="Hand">
                     <StackPanel Orientation="Vertical">
                         <StackPanel
@@ -100,18 +116,26 @@
                                 Classes="Sp128"
                                 Text="{Binding Keyword}" HorizontalAlignment="Center"
                                 Padding="4,2"
-                                Margin="0,0,0,0" />
+                                Margin="0,0,0,0"
+                                PointerEnter="OnNestedPointerEnter"
+                                PointerLeave="OnNestedPointerLeave"
+                                PointerPressed="OnMainKeyMouseDown"
+                                PointerReleased="OnMouseUp" />
                             <Border
                                 HorizontalAlignment="Right"
                                 Padding="4,2"
                                 Margin="0,-6,8,0"
                                 CornerRadius="2"
                                 IsVisible="{Binding !Centered}"
+                                PointerEnter="OnNestedPointerEnter"
+                                PointerLeave="OnNestedPointerLeave"
                                 PointerPressed="OnSShiftMouseDown"
-                                PointerReleased="OnMouseUp">
+                                PointerReleased="OnMouseUp"
+                                >
                                 <TextBlock
                                     Classes="Sp128"
                                     Text="{Binding SShiftKey}"
+                                    Padding="4,0"
                                     HorizontalAlignment="Right" />
                             </Border>
                             <StackPanel
@@ -122,12 +146,15 @@
                                     Margin="0,-5,0,0"
                                     CornerRadius="2"
                                     IsVisible="{Binding !CleanMode}"
+                                    PointerEnter="OnPointerEnter"
+                                    PointerLeave="OnPointerLeave"
                                     PointerPressed="OnSShiftMouseDown"
                                     PointerReleased="OnMouseUp">
                                     <TextBlock
                                         Classes="Sp128"
                                         Text="{Binding SShiftKey}"
                                         HorizontalAlignment="Center"
+                                        Padding="4,0"
                                         Margin="0,-2,0,0" />
                                 </Border>
                                 <TextBlock
@@ -135,7 +162,11 @@
                                     Text="{Binding SShiftKey}"
                                     HorizontalAlignment="Center"
                                     Margin="0,-2,0,2"
-                                    IsVisible="{Binding CleanMode}"/>
+                                    IsVisible="{Binding CleanMode}"
+                                    PointerEnter="OnNestedPointerEnter"
+                                    PointerLeave="OnNestedPointerLeave"
+                                    PointerPressed="OnMainKeyMouseDown"
+                                    PointerReleased="OnMouseUp" />
                             </StackPanel>
                         </StackPanel>
                         <StackPanel
@@ -146,13 +177,13 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                
                                 <Border
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Padding="4,4"
                                     Margin="8,0,0,0"
                                     CornerRadius="2"
+                                    Background="Transparent"
                                     IsVisible="{Binding HasGraphics}"
                                     PointerPressed="OnGraphicsKeyMouseDown"
                                     PointerReleased="OnMouseUp">
@@ -215,12 +246,12 @@
                             Margin="0,-5,0,0"/>
                     </StackPanel>
                 </Border>
-                <Border 
-                    Width="66" Height="45"
+                <Border
+                    Width="66" 
+                    Height="45"
                     HorizontalAlignment="Left"
-                    Background="Transparent"
-                    PointerEnter="OnMouseEnter"
-                    PointerLeave="OnMouseLeave"
+                    PointerEnter="OnNestedPointerEnter"
+                    PointerLeave="OnNestedPointerLeave"
                     PointerPressed="OnMainKeyMouseDown"
                     PointerReleased="OnMouseUp"
                     IsVisible="{Binding SimpleMode}" >

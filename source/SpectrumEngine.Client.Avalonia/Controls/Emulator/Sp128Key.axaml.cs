@@ -4,7 +4,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
-using Avalonia.Markup.Xaml;
 using SpectrumEngine.Emu;
 
 namespace SpectrumEngine.Client.Avalonia.Controls.Emulator;
@@ -166,12 +165,6 @@ public partial class Sp128Key : UserControl
         DataContext = this;
     }
     
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
-
-
     private void OnExtShiftKeyMouseDown(object sender, PointerPressedEventArgs e)
     {
         if (sender is Control control)
@@ -199,6 +192,7 @@ public partial class Sp128Key : UserControl
                     c.Classes.Set("Pressed", false);
                     c.Classes.Set("MouseOver", false);
                 });
+            ButtonBack.Classes.Set("Pressed", false);
             e.Handled = true;
         }
         KeyReleased?.Invoke(this, e);
@@ -225,7 +219,7 @@ public partial class Sp128Key : UserControl
         }
     }
 
-    private void OnMouseEnter(object? sender, PointerEventArgs e)
+    private void OnPointerEnter(object? sender, PointerEventArgs e)
     {
         if (sender is Control control)
         {
@@ -234,7 +228,7 @@ public partial class Sp128Key : UserControl
         }
     }
 
-    private void OnMouseLeave(object? sender, PointerEventArgs e)
+    private void OnPointerLeave(object? sender, PointerEventArgs e)
     {
         if (sender is Control control)
         {
@@ -243,16 +237,26 @@ public partial class Sp128Key : UserControl
         }
     }
 
+    private void OnNestedPointerEnter(object? sender, PointerEventArgs e)
+    {
+        ButtonBack.Classes.Set("MouseOver", true);
+        e.Handled = true;
+    }
+
+    private void OnNestedPointerLeave(object? sender, PointerEventArgs e)
+    {
+        ButtonBack.Classes.Set("MouseOver", false);
+        e.Handled = true;
+    }
+
     private void OnMainKeyMouseDown(object sender, PointerPressedEventArgs e)
     {
         if (sender is Control control)
         {
             e.Pointer.Capture(control);
-            control.Classes.Set("Pressed", true);
+            ButtonBack.Classes.Set("Pressed", true);
             e.Handled = true;
         }
-
-        SecondaryCode = null;
         MainKeyClicked?.Invoke(this, e);
     }
 
@@ -280,25 +284,4 @@ public partial class Sp128Key : UserControl
 
         GraphicsControlKeyClicked?.Invoke(this, e);
     }
-}
-
-/// <summary>
-/// Design time sample data for Sp48KeyControl
-/// </summary>
-public class SingleKey128ControlSampleData
-{
-    public string MainKey { get; set; } = "G";
-    public string Keyword { get; set; } = "RETURN";
-    public string SShiftKey { get; set; } = "@";
-    public string ExtKey { get; set; } = "READ";
-    public string ExtShiftKey { get; set; } = "CIRCLE";
-    public bool SimpleMode { get; set; } = false;
-    public bool CleanMode { get; set; } = false;
-    public bool NumericMode { get; set; } = true;
-    public bool Centered { get; set; } = true;
-    public bool HasGraphics { get; set; } = true;
-    public bool HasBit0 { get; set; } = true;
-    public bool HasBit1 { get; set; } = true;
-    public bool HasBit2 { get; set; } = true;
-    public bool HidesExtCaption { get; set; } = false;
 }
