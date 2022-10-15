@@ -1,6 +1,9 @@
+using System;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using SpectrumEngine.Emu;
 
@@ -11,8 +14,8 @@ public partial class Sp128Key : UserControl
     public static readonly StyledProperty<SpectrumKeyCode> CodeProperty =
         AvaloniaProperty.Register<Sp128Key, SpectrumKeyCode>(nameof(Code));
 
-    public static readonly StyledProperty<SpectrumKeyCode> SecondaryCodeProperty =
-        AvaloniaProperty.Register<Sp128Key, SpectrumKeyCode>(nameof(SecondaryCode));
+    public static readonly StyledProperty<SpectrumKeyCode?> SecondaryCodeProperty =
+        AvaloniaProperty.Register<Sp128Key, SpectrumKeyCode?>(nameof(SecondaryCode));
 
     public static readonly StyledProperty<string> MainKeyProperty =
         AvaloniaProperty.Register<Sp128Key, string>(nameof(MainKey));
@@ -61,7 +64,7 @@ public partial class Sp128Key : UserControl
         set => SetValue(CodeProperty, value);
     }
 
-    public SpectrumKeyCode SecondaryCode
+    public SpectrumKeyCode? SecondaryCode
     {
         get => GetValue(SecondaryCodeProperty);
         set => SetValue(SecondaryCodeProperty, value);
@@ -145,6 +148,18 @@ public partial class Sp128Key : UserControl
         set => SetValue(HasBit2Property, value);
     }
 
+    public event EventHandler<PointerPressedEventArgs>? MainKeyClicked;
+
+    public event EventHandler<PointerPressedEventArgs>? SymShiftKeyClicked;
+
+    public event EventHandler<PointerPressedEventArgs>? ExtKeyClicked;
+
+    public event EventHandler<PointerPressedEventArgs>? ExtShiftKeyClicked;
+
+    public event EventHandler<PointerPressedEventArgs>? GraphicsControlKeyClicked;
+
+    public event EventHandler<PointerReleasedEventArgs>? KeyReleased;
+
     public Sp128Key()
     {
         InitializeComponent();
@@ -157,36 +172,113 @@ public partial class Sp128Key : UserControl
     }
 
 
-    private void OnExtKeyMouseDown(object? sender, PointerPressedEventArgs e)
+    private void OnExtShiftKeyMouseDown(object sender, PointerPressedEventArgs e)
     {
+        if (sender is Control control)
+        {
+            e.Pointer.Capture(control);
+            control.Classes.Set("Pressed", true);
+            e.Handled = true;
+        }
+
+        SecondaryCode = null;
+        ExtShiftKeyClicked?.Invoke(this, e);
     }
 
-    private void OnMouseUp(object? sender, PointerReleasedEventArgs e)
+
+    private void OnMouseUp(object sender, PointerReleasedEventArgs e)
     {
+        if (sender is Control control)
+        {
+            e.Pointer.Capture(null);
+            control.Classes.Set("Pressed", false);
+            control.GetLogicalChildren()
+                .OfType<Control>().ToList()
+                .ForEach(c =>
+                {
+                    c.Classes.Set("Pressed", false);
+                    c.Classes.Set("MouseOver", false);
+                });
+            e.Handled = true;
+        }
+        KeyReleased?.Invoke(this, e);
+
     }
 
-    private void OnExtShifKeyMouseDown(object? sender, PointerPressedEventArgs e)
+    private void OnExtKeyMouseDown(object sender, PointerPressedEventArgs e)
     {
+        if (sender is Control control)
+        {
+            e.Pointer.Capture(control);
+            control.Classes.Set("Pressed", true);
+            e.Handled = true;
+        }
+
+        if (NumericMode)
+        {
+            SecondaryCode = SpectrumKeyCode.SShift;
+            ExtKeyClicked?.Invoke(this, e);
+        }
+        else
+        {
+            ExtKeyClicked?.Invoke(this, e);
+        }
     }
 
     private void OnMouseEnter(object? sender, PointerEventArgs e)
     {
+        if (sender is Control control)
+        {
+            control.Classes.Set("MouseOver", true);
+            e.Handled = true;
+        }
     }
 
     private void OnMouseLeave(object? sender, PointerEventArgs e)
     {
+        if (sender is Control control)
+        {
+            control.Classes.Set("MouseOver", false);
+            e.Handled = true;
+        }
     }
 
-    private void OnMainKeyMouseDown(object? sender, PointerPressedEventArgs e)
+    private void OnMainKeyMouseDown(object sender, PointerPressedEventArgs e)
     {
+        if (sender is Control control)
+        {
+            e.Pointer.Capture(control);
+            control.Classes.Set("Pressed", true);
+            e.Handled = true;
+        }
+
+        SecondaryCode = null;
+        MainKeyClicked?.Invoke(this, e);
     }
 
-    private void OnSShiftMouseDown(object? sender, PointerPressedEventArgs e)
+    private void OnSShiftMouseDown(object sender, PointerPressedEventArgs e)
     {
+        if (sender is Control control)
+        {
+            e.Pointer.Capture(control);
+            control.Classes.Set("Pressed", true);
+            e.Handled = true;
+        }
+
+        SecondaryCode = null;
+        SymShiftKeyClicked?.Invoke(this, e);
     }
 
-    private void OnGraphicsKeyMouseDown(object? sender, PointerPressedEventArgs e)
+    private void OnGraphicsKeyMouseDown(object sender, PointerPressedEventArgs e)
     {
+        if (sender is Control control)
+        {
+            e.Pointer.Capture(control);
+            control.Classes.Set("Pressed", true);
+            e.Handled = true;
+        }
+
+        GraphicsControlKeyClicked?.Invoke(this, e);
     }
 }
 

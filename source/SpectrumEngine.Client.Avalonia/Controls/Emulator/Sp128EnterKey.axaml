@@ -1,0 +1,113 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.Emulator.Sp128EnterKey">
+    
+    <UserControl.Styles>
+        <Style Selector="TextBlock.Sp128">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="9" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource KeyboardWhiteColor}" />
+        </Style>    
+    </UserControl.Styles>
+    
+        <Border 
+            BorderBrush="{DynamicResource KeyboardButtonBorderColor}" 
+            BorderThickness="1" 
+            Background="{DynamicResource KeyboardBackgroundColor}"
+            Width="130" 
+            Height="146">
+        <Grid>
+            <Ellipse 
+                x:Name="ButtonBack1" 
+                Width="66" 
+                Height="66" 
+                Fill="{DynamicResource KeyboardButtonBackgroundColor}" 
+                StrokeThickness="0" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Top" Margin="3,3" />
+            <Ellipse 
+                x:Name="ButtonBack2" 
+                Width="66" 
+                Height="66" 
+                Fill="{DynamicResource KeyboardButtonBackgroundColor}" 
+                StrokeThickness="0" 
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Top" 
+                Margin="3,75,3,3" />
+            <Ellipse 
+                x:Name="ButtonBack3" 
+                Width="66" 
+                Height="66" 
+                Fill="{DynamicResource KeyboardButtonBackgroundColor}" 
+                StrokeThickness="0" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Top" Margin="3,75,3,3"/>
+            <Rectangle 
+                x:Name="ButtonBack4" 
+                Height="50" 
+                HorizontalAlignment="Stretch" 
+                Margin="36,92,36,3"
+                Fill="{DynamicResource KeyboardButtonBackgroundColor}" 
+                StrokeThickness="0" />
+            <Rectangle 
+                x:Name="ButtonBack5" 
+                Width="66" 
+                Height="70" 
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="59,36,0,3"
+                Fill="{DynamicResource KeyboardButtonBackgroundColor}" 
+                StrokeThickness="0" />
+            <Border 
+                Width="130" 
+                Height="24" 
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="{DynamicResource KeyboardBackgroundColor}" >
+            </Border>
+            <Border BorderThickness="0" 
+                    Background="{DynamicResource KeyboardBackgroundColor}"
+                    Width="59" Height="97" 
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"/>
+            <Border BorderBrush="#181818" 
+                    BorderThickness="0,0,1,1" 
+                    Background="{DynamicResource KeyboardBackgroundColor}"
+                    Width="55" Height="73" 
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"/>
+            <Border Width="128" 
+                    Height="44"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="Transparent"
+                    Margin="0,97,0,0" 
+                    PointerEnter="OnPointerEnter" 
+                    PointerLeave="OnPointerLeave"
+                    PointerPressed="OnPointerPressed"
+                    PointerReleased="OnPointerReleased">
+                    <TextBlock 
+                        Classes="Sp128"
+                        Text="ENTER" 
+                        HorizontalAlignment="Center" 
+                        Padding="6,12" 
+                        TextAlignment="Center" />
+            </Border>
+            <Border 
+                Width="66" 
+                Height="73"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Margin="59,24,0,0" 
+                PointerEnter="OnPointerEnter" 
+                PointerLeave="OnPointerLeave" 
+                PointerPressed="OnPointerPressed" 
+                PointerReleased="OnPointerReleased" />
+        </Grid>
+    </Border>
+</UserControl>

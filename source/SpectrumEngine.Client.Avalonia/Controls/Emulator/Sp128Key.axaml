@@ -2,12 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:emulator="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.Emulator"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SpectrumEngine.Client.Avalonia.Controls.Emulator.Sp128Key">
-    <Design.DataContext>
-        <emulator:SingleKey128ControlSampleData />
-    </Design.DataContext>
     
     <UserControl.Styles>
         <Style Selector="TextBlock.Sp128">
@@ -23,10 +19,17 @@
         <Style Selector="TextBlock.Simple">
             <Setter Property="FontSize" Value="20" />
         </Style>
+        <Style Selector="Border.MouseOver">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="Border.Pressed">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
     </UserControl.Styles>
     
     <Border 
-        Padding="3,0,3,0" BorderBrush="{DynamicResource KeyboardBackgroundColor}" 
+        Padding="3,0,3,0" 
+        BorderBrush="{DynamicResource KeyboardButtonBorderColor}" 
         BorderThickness="1" 
         Background="{DynamicResource KeyboardBackgroundColor}"
         Width="75" Height="73">
@@ -54,17 +57,24 @@
                             CornerRadius="2" 
                             PointerPressed="OnExtKeyMouseDown"
                             PointerReleased="OnMouseUp"
+                            PointerEnter="OnMouseEnter"
+                            PointerLeave="OnMouseLeave"
                             Cursor="Hand">
                             <TextBlock 
                                 Classes="Sp128"
                                 Text="{Binding ExtKey}" 
                                 HorizontalAlignment="Center" />
                         </Border>
-                        <Border HorizontalAlignment="Center" Padding="4,1" Margin="0,-4,0,1" 
-                                CornerRadius="2" 
-                                PointerPressed="OnExtShifKeyMouseDown"
-                                PointerReleased="OnMouseUp"
-                                Cursor="Hand">
+                        <Border 
+                            HorizontalAlignment="Center" 
+                            Padding="4,1" 
+                            Margin="0,-4,0,1" 
+                            CornerRadius="2" 
+                            PointerPressed="OnExtShiftKeyMouseDown"
+                            PointerReleased="OnMouseUp"
+                            PointerEnter="OnMouseEnter"
+                            PointerLeave="OnMouseLeave"
+                            Cursor="Hand">
                             <TextBlock 
                                 Classes="Sp128"
                                 Text="{Binding ExtShiftKey}" 
