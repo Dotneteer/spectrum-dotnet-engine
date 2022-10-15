@@ -72,14 +72,16 @@
                             </Border>
                     </StackPanel>
                 </Border>
-                <Border Width="66" HorizontalAlignment="Left"
-                        Background="Transparent"
-                        IsVisible="{Binding !SimpleMode}"
-                        PointerEnter="OnMouseEnter"
-                        PointerLeave="OnMouseLeave"
-                        PointerPressed="OnMainKeyMouseDown"
-                        PointerReleased="OnMouseUp"
-                        Cursor="Hand">
+                <Border 
+                    Width="66" 
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    IsVisible="{Binding !SimpleMode}"
+                    PointerEnter="OnMouseEnter"
+                    PointerLeave="OnMouseLeave"
+                    PointerPressed="OnMainKeyMouseDown"
+                    PointerReleased="OnMouseUp"
+                    Cursor="Hand">
                     <StackPanel Orientation="Vertical">
                         <StackPanel
                             Orientation="Vertical"
@@ -203,18 +205,20 @@
                             Margin="0,-5,0,0"/>
                     </StackPanel>
                 </Border>
-                <Border Width="66" Height="45"
-                        HorizontalAlignment="Left"
-                        Background="Transparent"
-                        PointerEnter="OnMouseEnter"
-                        PointerLeave="OnMouseLeave"
-                        PointerPressed="OnMainKeyMouseDown"
-                        PointerReleased="OnMouseUp"
-                        IsVisible="{Binding SimpleMode}" >
+                <Border 
+                    Width="66" Height="45"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    PointerEnter="OnMouseEnter"
+                    PointerLeave="OnMouseLeave"
+                    PointerPressed="OnMainKeyMouseDown"
+                    PointerReleased="OnMouseUp"
+                    IsVisible="{Binding SimpleMode}" >
                     <TextBlock
+                        Classes="Sp128 Simple"
                         Text="{Binding MainKey}"
                         HorizontalAlignment="Center"
-                        Padding="6,2"
+                        Padding="0,4"
                         TextAlignment="Center"
                         Margin="-1,4,0,0" />
                 </Border>

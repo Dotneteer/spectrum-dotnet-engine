@@ -13,8 +13,11 @@
     
         <Border Background="{DynamicResource KeyboardBackgroundBrush}" Padding="16">
         <Viewbox Stretch="Uniform" Padding="16">
-            <Grid RowDefinitions="Auto,Auto,Auto,Auto">
-                <StackPanel Grid.Row="0" Orientation="Horizontal" x:Name="Row1" Margin="12,12,0,2">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                <StackPanel 
+                    Grid.Row="0" 
+                    Orientation="Horizontal" 
+                    x:Name="Row1" >
                     <emulator:Sp128Key 
                         Code="N4" 
                         SecondaryCode="CShift"
@@ -125,6 +128,307 @@
                 <!-- Code="Space" SecondaryCode="CShift" -->
                 <!-- ButtonWidth="110" -->
                 <!-- Keyword="BREAK"  /> -->
+                </StackPanel>
+                <StackPanel 
+                    Grid.Row="1" 
+                    x:Name="Row2"
+                    Orientation="Horizontal">
+                <!-- <local:Sp128WideKeyControl  -->
+                <!-- Code="N0" SecondaryCode="CShift" -->
+                <!-- ButtonWidth="110" -->
+                <!-- Keyword="DELETE"  /> -->
+                <emulator:Sp128Key 
+                    Code="N9" 
+                    SecondaryCode="CShift"
+                    Keyword="   " 
+                    SShiftKey="GRAPH" 
+                    Centered="true" 
+                    CleanMode="true" />
+                <emulator:Sp128Key 
+                    Code="Q"
+                    MainKey="Q" 
+                    Keyword="PLOT" 
+                    SShiftKey="&lt;=" 
+                    ExtKey="SIN" 
+                    ExtShiftKey="ASN" />
+                <emulator:Sp128Key 
+                    Code="W"
+                    MainKey="W" 
+                    Keyword="DRAW" 
+                    SShiftKey="&lt;&gt;" 
+                    ExtKey="COS" 
+                    ExtShiftKey="ACS" />
+                <emulator:Sp128Key 
+                    Code="E"
+                    MainKey="E" 
+                    Keyword="REM" 
+                    SShiftKey="&gt;=" 
+                    ExtKey="TAN" 
+                    ExtShiftKey="ATN" />
+                <emulator:Sp128Key 
+                    Code="R"
+                    MainKey="R" 
+                    Keyword="RUN" 
+                    SShiftKey="&lt;" 
+                    ExtKey="INT" 
+                    ExtShiftKey="VERIFY" />
+                <emulator:Sp128Key 
+                    Code="T"
+                    MainKey="T" 
+                    Keyword="RAND" 
+                    SShiftKey="&gt;" 
+                    ExtKey="RND" 
+                    ExtShiftKey="MERGE" />
+                <emulator:Sp128Key 
+                    Code="Y"
+                    MainKey="Y" 
+                    Keyword="RETURN" 
+                    SShiftKey="AND" 
+                    ExtKey="STR$" 
+                    ExtShiftKey="[" 
+                    Centered="true" />
+                <emulator:Sp128Key 
+                    Code="U"
+                    MainKey="U" 
+                    Keyword="IF" 
+                    SShiftKey="OR" 
+                    ExtKey="CHR$" 
+                    ExtShiftKey="]" 
+                    Centered="true" />
+                <emulator:Sp128Key 
+                    Code="I"
+                    MainKey="I" 
+                    Keyword="INPUT" 
+                    SShiftKey="AT" 
+                    ExtKey="CODE" 
+                    ExtShiftKey="IN" 
+                    Centered="true" />
+                <emulator:Sp128Key 
+                    Code="O"
+                    MainKey="O" 
+                    Keyword="POKE" 
+                    SShiftKey=";" 
+                    ExtKey="PEEK" 
+                    ExtShiftKey="OUT" />
+                <emulator:Sp128Key 
+                    Code="P"
+                    MainKey="P" 
+                    Keyword="PRINT" 
+                    SShiftKey="&quot;" 
+                    ExtKey="TAB" 
+                    ExtShiftKey="(C)" />
+            </StackPanel>
+                <StackPanel Grid.Row="2" x:Name="Row3"
+                            Orientation="Horizontal" >
+                    <!-- <local:Sp128WideKeyControl  -->
+                    <!--     Code="SShift" SecondaryCode="CShift" -->
+                    <!--     ButtonWidth="110" -->
+                    <!--     MainKey="EXTEND" -->
+                    <!--     Keyword="MODE"  /> -->
+                    <!-- <local:Sp128WideKeyControl  -->
+                    <!--     Code="N1" SecondaryCode="CShift" -->
+                    <!--     ButtonWidth="95" -->
+                    <!--     Keyword="EDIT"  /> -->
+                    <emulator:Sp128Key 
+                        Code="A"
+                        MainKey="A" 
+                        Keyword="NEW" 
+                        SShiftKey="STOP" 
+                        ExtKey="READ" 
+                        ExtShiftKey="~" 
+                        Centered="true"/>
+                    <emulator:Sp128Key 
+                        Code="S"
+                        MainKey="S" 
+                        Keyword="SAVE" 
+                        SShiftKey="NOT" 
+                        ExtKey="RESTORE" 
+                        ExtShiftKey="|" 
+                        Centered="true" />
+                    <emulator:Sp128Key 
+                        Code="D"
+                        MainKey="D" 
+                        Keyword="DIM" 
+                        SShiftKey="STEP" 
+                        ExtKey="DATA" 
+                        ExtShiftKey="\" 
+                        Centered="true"/>
+                    <emulator:Sp128Key 
+                        Code="F"
+                        MainKey="F" 
+                        Keyword="FOR" 
+                        SShiftKey="TO" 
+                        ExtKey="SGN" 
+                        ExtShiftKey="{}{" 
+                        Centered="true" />
+                    <emulator:Sp128Key 
+                        Code="G"
+                        MainKey="G" 
+                        Keyword="GOTO" 
+                        SShiftKey="THEN" 
+                        ExtKey="ABS" 
+                        ExtShiftKey="{}}" 
+                        Centered="true" />
+                    <emulator:Sp128Key 
+                        Code="H"
+                        MainKey="H" 
+                        Keyword="GOSUB" 
+                        SShiftKey="&#x2191;" 
+                        ExtKey="SQR" 
+                        ExtShiftKey="CIRCLE" />
+                    <emulator:Sp128Key 
+                        Code="J"
+                        MainKey="J" 
+                        Keyword="LOAD" 
+                        SShiftKey="-" 
+                        ExtKey="VAL" 
+                        ExtShiftKey="VAL$" />
+                    <emulator:Sp128Key 
+                        Code="K"
+                        MainKey="K" 
+                        Keyword="LIST" 
+                        SShiftKey="+" 
+                        ExtKey="LEN" 
+                        ExtShiftKey="SCREEN$" />
+                    <emulator:Sp128Key 
+                        Code="L"
+                        MainKey="L" 
+                        Keyword="LET" 
+                        SShiftKey="=" 
+                        ExtKey="USR" 
+                        ExtShiftKey="ATTR" />
+                </StackPanel>
+                <StackPanel 
+                    Grid.Row="3" 
+                    x:Name="Row4"
+                    Orientation="Horizontal" >
+                    <!-- <local:Sp128WideKeyControl  -->
+                    <!--     Code="CShift" SecondaryCode="CShift" -->
+                    <!--     ButtonWidth="168" -->
+                    <!--     MainKey="CAPS" -->
+                    <!--     Keyword="SHIFT"  /> -->
+                    <emulator:Sp128Key 
+                        Code="N2" 
+                        SecondaryCode="CShift"
+                        Keyword="CAPS" 
+                        SShiftKey="LOCK" 
+                        Centered="true" 
+                        CleanMode="True"/>
+                    <emulator:Sp128Key
+                        Code="Z"
+                        MainKey="Z" 
+                        Keyword="COPY" 
+                        SShiftKey=":" 
+                        ExtKey="LN" 
+                        ExtShiftKey="BEEP" />
+                    <emulator:Sp128Key 
+                        Code="X"
+                        MainKey="X" 
+                        Keyword="CLEAR" 
+                        SShiftKey="&#x00A3;" 
+                        ExtKey="EXP" 
+                        ExtShiftKey="INK" />
+                    <emulator:Sp128Key 
+                        Code="C"
+                        MainKey="C" 
+                        Keyword="CONT" 
+                        SShiftKey="?" 
+                        ExtKey="LPRINT" 
+                        ExtShiftKey="PAPER" />
+                    <emulator:Sp128Key 
+                        Code="V"
+                        MainKey="V" 
+                        Keyword="CLS" 
+                        SShiftKey="/" 
+                        ExtKey="LLIST" 
+                        ExtShiftKey="FLASH" />
+                    <emulator:Sp128Key 
+                        Code="B"
+                        MainKey="B" 
+                        Keyword="BORDER" 
+                        SShiftKey="*" 
+                        ExtKey="BIN" 
+                        ExtShiftKey="BRIGHT" />
+                    <emulator:Sp128Key 
+                        Code="N"
+                        MainKey="N" 
+                        Keyword="NEXT" 
+                        SShiftKey="," 
+                        ExtKey="INKEY$" 
+                        ExtShiftKey="OVER" />
+                    <emulator:Sp128Key 
+                        Code="M"
+                        MainKey="M" 
+                        Keyword="PAUSE" 
+                        SShiftKey="." 
+                        ExtKey="PI" 
+                        ExtShiftKey="INVERSE" />
+                    <emulator:Sp128Key 
+                        Code="M" 
+                        Centered="True"
+                        SecondaryCode="SShift"
+                        MainKey="." 
+                        SimpleMode="true" />
+                    <!-- <local:Sp128WideKeyControl  -->
+                    <!--     Code="CShift" SecondaryCode="CShift" -->
+                    <!--     ButtonWidth="167" -->
+                    <!--     MainKey="CAPS" -->
+                    <!--     Keyword="SHIFT"  /> -->
+                </StackPanel>
+                <StackPanel 
+                    Grid.Row="4" 
+                    x:Name="Row5"
+                    Orientation="Horizontal" >
+                    <emulator:Sp128Key 
+                        Code="SShift" 
+                        SecondaryCode="SShift"
+                        Keyword="SYMBOL" 
+                        SShiftKey="SHIFT" 
+                        Centered="true" 
+                        CleanMode="true" />
+                    <emulator:Sp128Key 
+                        Code="O" 
+                        SecondaryCode="SShift"
+                        MainKey=";" 
+                        SimpleMode="true" />
+                    <emulator:Sp128Key 
+                        Code="P" 
+                        SecondaryCode="SShift"
+                        MainKey="&quot;" 
+                        SimpleMode="true" />
+                    <emulator:Sp128Key 
+                        Code="N5" 
+                        SecondaryCode="CShift"
+                        MainKey="&#x25C4;" 
+                        SimpleMode="true" />
+                    <emulator:Sp128Key 
+                        Code="N8" 
+                        SecondaryCode="CShift"
+                        MainKey="&#x25BA;" 
+                        SimpleMode="true" />
+                    <!-- <local:Sp128WideKeyControl  -->
+                    <!--     Code="Space" -->
+                    <!--     ButtonWidth="335"/> -->
+                    <emulator:Sp128Key 
+                        Code="N7" SecondaryCode="CShift"
+                        MainKey="&#x25B2;" SimpleMode="true" />
+                    <emulator:Sp128Key 
+                        Code="N6" 
+                        SecondaryCode="CShift"
+                        MainKey="&#x25BC;" 
+                        SimpleMode="true" />
+                    <emulator:Sp128Key 
+                        Code="N" 
+                        SecondaryCode="SShift"
+                        MainKey="," 
+                        SimpleMode="true" />
+                    <emulator:Sp128Key 
+                        Code="SShift" 
+                        SecondaryCode="SShift"
+                        Keyword="SYMBOL" 
+                        SShiftKey="SHIFT" 
+                        Centered="true" 
+                        CleanMode="true" />
                 </StackPanel>
             </Grid>
         </Viewbox>
