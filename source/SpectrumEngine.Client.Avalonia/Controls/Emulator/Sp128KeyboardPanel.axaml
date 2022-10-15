@@ -1,0 +1,132 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
+             xmlns:emulator="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.Emulator"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.Emulator.Sp128KeyboardPanel">
+
+    <Design.DataContext>
+        <viewModels:MainWindowViewModel/>
+    </Design.DataContext>
+    
+        <Border Background="{DynamicResource KeyboardBackgroundBrush}" Padding="16">
+        <Viewbox Stretch="Uniform" Padding="16">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+                <StackPanel Grid.Row="0" Orientation="Horizontal" x:Name="Row1" Margin="12,12,0,2">
+                    <emulator:Sp128Key 
+                        Code="N4" 
+                        SecondaryCode="CShift"
+                        Keyword="INV" 
+                        SShiftKey="VIDEO" 
+                        Centered="true" 
+                        CleanMode="true" />
+                    <emulator:Sp128Key 
+                        Code="N3" 
+                        SecondaryCode="CShift"
+                        Keyword="TRUE" 
+                        SShiftKey="VIDEO" 
+                        Centered="true" 
+                        CleanMode="true"/>
+                    <emulator:Sp128Key 
+                        Code="N1"
+                        MainKey="1" 
+                        NumericMode="True" 
+                        SShiftKey="!" 
+                        ExtKey="BLUE" 
+                        ExtShiftKey="DEFFN" 
+                        HasGraphics="true" 
+                        HasBit0="True" />
+                    <emulator:Sp128Key 
+                        Code="N2"
+                        MainKey="2" 
+                        NumericMode="True" 
+                        SShiftKey="@" 
+                        ExtKey="RED" 
+                        ExtShiftKey="FN" 
+                        HasGraphics="true"
+                        HasBit1="True" />
+                    <emulator:Sp128Key 
+                        Code="N3"
+                        MainKey="3" 
+                        NumericMode="True" 
+                        SShiftKey="#" 
+                        ExtKey="MAGENTA" 
+                        ExtShiftKey="LINE" 
+                        HasGraphics="true" 
+                        HasBit0="True" 
+                        HasBit1="True" />
+                    <emulator:Sp128Key 
+                        Code="N4"
+                        MainKey="4" 
+                        NumericMode="True" 
+                        SShiftKey="$" 
+                        ExtKey="GREEN" 
+                        ExtShiftKey="OPEN #" 
+                        HasGraphics="true" 
+                        HasBit2="True" />
+                    <emulator:Sp128Key 
+                        Code="N5"
+                        MainKey="5"
+                        NumericMode="True"
+                        SShiftKey="%"
+                        ExtKey="CYAN"
+                        ExtShiftKey="CLOSE #" 
+                        HasGraphics="true"
+                        HasBit0="True"
+                        HasBit2="True" />
+                    <emulator:Sp128Key 
+                        Code="N6"
+                        MainKey="6" 
+                        NumericMode="True" 
+                        SShiftKey="&amp;" 
+                        ExtKey="YELLOW" 
+                        ExtShiftKey="MOVE" 
+                        HasGraphics="true"
+                        HasBit1="True"
+                        HasBit2="True" />
+                    <emulator:Sp128Key 
+                        Code="N7"
+                        MainKey="7"
+                        NumericMode="True"
+                        SShiftKey="'"
+                        ExtKey="WHITE"
+                        ExtShiftKey="ERASE" 
+                        HasGraphics="true"
+                        HasBit0="True"
+                        HasBit1="True"
+                        HasBit2="True" />
+                    <emulator:Sp128Key 
+                        Code="N8"
+                        MainKey="8"
+                        NumericMode="True"
+                        SShiftKey="("
+                        ExtKey="BR/FL (off)"
+                        ExtShiftKey="POINT" 
+                        HasGraphics="true" />
+                <emulator:Sp128Key 
+                        Code="N9"
+                        MainKey="9"
+                        NumericMode="True"
+                        SShiftKey=")"
+                        ExtKey="BR/FL (on)"
+                        ExtShiftKey="CAT" 
+                        HasGraphics="false" />
+                <emulator:Sp128Key 
+                        Code="N0"
+                        MainKey="0"
+                        NumericMode="True"
+                        SShiftKey="_"
+                        ExtKey="BLACK"
+                        ExtShiftKey="FORMAT" 
+                        HasGraphics="false" />
+                <!-- <local:Sp128WideKeyControl  -->
+                <!-- Code="Space" SecondaryCode="CShift" -->
+                <!-- ButtonWidth="110" -->
+                <!-- Keyword="BREAK"  /> -->
+                </StackPanel>
+            </Grid>
+        </Viewbox>
+    </Border>
+</UserControl>

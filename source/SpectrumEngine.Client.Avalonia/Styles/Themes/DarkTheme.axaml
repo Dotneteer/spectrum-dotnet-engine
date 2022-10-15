@@ -58,6 +58,11 @@
         
         <Color x:Key="InactiveBreakpointColor">#e51400</Color>
         <Color x:Key="ActiveBreakpointColor">#E5E510</Color>
+        
+        <Color x:Key="KeyboardBackgroundColor">#FF202020</Color>
+        <Color x:Key="KeyboardButtonBorderColor">#FF181818</Color>
+        <Color x:Key="KeyboardButtonBackgroundColor">#FF383838</Color>
+        <Color x:Key="KeyboardWhiteColor">#FFF0F0FF</Color>
 
         <SolidColorBrush x:Key="AppBackground" Color="{DynamicResource DarkGray}"/>
         <SolidColorBrush x:Key="MenuText" Color="{DynamicResource TextGray}"/>

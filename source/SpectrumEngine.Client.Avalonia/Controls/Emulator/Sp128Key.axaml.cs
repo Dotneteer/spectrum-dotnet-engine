@@ -148,6 +148,7 @@ public partial class Sp128Key : UserControl
     public Sp128Key()
     {
         InitializeComponent();
+        DataContext = this;
     }
     
     private void InitializeComponent()
