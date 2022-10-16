@@ -19,6 +19,9 @@
         <Style Selector="TextBlock.Simple">
             <Setter Property="FontSize" Value="20" />
         </Style>
+        <Style Selector="Border.Graph">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
         <Style Selector="Border.MouseOver">
             <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
         </Style>
@@ -127,11 +130,10 @@
                                 Margin="0,-6,8,0"
                                 CornerRadius="2"
                                 IsVisible="{Binding !Centered}"
-                                PointerEnter="OnNestedPointerEnter"
-                                PointerLeave="OnNestedPointerLeave"
+                                PointerEnter="OnPointerEnter"
+                                PointerLeave="OnPointerLeave"
                                 PointerPressed="OnSShiftMouseDown"
-                                PointerReleased="OnMouseUp"
-                                >
+                                PointerReleased="OnMouseUp" >
                                 <TextBlock
                                     Classes="Sp128"
                                     Text="{Binding SShiftKey}"
@@ -178,13 +180,15 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Border
+                                    Classes="Graph"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Padding="4,4"
                                     Margin="8,0,0,0"
                                     CornerRadius="2"
-                                    Background="Transparent"
                                     IsVisible="{Binding HasGraphics}"
+                                    PointerEnter="OnPointerEnter"
+                                    PointerLeave="OnPointerLeave"
                                     PointerPressed="OnGraphicsKeyMouseDown"
                                     PointerReleased="OnMouseUp">
                                     <Border
@@ -228,6 +232,8 @@
                                     Padding="4,2"
                                     Margin="0,0,2,0"
                                     CornerRadius="2"
+                                    PointerEnter="OnPointerEnter"
+                                    PointerLeave="OnPointerLeave"
                                     PointerPressed="OnSShiftMouseDown"
                                     PointerReleased="OnMouseUp">
                                     <TextBlock
@@ -243,7 +249,11 @@
                             HorizontalAlignment="Center"
                             Padding="0,2"
                             TextAlignment="Center"
-                            Margin="0,-5,0,0"/>
+                            Margin="0,-5,0,0"
+                            PointerEnter="OnNestedPointerEnter"
+                            PointerLeave="OnNestedPointerLeave"
+                            PointerPressed="OnMainKeyMouseDown"
+                            PointerReleased="OnMouseUp" />
                     </StackPanel>
                 </Border>
                 <Border
