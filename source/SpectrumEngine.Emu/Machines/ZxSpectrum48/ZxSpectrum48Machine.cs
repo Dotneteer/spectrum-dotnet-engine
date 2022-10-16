@@ -82,6 +82,7 @@ public class ZxSpectrum48Machine :
         // --- Set default property values
         SetMachineProperty(MachinePropNames.TAPE_MODE, TapeMode.Passive);
         SetMachineProperty(MachinePropNames.REWIND_REQUESTED, null);
+        SetMachineProperty(MachinePropNames.KBTYPE_48, true);
 
         // --- Unknown clock multiplier in the previous frame
         OldClockMultiplier = -1;

@@ -390,10 +390,13 @@
                 IsVisible="{Binding EmuViewOptions.ShowToolbar}" />
             <local:EmulatorStatusBarUserControl DockPanel.Dock="Bottom" 
                 IsVisible="{Binding EmuViewOptions.ShowStatusBar}"/>
-            <emulator:Sp128KeyboardPanel 
+            <Panel 
                 IsVisible="{Binding EmuViewOptions.ShowKeyboard}"
                 Height="300"
-                DockPanel.Dock="Bottom" />
+                DockPanel.Dock="Bottom" >
+                <emulator:Sp128KeyboardPanel IsVisible="{Binding !Machine.UseKeyboard48}" />
+                <local:KeyboardPanel IsVisible="{Binding Machine.UseKeyboard48}" />
+            </Panel>
             <local:Splitter 
                 IsVisible="{Binding EmuViewOptions.ShowKeyboard}"
                 Orientation="Vertical"
