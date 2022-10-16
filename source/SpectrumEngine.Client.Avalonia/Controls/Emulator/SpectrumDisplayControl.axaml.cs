@@ -4,7 +4,6 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -188,6 +187,8 @@ public partial class SpectrumDisplayControl : UserControl
         var samples = (machine as ZxSpectrumBase)?.GetAudioSamples();
         if (samples != null)
         {
+            var count = samples.Count(s => s == 0.0);
+            if (count < samples.Length/2) Debug.WriteLine("high samples");
             _audioProvider?.AddSamples(samples.Select(s => s * _volume).ToArray());
         }
 

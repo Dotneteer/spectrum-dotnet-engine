@@ -74,7 +74,7 @@ public class AudioDeviceBase: IAudioDevice
     /// </summary>
     public virtual void OnNewFrame()
     {
-        var cpuTactsInFrame = Machine.TactsInFrame * Machine.ClockMultiplier;
+        var cpuTactsInFrame = Machine.TactsInFrame;
         if (_audioNextSampleTact != 0)
         {
             if (_audioNextSampleTact > cpuTactsInFrame)

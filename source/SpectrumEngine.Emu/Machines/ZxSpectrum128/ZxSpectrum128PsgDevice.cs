@@ -1,3 +1,4 @@
+
 namespace SpectrumEngine.Emu.Machines.ZxSpectrum128;
 
 public class ZxSpectrum128PsgDevice: AudioDeviceBase, IPsgDevice
@@ -51,13 +52,11 @@ public class ZxSpectrum128PsgDevice: AudioDeviceBase, IPsgDevice
     /// <summary>
     /// Calculates the current audio value according to the CPU's clock
     /// </summary>
-    /// <remarks>
-    /// We do not need to calculate the value, as it is always the value of the last EAR bit
-    /// </remarks>
     public override void CalculateCurrentAudioValue()
     {
-        while (Machine.CurrentFrameTact >= _psgNextClockTact) {
-            GeneratePsgOutputValue();
+        while (Machine.CurrentFrameTact >= _psgNextClockTact)
+        {
+            _psg.GenerateOutputValue();
             _psgNextClockTact += PSG_CLOCK_STEP;
         }    
     }
@@ -87,9 +86,4 @@ public class ZxSpectrum128PsgDevice: AudioDeviceBase, IPsgDevice
             _psgNextClockTact -= Machine.TactsInFrame;
         }
     }
-
-    /// <summary>
-    /// Generates the current PSG output value according to current register settings
-    /// </summary>
-    private void GeneratePsgOutputValue() => _psg.GenerateOutputValue();
 }

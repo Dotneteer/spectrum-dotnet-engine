@@ -168,6 +168,6 @@ public partial class KeyboardPanel : UserControl
     private bool WaitForNextKeyPress(int frames)
     {
         var machine = Vm?.Machine.Controller?.Machine;
-        return machine != null && machine.Frames > _lastPressFrame + frames * machine.ClockMultiplier;
+        return machine != null && machine.Frames > _lastPressFrame + frames;
     }
 }

@@ -157,7 +157,7 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
         if ((address & 0xc000) != 0x4000) return;
         
         // --- We read from contended memory
-        var delay = _contentionValues[CurrentFrameTact / ClockMultiplier];
+        var delay = _contentionValues[CurrentFrameTact];
         TactPlusN(delay);
         TotalContentionDelaySinceStart += delay;
         ContentionDelaySincePause += delay;
@@ -375,7 +375,7 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
         // --- Apply I/O contention
         void ApplyContentionDelay()
         {
-            var delay = GetContentionValue(CurrentFrameTact / ClockMultiplier);
+            var delay = GetContentionValue(CurrentFrameTact);
             TactPlusN(delay);
             TotalContentionDelaySinceStart += delay;
             ContentionDelaySincePause += delay;
@@ -532,7 +532,7 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
     /// <returns>
     /// True, if the INT signal should be active; otherwise, false.
     /// </returns>
-    protected override bool ShouldRaiseInterrupt() => CurrentFrameTact / ClockMultiplier < 32;
+    protected override bool ShouldRaiseInterrupt() => CurrentFrameTact < 32;
 
     /// <summary>
     /// Check for current tape mode
@@ -548,7 +548,7 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
     /// <param name="increment">The tact increment value</param>
     public override void OnTactIncremented(int increment)
     {
-        var machineTact = CurrentFrameTact / ClockMultiplier;
+        var machineTact = CurrentFrameTact;
         while (LastRenderedFrameTact <= machineTact)
         {
             ScreenDevice.RenderTact(LastRenderedFrameTact++);
