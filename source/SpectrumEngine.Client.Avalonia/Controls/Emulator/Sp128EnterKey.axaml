@@ -12,6 +12,15 @@
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Foreground" Value="{DynamicResource KeyboardWhiteColor}" />
         </Style>    
+        <Style Selector="Ellipse, Rectangle">
+            <Setter Property="Fill" Value="{DynamicResource KeyboardButtonBackgroundColor}" />
+        </Style>
+        <Style Selector="Ellipse.MouseOver, Rectangle.MouseOver">
+            <Setter Property="Fill" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="Ellipse.Pressed, Rectangle.Pressed">
+            <Setter Property="Fill" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
     </UserControl.Styles>
     
         <Border 
@@ -25,7 +34,6 @@
                 x:Name="ButtonBack1" 
                 Width="66" 
                 Height="66" 
-                Fill="{DynamicResource KeyboardButtonBackgroundColor}" 
                 StrokeThickness="0" 
                 HorizontalAlignment="Right" 
                 VerticalAlignment="Top" Margin="3,3" />
@@ -33,7 +41,6 @@
                 x:Name="ButtonBack2" 
                 Width="66" 
                 Height="66" 
-                Fill="{DynamicResource KeyboardButtonBackgroundColor}" 
                 StrokeThickness="0" 
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Top" 
@@ -42,7 +49,6 @@
                 x:Name="ButtonBack3" 
                 Width="66" 
                 Height="66" 
-                Fill="{DynamicResource KeyboardButtonBackgroundColor}" 
                 StrokeThickness="0" 
                 HorizontalAlignment="Right" 
                 VerticalAlignment="Top" Margin="3,75,3,3"/>
@@ -51,7 +57,6 @@
                 Height="50" 
                 HorizontalAlignment="Stretch" 
                 Margin="36,92,36,3"
-                Fill="{DynamicResource KeyboardButtonBackgroundColor}" 
                 StrokeThickness="0" />
             <Rectangle 
                 x:Name="ButtonBack5" 
@@ -60,7 +65,6 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Margin="59,36,0,3"
-                Fill="{DynamicResource KeyboardButtonBackgroundColor}" 
                 StrokeThickness="0" />
             <Border 
                 Width="130" 
@@ -69,33 +73,36 @@
                 VerticalAlignment="Top"
                 Background="{DynamicResource KeyboardBackgroundColor}" >
             </Border>
-            <Border BorderThickness="0" 
-                    Background="{DynamicResource KeyboardBackgroundColor}"
-                    Width="59" Height="97" 
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"/>
-            <Border BorderBrush="#181818" 
-                    BorderThickness="0,0,1,1" 
-                    Background="{DynamicResource KeyboardBackgroundColor}"
-                    Width="55" Height="73" 
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"/>
-            <Border Width="128" 
-                    Height="44"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Background="Transparent"
-                    Margin="0,97,0,0" 
-                    PointerEnter="OnPointerEnter" 
-                    PointerLeave="OnPointerLeave"
-                    PointerPressed="OnPointerPressed"
-                    PointerReleased="OnPointerReleased">
-                    <TextBlock 
-                        Classes="Sp128"
-                        Text="ENTER" 
-                        HorizontalAlignment="Center" 
-                        Padding="6,12" 
-                        TextAlignment="Center" />
+            <Border 
+                BorderThickness="0" 
+                Background="{DynamicResource KeyboardBackgroundColor}"
+                Width="59" Height="97" 
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"/>
+            <Border 
+                BorderBrush="#181818" 
+                BorderThickness="0,0,1,1" 
+                Background="{DynamicResource KeyboardBackgroundColor}"
+                Width="55" Height="73" 
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"/>
+            <Border 
+                Width="128" 
+                Height="44"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Margin="0,97,0,0" 
+                PointerEnter="OnPointerEnter" 
+                PointerLeave="OnPointerLeave"
+                PointerPressed="OnPointerPressed"
+                PointerReleased="OnPointerReleased">
+                <TextBlock 
+                    Classes="Sp128"
+                    Text="ENTER" 
+                    HorizontalAlignment="Center" 
+                    Padding="6,12" 
+                    TextAlignment="Center" />
             </Border>
             <Border 
                 Width="66" 

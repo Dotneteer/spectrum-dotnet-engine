@@ -11,7 +11,16 @@
             <Setter Property="FontSize" Value="9" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Foreground" Value="{DynamicResource KeyboardWhiteColor}" />
-        </Style>    
+        </Style>
+        <Style Selector="Ellipse, Rectangle">
+            <Setter Property="Fill" Value="{DynamicResource KeyboardButtonBackgroundColor}" />
+        </Style>
+        <Style Selector="Ellipse.MouseOver, Rectangle.MouseOver">
+            <Setter Property="Fill" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="Ellipse.Pressed, Rectangle.Pressed">
+            <Setter Property="Fill" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
     </UserControl.Styles>
     
     <Border 
@@ -20,26 +29,58 @@
         Background="{DynamicResource KeyboardBackgroundColor}"
         Width="{Binding ButtonWidth}" Height="73">
         <Grid>
-            <Rectangle x:Name="ButtonBack1" Height="67" HorizontalAlignment="Stretch" Margin="36,3"
-                       Fill="#383838" StrokeThickness="0" />
-            <Ellipse x:Name="ButtonBack2" Width="66" Height="66" Fill="#383838" StrokeThickness="0" 
-                     HorizontalAlignment="Left" 
-                     VerticalAlignment="Top" Margin="3,3" />
-            <Ellipse x:Name="ButtonBack3" Width="66" Height="66" Fill="#383838" StrokeThickness="0" 
-                     HorizontalAlignment="Right" 
-                     VerticalAlignment="Top" Margin="3,3"/>
-            <StackPanel Orientation="Vertical">
-                <Border Width="{Binding ButtonWidth}" Height="24" HorizontalAlignment="Left" 
-                        Background="{DynamicResource KeyboardBackgroundColor}">
+            <Rectangle 
+                x:Name="ButtonBack1" 
+                Height="67" 
+                HorizontalAlignment="Stretch" 
+                Margin="36,3"
+                StrokeThickness="0"
+                PointerEnter="OnPointerEnter" 
+                PointerLeave="OnPointerLeave"
+                PointerPressed="OnPointerPressed"
+                PointerReleased="OnPointerReleased"
+                Cursor="Hand" />
+            <Ellipse 
+                x:Name="ButtonBack2" 
+                Width="66" 
+                Height="66" 
+                StrokeThickness="0" 
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Top" Margin="3,3"
+                PointerEnter="OnPointerEnter" 
+                PointerLeave="OnPointerLeave" 
+                PointerPressed="OnPointerPressed"
+                PointerReleased="OnPointerReleased"
+                Cursor="Hand" />
+            <Ellipse 
+                x:Name="ButtonBack3" 
+                Width="66" 
+                Height="66" 
+                StrokeThickness="0" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Top" Margin="3,3" 
+                PointerEnter="OnPointerEnter" 
+                PointerLeave="OnPointerLeave"
+                PointerPressed="OnPointerPressed"
+                PointerReleased="OnPointerReleased"
+                Cursor="Hand" />
+            <StackPanel
+                Orientation="Vertical"
+                PointerEnter="OnPointerEnter" 
+                PointerLeave="OnPointerLeave" 
+                PointerPressed="OnPointerPressed"
+                PointerReleased="OnPointerReleased"
+                Cursor="Hand" >
+                <Border 
+                    Width="{Binding ButtonWidth}" 
+                    Height="24" 
+                    HorizontalAlignment="Left" 
+                    Background="{DynamicResource KeyboardBackgroundColor}">
                 </Border>
-                <Border Width="{Binding ButtonWidth}" 
-                        Height="46"
-                        HorizontalAlignment="Left" 
-                        Background="Transparent" 
-                        PointerEnter="OnPointerEnter" 
-                        PointerLeave="OnPointerLeave"
-                        PointerPressed="OnPointerPressed"
-                        PointerReleased="OnPointerReleased">
+                <Border
+                    Width="{Binding ButtonWidth}" 
+                    Height="46"
+                    HorizontalAlignment="Left" >
                     <StackPanel Orientation="Vertical">
                         <TextBlock
                             Classes="Sp128"
@@ -47,14 +88,14 @@
                             HorizontalAlignment="Center" 
                             Padding="0,2" 
                             TextAlignment="Center" 
-                            Margin="0,6,0,0"/>
+                            Margin="0,6,0,0" />
                         <TextBlock
                             Classes="Sp128"
                             Text="{Binding Keyword}" 
                             HorizontalAlignment="Center" 
                             Padding="0,2" 
                             TextAlignment="Center" 
-                            Margin="0,-4,0,0"/>
+                            Margin="0,-4,0,0" />
                     </StackPanel>
                 </Border>
             </StackPanel>

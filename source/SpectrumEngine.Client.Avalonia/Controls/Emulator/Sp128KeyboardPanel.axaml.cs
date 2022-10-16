@@ -41,6 +41,16 @@ public partial class Sp128KeyboardPanel : UserControl
                 key.GraphicsControlKeyClicked += OnGraphicsControlKeyClicked;
                 key.KeyReleased += OnKeyReleased;
             });
+            this.GetLogicalDescendants().OfType<Sp128WideKey>().ToList().ForEach(key =>
+            {
+                key.MainKeyClicked += OnMainKeyClicked;
+                key.KeyReleased += OnKeyReleased;
+            });
+            this.GetLogicalDescendants().OfType<Sp128EnterKey>().ToList().ForEach(key =>
+            {
+                key.MainKeyClicked += OnMainKeyClicked;
+                key.KeyReleased += OnKeyReleased;
+            });
         }
         else
         {
@@ -53,16 +63,38 @@ public partial class Sp128KeyboardPanel : UserControl
                 key.GraphicsControlKeyClicked -= OnGraphicsControlKeyClicked;
                 key.KeyReleased -= OnKeyReleased;
             });
+            this.GetLogicalDescendants().OfType<Sp128WideKey>().ToList().ForEach(key =>
+            {
+                key.MainKeyClicked -= OnMainKeyClicked;
+                key.KeyReleased -= OnKeyReleased;
+            });
+            this.GetLogicalDescendants().OfType<Sp128EnterKey>().ToList().ForEach(key =>
+            {
+                key.MainKeyClicked -= OnMainKeyClicked;
+                key.KeyReleased -= OnKeyReleased;
+            });
         }
     }
     
-        private void OnMainKeyClicked(object? sender, PointerPressedEventArgs e)
+    private void OnMainKeyClicked(object? sender, PointerPressedEventArgs e)
     {
-        if (sender is not Sp128Key key) return;
-        
-        _lastSecondary = key.SecondaryCode 
-            ?? (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed ? null : SpectrumKeyCode.CShift);
-        SetKeyStatus(true, key.Code, _lastSecondary);
+        switch (sender)
+        {
+            case Sp128Key key:
+                _lastSecondary = key.SecondaryCode 
+                                 ?? (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed 
+                                     ? null 
+                                     : SpectrumKeyCode.CShift);
+                SetKeyStatus(true, key.Code, _lastSecondary);
+                break;
+            case Sp128WideKey key:
+                _lastSecondary = key.SecondaryCode;
+                SetKeyStatus(true, key.Code, _lastSecondary);
+                break;
+            case Sp128EnterKey:
+                SetKeyStatus(true, SpectrumKeyCode.Enter, _lastSecondary);
+                break;
+        }
     }
 
     private void OnSymShiftKeyClicked(object? sender, PointerPressedEventArgs e)
@@ -108,8 +140,18 @@ public partial class Sp128KeyboardPanel : UserControl
 
     private void OnKeyReleased(object? sender, PointerReleasedEventArgs e)
     {
-        if (sender is not Sp128Key key) return;
-        SetKeyStatus(false, key.Code, _lastSecondary);
+        switch (sender)
+        {
+            case Sp128Key key:
+                SetKeyStatus(false, key.Code, _lastSecondary);
+                break;
+            case Sp128WideKey key:
+                SetKeyStatus(false, key.Code, _lastSecondary);
+                break;
+            case Sp128EnterKey:
+                SetKeyStatus(false, SpectrumKeyCode.Enter, _lastSecondary);
+                break;
+        }
         e.Handled = true;
     }
 
