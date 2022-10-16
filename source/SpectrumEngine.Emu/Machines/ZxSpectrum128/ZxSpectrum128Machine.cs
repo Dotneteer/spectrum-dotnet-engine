@@ -1,6 +1,5 @@
 // ReSharper disable VirtualMemberCallInConstructor
 
-using System.Diagnostics;
 using SpectrumEngine.Emu.Machines.ZxSpectrum128;
 
 namespace SpectrumEngine.Emu.ZxSpectrum128;
@@ -138,6 +137,7 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
         // --- Set default property values
         SetMachineProperty(MachinePropNames.TAPE_MODE, TapeMode.Passive);
         SetMachineProperty(MachinePropNames.REWIND_REQUESTED, null);
+        SetMachineProperty(MachinePropNames.KBTYPE_48, false);
 
         // --- Unknown clock multiplier in the previous frame
         OldClockMultiplier = -1;
@@ -309,7 +309,7 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
         if (page != 0x4000 && (page != 0xc000 || (_selectedBank & 0x01) != 1)) return;
         
         // --- We read from contended memory
-        var delay = GetContentionValue(CurrentFrameTact / ClockMultiplier);
+        var delay = GetContentionValue(CurrentFrameTact);
         TactPlusN(delay);
         TotalContentionDelaySinceStart += delay;
         ContentionDelaySincePause += delay;

@@ -7,15 +7,15 @@ using Avalonia.Markup.Xaml;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Emu;
 
-namespace SpectrumEngine.Client.Avalonia.Controls;
+namespace SpectrumEngine.Client.Avalonia.Controls.Emulator;
 
-public partial class KeyboardPanel : UserControl
+public partial class Sp128KeyboardPanel : UserControl
 {
     // --- Stores the last pressed secondary button's key code
     private SpectrumKeyCode? _lastSecondary;
     private int _lastPressFrame;
-    
-    public KeyboardPanel()
+
+    public Sp128KeyboardPanel()
     {
         InitializeComponent();
     }
@@ -24,52 +24,82 @@ public partial class KeyboardPanel : UserControl
     {
         AvaloniaXamlLoader.Load(this);
     }
-
+    
     private MainWindowViewModel? Vm => DataContext as MainWindowViewModel; 
-
+    
     protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
     {
         if (change.Property.Name != "IsVisible") return;
         if (change.NewValue.Value is true)
         {
-            this.GetLogicalDescendants().OfType<Sp48Key>().ToList().ForEach(key =>
+            this.GetLogicalDescendants().OfType<Sp128Key>().ToList().ForEach(key =>
             {
                 key.MainKeyClicked += OnMainKeyClicked;
                 key.SymShiftKeyClicked += OnSymShiftKeyClicked;
                 key.ExtKeyClicked += OnExtKeyClicked;
                 key.ExtShiftKeyClicked += OnExtShiftKeyClicked;
-                key.NumericControlKeyClicked += OnNumericControlKeyClicked;
                 key.GraphicsControlKeyClicked += OnGraphicsControlKeyClicked;
+                key.KeyReleased += OnKeyReleased;
+            });
+            this.GetLogicalDescendants().OfType<Sp128WideKey>().ToList().ForEach(key =>
+            {
+                key.MainKeyClicked += OnMainKeyClicked;
+                key.KeyReleased += OnKeyReleased;
+            });
+            this.GetLogicalDescendants().OfType<Sp128EnterKey>().ToList().ForEach(key =>
+            {
+                key.MainKeyClicked += OnMainKeyClicked;
                 key.KeyReleased += OnKeyReleased;
             });
         }
         else
         {
-            this.GetLogicalDescendants().OfType<Sp48Key>().ToList().ForEach(key =>
+            this.GetLogicalDescendants().OfType<Sp128Key>().ToList().ForEach(key =>
             {
                 key.MainKeyClicked -= OnMainKeyClicked;
                 key.SymShiftKeyClicked -= OnSymShiftKeyClicked;
                 key.ExtKeyClicked -= OnExtKeyClicked;
                 key.ExtShiftKeyClicked -= OnExtShiftKeyClicked;
-                key.NumericControlKeyClicked -= OnNumericControlKeyClicked;
                 key.GraphicsControlKeyClicked -= OnGraphicsControlKeyClicked;
+                key.KeyReleased -= OnKeyReleased;
+            });
+            this.GetLogicalDescendants().OfType<Sp128WideKey>().ToList().ForEach(key =>
+            {
+                key.MainKeyClicked -= OnMainKeyClicked;
+                key.KeyReleased -= OnKeyReleased;
+            });
+            this.GetLogicalDescendants().OfType<Sp128EnterKey>().ToList().ForEach(key =>
+            {
+                key.MainKeyClicked -= OnMainKeyClicked;
                 key.KeyReleased -= OnKeyReleased;
             });
         }
     }
-
+    
     private void OnMainKeyClicked(object? sender, PointerPressedEventArgs e)
     {
-        if (sender is not Sp48Key key) return;
-        
-        _lastSecondary = key.SecondaryCode 
-            ?? (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed ? null : SpectrumKeyCode.CShift);
-        SetKeyStatus(true, key.Code, _lastSecondary);
+        switch (sender)
+        {
+            case Sp128Key key:
+                _lastSecondary = key.SecondaryCode 
+                                 ?? (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed 
+                                     ? null 
+                                     : SpectrumKeyCode.CShift);
+                SetKeyStatus(true, key.Code, _lastSecondary);
+                break;
+            case Sp128WideKey key:
+                _lastSecondary = key.SecondaryCode;
+                SetKeyStatus(true, key.Code, _lastSecondary);
+                break;
+            case Sp128EnterKey:
+                SetKeyStatus(true, SpectrumKeyCode.Enter, _lastSecondary);
+                break;
+        }
     }
 
     private void OnSymShiftKeyClicked(object? sender, PointerPressedEventArgs e)
     {
-        if (sender is not Sp48Key key) return;
+        if (sender is not Sp128Key key) return;
         
         _lastSecondary = SpectrumKeyCode.SShift;
         SetKeyStatus(true, key.Code, _lastSecondary);
@@ -78,7 +108,7 @@ public partial class KeyboardPanel : UserControl
 
     private void OnExtKeyClicked(object? sender, PointerPressedEventArgs e)
     {
-        if (sender is not Sp48Key key) return;
+        if (sender is not Sp128Key key) return;
         if (!WaitForNextKeyPress(9)) return;
         
         QueueKey(0, 2, SpectrumKeyCode.CShift, SpectrumKeyCode.SShift);
@@ -89,7 +119,7 @@ public partial class KeyboardPanel : UserControl
 
     private void OnExtShiftKeyClicked(object? sender, PointerPressedEventArgs e)
     {
-        if (sender is not Sp48Key key) return;
+        if (sender is not Sp128Key key) return;
         if (!WaitForNextKeyPress(9)) return;
 
         QueueKey(0, 2, SpectrumKeyCode.CShift, SpectrumKeyCode.SShift);
@@ -97,20 +127,9 @@ public partial class KeyboardPanel : UserControl
         e.Handled = true;
     }
 
-    private void OnNumericControlKeyClicked(object? sender, PointerPressedEventArgs e)
-    {
-        if (sender is not Sp48Key key) return;
-        if (!WaitForNextKeyPress(9)) return;
-
-        QueueKey(0, 2, SpectrumKeyCode.CShift, SpectrumKeyCode.SShift);
-        QueueKey(3, 2, key.Code, 
-            e.GetCurrentPoint(this).Properties.IsLeftButtonPressed ? null : SpectrumKeyCode.CShift);
-        e.Handled = true;
-    }
-
     private void OnGraphicsControlKeyClicked(object? sender, PointerPressedEventArgs e)
     {
-        if (sender is not Sp48Key key) return;
+        if (sender is not Sp128Key key) return;
         if (!WaitForNextKeyPress(12)) return;
         
         QueueKey(0, 2, SpectrumKeyCode.N9, SpectrumKeyCode.CShift);
@@ -121,8 +140,18 @@ public partial class KeyboardPanel : UserControl
 
     private void OnKeyReleased(object? sender, PointerReleasedEventArgs e)
     {
-        if (sender is not Sp48Key key) return;
-        SetKeyStatus(false, key.Code, _lastSecondary);
+        switch (sender)
+        {
+            case Sp128Key key:
+                SetKeyStatus(false, key.Code, _lastSecondary);
+                break;
+            case Sp128WideKey key:
+                SetKeyStatus(false, key.Code, _lastSecondary);
+                break;
+            case Sp128EnterKey:
+                SetKeyStatus(false, SpectrumKeyCode.Enter, _lastSecondary);
+                break;
+        }
         e.Handled = true;
     }
 

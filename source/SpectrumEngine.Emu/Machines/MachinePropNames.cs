@@ -10,4 +10,5 @@ public static class MachinePropNames
     public const string TAPE_SAVER = "TapeSaver";
     public const string TAPE_DATA = "TapeData";
     public const string TAPE_MODE = "TapeMode";
+    public const string KBTYPE_48 = "Keyboard48";
 }

@@ -6,9 +6,6 @@ using Avalonia.Controls;
 using Avalonia.Metadata;
 using SpectrumEngine.Client.Avalonia.Utility;
 using SpectrumEngine.Emu;
-// ReSharper disable UnusedMember.Local
-// ReSharper disable UnusedParameter.Local
-// ReSharper disable MemberCanBePrivate.Global
 
 namespace SpectrumEngine.Client.Avalonia.ViewModels;
 
@@ -18,8 +15,9 @@ namespace SpectrumEngine.Client.Avalonia.ViewModels;
 public class MachineViewModel: ViewModelBase
 {
     private MachineControllerState _mstate;
-    private bool _allowFastLoad;
+    private bool _useKeyboard48;
     private TapeMode _tapeMode;
+    private bool _allowFastLoad;
     private int _clockMultiplier;
     private FrameStats _frameStats = new(); 
 
@@ -49,16 +47,25 @@ public class MachineViewModel: ViewModelBase
         RaisePropertyChanged(nameof(Id));
         RaisePropertyChanged(nameof(DisplayName));
         
+        // --- Use the appropriate keyboard
+        var kbTypeProp = Controller.Machine.GetMachineProperty(MachinePropNames.KBTYPE_48);
+        if (kbTypeProp is bool kbTypeValue)
+        {
+            UseKeyboard48 = kbTypeValue;
+        }
         
+        // --- Sign initial state change
         ControllerChanged?.Invoke(this, (oldController, Controller));
         OnStateChanged(this, (MachineControllerState.None, MachineControllerState.None));
 
+        // --- Execute this handle whenever the controller's state changes
         void OnStateChanged(object? sender, (MachineControllerState OldState, MachineControllerState NewState) e)
         {
             // --- Refresh command states whenever the controller state changes
             MachineControllerState = e.NewState;
         }
 
+        // --- Initiate this handler whenever a new frame has been completed
         void OnFrameCompleted(object? sender, bool completed)
         {
             if (!completed) return;
@@ -73,11 +80,17 @@ public class MachineViewModel: ViewModelBase
             };
         }
 
+        // --- Respond to machine property changes
         void OnMachinePropertyChanged(object? sender, (string key, object? value) args)
         {
             if (args.key == MachinePropNames.TAPE_MODE && args.value is TapeMode tapeMode)
             {
                 TapeMode = tapeMode;
+                return;
+            }
+            if (args.key == MachinePropNames.KBTYPE_48 && args.value is bool kbType)
+            {
+                UseKeyboard48 = kbType;
             }
         }
     }
@@ -111,6 +124,15 @@ public class MachineViewModel: ViewModelBase
         set => SetProperty(ref _mstate, value);
     }
 
+    /// <summary>
+    /// Indicates that the current machine uses ZX Spectrum 128 keyboard
+    /// </summary>
+    public bool UseKeyboard48
+    {
+        get => _useKeyboard48;
+        set => SetProperty(ref _useKeyboard48, value);
+    }
+    
     /// <summary>
     /// The current tape mode
     /// </summary>
