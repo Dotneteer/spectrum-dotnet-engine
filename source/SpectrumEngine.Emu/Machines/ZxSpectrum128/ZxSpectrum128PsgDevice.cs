@@ -1,4 +1,3 @@
-
 namespace SpectrumEngine.Emu.Machines.ZxSpectrum128;
 
 public class ZxSpectrum128PsgDevice: AudioDeviceBase, IPsgDevice
@@ -58,7 +57,7 @@ public class ZxSpectrum128PsgDevice: AudioDeviceBase, IPsgDevice
         {
             _psg.GenerateOutputValue();
             _psgNextClockTact += PSG_CLOCK_STEP;
-        }    
+        }
     }
 
     /// <summary>
