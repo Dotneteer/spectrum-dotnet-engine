@@ -1,0 +1,279 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.Emulator.Sp128Key">
+    
+    <UserControl.Styles>
+        <Style Selector="TextBlock.Sp128">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="9" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource KeyboardWhiteColor}" />
+        </Style>    
+        <Style Selector="TextBlock.Num">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Normal" />
+        </Style>
+        <Style Selector="TextBlock.Simple">
+            <Setter Property="FontSize" Value="20" />
+        </Style>
+        <Style Selector="Border.Graph">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="Border.MouseOver">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="Border.Pressed">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
+        <Style Selector="TextBlock.MouseOver">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="TextBlock.Pressed">
+            <Setter Property="Background" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
+        <Style Selector="Ellipse">
+            <Setter Property="Fill" Value="{DynamicResource KeyboardButtonBackgroundColor}" />
+        </Style>
+        <Style Selector="Ellipse.MouseOver">
+            <Setter Property="Fill" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="Ellipse.Pressed">
+            <Setter Property="Fill" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
+    </UserControl.Styles>
+    
+    <Border 
+        Padding="3,0,3,0" 
+        BorderBrush="{DynamicResource KeyboardButtonBorderColor}" 
+        BorderThickness="1" 
+        Background="{DynamicResource KeyboardBackgroundColor}"
+        Width="75" Height="73">
+        <Grid>
+            <Ellipse
+                x:Name="ButtonBack"
+                Margin="0,3,0,0"
+                Width="66" 
+                Height="66" 
+                StrokeThickness="0" 
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Top" 
+                Cursor="Hand" 
+                PointerEnter="OnPointerEnter"
+                PointerLeave="OnPointerLeave"
+                PointerPressed="OnMainKeyMouseDown"
+                PointerReleased="OnMouseUp" />
+            <StackPanel Orientation="Vertical">
+                <Border 
+                    Width="66" 
+                    Height="24" 
+                    HorizontalAlignment="Left" 
+                    Background="{DynamicResource KeyboardBackgroundColor}">
+                    <StackPanel 
+                        Orientation="Vertical"
+                        IsVisible="{Binding !CleanMode}">
+                        <Border
+                            HorizontalAlignment="Center" 
+                            Padding="4,1" 
+                            Margin="0,1,0,1" 
+                            CornerRadius="2" 
+                            PointerPressed="OnExtKeyMouseDown"
+                            PointerReleased="OnMouseUp"
+                            PointerEnter="OnPointerEnter"
+                            PointerLeave="OnPointerLeave"
+                            Cursor="Hand">
+                            <TextBlock 
+                                Classes="Sp128"
+                                Text="{Binding ExtKey}" 
+                                HorizontalAlignment="Center" />
+                        </Border>
+                        <Border 
+                            HorizontalAlignment="Center" 
+                            Padding="4,1" 
+                            Margin="0,-4,0,1" 
+                            CornerRadius="2" 
+                            PointerPressed="OnExtShiftKeyMouseDown"
+                            PointerReleased="OnMouseUp"
+                            PointerEnter="OnPointerEnter"
+                            PointerLeave="OnPointerLeave"
+                            Cursor="Hand">
+                            <TextBlock 
+                                Classes="Sp128"
+                                Text="{Binding ExtShiftKey}" 
+                                HorizontalAlignment="Center" />
+                            </Border>
+                    </StackPanel>
+                </Border>
+                <Border 
+                    Width="66" 
+                    HorizontalAlignment="Left"
+                    IsVisible="{Binding !SimpleMode}"
+                    Cursor="Hand">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel
+                            Orientation="Vertical"
+                            IsVisible="{Binding !NumericMode}">
+                            <TextBlock
+                                Classes="Sp128"
+                                Text="{Binding Keyword}" HorizontalAlignment="Center"
+                                Padding="4,2"
+                                Margin="0,0,0,0"
+                                PointerEnter="OnNestedPointerEnter"
+                                PointerLeave="OnNestedPointerLeave"
+                                PointerPressed="OnMainKeyMouseDown"
+                                PointerReleased="OnMouseUp" />
+                            <Border
+                                HorizontalAlignment="Right"
+                                Padding="4,2"
+                                Margin="0,-6,8,0"
+                                CornerRadius="2"
+                                IsVisible="{Binding !Centered}"
+                                PointerEnter="OnPointerEnter"
+                                PointerLeave="OnPointerLeave"
+                                PointerPressed="OnSShiftMouseDown"
+                                PointerReleased="OnMouseUp" >
+                                <TextBlock
+                                    Classes="Sp128"
+                                    Text="{Binding SShiftKey}"
+                                    Padding="4,0"
+                                    HorizontalAlignment="Right" />
+                            </Border>
+                            <StackPanel
+                                IsVisible="{Binding Centered}">
+                                <Border
+                                    HorizontalAlignment="Center"
+                                    Padding="4,4,4,2"
+                                    Margin="0,-5,0,0"
+                                    CornerRadius="2"
+                                    IsVisible="{Binding !CleanMode}"
+                                    PointerEnter="OnPointerEnter"
+                                    PointerLeave="OnPointerLeave"
+                                    PointerPressed="OnSShiftMouseDown"
+                                    PointerReleased="OnMouseUp">
+                                    <TextBlock
+                                        Classes="Sp128"
+                                        Text="{Binding SShiftKey}"
+                                        HorizontalAlignment="Center"
+                                        Padding="4,0"
+                                        Margin="0,-2,0,0" />
+                                </Border>
+                                <TextBlock
+                                    Classes="Sp128"
+                                    Text="{Binding SShiftKey}"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,-2,0,2"
+                                    IsVisible="{Binding CleanMode}"
+                                    PointerEnter="OnNestedPointerEnter"
+                                    PointerLeave="OnNestedPointerLeave"
+                                    PointerPressed="OnMainKeyMouseDown"
+                                    PointerReleased="OnMouseUp" />
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel
+                            Orientation="Vertical"
+                            IsVisible="{Binding NumericMode}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border
+                                    Classes="Graph"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Padding="4,4"
+                                    Margin="8,0,0,0"
+                                    CornerRadius="2"
+                                    IsVisible="{Binding HasGraphics}"
+                                    PointerEnter="OnPointerEnter"
+                                    PointerLeave="OnPointerLeave"
+                                    PointerPressed="OnGraphicsKeyMouseDown"
+                                    PointerReleased="OnMouseUp">
+                                    <Border
+                                        Width="16"
+                                        Height="16"
+                                        HorizontalAlignment="Center"
+                                        BorderBrush="White"
+                                        BorderThickness="1"
+                                        IsVisible="{Binding HasGraphics}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Background="White"
+                                            IsVisible="{Binding HasBit0}"/>
+                                        <Border
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Background="White"
+                                            IsVisible="{Binding HasBit1}"/>
+                                        <Border
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Background="White"
+                                            IsVisible="{Binding HasBit2}"/>
+                                    </Grid>
+                                </Border>
+                                </Border>
+                                <Border
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Padding="4,2"
+                                    Margin="0,0,2,0"
+                                    CornerRadius="2"
+                                    PointerEnter="OnPointerEnter"
+                                    PointerLeave="OnPointerLeave"
+                                    PointerPressed="OnSShiftMouseDown"
+                                    PointerReleased="OnMouseUp">
+                                    <TextBlock
+                                        Classes="Sp128 Num"
+                                        Text="{Binding SShiftKey}"
+                                        HorizontalAlignment="Center" />
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                        <TextBlock
+                            Classes="Sp128 Simple"
+                            Text="{Binding MainKey}"
+                            HorizontalAlignment="Center"
+                            Padding="0,2"
+                            TextAlignment="Center"
+                            Margin="0,-5,0,0"
+                            PointerEnter="OnNestedPointerEnter"
+                            PointerLeave="OnNestedPointerLeave"
+                            PointerPressed="OnMainKeyMouseDown"
+                            PointerReleased="OnMouseUp" />
+                    </StackPanel>
+                </Border>
+                <Border
+                    Width="66" 
+                    Height="45"
+                    HorizontalAlignment="Left"
+                    PointerEnter="OnNestedPointerEnter"
+                    PointerLeave="OnNestedPointerLeave"
+                    PointerPressed="OnMainKeyMouseDown"
+                    PointerReleased="OnMouseUp"
+                    IsVisible="{Binding SimpleMode}" >
+                    <TextBlock
+                        Classes="Sp128 Simple"
+                        Text="{Binding MainKey}"
+                        HorizontalAlignment="Center"
+                        Padding="0,4"
+                        TextAlignment="Center"
+                        Margin="-1,4,0,0" />
+                </Border>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

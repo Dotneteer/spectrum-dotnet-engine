@@ -30,7 +30,9 @@
                         Path="{DynamicResource IconRefresh}" 
                         Command="{Binding MemoryViewer.Refresh}" 
                         Hint="Refresh"/>
-                    <StackPanel 
+                    <!-- Full view header-->
+                    <StackPanel
+                        IsVisible="{Binding MemoryViewer.InFullMode}"
                         Orientation="Horizontal" 
                         VerticalAlignment="Center"
                         Margin="8,0,0,0">
@@ -44,31 +46,48 @@
                             Text="{Binding MemoryViewer.RangeTo, StringFormat='{}{0:X4}'}" 
                             Foreground="{DynamicResource DiagLabelTextColor}" />
                     </StackPanel>
+                    <!-- ROM page view header-->
+                    <StackPanel
+                        IsVisible="{Binding MemoryViewer.InRomPageMode}"
+                        Orientation="Horizontal" 
+                        VerticalAlignment="Center"
+                        Margin="8,0,0,0">
+                        <TextBlock Text="ROM " Foreground="{DynamicResource DiagLabelTextColor}" />
+                        <TextBlock 
+                            Text="{Binding MemoryViewer.RomPage}" 
+                            Foreground="{DynamicResource DiagLabelTextColor}" />
+                    </StackPanel>
+                    <!-- RAM bank view header-->
+                    <StackPanel
+                        IsVisible="{Binding MemoryViewer.InRamBankMode}"
+                        Orientation="Horizontal" 
+                        VerticalAlignment="Center"
+                        Margin="8,0,0,0">
+                        <TextBlock Text="BANK " Foreground="{DynamicResource DiagLabelTextColor}" />
+                        <TextBlock 
+                            Text="{Binding MemoryViewer.RamBank}" 
+                            Foreground="{DynamicResource DiagLabelTextColor}" />
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </Panel>
-        <DataGrid 
-            x:Name="Dg"
-            Grid.Row="1" 
+        
+        <ListBox
+            Grid.Row="1"
+            x:Name="MemoryList"
             Items="{Binding MemoryViewer.MemoryItems}"
-            RowHeight="22"
-            BorderThickness="0"
-            HorizontalGridLinesBrush="Transparent"
-            HeadersVisibility="None"
-            AutoGenerateColumns="False"
-            GridLinesVisibility="None"
-            SelectionMode="Single" 
-            CellPointerPressed="OnCellPointerPressed" >
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Bp" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <memory:MemoryLineControl />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+            SelectionChanged="OnMemorySelectionChanged">
+            <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="Padding" Value="0,2" />
+                </Style>
+            </ListBox.Styles>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <memory:MemoryLineControl />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 
 </UserControl>

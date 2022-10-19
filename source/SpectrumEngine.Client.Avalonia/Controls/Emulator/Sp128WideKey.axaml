@@ -1,0 +1,105 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpectrumEngine.Client.Avalonia.Controls.Emulator.Sp128WideKey">
+    
+    <UserControl.Styles>
+        <Style Selector="TextBlock.Sp128">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="9" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource KeyboardWhiteColor}" />
+        </Style>
+        <Style Selector="Ellipse, Rectangle">
+            <Setter Property="Fill" Value="{DynamicResource KeyboardButtonBackgroundColor}" />
+        </Style>
+        <Style Selector="Ellipse.MouseOver, Rectangle.MouseOver">
+            <Setter Property="Fill" Value="{DynamicResource KeyTextHighlightBrush}" />
+        </Style>
+        <Style Selector="Ellipse.Pressed, Rectangle.Pressed">
+            <Setter Property="Fill" Value="{DynamicResource KeyTextHighlightPressedBrush}" />
+        </Style>
+    </UserControl.Styles>
+    
+    <Border 
+        BorderBrush="{DynamicResource KeyboardButtonBorderColor}" 
+        BorderThickness="1" 
+        Background="{DynamicResource KeyboardBackgroundColor}"
+        Width="{Binding ButtonWidth}" Height="73">
+        <Grid>
+            <Rectangle 
+                x:Name="ButtonBack1" 
+                Height="67" 
+                HorizontalAlignment="Stretch" 
+                Margin="36,3"
+                StrokeThickness="0"
+                PointerEnter="OnPointerEnter" 
+                PointerLeave="OnPointerLeave"
+                PointerPressed="OnPointerPressed"
+                PointerReleased="OnPointerReleased"
+                Cursor="Hand" />
+            <Ellipse 
+                x:Name="ButtonBack2" 
+                Width="66" 
+                Height="66" 
+                StrokeThickness="0" 
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Top" Margin="3,3"
+                PointerEnter="OnPointerEnter" 
+                PointerLeave="OnPointerLeave" 
+                PointerPressed="OnPointerPressed"
+                PointerReleased="OnPointerReleased"
+                Cursor="Hand" />
+            <Ellipse 
+                x:Name="ButtonBack3" 
+                Width="66" 
+                Height="66" 
+                StrokeThickness="0" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Top" Margin="3,3" 
+                PointerEnter="OnPointerEnter" 
+                PointerLeave="OnPointerLeave"
+                PointerPressed="OnPointerPressed"
+                PointerReleased="OnPointerReleased"
+                Cursor="Hand" />
+            <StackPanel
+                Orientation="Vertical"
+                PointerEnter="OnPointerEnter" 
+                PointerLeave="OnPointerLeave" 
+                PointerPressed="OnPointerPressed"
+                PointerReleased="OnPointerReleased"
+                Cursor="Hand" >
+                <Border 
+                    Width="{Binding ButtonWidth}" 
+                    Height="24" 
+                    HorizontalAlignment="Left" 
+                    Background="{DynamicResource KeyboardBackgroundColor}">
+                </Border>
+                <Border
+                    Width="{Binding ButtonWidth}" 
+                    Height="46"
+                    HorizontalAlignment="Left" >
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock
+                            Classes="Sp128"
+                            Text="{Binding MainKey}" 
+                            HorizontalAlignment="Center" 
+                            Padding="0,2" 
+                            TextAlignment="Center" 
+                            Margin="0,6,0,0" />
+                        <TextBlock
+                            Classes="Sp128"
+                            Text="{Binding Keyword}" 
+                            HorizontalAlignment="Center" 
+                            Padding="0,2" 
+                            TextAlignment="Center" 
+                            Margin="0,-4,0,0" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </Border>
+
+</UserControl>

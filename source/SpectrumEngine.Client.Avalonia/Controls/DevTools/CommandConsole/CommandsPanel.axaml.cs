@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Threading;
 using SpectrumEngine.Client.Avalonia.ViewModels;
 using SpectrumEngine.Tools.Commands;
 using SpectrumEngine.Tools.Output;
@@ -32,7 +34,10 @@ public partial class CommandsPanel : UserControl
             // --- Refresh the output whenever it changes
             if (Vm != null)
             {
-                Vm.Commands.Buffer = _buffer.Clone().Contents;
+                Dispatcher.UIThread.Post(() =>
+                {
+                    Vm.Commands.Buffer = _buffer.Clone().Contents;
+                });
             }
         };
     }
@@ -75,7 +80,7 @@ public partial class CommandsPanel : UserControl
                 var itemCount = Vm?.Commands.Buffer?.Count ?? 0;
                 if (itemCount > 0)
                 {
-                    OutputGrid.ScrollIntoView(Vm!.Commands.Buffer![itemCount - 1], null);
+                    OutputList.ScrollIntoView(itemCount - 1);
                 }
                 Prompt.Text = "";
                 _lastCommandIndex = _commandHistory.Count;
@@ -150,10 +155,18 @@ public partial class CommandsPanel : UserControl
         }
     }
 
-    private async void OnCellPointerPressed(object? _, DataGridCellPointerPressedEventArgs e)
+    private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        e.PointerPressedEventArgs.Handled = true;
-        await Task.Delay(20);
-        OutputGrid.SelectedIndex = -1;
+        OutputList.SelectedItems.Clear();
+    }
+
+    private void OnOutputListGotFocus(object? sender, GotFocusEventArgs e)
+    {
+        Prompt.Focus();
+    }
+
+    private void OnCommandPanelGotFocus(object? sender, GotFocusEventArgs e)
+    {
+        Prompt.Focus();
     }
 }

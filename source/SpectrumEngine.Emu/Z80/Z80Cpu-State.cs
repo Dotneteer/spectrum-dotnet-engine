@@ -85,7 +85,7 @@ public partial class Z80Cpu
     /// <summary>
     /// Get the current frame tact within the machine frame being executed.
     /// </summary>
-    public int CurrentFrameTact => (int)(Tacts % ((ulong)TactsInFrame * (ulong)ClockMultiplier));
+    public int CurrentFrameTact => (int)(Tacts % ((ulong)TactsInFrame * (ulong)ClockMultiplier) / (ulong)ClockMultiplier);
 
     /// <summary>
     /// This flag indicates if bit 3 or 5 of Register F has been updated. We need to keep this value, as we utilize

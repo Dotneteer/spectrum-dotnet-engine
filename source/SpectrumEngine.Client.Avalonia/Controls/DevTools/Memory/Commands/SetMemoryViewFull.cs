@@ -4,21 +4,18 @@ using SpectrumEngine.Tools.Commands;
 namespace SpectrumEngine.Client.Avalonia.Controls.DevTools.Commands;
 
 /// <summary>
-/// Sets the memory range to use in the Memory view
+/// Refreshes the current disassembly view
 /// </summary>
-[CommandId("mr")]
-[CommandAliases("mem-range")]
-[CommandDescription("Sets the memory range to use with the memory view")]
-[CommandUsage("mr <from address> <to address>")]
-public class SetMemoryRangeCommand: CommandWithAddressRangeBase
+[CommandId("mf")]
+[CommandDescription("Refreshes the current memory view")]
+[CommandUsage("mem-full")]
+public class SetMemoryViewFull: CommandWithNoArgBase
 {
     protected override Task<InteractiveCommandResult> DoExecute(IInteractiveCommandContext context)
     {
         if (context.Output != null)
         {
             var memViewer = context.Model!.MemoryViewer;
-            memViewer.RangeFrom = FromAddress;
-            memViewer.RangeTo = ToAddress;
             memViewer.DisplayMode = MemoryDisplayMode.Full;
             memViewer.RaiseModeChanged();
             memViewer.RaiseRangeChanged();

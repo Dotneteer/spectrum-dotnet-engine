@@ -7,6 +7,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="using:SpectrumEngine.Client.Avalonia.Controls"
+        xmlns:emulator="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.Emulator"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SpectrumEngine.Client.Avalonia.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
@@ -389,10 +390,13 @@
                 IsVisible="{Binding EmuViewOptions.ShowToolbar}" />
             <local:EmulatorStatusBarUserControl DockPanel.Dock="Bottom" 
                 IsVisible="{Binding EmuViewOptions.ShowStatusBar}"/>
-            <local:KeyboardPanel 
+            <Panel 
                 IsVisible="{Binding EmuViewOptions.ShowKeyboard}"
                 Height="300"
-                DockPanel.Dock="Bottom" />
+                DockPanel.Dock="Bottom" >
+                <emulator:Sp128KeyboardPanel IsVisible="{Binding !Machine.UseKeyboard48}" />
+                <local:KeyboardPanel IsVisible="{Binding Machine.UseKeyboard48}" />
+            </Panel>
             <local:Splitter 
                 IsVisible="{Binding EmuViewOptions.ShowKeyboard}"
                 Orientation="Vertical"

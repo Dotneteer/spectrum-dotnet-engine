@@ -82,6 +82,7 @@ public class ZxSpectrum48Machine :
         // --- Set default property values
         SetMachineProperty(MachinePropNames.TAPE_MODE, TapeMode.Passive);
         SetMachineProperty(MachinePropNames.REWIND_REQUESTED, null);
+        SetMachineProperty(MachinePropNames.KBTYPE_48, true);
 
         // --- Unknown clock multiplier in the previous frame
         OldClockMultiplier = -1;
@@ -127,6 +128,17 @@ public class ZxSpectrum48Machine :
     {
         throw new NotSupportedException();
     }
+
+    /// <summary>
+    /// Gets the audio sample rate
+    /// </summary>
+    public override int GetAudioSampleRate() => BeeperDevice.GetAudioSampleRate();
+
+    /// <summary>
+    /// Gets the audio samples rendered in the current frame
+    /// </summary>
+    /// <returns>Array with the audio samples</returns>
+    public override float[] GetAudioSamples() => BeeperDevice.GetAudioSamples();
 
     /// <summary>
     /// Get the number of T-states in a display line (use -1, if this info is not available)

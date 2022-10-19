@@ -197,8 +197,7 @@ public partial class Sp48Key : UserControl
 
     public event EventHandler<PointerReleasedEventArgs>? KeyReleased;
 
-    public SpectrumKeyCode? SecondaryCode { get; set; } = null;
-
+    public SpectrumKeyCode? SecondaryCode { get; set; }
 
     public Sp48Key()
     {
@@ -390,17 +389,15 @@ public class SingleKeyControlSampleData
     public string SShiftKey { get; set; } = "@";
     public string ExtKey { get; set; } = "READ";
     public string ExtShiftKey { get; set; } = "CIRCLE";
-    public bool SimpleMode { get; set; } = false;
+    public bool SimpleMode { get; set; }
     public bool NumericMode { get; set; } = true;
     public bool HasGraphics { get; set; } = true;
-    public int GraphicsCode { get; set; } = 7;
     public bool HasBit0 { get; set; } = true;
     public bool HasBit1 { get; set; } = true;
     public bool HasBit2 { get; set; } = true;
-    public bool SymMode { get; set; } = false;
-    public bool TwoLineMode { get; set; } = false;
+    public bool SymMode { get; set; }
+    public bool TwoLineMode { get; set; }
     public double ButtonWidth { get; set; } = 100.0;
     public string ColorKey { get; set; } = "BLUE";
     public SolidColorBrush NumForeground { get; set; } = new (Colors.Blue);
-    public SolidColorBrush NumBackground { get; set; } = new (Colors.Transparent);
 }

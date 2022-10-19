@@ -99,6 +99,13 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
     /// <returns>The result of the command</returns>
     public async Task<InteractiveCommandResult> Execute(IInteractiveCommandContext context)
     {
+        // --- Validate the command
+        var commandMsg = await ValidateCommand(context);
+        if (commandMsg != null)
+        {
+            return new InteractiveCommandResult(false, commandMsg);
+        }
+        
         // --- Validate the input arguments
         var validation = await ValidateArgs(context.CommandTokens!.Skip(1).ToList());
 
@@ -137,6 +144,18 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
     }
 
     /// <summary>
+    /// Checks if the command is executable within the current context
+    /// </summary>
+    /// <param name="context">Command execution context</param>
+    /// <returns>
+    /// Null, if the command is executable; otherwise, the error message
+    /// </returns>
+    protected virtual Task<string?> ValidateCommand(IInteractiveCommandContext context)
+    {
+        return Task.FromResult((string?)null);
+    }
+    
+    /// <summary>
     /// Validates command arguments
     /// </summary>
     /// <param name="args">Arguments to validate</param>
@@ -166,7 +185,20 @@ public abstract class InteractiveCommandBase : IInteractiveCommandInfo
     /// <summary>
     /// Creates a message with the specified count as the expected number of arguments.
     /// </summary>
-    /// <param name="count"></param>
+    /// <param name="message">Error message to create</param>
+    /// <returns></returns>
+    public static List<ValidationMessage> ErrorMessage(string message)
+    {
+        return new List<ValidationMessage>
+        {
+            new(ValidationMessageType.Error, message)
+        };
+    }
+    
+    /// <summary>
+    /// Creates a message with the specified count as the expected number of arguments.
+    /// </summary>
+    /// <param name="count">Number of expected arguments</param>
     /// <returns></returns>
     public static List<ValidationMessage> ExpectArgs(int count)
     {
