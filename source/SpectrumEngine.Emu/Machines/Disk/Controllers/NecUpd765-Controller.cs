@@ -4,18 +4,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SpectrumEngine.Emu.Machines.Disk;
+namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
 
-    /// <summary>
-    /// FDC State and Methods
-    /// </summary>
-    /*
-        Implementation based on the information contained here:
-        http://www.cpcwiki.eu/index.php/765_FDC
-        and here:
-        http://www.cpcwiki.eu/imgs/f/f3/UPD765_Datasheet_OCRed.pdf
-    */
-    public partial class NECUPD765
+/// <summary>
+/// FDC State and Methods
+/// </summary>
+/*
+	Implementation based on the information contained here:
+	http://www.cpcwiki.eu/index.php/765_FDC
+	and here:
+	http://www.cpcwiki.eu/imgs/f/f3/UPD765_Datasheet_OCRed.pdf
+*/
+public partial class NecUpd765
 {
 	/// <summary>
 	/// Signs whether the drive is active
@@ -30,17 +30,13 @@ namespace SpectrumEngine.Emu.Machines.Disk;
 	/// <summary>
 	/// State parameters relating to the Active command
 	/// </summary>
-	public CommandParameters ActiveCommandParams = new CommandParameters();
+	public CommandParams ActiveCommandParams = new CommandParams();
 
 	/// <summary>
 	/// The current active phase of the controller
 	/// </summary>
 	private Phase ActivePhase = Phase.Command;
 
-	/// <summary>
-	/// The currently active interrupt
-	/// </summary>
-	private InterruptState ActiveInterrupt = InterruptState.None;
 	/// <summary>
 	/// Command buffer
 	/// This does not contain the initial command byte (only parameter bytes)
@@ -2346,7 +2342,7 @@ namespace SpectrumEngine.Emu.Machines.Disk;
 				UnSetBit(MSR_EXM, ref StatusMain);
 				break;
 			case Phase.Execution:
-				if (ActiveCommand.Direction == CommandDirection.OUT)
+				if (ActiveCommand.Direction == CommandDirection.Out)
 					SetBit(MSR_DIO, ref StatusMain);
 				else
 					UnSetBit(MSR_DIO, ref StatusMain);

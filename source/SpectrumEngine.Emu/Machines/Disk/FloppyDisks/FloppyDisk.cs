@@ -191,8 +191,8 @@ public abstract class FloppyDisk
             }
         }
 
-        public CHRN SectorIDInfo =>
-            new CHRN
+        public NecUpd765CommandParams SectorIDInfo =>
+            new NecUpd765CommandParams
             {
                 C = TrackNumber,
                 H = SideNumber,

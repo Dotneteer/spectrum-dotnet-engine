@@ -8,14 +8,14 @@ namespace SpectrumEngine.Emu.Machines.Disk;
 /// </summary>
 public class FlopyDiskDriveDevice : IFlopyDiskDriveDevice
 {
-    private readonly NECUPD765 _floppyDiskController;
+    private readonly NecUpd765 _floppyDiskController;
 
     /// <summary>
     /// Default constructor
     /// </summary>
     /// <param name="driveId">Floppy disk Identifier</param>
     /// <param name="floppyDiskController">Floppy disk controller</param>
-    public FlopyDiskDriveDevice(int driveId, NECUPD765 floppyDiskController)
+    public FlopyDiskDriveDevice(int driveId, NecUpd765 floppyDiskController)
     {
         Id = driveId;
         _floppyDiskController = floppyDiskController;
