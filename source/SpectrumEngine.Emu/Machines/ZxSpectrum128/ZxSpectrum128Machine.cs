@@ -181,7 +181,22 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     /// </param>
     protected override void OnInitNewFrame(bool clockMultiplierChanged)
     {
-        base.OnInitNewFrame(clockMultiplierChanged);
+        // --- No screen tact rendered in this frame
+        LastRenderedFrameTact = 0;
+
+        // --- Prepare the screen device for the new machine frame
+        ScreenDevice.OnNewFrame();
+
+        // --- Handle audio sample recalculations when the actual clock frequency changes
+        if (OldClockMultiplier != ClockMultiplier)
+        {
+            BeeperDevice.SetAudioSampleRate(AUDIO_SAMPLE_RATE);
+            PsgDevice.SetAudioSampleRate(AUDIO_SAMPLE_RATE);
+            OldClockMultiplier = ClockMultiplier;
+        }
+
+        // --- Prepare the beeper device for the new frame
+        BeeperDevice.OnNewFrame();
         PsgDevice.OnNewFrame();
     }
 
