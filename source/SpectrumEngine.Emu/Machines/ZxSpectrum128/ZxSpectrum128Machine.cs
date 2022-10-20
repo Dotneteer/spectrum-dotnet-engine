@@ -80,9 +80,6 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
         // --- Initialize the machine's ROM (Roms/ZxSpectrum48/ZxSpectrum48.rom)
         UploadRomBytes(0, LoadRomFromResource(MachineId, 0));
         UploadRomBytes(1, LoadRomFromResource(MachineId, 1));
-        
-        // --- Allow access to the 64Kbyte of memory
-        // SetMachineProperty(MachinePropNames.MemoryFlat, _memory);
     }
 
     /// <summary>
