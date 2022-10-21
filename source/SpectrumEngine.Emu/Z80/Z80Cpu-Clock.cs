@@ -27,6 +27,13 @@ public partial class Z80Cpu
     public void TactPlus1()
     {
         Tacts += 1;
+        FrameTacts += 1;
+        var totalTacts = TactsInFrame * ClockMultiplier;
+        if (FrameTacts >= totalTacts)
+        {
+            Frames++;
+            FrameTacts -= totalTacts;
+        }
         OnTactIncremented(1);
     }
 
@@ -37,6 +44,13 @@ public partial class Z80Cpu
     public void TactPlus2()
     {
         Tacts += 2;
+        FrameTacts += 2;
+        var totalTacts = TactsInFrame * ClockMultiplier;
+        if (FrameTacts >= totalTacts)
+        {
+            Frames++;
+            FrameTacts -= totalTacts;
+        }
         OnTactIncremented(2);
     }
 
@@ -47,6 +61,13 @@ public partial class Z80Cpu
     public void TactPlus3()
     {
         Tacts += 3;
+        FrameTacts += 3;
+        var totalTacts = TactsInFrame * ClockMultiplier;
+        if (FrameTacts >= totalTacts)
+        {
+            Frames++;
+            FrameTacts -= totalTacts;
+        }
         OnTactIncremented(3);
     }
 
@@ -57,6 +78,13 @@ public partial class Z80Cpu
     public void TactPlus4()
     {
         Tacts += 4;
+        FrameTacts += 4;
+        var totalTacts = TactsInFrame * ClockMultiplier;
+        if (FrameTacts >= totalTacts)
+        {
+            Frames++;
+            FrameTacts -= totalTacts;
+        }
         OnTactIncremented(4);
     }
 
@@ -67,6 +95,13 @@ public partial class Z80Cpu
     public void TactPlus5()
     {
         Tacts += 5;
+        FrameTacts += 5;
+        var totalTacts = TactsInFrame * ClockMultiplier;
+        if (FrameTacts >= totalTacts)
+        {
+            Frames++;
+            FrameTacts -= totalTacts;
+        }
         OnTactIncremented(5);
     }
 
@@ -77,17 +112,14 @@ public partial class Z80Cpu
     public void TactPlus6()
     {
         Tacts += 6;
+        FrameTacts += 6;
+        var totalTacts = TactsInFrame * ClockMultiplier;
+        if (FrameTacts >= totalTacts)
+        {
+            Frames++;
+            FrameTacts -= totalTacts;
+        }
         OnTactIncremented(6);
-    }
-
-    /// <summary>
-    /// This method increments the current CPU tacts by seven.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void TactPlus7()
-    {
-        Tacts += 7;
-        OnTactIncremented(7);
     }
 
     /// <summary>
@@ -97,6 +129,13 @@ public partial class Z80Cpu
     public void TactPlusN(byte n)
     {
         Tacts += n;
+        FrameTacts += n;
+        var totalTacts = TactsInFrame * ClockMultiplier;
+        if (FrameTacts >= totalTacts)
+        {
+            Frames++;
+            FrameTacts -= totalTacts;
+        }
         OnTactIncremented(n);
     }
 }

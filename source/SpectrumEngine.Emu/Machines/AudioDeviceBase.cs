@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using System.Text.Json;
+
 namespace SpectrumEngine.Emu;
 
 /// <summary>
@@ -57,7 +60,7 @@ public class AudioDeviceBase: IAudioDevice
     public void SetAudioSampleRate(int sampleRate)
     {
         _audioSampleRate = sampleRate;
-        var sampleLength = (double)Machine.BaseClockFrequency * Machine.ClockMultiplier / sampleRate;
+        var sampleLength = (double)Machine.BaseClockFrequency / sampleRate;
         _audioSampleLength = (int)sampleLength;
         _audioLowerGate = (int)((sampleLength - _audioSampleLength) * GATE);
         _audioGateValue = 0;

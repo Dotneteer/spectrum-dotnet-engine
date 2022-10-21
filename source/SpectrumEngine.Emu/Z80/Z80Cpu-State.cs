@@ -65,7 +65,17 @@ public partial class Z80Cpu
     /// <summary>
     /// The number of T-states (clock cycles) elapsed since the last reset
     /// </summary>
-    public ulong Tacts { get; set; }
+    public ulong Tacts { get; private set; }
+
+    /// <summary>
+    /// The number of T-states within the current frame
+    /// </summary>
+    public int FrameTacts { get; private set; }
+    
+    /// <summary>
+    /// Show the number of machine frames completed since the CPU started.
+    /// </summary>
+    public int Frames { get; private set; }
 
     /// <summary>
     /// Get the number of T-states in a machine frame.
@@ -78,16 +88,11 @@ public partial class Z80Cpu
     public virtual int TactsInDisplayLine => -1;
 
     /// <summary>
-    /// Show the number of machine frames completed since the CPU started.
-    /// </summary>
-    public int Frames => (int)(Tacts / ((ulong)TactsInFrame * (ulong)ClockMultiplier));
-
-    /// <summary>
     /// Get the current frame tact within the machine frame being executed.
     /// </summary>
-    public int CurrentFrameTact => (int)(Tacts % ((ulong)TactsInFrame * (ulong)ClockMultiplier) / (ulong)ClockMultiplier);
+    public int CurrentFrameTact => FrameTacts / ClockMultiplier;
 
-    /// <summary>
+    /// <summary>   
     /// This flag indicates if bit 3 or 5 of Register F has been updated. We need to keep this value, as we utilize
     /// it within the `SCF` and `CCF` instructions to calculate the new values of bit 3 and 5 of F.
     /// </summary>
