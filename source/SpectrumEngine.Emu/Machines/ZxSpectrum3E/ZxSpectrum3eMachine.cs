@@ -24,7 +24,7 @@ public class ZxSpectrum3eMachine: ZxSpectrumBase
     /// <summary>
     /// The unique identifier of the machine type
     /// </summary>
-    public override string MachineId => "spP3e";
+    public override string MachineId => "spp3e";
 
     /// <summary>
     /// The name of the machine type to display
@@ -431,13 +431,101 @@ public class ZxSpectrum3eMachine: ZxSpectrumBase
             return PsgDevice.ReadPsgRegisterValue();
         }
 
+        // --- Handle reading the FDC main status register port
+        if ((address & 0xffff) == 0x2ffd)
+        {
+            // TODO: Implement this port
+            return 0xff;
+        }
+        
+        // --- Handle reading the FDC data port
+        if ((address & 0xffff) == 0x3ffd)
+        {
+            // TODO: Implement this port
+            return 0xff;
+        }
+
         return FloatingBusDevice.ReadFloatingBus();
     }
 
+    /// <summary>
+    /// This function implements the memory read delay of the CPU.
+    /// </summary>
+    /// <param name="address">Memory address to read</param>
+    /// <remarks>
+    /// On the +3 Spectrum, no contention occurs as the +3 ULA applies contention only when the Z80's MREQ line is
+    /// active, which it is not during an I/O operation.
+    /// </remarks>
+    public override void DelayMemoryRead(ushort address) => TactPlus4();
+
     public override void DoWritePort(ushort address, byte value)
     {
-        throw new NotImplementedException();
+        // --- Standard ZX Spectrum 48 port
+        if ((address & 0x0001) == 0)
+        {
+            WritePort0xFE(value);
+            return;
+        }
+
+        // --- Memory paging port
+        if ((address & 0xc002) == 0x4000)
+        {
+            // --- Abort if paging is not enabled
+            if (!_pagingEnabled) return;
+            
+            // --- Choose the RAM bank for Slot 3 (0xc000-0xffff)
+            _selectedBank = value & 0x07;
+
+            // --- Choose screen (Bank 5 or 7)
+            _useShadowScreen = ((value >> 3) & 0x01) == 0x01;
+
+            // --- Choose ROM bank for Slot 0 (0x0000-0x3fff)
+            _selectedRom = (value >> 4) & 0x01;
+
+            // --- Enable/disable paging
+            _pagingEnabled = (value & 0x20) == 0x00;
+
+            return;
+        }
+        
+        // --- Special memory paging port
+        if ((address & 0xf002) == 0x1000)
+        {
+            // --- Special paging mode
+            _inSpecialPagingMode = (value & 0x01) != 0;
+            _specialConfigMode = (value >> 1) & 0x03;
+            
+            // --- Disk motor
+            _diskMotorOn = (value & 0x08) != 0;
+        }
+        
+        // --- Test for PSG register index port
+        if ((address & 0xc002) == 0xc000) {
+            PsgDevice.SetPsgRegisterIndex((byte)(value & 0x0f));
+            return;
+        }
+        
+        // --- Test for PSG register value port
+        if ((address & 0xc002) == 0x8000) {
+            PsgDevice.WritePsgRegisterValue(value);
+        }
+        
+        // --- Test for the floppy controller port
+        if ((address & 0xffff) == 0x3fff)
+        {
+            // TODO:Implement write to the FDC port
+        }
     }
+
+    /// <summary>
+    /// This function implements the memory write delay of the CPU.
+    /// </summary>
+    /// <param name="address">Memory address to write</param>
+    /// <remarks>
+    /// On the +3 Spectrum, no contention occurs as the +3 ULA applies contention only when the Z80's MREQ line is
+    /// active, which it is not during an I/O operation.
+    /// </remarks>
+    public override void DelayMemoryWrite(ushort address) => TactPlus4();
 
     #endregion
     

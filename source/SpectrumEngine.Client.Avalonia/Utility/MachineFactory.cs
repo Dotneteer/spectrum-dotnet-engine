@@ -15,6 +15,7 @@ public static class MachineFactory
         {
             "sp48" => new ZxSpectrum48Machine(),
             "sp128" => new ZxSpectrum128Machine(),
+            "spp3e" => new ZxSpectrum3eMachine(),
             _ => null
         };
 
