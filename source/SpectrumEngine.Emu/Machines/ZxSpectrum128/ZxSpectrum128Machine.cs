@@ -398,7 +398,6 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
 
             // --- Enable/disable paging
             _pagingEnabled = (value & 0x20) == 0x00;
-
             return;
         }
         

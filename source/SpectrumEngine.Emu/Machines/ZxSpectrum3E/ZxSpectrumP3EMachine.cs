@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace SpectrumEngine.Emu;
 
 /// <summary>
@@ -65,7 +67,7 @@ public class ZxSpectrumP3EMachine: ZxSpectrumBase
         ScreenDevice = new CommonScreenDevice(this, CommonScreenDevice.ZxSpectrumP3EScreenConfiguration);
         BeeperDevice = new BeeperDevice(this);
         PsgDevice = new ZxSpectrum128PsgDevice(this);
-        FloatingBusDevice = new ZxSpectrum3eFloatingBusDevice(this);
+        FloatingBusDevice = new ZxSpectrumP3EFloatingBusDevice(this);
         TapeDevice = new TapeDevice(this);
         Reset();
 
@@ -407,6 +409,11 @@ public class ZxSpectrumP3EMachine: ZxSpectrumBase
         ContentionDelaySincePause += delay;
     }
 
+    /// <summary>
+    /// Indicates if memory paging is enabled
+    /// </summary>
+    public bool MemoryPagingEnabled => _pagingEnabled;
+    
     #endregion 
     
     #region I/O port handling
@@ -491,7 +498,6 @@ public class ZxSpectrumP3EMachine: ZxSpectrumBase
 
             // --- Enable/disable paging
             _pagingEnabled = (value & 0x20) == 0x00;
-
             return;
         }
         
@@ -505,6 +511,7 @@ public class ZxSpectrumP3EMachine: ZxSpectrumBase
             
             // --- Disk motor
             _diskMotorOn = (value & 0x08) != 0;
+            return;
         }
         
         // --- Test for PSG register index port
@@ -516,6 +523,7 @@ public class ZxSpectrumP3EMachine: ZxSpectrumBase
         // --- Test for PSG register value port
         if ((address & 0xc002) == 0x8000) {
             PsgDevice.WritePsgRegisterValue(value);
+            return;
         }
         
         // --- Test for the floppy controller port
