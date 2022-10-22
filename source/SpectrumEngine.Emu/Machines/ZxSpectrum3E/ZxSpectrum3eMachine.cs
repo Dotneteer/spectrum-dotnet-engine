@@ -3,7 +3,7 @@ namespace SpectrumEngine.Emu;
 /// <summary>
 /// This class represents the emulator of a ZX Spectrum +3E machine.
 /// </summary>
-public class ZxSpectrum3eMachine: ZxSpectrumBase
+public class ZxSpectrum3EMachine: ZxSpectrumBase
 {
     #region Private members
 
@@ -39,7 +39,7 @@ public class ZxSpectrum3eMachine: ZxSpectrumBase
     /// <summary>
     /// Initialize the machine
     /// </summary>
-    public ZxSpectrum3eMachine()
+    public ZxSpectrum3EMachine()
     {
         // --- Set up machine attributes
         BaseClockFrequency = 3_546_900;
@@ -141,6 +141,11 @@ public class ZxSpectrum3eMachine: ZxSpectrumBase
         // --- Empty the queue of emulated keystrokes
         lock (EmulatedKeyStrokes) { EmulatedKeyStrokes.Clear(); }
     }
+
+    /// <summary>
+    /// Indicates if the currently selected ROM is the ZX Spectrum 48 ROM
+    /// </summary>
+    public override bool IsSpectrum48RomSelected => _selectedRom == 3;
 
     /// <summary>
     /// Reads the screen memory byte
@@ -305,7 +310,7 @@ public class ZxSpectrum3eMachine: ZxSpectrumBase
                 : _ramBanks[2][memIndex],
             _ => _inSpecialPagingMode
                 ? _ramBanks[_specialConfigMode == 1 ? 7 : 3][memIndex]
-                :_ramBanks[_selectedBank][memIndex]
+                : _ramBanks[_selectedBank][memIndex]
         };
     }
 
@@ -480,7 +485,7 @@ public class ZxSpectrum3eMachine: ZxSpectrumBase
             _useShadowScreen = ((value >> 3) & 0x01) == 0x01;
 
             // --- Choose ROM bank for Slot 0 (0x0000-0x3fff)
-            _selectedRom = (value >> 4) & 0x01;
+            _selectedRom = (value >> 4) & 0x01 | (_specialConfigMode & 0x02);
 
             // --- Enable/disable paging
             _pagingEnabled = (value & 0x20) == 0x00;
@@ -494,6 +499,7 @@ public class ZxSpectrum3eMachine: ZxSpectrumBase
             // --- Special paging mode
             _inSpecialPagingMode = (value & 0x01) != 0;
             _specialConfigMode = (value >> 1) & 0x03;
+            _selectedRom = _selectedRom & 0x01 | (_specialConfigMode & 0x02);
             
             // --- Disk motor
             _diskMotorOn = (value & 0x08) != 0;

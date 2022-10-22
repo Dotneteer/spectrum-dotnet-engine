@@ -136,6 +136,11 @@ public class ZxSpectrum128Machine: ZxSpectrumBase
     }
 
     /// <summary>
+    /// Indicates if the currently selected ROM is the ZX Spectrum 48 ROM
+    /// </summary>
+    public override bool IsSpectrum48RomSelected => _selectedRom == 1;
+
+    /// <summary>
     /// Reads the screen memory byte
     /// </summary>
     /// <param name="offset">Offset from the beginning of the screen memory</param>
