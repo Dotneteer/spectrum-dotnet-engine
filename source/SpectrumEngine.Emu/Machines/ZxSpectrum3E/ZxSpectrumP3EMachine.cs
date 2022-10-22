@@ -3,7 +3,7 @@ namespace SpectrumEngine.Emu;
 /// <summary>
 /// This class represents the emulator of a ZX Spectrum +3E machine.
 /// </summary>
-public class ZxSpectrum3EMachine: ZxSpectrumBase
+public class ZxSpectrumP3EMachine: ZxSpectrumBase
 {
     #region Private members
 
@@ -39,12 +39,14 @@ public class ZxSpectrum3EMachine: ZxSpectrumBase
     /// <summary>
     /// Initialize the machine
     /// </summary>
-    public ZxSpectrum3EMachine()
+    public ZxSpectrumP3EMachine()
     {
         // --- Set up machine attributes
         BaseClockFrequency = 3_546_900;
         ClockMultiplier = 1;
-        DelayedAddressBus = true;
+        
+        // --- ZX Spectrum +2E/3E uses Gate Array and not ULA
+        DelayedAddressBus = false;
         
         // --- Initialize the memory contents
         _romPages = new byte[4][];
@@ -60,7 +62,7 @@ public class ZxSpectrum3EMachine: ZxSpectrumBase
 
         // --- Create and initialize devices
         KeyboardDevice = new KeyboardDevice(this);
-        ScreenDevice = new CommonScreenDevice(this, CommonScreenDevice.ZxSpectrum128ScreenConfiguration);
+        ScreenDevice = new CommonScreenDevice(this, CommonScreenDevice.ZxSpectrumP3EScreenConfiguration);
         BeeperDevice = new BeeperDevice(this);
         PsgDevice = new ZxSpectrum128PsgDevice(this);
         FloatingBusDevice = new ZxSpectrum3eFloatingBusDevice(this);

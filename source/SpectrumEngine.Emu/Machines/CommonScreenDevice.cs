@@ -79,6 +79,28 @@ public sealed class CommonScreenDevice : IScreenDevice
         ContentionValues = new byte[] { 4, 3, 2, 1, 0, 0, 6, 5 }
     };
 
+
+    /// <summary>
+    /// Define the screen configuration attributes of ZX Spectrum 48K (PAL)
+    /// </summary>
+    public static readonly ScreenConfiguration ZxSpectrumP3EScreenConfiguration = new()
+    {
+        VerticalSyncLines = 8,
+        NonVisibleBorderTopLines = 7,
+        BorderTopLines = 48,
+        BorderBottomLines = 48,
+        NonVisibleBorderBottomLines = 8,
+        DisplayLines = 192,
+        BorderLeftTime = 24,
+        BorderRightTime = 24,
+        DisplayLineTime = 128,
+        HorizontalBlankingTime = 40,
+        NonVisibleBorderRightTime = 12,
+        PixelDataPrefetchTime = 2,
+        AttributeDataPrefetchTime = 1,
+        ContentionValues = new byte[] { 0, 7, 6, 5, 4, 3, 2, 1 }
+    };
+
     /// <summary>
     /// This table defines the ARGB colors for the 16 available colors on the ZX Spectrum 48K model.
     /// </summary>
