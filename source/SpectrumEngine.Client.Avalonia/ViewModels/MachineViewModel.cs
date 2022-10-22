@@ -211,7 +211,7 @@ public class MachineViewModel: ViewModelBase
     /// <returns>Is the command enabled?</returns>
     [DependsOn(nameof(MachineControllerState))]
     private bool CanSelectMachineType(object? parameter)
-        => parameter is "sp48" or "sp128"; 
+        => parameter is "sp48" or "sp128" or "spP3e"; 
     
     /// <summary>
     /// Execute the Start command

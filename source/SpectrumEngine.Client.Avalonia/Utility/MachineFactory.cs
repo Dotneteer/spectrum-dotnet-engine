@@ -1,6 +1,5 @@
 using SpectrumEngine.Client.Avalonia.Providers;
 using SpectrumEngine.Emu;
-using SpectrumEngine.Emu.ZxSpectrum128;
 
 namespace SpectrumEngine.Client.Avalonia.Utility;
 
@@ -16,6 +15,7 @@ public static class MachineFactory
         {
             "sp48" => new ZxSpectrum48Machine(),
             "sp128" => new ZxSpectrum128Machine(),
+            "spp3e" => new ZxSpectrum3EMachine(),
             _ => null
         };
 

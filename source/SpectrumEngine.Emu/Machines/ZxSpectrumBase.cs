@@ -166,7 +166,7 @@ public abstract class ZxSpectrumBase: Z80MachineBase, IZxSpectrumMachine
     /// <summary>
     /// Gets the ULA issue number of the ZX Spectrum model (2 or 3)
     /// </summary>
-    public abstract int UlaIssue { get; set; }
+    public virtual int UlaIssue { get; set; } = 3;
 
     /// <summary>
     /// This method allocates storage for the memory contention values.
