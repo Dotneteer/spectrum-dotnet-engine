@@ -67,7 +67,7 @@ public class MainWindowViewModel : ViewModelBase
             new()
             {
                 Id = "Debug",
-                Icon = "IconFiles",
+                Icon = "IconDebug",
                 Description = "Run and Debug"
             },
         };
