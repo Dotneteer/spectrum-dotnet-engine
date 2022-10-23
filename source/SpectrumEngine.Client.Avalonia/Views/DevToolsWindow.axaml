@@ -216,6 +216,8 @@
         <controls:DevsStatusBarUserControl 
             DockPanel.Dock="Bottom" 
             IsVisible="{Binding DevToolsViewOptions.ShowStatusBar}"/>
+        <devTools:ActivityBar 
+            DockPanel.Dock="Left" />
         <devTools:SiteBar
             DockPanel.Dock="{Binding DevToolsViewOptions.SiteBarOnLeft, Converter={StaticResource VerticalDockConverter}}"
             IsVisible="{Binding DevToolsViewOptions.ShowSiteBar}"

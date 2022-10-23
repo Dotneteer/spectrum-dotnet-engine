@@ -51,5 +51,9 @@
         <DependentUpon>DisassemblyViewPanel.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Controls\DevTools\Activity\ActivityBar.axaml.cs">
+        <DependentUpon>ActivityBar.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>   
 </Project>

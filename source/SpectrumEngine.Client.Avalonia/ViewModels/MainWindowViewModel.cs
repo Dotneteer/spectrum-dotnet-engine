@@ -1,6 +1,7 @@
 ﻿// ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
 
+using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Platform;
 using SpectrumEngine.Client.Avalonia.Controls.DevTools;
@@ -52,6 +53,23 @@ public class MainWindowViewModel : ViewModelBase
             ShowPanels = true,
             SiteBarOnLeft = true,
             PanelsAtBottom = true
+        };
+        
+        // --- Initiualize activities
+        Activities = new List<ActivityViewModel>
+        {
+            new()
+            {
+                Id = "Project",
+                Icon = "IconFiles",
+                Description = "Project Explorer"
+            },
+            new()
+            {
+                Id = "Debug",
+                Icon = "IconFiles",
+                Description = "Run and Debug"
+            },
         };
         
         // --- Initialize the parts of the DevTools window
@@ -129,6 +147,11 @@ public class MainWindowViewModel : ViewModelBase
     /// </summary>
     public PreferencesViewModel Preferences { get; }
 
+    /// <summary>
+    /// DevTool activities
+    /// </summary>
+    public List<ActivityViewModel> Activities { get; }
+    
     /// <summary>
     /// DevTools site bar view options
     /// </summary>
