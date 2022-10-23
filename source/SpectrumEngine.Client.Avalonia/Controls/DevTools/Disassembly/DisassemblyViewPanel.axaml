@@ -92,14 +92,14 @@
                                     IsVisible="{Binding HasNoBreakpoint}" />
                                 <controls:PlainIcon
                                     IsVisible="{Binding HasActiveBreakpoint}"
-                                    Path="{DynamicResource IconActiveBreakpoint}"
+                                    IconName="IconActiveBreakpoint"
                                     Fill="{DynamicResource ActiveBreakpointBrush}"
                                     VerticalAlignment="Center"
                                     Width="18"
                                     Height="18" />
                                 <controls:PlainIcon
                                     IsVisible="{Binding HasDefinedBreakpoint}"
-                                    Path="{DynamicResource IconCircleFilled}" 
+                                    IconName="IconCircleFilled" 
                                     Fill="{DynamicResource InactiveBreakpointBrush}"
                                     VerticalAlignment="Center"
                                     Width="18"

@@ -13,8 +13,8 @@ public class PlainIcon : TemplatedControl
     public static readonly StyledProperty<Brush> FillProperty = 
         AvaloniaProperty.Register<PlainIcon, Brush>(nameof(Fill), new SolidColorBrush(Colors.White));
 
-    public static readonly StyledProperty<Geometry> PathProperty = 
-        AvaloniaProperty.Register<PlainIcon, Geometry>(nameof(Path));
+    public static readonly StyledProperty<string> IconNameProperty = 
+        AvaloniaProperty.Register<PlainIcon, string>(nameof(IconName));
 
     /// <summary>
     /// Fill brush for the button icon
@@ -28,9 +28,9 @@ public class PlainIcon : TemplatedControl
     /// <summary>
     /// The path property of the vector icon
     /// </summary>
-    public Geometry Path
+    public string IconName
     {
-        get => GetValue(PathProperty);
-        set => SetValue(PathProperty, value);
+        get => GetValue(IconNameProperty);
+        set => SetValue(IconNameProperty, value);
     }
 }

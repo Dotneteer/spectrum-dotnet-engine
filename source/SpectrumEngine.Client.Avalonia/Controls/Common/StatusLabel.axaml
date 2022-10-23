@@ -16,7 +16,7 @@
                 <StackPanel Orientation="Horizontal">
                     <controls:PlainIcon
                         IsVisible="{TemplateBinding ShowIcon}"
-                        Path="{TemplateBinding Path}"
+                        IconName="{TemplateBinding IconName}"
                         Fill="{TemplateBinding Fill}"/>
                     <TextBlock 
                         Text="{TemplateBinding Text}"

@@ -13,7 +13,7 @@
             HorizontalAlignment="Left"
             Margin="-4 0 0 0 "
             IsVisible="{Binding ElementName=UserControl, Path=Value}"
-            Path="{DynamicResource IconCircleFilled}"
+            IconName="IconCircleFilled"
             Fill="{DynamicResource DiagValueTextBrush}" />
         <controls:PlainIcon
             Height="16"
@@ -21,7 +21,7 @@
             HorizontalAlignment="Left"
             Margin="-4 0 0 0 "
             IsVisible="{Binding ElementName=UserControl, Path=!Value}"
-            Path="{DynamicResource IconCircleOutline}"
+            IconName="IconCircleOutline"
             Fill="{DynamicResource DiagValueTextBrush}" />
     </Grid>
 </UserControl>

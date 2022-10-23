@@ -40,13 +40,13 @@
                             <StackPanel Orientation="Horizontal">
                                 <controls:PlainIcon
                                     IsVisible="{Binding Address, Converter={StaticResource IsActiveBreakpointConverter}}"
-                                    Path="{DynamicResource IconActiveBreakpoint}"
+                                    IconName="IconActiveBreakpoint"
                                     Fill="{DynamicResource ActiveBreakpointBrush}"
                                     Width="20"
                                     Height="20" />
                                 <controls:PlainIcon
                                     IsVisible="{Binding Address, Converter={StaticResource IsInactiveBreakpointConverter}}"
-                                    Path="{DynamicResource IconCircleFilled}" 
+                                    IconName="IconCircleFilled" 
                                     Fill="{DynamicResource InactiveBreakpointBrush}" 
                                     Width="20"
                                     Height="20" />

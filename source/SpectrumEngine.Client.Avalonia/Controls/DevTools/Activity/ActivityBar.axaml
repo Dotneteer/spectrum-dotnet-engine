@@ -23,7 +23,7 @@
                         <controls:PlainIcon 
                             Width="32" 
                             Height="32"
-                            Path="{Binding Icon, Converter={StaticResource IconPathConverter}}" />
+                            IconName="{Binding Icon}" />
                     </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>

@@ -25,14 +25,14 @@
         <Panel Grid.Column="0" HorizontalAlignment="Left">
             <StackPanel Orientation="Horizontal">
                 <controls:StatusLabel
-                    Path="{DynamicResource IconWindow}"
+                    IconName="IconWindow"
                     Text="{Binding Machine.FrameStats.FrameCount}"
                     Width="90"/>
                 <StackPanel 
                     Orientation="Horizontal" 
                     Width="148">
                     <controls:StatusLabel
-                        Path="{DynamicResource IconDashboard}"
+                        IconName="IconDashboard"
                         Text="{Binding Machine.FrameStats.AvgCpuFrameTimeInMs, Converter={StaticResource FixedDecimalConverter}}" />
                     <controls:StatusLabel ShowIcon="false" Text="/" Padding="0" />
                     <controls:StatusLabel
@@ -51,7 +51,7 @@
         </Panel>
         <Panel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
             <StackPanel Orientation="Horizontal">
-                <controls:PlainIcon Path="{DynamicResource IconVm}"/>
+                <controls:PlainIcon IconName="IconVm"/>
                 <controls:StatusLabel 
                     ShowIcon="false"
                     Text="{Binding Machine.DisplayName}" />

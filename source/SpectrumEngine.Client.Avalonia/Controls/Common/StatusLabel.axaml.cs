@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Media;
 
@@ -13,8 +12,8 @@ public class StatusLabel : TemplatedControl
     public static readonly StyledProperty<Brush> FillProperty = 
         AvaloniaProperty.Register<StatusLabel, Brush>(nameof(Fill), new SolidColorBrush(Colors.White));
 
-    public static readonly StyledProperty<Geometry> PathProperty = 
-        AvaloniaProperty.Register<StatusLabel, Geometry>(nameof(Path));
+    public static readonly StyledProperty<string> IconNameProperty = 
+        AvaloniaProperty.Register<StatusLabel, string>(nameof(IconName));
 
     public static readonly StyledProperty<string> TextProperty = 
         AvaloniaProperty.Register<StatusLabel, string>(nameof(Text));
@@ -34,10 +33,10 @@ public class StatusLabel : TemplatedControl
     /// <summary>
     /// The path property of the vector icon
     /// </summary>
-    public Geometry Path
+    public string IconName
     {
-        get => GetValue(PathProperty);
-        set => SetValue(PathProperty, value);
+        get => GetValue(IconNameProperty);
+        set => SetValue(IconNameProperty, value);
     }
 
     /// <summary>

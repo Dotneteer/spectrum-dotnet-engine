@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
     <Design.PreviewWith>
-        <controls:PlainIcon Path="{DynamicResource IconStop}" />
+        <controls:PlainIcon IconName="IconStop" />
     </Design.PreviewWith>
 
     <Style Selector="controls|PlainIcon">
@@ -23,7 +23,7 @@
                         VerticalAlignment="Center"
                         Stretch="Uniform"
                         Fill="{TemplateBinding Fill}"
-                        Data="{TemplateBinding Path}" />
+                        Data="{TemplateBinding IconName, Converter={StaticResource IconPathConverter}}" />
                 </Border>
             </ControlTemplate>
         </Setter>

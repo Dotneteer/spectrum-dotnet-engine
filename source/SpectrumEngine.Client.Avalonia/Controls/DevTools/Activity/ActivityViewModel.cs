@@ -7,9 +7,9 @@ namespace SpectrumEngine.Client.Avalonia.Controls.DevTools;
 /// </summary>
 public class ActivityViewModel: ViewModelBase
 {
-    private string _id;
-    private string _icon;
-    private string _description;
+    private string _id = "<None>";
+    private string _icon = "IconFiles";
+    private string? _description;
     private bool _isSystem;
 
     public string Id
@@ -24,7 +24,7 @@ public class ActivityViewModel: ViewModelBase
         set => SetProperty(ref _icon, value);
     }
     
-    public string Description
+    public string? Description
     {
         get => _description;
         set => SetProperty(ref _description, value);
