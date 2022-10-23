@@ -29,56 +29,56 @@
     <Border Padding="2">
         <StackPanel Orientation="Horizontal">
             <controls:IconButton
-                Path="{DynamicResource IconPlay}"
+                IconName="IconPlay"
                 Fill="{DynamicResource IconPlayBrush}"
                 Command="{Binding Machine.Start}"
                 Hint="Start" />
             <controls:IconButton
-                Path="{DynamicResource IconPause}"
+                IconName="IconPause"
                 Fill="{DynamicResource IconPauseBrush}"
                 Command="{Binding Machine.Pause}"
                 Hint="Pause" />
             <controls:IconButton
-                Path="{DynamicResource IconStop}"
+                IconName="IconStop"
                 Fill="{DynamicResource IconStopBrush}"
                 Command="{Binding Machine.Stop}"
                 Hint="Stop" />
             <controls:IconButton
-                Path="{DynamicResource IconRestart}"
+                IconName="IconRestart"
                 Fill="{DynamicResource IconPlayBrush}"
                 Command="{Binding Machine.Restart}"
                 Hint="Stop" />
             <controls:IconButtonSeparator />
             <controls:IconButton
-                Path="{DynamicResource IconStartDebug}"
+                IconName="IconStartDebug"
                 Fill="{DynamicResource IconPlayBrush}"
                 Command="{Binding Machine.StartDebug}"
                 Hint="Stop" />
             <controls:IconButton
-                Path="{DynamicResource IconStepInto}"
+                IconName="IconStepInto"
                 Fill="{DynamicResource IconPauseBrush}"
                 Command="{Binding Machine.StepInto}"
                 Hint="Pause" />
             <controls:IconButton
-                Path="{DynamicResource IconStepOver}"
+                IconName="IconStepOver"
                 Fill="{DynamicResource IconPauseBrush}"
                 Command="{Binding Machine.StepOver}"
                 Hint="Pause" />
             <controls:IconButton
-                Path="{DynamicResource IconStepOut}"
+                IconName="IconStepOut"
                 Fill="{DynamicResource IconPauseBrush}"
                 Command="{Binding Machine.StepOut}"
                 Hint="Pause" />
             <controls:IconButtonSeparator />
             <controls:IconButton
                 IsVisible="{Binding !EmuViewOptions.IsMuted}"
-                Path="{DynamicResource IconMute}"
+                IconName="IconMute"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Command="{Binding EmuViewOptions.ToggleMuted}"
                 Hint="Pause" />
             <controls:IconButton
                 IsVisible="{Binding EmuViewOptions.IsMuted}"
-                Path="{DynamicResource IconUnmute}"
+                IconName="IconUnmute"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Command="{Binding EmuViewOptions.ToggleMuted}"
                 Hint="Pause" />

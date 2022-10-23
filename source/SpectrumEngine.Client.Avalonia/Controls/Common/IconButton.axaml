@@ -5,7 +5,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:SpectrumEngine.Client.Avalonia.Controls">
     <Design.PreviewWith>
-        <controls:IconButton Path="{DynamicResource IconStop}" Height="36" Width="36" />
+        <controls:IconButton IconName="IconStop" Height="36" Width="36" />
     </Design.PreviewWith>
 
     <Style Selector="controls|IconButton">
@@ -43,7 +43,7 @@
                                 VerticalAlignment="Center"
                                 Stretch="Uniform"
                                 Fill="{TemplateBinding Fill}"
-                                Data="{TemplateBinding Path}" />
+                                Data="{TemplateBinding IconName, Converter={StaticResource IconPathConverter}}" />
                         </Button>
                     </Border>
                     <!-- HACK: We use this border to show the button hint when the button is disabled -->

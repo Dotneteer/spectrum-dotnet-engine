@@ -29,76 +29,76 @@
     <Border Padding="2">
         <StackPanel Orientation="Horizontal">
             <controls:IconButton
-                Path="{DynamicResource IconPlay}"
+                IconName="IconPlay"
                 Fill="{DynamicResource IconPlayBrush}"
                 Command="{Binding Machine.Start}"
                 Hint="Start" />
             <controls:IconButton
-                Path="{DynamicResource IconPause}"
+                IconName="IconPause"
                 Fill="{DynamicResource IconPauseBrush}"
                 Command="{Binding Machine.Pause}"
                 Hint="Pause" />
             <controls:IconButton
-                Path="{DynamicResource IconStop}"
+                IconName="IconStop"
                 Fill="{DynamicResource IconStopBrush}"
                 Command="{Binding Machine.Stop}"
                 Hint="Stop" />
             <controls:IconButton
-                Path="{DynamicResource IconRestart}"
+                IconName="IconRestart"
                 Fill="{DynamicResource IconPlayBrush}"
                 Command="{Binding Machine.Restart}"
                 Hint="Restart" />
             <controls:IconButtonSeparator />
             <controls:IconButton
-                Path="{DynamicResource IconStartDebug}"
+                IconName="IconStartDebug"
                 Fill="{DynamicResource IconPlayBrush}"
                 Command="{Binding Machine.StartDebug}"
                 Hint="Start with Debugging" />
             <controls:IconButton
-                Path="{DynamicResource IconStepInto}"
+                IconName="IconStepInto"
                 Fill="{DynamicResource IconPauseBrush}"
                 Command="{Binding Machine.StepInto}"
                 Hint="Step Into" />
             <controls:IconButton
-                Path="{DynamicResource IconStepOver}"
+                IconName="IconStepOver"
                 Fill="{DynamicResource IconPauseBrush}"
                 Command="{Binding Machine.StepOver}"
                 Hint="Step Over" />
             <controls:IconButton
-                Path="{DynamicResource IconStepOut}"
+                IconName="IconStepOut"
                 Fill="{DynamicResource IconPauseBrush}"
                 Command="{Binding Machine.StepOut}"
                 Hint="Step Out" />
             <controls:IconButtonSeparator />
             <controls:IconButton
                 IsChecked="{Binding EmuViewOptions.ShowKeyboard}"
-                Path="{DynamicResource IconKeyboard}"
+                IconName="IconKeyboard"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Command="{Binding EmuViewOptions.ToggleShowKeyboard}"
                 Hint="Show Keyboard" />
             <controls:IconButtonSeparator />
             <controls:IconButton
                 IsVisible="{Binding !EmuViewOptions.IsMuted}"
-                Path="{DynamicResource IconMute}"
+                IconName="IconMute"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Command="{Binding EmuViewOptions.ToggleMuted}"
                 Hint="Mute Sound" />
             <controls:IconButton
                 IsVisible="{Binding EmuViewOptions.IsMuted}"
-                Path="{DynamicResource IconUnmute}"
+                IconName="IconUnmute"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Command="{Binding EmuViewOptions.ToggleMuted}"
                 Hint="Unmute Sound" />
             <controls:IconButtonSeparator />
             <controls:IconButton
                 IsChecked="{Binding Machine.AllowFastLoad}"
-                Path="{DynamicResource IconFastLoad}"
+                IconName="IconFastLoad"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Command="{Binding Machine.ToggleFastLoad}"
                 Hint="Enable Fast Load" />
             <controls:IconButton
                 IsEnabled="{Binding !Machine.TapeMode, Converter={StaticResource TapeModeVisibilityConverter}}"
-                Path="{DynamicResource IconRewind}"
+                IconName="IconRewind"
                 Fill="{DynamicResource IconDefaultBrush}"
                 Command="{Binding Machine.Rewind}"
                 Hint="Rewind tape" />

@@ -27,7 +27,7 @@
             <Border Padding="2">
                 <StackPanel Orientation="Horizontal">
                     <controls:IconButton
-                        Path="{DynamicResource IconRefresh}" 
+                        IconName="IconRefresh" 
                         Command="{Binding MemoryViewer.Refresh}" 
                         Hint="Refresh"/>
                     <!-- Full view header-->

@@ -33,23 +33,23 @@
                 BorderThickness="0,0,0,1" >
                 <StackPanel Orientation="Horizontal">
                     <controls:IconButton
-                        Path="{DynamicResource IconRefresh}" 
+                        IconName="IconRefresh" 
                         Command="{Binding Disassembler.Refresh}" 
                         Hint="Refresh"/>
                     <controls:IconButtonSeparator />
                     <controls:IconButton
                         IsChecked="{Binding Disassembler.IsFlatMode}"
-                        Path="{DynamicResource IconListFlat}" 
+                        IconName="IconListFlat" 
                         Command="{Binding Disassembler.SetFlatMode}" 
                         Hint="Normal Mode"/>
                     <controls:IconButton 
                         IsChecked="{Binding Disassembler.IsFollowPcMode}"
-                        Path="{DynamicResource IconFollowPc}" 
+                        IconName="IconFollowPc" 
                         Command="{Binding Disassembler.SetFollowPcMode}" 
                         Hint="Follow the current value of PC"/>
                     <controls:IconButton 
                         IsChecked="{Binding Disassembler.IsStartFromPcMode}"
-                        Path="{DynamicResource IconStartFromPc}" 
+                        IconName="IconStartFromPc" 
                         Command="{Binding Disassembler.SetStartFromPcMode}" 
                         Hint="Disassembly from the current PC"/>
                     <StackPanel 
