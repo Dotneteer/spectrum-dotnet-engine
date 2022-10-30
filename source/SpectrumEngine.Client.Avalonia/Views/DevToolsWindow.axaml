@@ -5,9 +5,12 @@
         xmlns:viewModels="clr-namespace:SpectrumEngine.Client.Avalonia.ViewModels"
         xmlns:controls="clr-namespace:SpectrumEngine.Client.Avalonia.Controls"
         xmlns:devTools="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.DevTools"
+        xmlns:common="clr-namespace:SpectrumEngine.Client.Avalonia.Controls.Common"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SpectrumEngine.Client.Avalonia.Views.DevToolsWindow"
         Title="SpectrumEngine - Development Tools"
+        MinHeight="480"
+        MinWidth="640"
         Closing="OnClosing"
         Closed="DevToolsClosed">
     
@@ -216,8 +219,9 @@
         <controls:DevsStatusBarUserControl 
             DockPanel.Dock="Bottom" 
             IsVisible="{Binding DevToolsViewOptions.ShowStatusBar}"/>
-        <devTools:ActivityBar 
-            DockPanel.Dock="Left" />
+        <common:ShrinkableListControl
+            DockPanel.Dock="Left" 
+            Width="80" />
         <devTools:SiteBar
             DockPanel.Dock="{Binding DevToolsViewOptions.SiteBarOnLeft, Converter={StaticResource VerticalDockConverter}}"
             IsVisible="{Binding DevToolsViewOptions.ShowSiteBar}"
