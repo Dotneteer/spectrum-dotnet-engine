@@ -219,9 +219,7 @@
         <controls:DevsStatusBarUserControl 
             DockPanel.Dock="Bottom" 
             IsVisible="{Binding DevToolsViewOptions.ShowStatusBar}"/>
-        <common:ShrinkableListControl
-            DockPanel.Dock="Left" 
-            Width="80" />
+        <devTools:ActivityBar />
         <devTools:SiteBar
             DockPanel.Dock="{Binding DevToolsViewOptions.SiteBarOnLeft, Converter={StaticResource VerticalDockConverter}}"
             IsVisible="{Binding DevToolsViewOptions.ShowSiteBar}"

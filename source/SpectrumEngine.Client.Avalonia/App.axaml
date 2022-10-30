@@ -29,7 +29,5 @@
         <StyleInclude Source="/Controls/Common/StatusLabel.axaml"/>
         <StyleInclude Source="/Controls/Common/SiteBarExpander.axaml"/>
         <StyleInclude Source="/Controls/DevTools/Memory/MemoryValueToolTip.axaml"/>
-        
-        <StyleInclude Source="/Controls/Common/ShrinkableListControl.axaml"/>
     </Application.Styles>
 </Application>

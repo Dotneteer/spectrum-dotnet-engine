@@ -11,7 +11,7 @@
         <viewModels:MainWindowViewModel/>
     </Design.DataContext>
     
-    <Border Width="60">
+    <Border Width="48">
         <ListBox
             Items="{Binding Activities}"
             Background="{DynamicResource MenuGray}">
@@ -21,8 +21,9 @@
                         ToolTip.Tip="{Binding Description}"
                         Background="Transparent">
                         <controls:PlainIcon 
-                            Width="32" 
-                            Height="32"
+                            Padding="2"
+                            Width="24" 
+                            Height="24"
                             IconName="{Binding Icon}" />
                     </Border>
                 </DataTemplate>
