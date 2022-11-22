@@ -107,44 +107,48 @@ public record NecUpd765Command
 /// </summary>
 public class Command
 {
-    //          /// <summary>
-    //          /// Mask to remove potential parameter bits (5,6, and or 7) in order to identify the command
-    //          /// </summary>
-    //          public int BitMask { get; set; }
     /// <summary>
     /// The command code after bitmask has been applied
     /// </summary>
     public int CommandCode { get; set; }
+
     /// <summary>
     /// The number of bytes that make up the full command
     /// </summary>
     public int ParameterByteCount { get; set; }
+
     /// <summary>
     /// The number of result bytes that will be generated from the command
     /// </summary>
     public int ResultByteCount { get; set; }
+
     /// <summary>
     /// The command direction
     /// IN - Z80 to UPD765A
     /// OUT - UPD765A to Z80
     /// </summary>
-    public CommandDirection Direction { get; set; }
+    public NecUpd765.CommandDirection Direction { get; set; }
+
     /// <summary>
     /// Command makes use of the MT bit
     /// </summary>
     public bool MT;
+
     /// <summary>
     /// Command makes use of the MF bit
     /// </summary>
     public bool MF;
+
     /// <summary>
     /// Command makes use of the SK bit
     /// </summary>
     public bool SK;
+
     /// <summary>
     /// Read/Write command that is READ
     /// </summary>
     public bool IsRead;
+
     /// <summary>
     /// Read/Write command that is WRITE
     /// </summary>

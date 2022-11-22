@@ -1,5 +1,7 @@
 ﻿using SpectrumEngine.Emu.Abstractions;
+using SpectrumEngine.Emu.Machines.Disk.Controllers;
 using SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
+using SpectrumEngine.Emu.Machines.Disk.FloppyDisks.Formats;
 
 namespace SpectrumEngine.Emu.Machines.Disk;
 
@@ -22,14 +24,14 @@ public class FlopyDiskDriveDevice : IFlopyDiskDriveDevice
     }
 
     /// <summary>
-    /// Signs whether is motor running 
-    /// </summary>
-    public bool IsMotorRunning { get; private set; }
-
-    /// <summary>
     /// The floppy disk drive device ID
     /// </summary>
     public int Id { get; private set; }
+
+    /// <summary>
+    /// signs whether is motor running
+    /// </summary>
+    public bool IsMotorRunning => _floppyDiskController.FlagMotor;
 
     /// <summary>
     /// Signs whether is drive ready
@@ -38,7 +40,7 @@ public class FlopyDiskDriveDevice : IFlopyDiskDriveDevice
     {
         get
         {
-            if (!IsDiskLoaded || Disk.GetTrackCount() == 0 || !_floppyDiskController.FDD_FLAG_MOTOR)
+            if (!IsDiskLoaded || Disk?.GetTrackCount() == 0 || !_floppyDiskController.FlagMotor)
                 return false;
             else
                 return true;
@@ -48,43 +50,43 @@ public class FlopyDiskDriveDevice : IFlopyDiskDriveDevice
     /// <summary>
     /// Signs whether is disk write protected
     /// </summary>
-    public bool IsWriteProtect { get; private set; } = false;
+    public bool IsWriteProtect { get; set; } = false;
 
     /// <summary>
     /// Counter for seek steps
     /// One step for each index pulse (track index) until seeked track
     /// </summary>
-    public int SeekCounter { get; private set; }
+    public int SeekCounter { get; set; }
 
     /// <summary>
     /// Seek status
     /// </summary>
-    public int SeekStatus { get; private set; }
+    public int SeekStatus { get; set; }
 
     /// <summary>
     /// Age counter
     /// </summary>
-    public int SeekAge { get; private set; }
+    public int SeekAge { get; set; }
 
     /// <summary>
     /// Track to seeking (used in seek operations)
     /// </summary>
-    public int SeekingTrack { get; private set; }
+    public int SeekingTrack { get; set; }
 
     /// <summary>
     /// Current disk side
     /// </summary>
-    public byte CurrentSide { get; private set; }
+    public byte CurrentSide { get; set; }
 
     /// <summary>
     /// Current track index in DiskTracks array
     /// </summary>
-    public byte TrackIndex { get; private set; }
+    public byte TrackIndex { get; set; }
 
     /// <summary>
     /// Sector index in the Sectors array
     /// </summary>
-    public int SectorIndex { get; private set; }
+    public int SectorIndex { get; set; }
 
     /// <summary>
     /// Loaded floppy disk
@@ -106,16 +108,22 @@ public class FlopyDiskDriveDevice : IFlopyDiskDriveDevice
             // default invalid track
             int id = 0xff;
 
-            if (Disk == null)
+            if (Disk == null || Disk.DiskTracks == null)
+            {
                 return (byte)id;
-
-            if (Disk.DiskTracks.Length == 0)
+            }
+            else if (Disk.DiskTracks.Length == 0)
+            {
                 return (byte)id;
-
-            if (TrackIndex >= Disk.GetTrackCount())
+            }
+            else if (TrackIndex >= Disk.GetTrackCount())
+            {
                 TrackIndex = 0;
+            }
             else if (TrackIndex < 0)
+            {
                 TrackIndex = 0;
+            }
 
             var track = Disk.DiskTracks[TrackIndex];
 
@@ -125,6 +133,11 @@ public class FlopyDiskDriveDevice : IFlopyDiskDriveDevice
         }
         set
         {
+            if (Disk == null || Disk.DiskTracks == null)
+            {
+                return;
+            }
+
             for (int i = 0; i < Disk.GetTrackCount(); i++)
             {
                 if (Disk.DiskTracks[i].TrackNumber == value)
@@ -143,18 +156,18 @@ public class FlopyDiskDriveDevice : IFlopyDiskDriveDevice
     public void LoadDisk(byte[] diskData)
     {
         // try dsk first
-        FloppyDisk fdd = null;
+        FloppyDisk? fdd = null;
         bool found = false;
 
         foreach (FloppyDiskFormat type in Enum.GetValues(typeof(FloppyDiskFormat)))
         {
             switch (type)
             {
-                case FloppyDiskFormat.CPCExtended:
+                case FloppyDiskFormat.CpcExtended:
                     fdd = new CpcExtendedFloppyDisk();
                     found = fdd.ParseDisk(diskData);
                     break;
-                case FloppyDiskFormat.CPC:
+                case FloppyDiskFormat.Cpc:
                     fdd = new CpcFloppyDisk();
                     found = fdd.ParseDisk(diskData);
                     break;
@@ -169,7 +182,7 @@ public class FlopyDiskDriveDevice : IFlopyDiskDriveDevice
 
         if (!found)
         {
-            throw new InvalidOperationException($"{this.GetType()}{Environment.NewLine}Disk image file could not be parsed. Unknown format.");
+            throw new InvalidOperationException($"{GetType()}{Environment.NewLine}Disk image file could not be parsed. Unknown format.");
         }
     }
 

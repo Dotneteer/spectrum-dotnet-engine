@@ -31,32 +31,32 @@ public abstract class FloppyDisk
     /// <summary>
     /// Tracks
     /// </summary>
-    public Track[]? DiskTracks { get; private set; }
+    public Track[]? DiskTracks { get; protected set; }
 
     /// <summary>
     /// Number of tracks per side
     /// </summary>
-    public int SideTracksCount { get; private set; }
+    public int SideTracksCount { get; protected set; }
 
     /// <summary>
     /// Number of bytes per track
     /// </summary>
-    public int BytesPerTrack { get; private set; }
+    public int BytesPerTrack { get; protected set; }
 
     /// <summary>
     /// The number of physical sides
     /// </summary>
-    public int SideCount { get; private set; }
+    public int SideCount { get; protected set; }
 
     /// <summary>
     /// Signs whether is write-protect tab on the disk
     /// </summary>
-    public bool IsWriteProtected { get; private set; }
+    public bool IsWriteProtected { get; protected set; }
 
     /// <summary>
     /// Disk image data
     /// </summary>
-    public byte[]? DiskData { get; private set; }
+    public byte[]? DiskData { get; protected set; }
 
     /// <summary>
     /// Get the track count for the disk
@@ -126,12 +126,14 @@ public abstract class FloppyDisk
         public virtual byte[]? SectorData { get; set; }
         public virtual bool ContainsMultipleWeakSectors { get; set; }
 
-        public int WeakReadIndex { get; private set } = 0;
+        public int WeakReadIndex { get; private set; } = 0;
 
         public void SectorReadCompleted()
         {
             if (ContainsMultipleWeakSectors)
+            {
                 WeakReadIndex++;
+            }
         }
 
         public int DataLen
@@ -191,15 +193,15 @@ public abstract class FloppyDisk
             }
         }
 
-        public NecUpd765CommandParams SectorIDInfo =>
-            new NecUpd765CommandParams
+        public NecUpd765Command SectorIDInfo =>
+            new()
             {
                 C = TrackNumber,
                 H = SideNumber,
                 R = SectorID,
                 N = SectorSize,
-                Flag1 = Status1,
-                Flag2 = Status2,
+                St1 = Status1,
+                St2 = Status2,
             };
     }
 }

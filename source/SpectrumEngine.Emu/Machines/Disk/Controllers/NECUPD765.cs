@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SpectrumEngine.Emu.Abstractions;
+using System.Collections.Generic;
 
 namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
 
@@ -17,13 +18,15 @@ public partial class NecUpd765
 	/// The emulated spectrum machine
 	/// </summary>
 	private Z80MachineBase _machine;
+	private FlopyDiskDriveCluster _flopyDiskDriveCluster;
 
 	/// <summary>
 	/// Main constructor
 	/// </summary>
-	public NecUpd765(Z80MachineBase machine)
+	public NecUpd765(Z80MachineBase machine, FlopyDiskDriveCluster flopyDiskDriveCluster)
 	{
 		_machine = machine;
+		_flopyDiskDriveCluster = flopyDiskDriveCluster;
 
 		InitCommandList();				
 		TimingInit();
@@ -38,14 +41,14 @@ public partial class NecUpd765
 	public void Reset()
 	{
 		// setup main status
-		StatusMain = 0;
+		_mainStatusRegisters = 0;
 
-		Status0 = 0;
-		Status1 = 0;
-		Status2 = 0;
-		Status3 = 0;
+		_statusRegisters0 = 0;
+		_statusRegisters1 = 0;
+		_statusRegisters2 = 0;
+		_statusRegisters3 = 0;
 
-		SetBit(MSR_RQM, ref StatusMain);
+		_mainStatusRegisters.SetBits(MainStatusRegisters.RQM);
 
 		SetPhase_Idle();
 
@@ -58,6 +61,8 @@ public partial class NecUpd765
 		CMD_FLAG_MF = false;
 	}
 
+	private FlopyDiskDriveDevice? ActiveFloppyDiskDrive => (FlopyDiskDriveDevice?)_flopyDiskDriveCluster.ActiveFloppyDiskDrive;
+
 	/// <summary>
 	/// Setup the command structure
 	/// Each command represents one of the internal UPD765 commands
@@ -67,7 +72,7 @@ public partial class NecUpd765
 		CommandList = new List<Command>
 		{
                 // read data
-                new Command { CommandDelegate = UPD_ReadData, CommandCode = 0x06, MT = true, MF = true, SK = true, IsRead = true,
+                new Command { CommandDelegate = ReadData, CommandCode = 0x06, MT = true, MF = true, SK = true, IsRead = true,
 				Direction = CommandDirection.Out, ParameterByteCount = 8, ResultByteCount = 7 },
                 // read id
                 new Command { CommandDelegate = UPD_ReadID, CommandCode = 0x0a, MF = true, IsRead = true,

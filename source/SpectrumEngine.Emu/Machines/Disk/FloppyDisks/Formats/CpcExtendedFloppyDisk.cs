@@ -34,16 +34,16 @@ public class CpcExtendedFloppyDisk : FloppyDisk
         }
 
         // read the disk information block
-        DiskHeader.DiskIdent = ident;
-        DiskHeader.DiskCreatorString = Encoding.ASCII.GetString(data, 0x22, 14);
-        DiskHeader.NumberOfTracks = data[0x30];
-        DiskHeader.NumberOfSides = data[0x31];
-        DiskHeader.TrackSizes = new int[DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides];
-        DiskTracks = new Track[DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides];
+        Header.DiskIdent = ident;
+        Header.DiskCreatorString = Encoding.ASCII.GetString(data, 0x22, 14);
+        Header.NumberOfTracks = data[0x30];
+        Header.NumberOfSides = data[0x31];
+        Header.TrackSizes = new int[Header.NumberOfTracks * Header.NumberOfSides];
+        DiskTracks = new Track[Header.NumberOfTracks * Header.NumberOfSides];
         DiskData = data;
         int pos = 0x34;
 
-        if (DiskHeader.NumberOfSides > 1)
+        if (Header.NumberOfSides > 1)
         {
             StringBuilder sbm = new StringBuilder();
             sbm.AppendLine();
@@ -54,30 +54,30 @@ public class CpcExtendedFloppyDisk : FloppyDisk
             throw new NotImplementedException(sbm.ToString());
         }
 
-        if (DiskHeader.NumberOfTracks > 42)
+        if (Header.NumberOfTracks > 42)
         {
             StringBuilder sbm = new StringBuilder();
             sbm.AppendLine();
             sbm.AppendLine();
-            sbm.AppendLine("The detected disk is an " + DiskHeader.NumberOfTracks + " track disk image.");
+            sbm.AppendLine("The detected disk is an " + Header.NumberOfTracks + " track disk image.");
             sbm.AppendLine("This is currently incompatible with the emulated +3 disk drive (42 tracks).");
             sbm.AppendLine("Likely the disk image is an 80 track betadisk or opus image, the drives and controllers for which are not currently emulated in ZXHawk");
             throw new NotImplementedException(sbm.ToString());
         }
 
-        for (int i = 0; i < DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides; i++)
+        for (int i = 0; i < Header.NumberOfTracks * Header.NumberOfSides; i++)
         {
-            DiskHeader.TrackSizes[i] = data[pos++] * 256;
+            Header.TrackSizes[i] = data[pos++] * 256;
         }
 
         // move to first track information block
         pos = 0x100;
 
         // parse each track
-        for (int i = 0; i < DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides; i++)
+        for (int i = 0; i < Header.NumberOfTracks * Header.NumberOfSides; i++)
         {
             // check for unformatted track
-            if (DiskHeader.TrackSizes[i] == 0)
+            if (Header.TrackSizes[i] == 0)
             {
                 DiskTracks[i] = new Track();
                 DiskTracks[i].Sectors = new Sector[0];
@@ -147,11 +147,11 @@ public class CpcExtendedFloppyDisk : FloppyDisk
             }
 
             // move to the next track info block
-            pos += DiskHeader.TrackSizes[i];
+            pos += Header.TrackSizes[i];
         }
 
-        // run protection scheme detector
-        ParseProtection();
+        // protection scheme detector
+        // TODO: dgzornoza to implement
 
         return true;
     }

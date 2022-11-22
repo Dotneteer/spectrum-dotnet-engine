@@ -8,6 +8,21 @@ namespace SpectrumEngine.Emu.Abstractions
     public interface IFlopyDiskDriveDevice
     {
         /// <summary>
+        /// Device Id
+        /// </summary>
+        int Id { get; }
+
+        /// <summary>
+        /// signs whether is motor running
+        /// </summary>
+        bool IsMotorRunning { get; }
+
+        /// <summary>
+        /// Signs whether is drive ready
+        /// </summary>
+        bool IsReady { get; }
+
+        /// <summary>
         /// Loaded floppy disk
         /// </summary>
         FloppyDisk? Disk { get; }
@@ -16,6 +31,11 @@ namespace SpectrumEngine.Emu.Abstractions
         /// Signs whether is disk loaded
         /// </summary>   
         bool IsDiskLoaded { get; }
+
+        /// <summary>
+        /// Current cylinder track ID
+        /// </summary>
+        byte CurrentTrackId { get; }
 
         /// <summary>
         /// Load floppy disk data

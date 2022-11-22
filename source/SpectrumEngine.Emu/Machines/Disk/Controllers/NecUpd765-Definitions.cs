@@ -8,7 +8,7 @@ public partial class NecUpd765
     /// <summary>
     /// Current phase of the controller
     /// </summary>
-    private enum Phase
+    public enum Phase
     {
         /// <summary>
         /// FDC is in an idle state, awaiting the next initial command byte.
@@ -31,7 +31,7 @@ public partial class NecUpd765
     /// <summary>
     /// Command directions
     /// </summary>
-    private enum CommandDirection
+    public enum CommandDirection
     {
         /// <summary>
         /// Data flows from UPD765A to Z80
@@ -89,10 +89,13 @@ public partial class NecUpd765
     }
 
     /// <summary>
-    /// Main status registers
+    /// Main status registers (accessed via reads to port 0x2ffd)
     /// </summary>
-    public enum MainStatusRegister
+    [Flags]
+    public enum MainStatusRegisters : byte
     {
+        /// <summary>Default value</summary>
+        None = 0,
         /// <summary>
         /// FDD0 Busy
         /// FDD number 0 is in the seek mode. II any of the DnB bits IS set FDC will not accept read or write command.
@@ -141,8 +144,11 @@ public partial class NecUpd765
     /// <summary>
     /// Status Register 0
     /// </summary>
-    public enum StatusRegister0
+    [Flags]
+    public enum StatusRegisters0 : byte
     {
+        /// <summary>Default value</summary>
+        None = 0,
         /// <summary>
         /// Unit Select 0
         /// This flaa is used to Indicate a drive unit number at interrupt
@@ -195,8 +201,11 @@ public partial class NecUpd765
     /// <summary>
     /// Status Register 1
     /// </summary>
-    public enum StatusRegister1
+    [Flags]
+    public enum StatusRegisters1 : byte
     {
+        /// <summary>Default value</summary>
+        None = 0,
         /// <summary>
         /// Missing Address Mark
         /// This bit is set if the FDC does not detect the IDAM before 2 index pulses It is also set if
@@ -235,8 +244,11 @@ public partial class NecUpd765
     /// <summary>
     /// Status Register 2
     /// </summary>
-    public enum StatusRegister2
+    [Flags]
+    public enum StatusRegisters2 : byte
     {
+        /// <summary>Default value</summary>
+        None = 0,
         /// <summary>
         /// Missing Address Mark in Data Field
         /// When data IS read from the medium, if the FDC cannot find a data address mark or 
@@ -282,8 +294,11 @@ public partial class NecUpd765
     /// <summary>
     /// Status Register 3
     /// </summary>
-    public enum StatusRegister3
+    [Flags]
+    public enum StatusRegisters3 : byte
     {
+        /// <summary>Default value</summary>
+        None = 0,
         /// <summary>
         /// Unit select 0
         /// This bit is used to indicate the status of the unit select 0 signal to the FDD.
@@ -327,7 +342,7 @@ public partial class NecUpd765
     }
 
     /// <summary>
-    /// 
+    /// Drive seek states
     /// </summary>
     public enum DriveSeekState
     {

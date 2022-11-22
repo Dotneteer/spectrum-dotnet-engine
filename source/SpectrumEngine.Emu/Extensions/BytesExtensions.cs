@@ -15,5 +15,5 @@ namespace SpectrumEngine.Emu.Extensions
 		{
 			return (ushort)(buf[offsetIndex] | buf[offsetIndex + 1] << 8);
 		}
-	}
+    }
 }

@@ -5,6 +5,10 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
 
 /// <summary>
 /// IPortIODevice
+/// The disk drive on the +3 is controlled by three ports:
+/// 0x1ffd: Setting bit 3 high will turn the drive motor (or motors, if you have more than one drive attached) on. Setting bit 3 low will turn them off again. (0x1ffd is also used for memory control).
+/// 0x2ffd: Reading from this port will return the main status register of the uPD765A (the FDC used in the +3).
+/// 0x3ffd: Bytes written to this port are sent to the FDC, whilst reading from this port will read bytes from the FDC.
 /// </summary>
 public partial class NecUpd765 : IPortIODevice
 {
@@ -22,7 +26,7 @@ public partial class NecUpd765 : IPortIODevice
         }
         else if (port == 0x2ffd)
         {
-            result = ReadMainStatus();
+            result = (int)ReadMainStatus();
             return true;
         }
 
@@ -43,10 +47,11 @@ public partial class NecUpd765 : IPortIODevice
             return true;
         }
 
+        ///
         if (port == 0x1ffd)
         {
             // set disk motor on/off
-            FDD_FLAG_MOTOR = bits[3];
+            FlagMotor = bits[3];
             return true;
         }
 
