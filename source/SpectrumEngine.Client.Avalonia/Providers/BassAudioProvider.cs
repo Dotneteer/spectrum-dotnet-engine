@@ -1,5 +1,6 @@
 ﻿using ManagedBass;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace SpectrumEngine.Client.Avalonia.Providers
@@ -43,7 +44,6 @@ namespace SpectrumEngine.Client.Avalonia.Providers
 
             // convert to 16-bits with volume
             var bytes = samples.Select(item => (short)(item * short.MaxValue * _volume)).ToArray();
-
             _ = Bass.StreamPutData(_streamHandle.Value, bytes, samples.Length * 2);
         }
 
@@ -106,7 +106,7 @@ namespace SpectrumEngine.Client.Avalonia.Providers
 
         private void InitializeDevice()
         {
-            _volume = .15F;
+            _volume = .30f;
             Bass.UpdatePeriod = 10;
 
             // initialize default output device (and measure latency)

@@ -1,4 +1,4 @@
-namespace SpectrumEngine.Emu.Machines.ZxSpectrum128;
+namespace SpectrumEngine.Emu;
 
 /// <summary>
 /// Represents a PSG chip

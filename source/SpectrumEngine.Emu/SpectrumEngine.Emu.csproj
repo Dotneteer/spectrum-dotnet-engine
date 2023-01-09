@@ -16,6 +16,14 @@
     <EmbeddedResource Include="Roms\sp128-0.rom" />
     <None Remove="Roms\sp128-1.rom" />
     <EmbeddedResource Include="Roms\sp128-1.rom" />
+    <None Remove="Roms\spp3e-0.rom" />
+    <EmbeddedResource Include="Roms\spp3e-0.rom" />
+    <None Remove="Roms\spp3e-1.rom" />
+    <EmbeddedResource Include="Roms\spp3e-1.rom" />
+    <None Remove="Roms\spp3e-2.rom" />
+    <EmbeddedResource Include="Roms\spp3e-2.rom" />
+    <None Remove="Roms\spp3e-3.rom" />
+    <EmbeddedResource Include="Roms\spp3e-3.rom" />
 	</ItemGroup>
 
 

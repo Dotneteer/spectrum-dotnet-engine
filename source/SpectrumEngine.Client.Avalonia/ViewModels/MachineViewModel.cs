@@ -189,12 +189,18 @@ public class MachineViewModel: ViewModelBase
             {
                 await Stop();
             }
-            if (MachineFactory.CreateMachine(machineId) == null)
+
+            var newMachine = MachineFactory.CreateMachine(machineId);
+            if (newMachine == null)
             {
                 var msgBox = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxStandardWindow("Error",
                     $"Cannot find or instantiate machine with ID '{machineId}'");
                 await msgBox.Show();
+                return;
             }
+            
+            // --- Set up machine properties
+            newMachine.SetMachineProperty(MachinePropNames.FAST_LOAD, AllowFastLoad);
         }
     }
 
@@ -205,7 +211,7 @@ public class MachineViewModel: ViewModelBase
     /// <returns>Is the command enabled?</returns>
     [DependsOn(nameof(MachineControllerState))]
     private bool CanSelectMachineType(object? parameter)
-        => parameter is "sp48" or "sp128"; 
+        => parameter is "sp48" or "sp128" or "spP3e"; 
     
     /// <summary>
     /// Execute the Start command

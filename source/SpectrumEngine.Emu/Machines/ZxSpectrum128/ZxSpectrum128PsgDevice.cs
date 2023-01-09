@@ -1,4 +1,4 @@
-namespace SpectrumEngine.Emu.Machines.ZxSpectrum128;
+namespace SpectrumEngine.Emu;
 
 public class ZxSpectrum128PsgDevice: AudioDeviceBase, IPsgDevice
 {
