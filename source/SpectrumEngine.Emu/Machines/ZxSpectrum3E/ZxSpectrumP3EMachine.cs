@@ -437,7 +437,7 @@ public class ZxSpectrumP3EMachine: ZxSpectrumBase
         } 
         
         // --- Handle the Kempston port
-        if ((address & 0x00e0) != 0) {
+        if ((address & 0x00e0) == 0) {
             // TODO: Implement Kempston port handling
             return 0xff;
         }
