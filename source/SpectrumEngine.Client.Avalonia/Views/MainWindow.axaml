@@ -86,9 +86,9 @@
                             <NativeMenuItem
                                 Header="ZX Spectrum +3E"
                                 Command="{Binding Machine.SelectMachineType}"
-                                CommandParameter="spP3e"
+                                CommandParameter="spp3e"
                                 ToggleType="CheckBox"
-                                IsChecked="{Binding Machine.Id, Converter={StaticResource MachineTypeVisibilityConverter}, ConverterParameter='sp3e'}" />
+                                IsChecked="{Binding Machine.Id, Converter={StaticResource MachineTypeVisibilityConverter}, ConverterParameter='spp3e'}" />
                             <NativeMenuItem
                                 Header="ZX Spectrum Next"
                                 Command="{Binding Machine.SelectMachineType}"
@@ -252,10 +252,10 @@
                         <MenuItem
                             Header="ZX Spectrum +3E"
                             Command="{Binding Machine.SelectMachineType}"
-                            CommandParameter="spP3e">
+                            CommandParameter="spp3e">
                             <MenuItem.Icon>
                                 <local:CheckedIndicator 
-                                    IsChecked="{Binding Machine.Id, Converter={StaticResource MachineTypeVisibilityConverter}, ConverterParameter='sp3e'}" />
+                                    IsChecked="{Binding Machine.Id, Converter={StaticResource MachineTypeVisibilityConverter}, ConverterParameter='spp3e'}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem

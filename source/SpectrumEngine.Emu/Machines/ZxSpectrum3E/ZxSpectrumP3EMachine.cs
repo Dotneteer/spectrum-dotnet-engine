@@ -1,3 +1,5 @@
+using SpectrumEngine.Emu.Machines.Disk;
+
 namespace SpectrumEngine.Emu;
 
 /// <summary>
@@ -16,6 +18,8 @@ public class ZxSpectrumP3EMachine: ZxSpectrumBase
     private bool _inSpecialPagingMode;
     private int _specialConfigMode;
     private bool _diskMotorOn;
+
+    public readonly FlopyDiskDriveCluster flopyDiskDriveCluster;
 
     #endregion
 
@@ -67,13 +71,19 @@ public class ZxSpectrumP3EMachine: ZxSpectrumBase
         PsgDevice = new ZxSpectrum128PsgDevice(this);
         FloatingBusDevice = new ZxSpectrum3eFloatingBusDevice(this);
         TapeDevice = new TapeDevice(this);
+        flopyDiskDriveCluster = new FlopyDiskDriveCluster(this);        
+
         Reset();
 
-        // --- Initialize the machine's ROM (Roms/ZxSpectrum48/ZxSpectrum48.rom)
+        // --- Initialize the machine's ROM (Roms/spp3e-X.rom)
         UploadRomBytes(0, LoadRomFromResource(MachineId, 0));
         UploadRomBytes(1, LoadRomFromResource(MachineId, 1));
         UploadRomBytes(2, LoadRomFromResource(MachineId, 2));
         UploadRomBytes(3, LoadRomFromResource(MachineId, 3));
+
+        // TODO: DGzornoza
+        var data = File.ReadAllBytes("E:\\OneDrive\\Spectrum\\Sir Fred (Spanish).dsk");
+        flopyDiskDriveCluster.LoadDisk(data);
     }
 
     /// <summary>
@@ -431,26 +441,33 @@ public class ZxSpectrumP3EMachine: ZxSpectrumBase
             // TODO: Implement Kempston port handling
             return 0xff;
         }
-        
+
         // --- Handle the PSG register index port
         if ((address & 0xc002) == 0xc000)
         {
             return PsgDevice.ReadPsgRegisterValue();
         }
 
-        // --- Handle reading the FDC main status register port
-        if ((address & 0xffff) == 0x2ffd)
+        // --- Handle reading the FDC port
+        if (flopyDiskDriveCluster.TryReadPort(address, out byte fdcResult))
         {
-            // TODO: Implement this port
-            return 0xff;
+            return fdcResult;
         }
-        
-        // --- Handle reading the FDC data port
-        if ((address & 0xffff) == 0x3ffd)
-        {
-            // TODO: Implement this port
-            return 0xff;
-        }
+
+        //// --- Handle reading the FDC main status register port
+        //if ((address & 0xffff) == 0x2ffd)
+        //{
+        //    // TODO: Implement this port
+        //    flopyDiskDriveCluster.ActiveFloppyDiskDrive.
+        //    return 0xff;
+        //}
+
+        //// --- Handle reading the FDC data port
+        //if ((address & 0xffff) == 0x3ffd)
+        //{
+        //    // TODO: Implement this port
+        //    return 0xff;
+        //}
 
         return FloatingBusDevice.ReadFloatingBus();
     }

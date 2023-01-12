@@ -29,10 +29,7 @@ public partial class NecUpd765
 		_flopyDiskDriveCluster = flopyDiskDriveCluster;
 
 		InitCommandList();				
-		TimingInit();
 		Reset();
-
-		FDD_Init();
 	}
 
 	/// <summary>

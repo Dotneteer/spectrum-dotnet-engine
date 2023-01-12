@@ -34,50 +34,51 @@ public class CpcExtendedFloppyDisk : FloppyDisk
         }
 
         // read the disk information block
-        Header.DiskIdent = ident;
-        Header.DiskCreatorString = Encoding.ASCII.GetString(data, 0x22, 14);
-        Header.NumberOfTracks = data[0x30];
-        Header.NumberOfSides = data[0x31];
-        Header.TrackSizes = new int[Header.NumberOfTracks * Header.NumberOfSides];
-        DiskTracks = new Track[Header.NumberOfTracks * Header.NumberOfSides];
+        DiskHeader.DiskIdent = ident;
+        DiskHeader.DiskCreatorString = Encoding.ASCII.GetString(data, 0x22, 14);
+        DiskHeader.NumberOfTracks = data[0x30];
+        DiskHeader.NumberOfSides = data[0x31];
+        DiskHeader.TrackSizes = new int[DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides];
+        DiskTracks = new Track[DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides];
         DiskData = data;
         int pos = 0x34;
 
-        if (Header.NumberOfSides > 1)
+        if (DiskHeader.NumberOfSides > 1)
         {
             StringBuilder sbm = new StringBuilder();
             sbm.AppendLine();
             sbm.AppendLine();
             sbm.AppendLine("The detected disk image contains multiple sides.");
-            sbm.AppendLine("This is NOT currently supported in ZXHawk.");
-            sbm.AppendLine("Please find an alternate image/dump where each side has been saved as a separate *.dsk image (and use the multi-disk bundler tool to load into Bizhawk).");
+            sbm.AppendLine("This is NOT currently supported.");
+            sbm.AppendLine("Please find an alternate image.");
             throw new NotImplementedException(sbm.ToString());
         }
 
-        if (Header.NumberOfTracks > 42)
+        if (DiskHeader.NumberOfTracks > 42)
         {
             StringBuilder sbm = new StringBuilder();
             sbm.AppendLine();
             sbm.AppendLine();
-            sbm.AppendLine("The detected disk is an " + Header.NumberOfTracks + " track disk image.");
+            sbm.AppendLine("The detected disk is an " + DiskHeader.NumberOfTracks + " track disk image.");
             sbm.AppendLine("This is currently incompatible with the emulated +3 disk drive (42 tracks).");
-            sbm.AppendLine("Likely the disk image is an 80 track betadisk or opus image, the drives and controllers for which are not currently emulated in ZXHawk");
+            sbm.AppendLine("Likely the disk image is an 80 track betadisk or opus image");
+            sbm.AppendLine("Please find an alternate image.");
             throw new NotImplementedException(sbm.ToString());
         }
 
-        for (int i = 0; i < Header.NumberOfTracks * Header.NumberOfSides; i++)
+        for (int i = 0; i < DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides; i++)
         {
-            Header.TrackSizes[i] = data[pos++] * 256;
+            DiskHeader.TrackSizes[i] = data[pos++] * 256;
         }
 
         // move to first track information block
         pos = 0x100;
 
         // parse each track
-        for (int i = 0; i < Header.NumberOfTracks * Header.NumberOfSides; i++)
+        for (int i = 0; i < DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides; i++)
         {
             // check for unformatted track
-            if (Header.TrackSizes[i] == 0)
+            if (DiskHeader.TrackSizes[i] == 0)
             {
                 DiskTracks[i] = new Track();
                 DiskTracks[i].Sectors = new Sector[0];
@@ -147,7 +148,7 @@ public class CpcExtendedFloppyDisk : FloppyDisk
             }
 
             // move to the next track info block
-            pos += Header.TrackSizes[i];
+            pos += DiskHeader.TrackSizes[i];
         }
 
         // protection scheme detector

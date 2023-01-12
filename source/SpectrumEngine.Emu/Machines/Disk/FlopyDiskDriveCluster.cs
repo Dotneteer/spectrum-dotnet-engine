@@ -11,9 +11,10 @@ namespace SpectrumEngine.Emu.Machines.Disk;
 /// </summary>
 public class FlopyDiskDriveCluster
 {
+    private const int _floppyDiskDrivesUsed = 2;
     private readonly Z80MachineBase _machine;
     private readonly NecUpd765 _floppyDiskController;
-    private readonly IFlopyDiskDriveDevice[] _floppyDiskDrives = new FlopyDiskDriveDevice[2];
+    private readonly IFlopyDiskDriveDevice[] _floppyDiskDrives = new FlopyDiskDriveDevice[_floppyDiskDrivesUsed];
 
     private int _floppyDiskDriveSlot = 0;
 
@@ -39,6 +40,13 @@ public class FlopyDiskDriveCluster
     /// Active floppy disk
     /// </summary>
     public FloppyDisk? FloppyDisk => ActiveFloppyDiskDrive?.Disk;
+
+    /// <summary>
+    /// Try read FDC (Floppy disk controller) port
+    /// </summary>
+    /// <param name="port">port number to try read</param>
+    /// <param name="result">read byte result if can read, 0 otherwise</param>
+    public bool TryReadPort(ushort port, out byte result) => _floppyDiskController.TryReadPort(port, out result);
 
     /// <summary>
     /// Currently active floppy drive device
@@ -80,7 +88,7 @@ public class FlopyDiskDriveCluster
     /// </summary>
     private void Reset()
     {
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < _floppyDiskDrivesUsed; i++)
         {
             _floppyDiskDrives[i] = new FlopyDiskDriveDevice(i, _floppyDiskController);
         }

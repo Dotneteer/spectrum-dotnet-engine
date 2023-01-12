@@ -10,23 +10,25 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
 /// 0x2ffd: Reading from this port will return the main status register of the uPD765A (the FDC used in the +3).
 /// 0x3ffd: Bytes written to this port are sent to the FDC, whilst reading from this port will read bytes from the FDC.
 /// </summary>
-public partial class NecUpd765 : IPortIODevice
+public partial class NecUpd765 : IPortIODevice<byte>
 {
     /// <summary>
     /// Device responds to an IN instruction
     /// </summary>
-    public bool ReadPort(ushort port, out int result)
+    public bool TryReadPort(ushort port, out byte result)
     {
-        result = -1;
+        result = 0x00;
 
+        // reading the FDC data port
         if (port == 0x3ffd)
         {
             result = ReadDataRegister();
             return true;
         }
+        // reading the FDC main status register port
         else if (port == 0x2ffd)
         {
-            result = (int)ReadMainStatus();
+            result = (byte)ReadMainStatus();
             return true;
         }
 
@@ -36,14 +38,14 @@ public partial class NecUpd765 : IPortIODevice
     /// <summary>
     /// Device responds to an OUT instruction
     /// </summary>
-    public bool WritePort(ushort port, int value)
+    public bool TryWritePort(ushort port, byte value)
     {
-        BitArray bits = new BitArray(new byte[] { (byte)value });
+        BitArray bits = new BitArray(new byte[] { value });
 
         if (port == 0x3ffd)
         {
             // Z80 is attempting to write to the data register
-            WriteDataRegister((byte)value);
+            WriteDataRegister(value);
             return true;
         }
 

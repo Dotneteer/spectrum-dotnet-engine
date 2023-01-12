@@ -3,6 +3,7 @@ using SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using static SpectrumEngine.Emu.Machines.Disk.Controllers.NecUpd765;
 
 namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
 
@@ -260,7 +261,7 @@ public partial class NecUpd765
                 CommandBuffer[CommandBufferCounter] = LastByteReceived;
 
                 // process parameter byte
-                ParseParamByteStandard(CommandBufferCounter);
+                ParseParamByteStandard((CommandParameter)CommandBufferCounter);
 
                 // increment command parameter counter
                 CommandBufferCounter++;
@@ -562,7 +563,7 @@ public partial class NecUpd765
                 CommandBuffer[CommandBufferCounter] = LastByteReceived;
 
                 // process parameter byte
-                ParseParamByteStandard(CommandBufferCounter);
+                ParseParamByteStandard((CommandParameter)CommandBufferCounter);
 
                 // increment command parameter counter
                 CommandBufferCounter++;
@@ -873,7 +874,7 @@ public partial class NecUpd765
                 CommandBuffer[CommandBufferCounter] = LastByteReceived;
 
                 // process parameter byte
-                ParseParamByteStandard(CommandBufferCounter);
+                ParseParamByteStandard((CommandParameter)CommandBufferCounter);
 
                 // increment command parameter counter
                 CommandBufferCounter++;
@@ -1112,7 +1113,7 @@ public partial class NecUpd765
                 CommandBuffer[CommandBufferCounter] = LastByteReceived;
 
                 // process parameter byte
-                ParseParamByteStandard(CommandBufferCounter);
+                ParseParamByteStandard((CommandParameter)CommandBufferCounter);
 
                 // increment command parameter counter
                 CommandBufferCounter++;
@@ -1256,7 +1257,7 @@ public partial class NecUpd765
                 CommandBuffer[CommandBufferCounter] = LastByteReceived;
 
                 // process parameter byte
-                ParseParamByteStandard(CommandBufferCounter);
+                ParseParamByteStandard((CommandParameter)CommandBufferCounter);
 
                 // increment command parameter counter
                 CommandBufferCounter++;
@@ -1437,7 +1438,7 @@ public partial class NecUpd765
                 CommandBuffer[CommandBufferCounter] = LastByteReceived;
 
                 // process parameter byte
-                ParseParamByteStandard(CommandBufferCounter);
+                ParseParamByteStandard((CommandParameter)CommandBufferCounter);
 
                 // increment command parameter counter
                 CommandBufferCounter++;
@@ -1549,7 +1550,7 @@ public partial class NecUpd765
                 CommandBuffer[CommandBufferCounter] = LastByteReceived;
 
                 // process parameter byte
-                ParseParamByteStandard(CommandBufferCounter);
+                ParseParamByteStandard((CommandParameter)CommandBufferCounter);
 
                 // increment command parameter counter
                 CommandBufferCounter++;
@@ -1924,7 +1925,7 @@ public partial class NecUpd765
                 switch (CommandBufferCounter)
                 {
                     case 0:
-                        ParseParamByteStandard(CommandBufferCounter);
+                        ParseParamByteStandard((CommandParameter)CommandBufferCounter);
                         break;
                     case 1:
                         ActiveFloppyDiskDrive.SeekingTrack = currByte;
@@ -2012,7 +2013,7 @@ public partial class NecUpd765
                 CommandBuffer[CommandBufferCounter] = LastByteReceived;
 
                 // process parameter byte
-                ParseParamByteStandard(CommandBufferCounter);
+                ParseParamByteStandard((CommandParameter)CommandBufferCounter);
 
                 // increment command parameter counter
                 CommandBufferCounter++;
@@ -2179,7 +2180,7 @@ public partial class NecUpd765
                 CommandBuffer[CommandBufferCounter] = LastByteReceived;
 
                 // process parameter byte
-                ParseParamByteStandard(CommandBufferCounter);
+                ParseParamByteStandard((CommandParameter)CommandBufferCounter);
 
                 // increment command parameter counter
                 CommandBufferCounter++;
@@ -2590,7 +2591,7 @@ public partial class NecUpd765
                     ActiveCommandParams.Side = 0;
 
                 ActiveCommandParams.UnitSelect = (byte)(GetUnitSelect(currByte));
-                DiskDriveIndex = ActiveCommandParams.UnitSelect;
+                _flopyDiskDriveCluster.FloppyDiskDriveSlot = ActiveCommandParams.UnitSelect;
                 break;
 
             // C
@@ -2664,47 +2665,46 @@ public partial class NecUpd765
         if (ActiveCommand.CommandCode == 0x02)
         {
             // commit to result buffer
-            ResultBuffer[RS_ST0] = StatusRegisters0;
-            ResultBuffer[RS_ST1] = _statusRegisters1;
+            ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
+            ResultBuffer[(int)CommandResultParameter.ST1] = (byte)_statusRegisters1;
+
             return;
         }
 
         // check for error bits
-        if (GetBit(SR1_DE, _statusRegisters1) ||
-            GetBit(SR1_MA, _statusRegisters1) ||
-            GetBit(SR1_ND, _statusRegisters1) ||
-            GetBit(SR1_NW, _statusRegisters1) ||
-            GetBit(SR1_OR, _statusRegisters1) ||
-            GetBit(SR2_BC, _statusRegisters2) ||
-            GetBit(SR2_CM, _statusRegisters2) ||
-            GetBit(SR2_DD, _statusRegisters2) ||
-            GetBit(SR2_MD, _statusRegisters2) ||
-            GetBit(SR2_SN, _statusRegisters2) ||
-            GetBit(SR2_WC, _statusRegisters2))
+        if (_statusRegisters1.HasFlag(StatusRegisters1.DE) ||
+            _statusRegisters1.HasFlag(StatusRegisters1.MA) ||
+            _statusRegisters1.HasFlag(StatusRegisters1.ND) ||
+            _statusRegisters1.HasFlag(StatusRegisters1.NW) ||
+            _statusRegisters1.HasFlag(StatusRegisters1.OR) ||
+            _statusRegisters2.HasFlag(StatusRegisters2.BC) ||
+            _statusRegisters2.HasFlag(StatusRegisters2.CM) ||
+            _statusRegisters2.HasFlag(StatusRegisters2.DD) ||
+            _statusRegisters2.HasFlag(StatusRegisters2.MD) ||
+            _statusRegisters2.HasFlag(StatusRegisters2.SN) ||
+            _statusRegisters2.HasFlag(StatusRegisters2.WC))
         {
             // error bits set - unset end of track
-            UnSetBit(SR1_EN, ref _statusRegisters1);
+            _statusRegisters1.UnSetBits(StatusRegisters1.EN);            
         }
 
         // check for data errors
-        if (GetBit(SR1_DE, _statusRegisters1) ||
-            GetBit(SR2_DD, _statusRegisters2))
+        if (_statusRegisters1.HasFlag(StatusRegisters1.DE) || _statusRegisters2.HasFlag(StatusRegisters2.DD))
         {
             // unset control mark
-            UnSetBit(SR2_CM, ref _statusRegisters2);
+            _statusRegisters2.UnSetBits(StatusRegisters2.CM);
         }
-        else if (GetBit(SR2_CM, _statusRegisters2))
+        else if (_statusRegisters2.HasFlag(StatusRegisters2.CM))
         {
             // DAM found - unset IC and US0
-            UnSetBit(SR0_IC0, ref StatusRegisters0);
-            UnSetBit(SR0_US0, ref StatusRegisters0);
+            _statusRegisters0.UnSetBits(StatusRegisters0.IC_D6);
+            _statusRegisters0.UnSetBits(StatusRegisters0.US0);
         }
 
         // commit to result buffer
-        ResultBuffer[RS_ST0] = StatusRegisters0;
-        ResultBuffer[RS_ST1] = _statusRegisters1;
-        ResultBuffer[RS_ST2] = _statusRegisters2;
-
+        ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
+        ResultBuffer[(int)CommandResultParameter.ST1] = (byte)_statusRegisters1;
+        ResultBuffer[(int)CommandResultParameter.ST2] = (byte)_statusRegisters2;
     }
 
     /// <summary>
@@ -2712,10 +2712,10 @@ public partial class NecUpd765
     /// </summary>
     private void CommitResultCHRN()
     {
-        ResultBuffer[RS_C] = ActiveCommandParams.Cylinder;
-        ResultBuffer[RS_H] = ActiveCommandParams.Head;
-        ResultBuffer[RS_R] = ActiveCommandParams.Sector;
-        ResultBuffer[RS_N] = ActiveCommandParams.SectorSize;
+        ResultBuffer[(int)CommandResultParameter.C] = ActiveCommandParams.Cylinder;
+        ResultBuffer[(int)CommandResultParameter.H] = ActiveCommandParams.Head;
+        ResultBuffer[(int)CommandResultParameter.R] = ActiveCommandParams.Sector;
+        ResultBuffer[(int)CommandResultParameter.N] = ActiveCommandParams.SectorSize;
     }
 
     /// <summary>
@@ -2726,11 +2726,11 @@ public partial class NecUpd765
         ActivePhase = Phase.Idle;
 
         // active direction
-        UnSetBit(MSR_DIO, ref _mainStatusRegisters);
+        _mainStatusRegisters.UnSetBits(MainStatusRegisters.DIO);
         // CB
-        UnSetBit(MSR_CB, ref _mainStatusRegisters);
+        _mainStatusRegisters.UnSetBits(MainStatusRegisters.CB);
         // RQM
-        SetBit(MSR_RQM, ref _mainStatusRegisters);
+        _mainStatusRegisters.UnSetBits(MainStatusRegisters.RQM);
 
         CommandBufferCounter = 0;
         ResultBufferCounter = 0;
@@ -2744,13 +2744,13 @@ public partial class NecUpd765
         ActivePhase = Phase.Result;
 
         // active direction
-        SetBit(MSR_DIO, ref _mainStatusRegisters);
+        _mainStatusRegisters.SetBits(MainStatusRegisters.DIO);
         // CB
-        SetBit(MSR_CB, ref _mainStatusRegisters);
+        _mainStatusRegisters.SetBits(MainStatusRegisters.CB);
         // RQM
-        SetBit(MSR_RQM, ref _mainStatusRegisters);
+        _mainStatusRegisters.SetBits(MainStatusRegisters.RQM);
         // EXM
-        UnSetBit(MSR_EXM, ref _mainStatusRegisters);
+        _mainStatusRegisters.UnSetBits(MainStatusRegisters.EXM);
 
         CommandBufferCounter = 0;
         ResultBufferCounter = 0;
@@ -2764,10 +2764,11 @@ public partial class NecUpd765
         ActivePhase = Phase.Command;
 
         // default 0x80 - just RQM
-        SetBit(MSR_RQM, ref _mainStatusRegisters);
-        UnSetBit(MSR_DIO, ref _mainStatusRegisters);
-        UnSetBit(MSR_CB, ref _mainStatusRegisters);
-        UnSetBit(MSR_EXM, ref _mainStatusRegisters);
+        _mainStatusRegisters.SetBits(MainStatusRegisters.RQM);
+        _mainStatusRegisters.UnSetBits(MainStatusRegisters.DIO);
+        _mainStatusRegisters.UnSetBits(MainStatusRegisters.CB);
+        _mainStatusRegisters.UnSetBits(MainStatusRegisters.EXM);
+
         CommandBufferCounter = 0;
         ResultBufferCounter = 0;
     }
@@ -2780,11 +2781,11 @@ public partial class NecUpd765
         ActivePhase = Phase.Execution;
 
         // EXM
-        SetBit(MSR_EXM, ref _mainStatusRegisters);
+        _mainStatusRegisters.SetBits(MainStatusRegisters.EXM);
         // CB
-        SetBit(MSR_CB, ref _mainStatusRegisters);
+        _mainStatusRegisters.SetBits(MainStatusRegisters.CB);
         // RQM
-        UnSetBit(MSR_RQM, ref _mainStatusRegisters);
+        _mainStatusRegisters.UnSetBits(MainStatusRegisters.RQM);
 
         CommandBufferCounter = 0;
         ResultBufferCounter = 0;
