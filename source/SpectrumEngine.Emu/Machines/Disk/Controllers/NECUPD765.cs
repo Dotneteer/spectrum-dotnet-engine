@@ -56,7 +56,9 @@ public partial class NecUpd765
 		HUT_Counter = 0;
 		IndexPulseCounter = 0;
 		CMD_FLAG_MF = false;
-	}
+        ActiveCommand = CommandList[_cmdIndex];
+
+    }
 
 	private FlopyDiskDriveDevice? ActiveFloppyDiskDrive => (FlopyDiskDriveDevice?)_flopyDiskDriveCluster.ActiveFloppyDiskDrive;
 

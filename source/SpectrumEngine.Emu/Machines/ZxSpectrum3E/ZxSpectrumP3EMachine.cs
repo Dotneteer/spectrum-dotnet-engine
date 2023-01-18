@@ -80,10 +80,6 @@ public class ZxSpectrumP3EMachine: ZxSpectrumBase
         UploadRomBytes(1, LoadRomFromResource(MachineId, 1));
         UploadRomBytes(2, LoadRomFromResource(MachineId, 2));
         UploadRomBytes(3, LoadRomFromResource(MachineId, 3));
-
-        // TODO: DGzornoza
-        var data = File.ReadAllBytes("E:\\OneDrive\\Spectrum\\Sir Fred (Spanish).dsk");
-        flopyDiskDriveCluster.LoadDisk(data);
     }
 
     /// <summary>
@@ -136,7 +132,11 @@ public class ZxSpectrumP3EMachine: ZxSpectrumBase
         PsgDevice.SetAudioSampleRate(AUDIO_SAMPLE_RATE);
         FloatingBusDevice.Reset();
         TapeDevice.Reset();
-        
+
+        // TODO: DGzornoza
+        var data = File.ReadAllBytes("E:\\OneDrive\\Spectrum\\Sir Fred (Spanish).dsk");
+        flopyDiskDriveCluster.LoadDisk(data);        
+
         // --- Set default property values
         SetMachineProperty(MachinePropNames.TAPE_MODE, TapeMode.Passive);
         SetMachineProperty(MachinePropNames.REWIND_REQUESTED, null);
@@ -448,26 +448,11 @@ public class ZxSpectrumP3EMachine: ZxSpectrumBase
             return PsgDevice.ReadPsgRegisterValue();
         }
 
-        // --- Handle reading the FDC port
+        // --- Handle reading the FDC port (0x2ffd and 0x3ffd)
         if (flopyDiskDriveCluster.TryReadPort(address, out byte fdcResult))
         {
             return fdcResult;
         }
-
-        //// --- Handle reading the FDC main status register port
-        //if ((address & 0xffff) == 0x2ffd)
-        //{
-        //    // TODO: Implement this port
-        //    flopyDiskDriveCluster.ActiveFloppyDiskDrive.
-        //    return 0xff;
-        //}
-
-        //// --- Handle reading the FDC data port
-        //if ((address & 0xffff) == 0x3ffd)
-        //{
-        //    // TODO: Implement this port
-        //    return 0xff;
-        //}
 
         return FloatingBusDevice.ReadFloatingBus();
     }
@@ -525,20 +510,22 @@ public class ZxSpectrumP3EMachine: ZxSpectrumBase
         }
         
         // --- Test for PSG register index port
-        if ((address & 0xc002) == 0xc000) {
+        if ((address & 0xc002) == 0xc000) 
+        {
             PsgDevice.SetPsgRegisterIndex((byte)(value & 0x0f));
             return;
         }
         
         // --- Test for PSG register value port
-        if ((address & 0xc002) == 0x8000) {
+        if ((address & 0xc002) == 0x8000) 
+        {
             PsgDevice.WritePsgRegisterValue(value);
         }
-        
-        // --- Test for the floppy controller port
-        if ((address & 0xffff) == 0x3fff)
+
+        // --- Handle writting the FDC port (0x2ffd and 0x3ffd)
+        if (flopyDiskDriveCluster.TryWritePort(address, value))
         {
-            // TODO:Implement write to the FDC port
+            return;
         }
     }
 

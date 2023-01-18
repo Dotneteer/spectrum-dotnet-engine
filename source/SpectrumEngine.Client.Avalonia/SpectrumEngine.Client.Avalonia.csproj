@@ -16,6 +16,7 @@
     <ItemGroup>
         <AvaloniaResource Include="Assets\**" />
         <None Remove=".gitignore" />
+        <None Remove="BassResources\bass32.dll" />
         <None Remove="FodyWeavers.xsd" />
     </ItemGroup>
     <ItemGroup>
@@ -41,6 +42,7 @@
       <ProjectReference Include="..\SpectrumEngine.Tools\SpectrumEngine.Tools.csproj" />
     </ItemGroup>
     <ItemGroup>
+      <EmbeddedResource Include="BassResources\bass32.dll" />
       <EmbeddedResource Include="BassResources\bass64.dll" />
       <None Remove="bass.dll" />
       <None Remove="BassResources\libbass.dylib" />

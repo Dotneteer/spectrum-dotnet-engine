@@ -42,11 +42,20 @@ public class FlopyDiskDriveCluster
     public FloppyDisk? FloppyDisk => ActiveFloppyDiskDrive?.Disk;
 
     /// <summary>
-    /// Try read FDC (Floppy disk controller) port
+    /// Try read from FDC (Floppy disk controller) port
     /// </summary>
     /// <param name="port">port number to try read</param>
-    /// <param name="result">read byte result if can read, 0 otherwise</param>
-    public bool TryReadPort(ushort port, out byte result) => _floppyDiskController.TryReadPort(port, out result);
+    /// <param name="data">byte read if can read, 0 otherwise</param>
+    /// <returns>true if can read port, false otherwise</returns>
+    public bool TryReadPort(ushort port, out byte data) => _floppyDiskController.TryReadPort(port, out data);
+
+    /// <summary>
+    /// Try write in FDC (Floppy disk controller) port
+    /// </summary>
+    /// <param name="port">port number to try write</param>
+    /// <param name="data">byte to write</param>
+    /// <returns>true if can write port, false otherwise</returns>
+    public bool TryWritePort(ushort port, byte data) => _floppyDiskController.TryWritePort(port, data);
 
     /// <summary>
     /// Currently active floppy drive device
