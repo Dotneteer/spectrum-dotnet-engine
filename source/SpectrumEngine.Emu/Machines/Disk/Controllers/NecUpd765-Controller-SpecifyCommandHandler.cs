@@ -35,8 +35,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 case Phase.Command:
 
                     // store the parameter in the command buffer
-                    //CommandBuffer[CommandBufferCounter] = LastByteReceived;
-                    SetCommandBuffer(CommandBufferCounter, LastByteReceived);
+                    CommandBuffer[CommandBufferCounter] = LastByteReceived;
 
                     // process parameter byte
                     byte currByte = CommandBuffer[CommandBufferCounter];

@@ -40,8 +40,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 //----------------------------------------
                 case Phase.Command:
                     // store the parameter in the command buffer
-                    //CommandBuffer[CommandBufferCounter] = LastByteReceived;
-                    SetCommandBuffer(CommandBufferCounter, LastByteReceived);
+                    CommandBuffer[CommandBufferCounter] = LastByteReceived;
 
                     // process parameter byte
                     ParseParamByteStandard((CommandParameter)CommandBufferCounter);
@@ -96,8 +95,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         }
                     }
 
-                    //ResultBuffer[0] = (byte)_statusRegisters3;
-                    SetResultBuffer(0, (byte)_statusRegisters3);
+                    ResultBuffer[0] = (byte)_statusRegisters3;
                     ActivePhase = Phase.Result;
 
                     break;

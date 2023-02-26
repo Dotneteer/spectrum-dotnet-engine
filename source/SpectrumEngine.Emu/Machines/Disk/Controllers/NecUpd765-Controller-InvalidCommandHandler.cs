@@ -44,8 +44,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 //  Result bytes being sent to CPU
                 //----------------------------------------
                 case Phase.Result:
-                    // ResultBuffer[0] = 0x80;
-                    SetResultBuffer(0, 0x80);
+                    ResultBuffer[0] = 0x80;
                     break;
             }
         }

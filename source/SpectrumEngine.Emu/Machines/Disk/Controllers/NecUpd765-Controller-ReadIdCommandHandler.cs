@@ -36,8 +36,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 case Phase.Command:
 
                     // store the parameter in the command buffer
-                    //CommandBuffer[CommandBufferCounter] = LastByteReceived;
-                    SetCommandBuffer(CommandBufferCounter, LastByteReceived);
+                    CommandBuffer[CommandBufferCounter] = LastByteReceived;
 
                     // process parameter byte
                     ParseParamByteStandard((CommandParameter)CommandBufferCounter);
@@ -71,12 +70,10 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             _statusRegisters0.SetBits(StatusRegisters0.IC_D6 | StatusRegisters0.NR);
 
                             // setup the result buffer
-                            //ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
-                            SetResultBuffer((int)CommandResultParameter.ST0, (byte)_statusRegisters0);
+                            ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
                             for (int i = 1; i < 7; i++)
                             {
-                                // ResultBuffer[i] = 0;
-                                SetResultBuffer(i, 0);
+                                ResultBuffer[i] = 0;
                             }
 
                             // move to result phase
@@ -105,17 +102,12 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                             // read the sector data
                             var data = track.Sectors[ActiveFloppyDiskDrive.SectorIndex]; //.GetCHRN();
-                                                                                         //ResultBuffer[(int)CommandResultParameter.C] = data.TrackNumber;
-                            SetResultBuffer((int)CommandResultParameter.C, data.TrackNumber);
-                            //ResultBuffer[(int)CommandResultParameter.H] = data.SideNumber;
-                            SetResultBuffer((int)CommandResultParameter.H, data.SideNumber);
-                            //ResultBuffer[(int)CommandResultParameter.R] = data.SectorID;
-                            SetResultBuffer((int)CommandResultParameter.R, data.SectorID);
-                            //ResultBuffer[(int)CommandResultParameter.N] = data.SectorSize;
-                            SetResultBuffer((int)CommandResultParameter.N, data.SectorSize);
+                            ResultBuffer[(int)CommandResultParameter.C] = data.TrackNumber;
+                            ResultBuffer[(int)CommandResultParameter.H] = data.SideNumber;
+                            ResultBuffer[(int)CommandResultParameter.R] = data.SectorID;
+                            ResultBuffer[(int)CommandResultParameter.N] = data.SectorSize;
 
-                            //ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
-                            SetResultBuffer((int)CommandResultParameter.ST0, (byte)_statusRegisters0);
+                            ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
 
                             // check for DAM & CRC
                             //if (data.Status2.Bit(SR2_CM))
@@ -138,10 +130,8 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             CommitResultCHRN();
 
                             _statusRegisters0.SetBits(StatusRegisters0.IC_D6);
-                            //ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
-                            SetResultBuffer((int)CommandResultParameter.ST0, (byte)_statusRegisters0);
-                            //ResultBuffer[(int)CommandResultParameter.ST1] = 0x01;
-                            SetResultBuffer((int)CommandResultParameter.ST1, 0x01);
+                            ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
+                            ResultBuffer[(int)CommandResultParameter.ST1] = 0x01;
                         }
 
                         ActivePhase = Phase.Result;

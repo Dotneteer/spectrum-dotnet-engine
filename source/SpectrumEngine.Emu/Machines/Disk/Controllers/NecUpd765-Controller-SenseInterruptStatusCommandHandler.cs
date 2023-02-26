@@ -64,11 +64,9 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                         // first byte ST0 0x20
                         _statusRegisters0 = (StatusRegisters0)0x20;
-                        //ResultBuffer[0] = (byte)_statusRegisters0;
-                        SetResultBuffer(0, (byte)_statusRegisters0);
+                        ResultBuffer[0] = (byte)_statusRegisters0;
                         // second byte is the current track id
-                        //ResultBuffer[1] = ActiveFloppyDiskDrive.CurrentTrackId;
-                        SetResultBuffer(1, ActiveFloppyDiskDrive.CurrentTrackId);
+                        ResultBuffer[1] = ActiveFloppyDiskDrive.CurrentTrackId;
                     }
                     /*
                         else if (ActiveFloppyDiskDrive.SeekStatus == SEEK_INTACKNOWLEDGED)
@@ -86,8 +84,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         // SIS with no interrupt
                         ResultLength = 1;
                         _statusRegisters0 = (StatusRegisters0)0x80;
-                        //ResultBuffer[0] = (byte)_statusRegisters0;
-                        SetResultBuffer(0, (byte)_statusRegisters0);
+                        ResultBuffer[0] = (byte)_statusRegisters0;
                     }
 
                     ActivePhase = Phase.Result;

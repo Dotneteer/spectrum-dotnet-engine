@@ -34,7 +34,7 @@ public partial class NecUpd765
     /// <summary>
     /// Active command state
     /// </summary>
-    private CommandState ActiveCommandState = new CommandState();
+    private CommandState ActiveCommandState = new();
 
     /// <summary>
     /// Current active phase controller
@@ -45,15 +45,6 @@ public partial class NecUpd765
     /// Command buffer
     /// </summary>
     private byte[] CommandBuffer = new byte[9];
-    // TODO: DGZornoza: debug
-    private void SetCommandBuffer(int index, byte value)
-    {
-        //if (index == 1)
-        //{
-        //    Debugger.Break();
-        //}
-        CommandBuffer[index] = value;
-    }
 
     /// <summary>
     /// Current index in command buffer
@@ -129,10 +120,6 @@ public partial class NecUpd765
     /// Contains result bytes in result phase
     /// </summary>
     private byte[] ResultBuffer = new byte[7];
-    private void SetResultBuffer(int index, byte value)
-    {
-        ResultBuffer[index] = value;
-    }
 
     /// <summary>
     /// Current index in result buffer
@@ -590,8 +577,7 @@ public partial class NecUpd765
     {
         for (int i = 0; i < ResultBuffer.Length; i++)
         {
-            //ResultBuffer[i] = 0;
-            SetResultBuffer(i, 0);
+            ResultBuffer[i] = 0;
         }
     }
 
@@ -615,10 +601,8 @@ public partial class NecUpd765
         if (ActiveCommand.CommandCode == 0x02)
         {
             // commit to result buffer
-            //ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
-            SetResultBuffer((int)CommandResultParameter.ST0, (byte)_statusRegisters0);
-            //ResultBuffer[(int)CommandResultParameter.ST1] = (byte)_statusRegisters1;
-            SetResultBuffer((int)CommandResultParameter.ST1, (byte)_statusRegisters1);
+            ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
+            ResultBuffer[(int)CommandResultParameter.ST1] = (byte)_statusRegisters1;
 
             return;
         }
@@ -654,12 +638,9 @@ public partial class NecUpd765
         }
 
         // commit to result buffer
-        //ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
-        SetResultBuffer((int)CommandResultParameter.ST0, (byte)_statusRegisters0);
-        //ResultBuffer[(int)CommandResultParameter.ST1] = (byte)_statusRegisters1;
-        SetResultBuffer((int)CommandResultParameter.ST1, (byte)_statusRegisters1);
-        //ResultBuffer[(int)CommandResultParameter.ST2] = (byte)_statusRegisters2;
-        SetResultBuffer((int)CommandResultParameter.ST2, (byte)_statusRegisters2);
+        ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
+        ResultBuffer[(int)CommandResultParameter.ST1] = (byte)_statusRegisters1;
+        ResultBuffer[(int)CommandResultParameter.ST2] = (byte)_statusRegisters2;
     }
 
     /// <summary>
@@ -667,14 +648,10 @@ public partial class NecUpd765
     /// </summary>
     private void CommitResultCHRN()
     {
-        //ResultBuffer[(int)CommandResultParameter.C] = ActiveCommandParams.Cylinder;
-        SetResultBuffer((int)CommandResultParameter.C, ActiveCommandState.Cylinder);
-        //ResultBuffer[(int)CommandResultParameter.H] = ActiveCommandParams.Head;
-        SetResultBuffer((int)CommandResultParameter.H, ActiveCommandState.Head);
-        //ResultBuffer[(int)CommandResultParameter.R] = ActiveCommandParams.Sector;
-        SetResultBuffer((int)CommandResultParameter.R, ActiveCommandState.Sector);
-        //ResultBuffer[(int)CommandResultParameter.N] = ActiveCommandParams.SectorSize;
-        SetResultBuffer((int)CommandResultParameter.N, ActiveCommandState.SectorSize);
+        ResultBuffer[(int)CommandResultParameter.C] = ActiveCommandState.Cylinder;
+        ResultBuffer[(int)CommandResultParameter.H] = ActiveCommandState.Head;
+        ResultBuffer[(int)CommandResultParameter.R] = ActiveCommandState.Sector;
+        ResultBuffer[(int)CommandResultParameter.N] = ActiveCommandState.SectorSize;
     }
 
     /// <summary>

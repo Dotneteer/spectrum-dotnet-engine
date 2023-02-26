@@ -197,20 +197,4 @@ public struct CommandState
     /// which users are going to read out or write into the sector
     /// </summary>
     public byte DTL;
-
-    /// <summary>
-    /// Clear down
-    /// </summary>
-    public void Reset()
-    {
-        UnitSelect = 0;
-        Side = 0;
-        Cylinder = 0;
-        Head = 0;
-        Sector = 0;
-        SectorSize = 0;
-        EOT = 0;
-        Gap3Length = 0;
-        DTL = 0;
-    }
 }
