@@ -14,113 +14,248 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
 */
 public partial class NecUpd765
 {
-	/// <summary>
-	/// The emulated spectrum machine
-	/// </summary>
-	private Z80MachineBase _machine;
-	private FlopyDiskDriveCluster _flopyDiskDriveCluster;
+    /// <summary>
+    /// The emulated spectrum machine
+    /// </summary>
+    private Z80MachineBase _machine;
+    private FlopyDiskDriveCluster _flopyDiskDriveCluster;
 
-	/// <summary>
-	/// Main constructor
-	/// </summary>
-	public NecUpd765(Z80MachineBase machine, FlopyDiskDriveCluster flopyDiskDriveCluster)
-	{
-		_machine = machine;
-		_flopyDiskDriveCluster = flopyDiskDriveCluster;
+    /// <summary>
+    /// Main constructor
+    /// </summary>
+    public NecUpd765(Z80MachineBase machine, FlopyDiskDriveCluster flopyDiskDriveCluster)
+    {
+        _machine = machine;
+        _flopyDiskDriveCluster = flopyDiskDriveCluster;
 
-		InitCommandList();				
-		Reset();
-	}
+        InitCommands();
+        Reset();
+    }
 
-	/// <summary>
-	/// Resets the FDC
-	/// </summary>
-	public void Reset()
-	{
-		// setup main status
-		_mainStatusRegisters = 0;
+    /// <summary>
+    /// Resets the FDC
+    /// </summary>
+    public void Reset()
+    {
+        // setup main status
+        _mainStatusRegisters = 0;
 
-		_statusRegisters0 = 0;
-		_statusRegisters1 = 0;
-		_statusRegisters2 = 0;
-		_statusRegisters3 = 0;
+        _statusRegisters0 = 0;
+        _statusRegisters1 = 0;
+        _statusRegisters2 = 0;
+        _statusRegisters3 = 0;
 
-		_mainStatusRegisters.SetBits(MainStatusRegisters.RQM);
+        _mainStatusRegisters.SetBits(MainStatusRegisters.RQM);
 
-		SetPhase_Idle();
+        SetPhase_Idle();
 
-		SRT = 6;
-		HUT = 16;
-		HLT = 2;
-		HLT_Counter = 0;
-		HUT_Counter = 0;
-		IndexPulseCounter = 0;
-		CMD_FLAG_MF = false;
-        ActiveCommand = CommandList[_cmdIndex];
+        SRT = 6;
+        HUT = 16;
+        HLT = 2;
+        HLT_Counter = 0;
+        HUT_Counter = 0;
+        IndexPulseCounter = 0;
+        CMD_FLAG_MF = false;
+        ActiveCommand = Commands[_cmdIndex];
 
     }
 
-	private FlopyDiskDriveDevice? ActiveFloppyDiskDrive => (FlopyDiskDriveDevice?)_flopyDiskDriveCluster.ActiveFloppyDiskDrive;
+    private FlopyDiskDriveDevice? ActiveFloppyDiskDrive => (FlopyDiskDriveDevice?)_flopyDiskDriveCluster.ActiveFloppyDiskDrive;
 
-	/// <summary>
-	/// Setup the command structure
-	/// Each command represents one of the internal UPD765 commands
-	/// </summary>
-	private void InitCommandList()
-	{
-		CommandList = new List<Command>
-		{
-                // read data
-                new Command { CommandDelegate = ReadData, CommandCode = 0x06, MT = true, MF = true, SK = true, IsRead = true,
-				Direction = CommandDirection.Out, ParameterByteCount = 8, ResultByteCount = 7 },
-                // read id
-                new Command { CommandDelegate = UPD_ReadID, CommandCode = 0x0a, MF = true, IsRead = true,
-				Direction = CommandDirection.Out, ParameterByteCount = 1, ResultByteCount = 7 },
-                // specify
-                new Command { CommandDelegate = UPD_Specify, CommandCode = 0x03,
-				Direction = CommandDirection.Out, ParameterByteCount = 2, ResultByteCount = 0 },
-                // read diagnostic
-                new Command { CommandDelegate = UPD_ReadDiagnostic, CommandCode = 0x02, MF = true, SK = true, IsRead = true,
-				Direction = CommandDirection.Out, ParameterByteCount = 8, ResultByteCount = 7 },
-                // scan equal
-                new Command { CommandDelegate = UPD_ScanEqual, CommandCode = 0x11, MT = true, MF = true, SK = true, IsRead = true,
-				Direction = CommandDirection.In, ParameterByteCount = 8, ResultByteCount = 7 },
-                // scan high or equal
-                new Command { CommandDelegate = UPD_ScanHighOrEqual, CommandCode = 0x1d, MT = true, MF = true, SK = true, IsRead = true,
-				Direction = CommandDirection.In, ParameterByteCount = 8, ResultByteCount = 7 },
-                // scan low or equal
-                new Command { CommandDelegate = UPD_ScanLowOrEqual, CommandCode = 0x19, MT = true, MF = true, SK = true, IsRead = true,
-				Direction = CommandDirection.In, ParameterByteCount = 8, ResultByteCount = 7 },
-                // read deleted data
-                new Command { CommandDelegate = UPD_ReadDeletedData, CommandCode = 0x0c, MT = true, MF = true, SK = true, IsRead = true,
-				Direction = CommandDirection.Out, ParameterByteCount = 8, ResultByteCount = 7 },
-                // write data
-                new Command { CommandDelegate = UPD_WriteData, CommandCode = 0x05, MT = true, MF = true, IsWrite = true,
-				Direction = CommandDirection.In, ParameterByteCount = 8, ResultByteCount = 7 },
-                // write id
-                new Command { CommandDelegate = UPD_WriteID, CommandCode = 0x0d, MF = true, IsWrite = true,
-				Direction = CommandDirection.In, ParameterByteCount = 5, ResultByteCount = 7 },
-                // write deleted data
-                new Command { CommandDelegate = UPD_WriteDeletedData, CommandCode = 0x09, MT = true, MF = true, IsWrite = true,
-				Direction = CommandDirection.In, ParameterByteCount = 8, ResultByteCount = 7 },
-                // seek
-                new Command { CommandDelegate = UPD_Seek, CommandCode = 0x0f,
-				Direction = CommandDirection.Out, ParameterByteCount = 2, ResultByteCount = 0 },
-                // recalibrate (seek track00)
-                new Command { CommandDelegate = UPD_Recalibrate, CommandCode = 0x07,
-				Direction = CommandDirection.Out, ParameterByteCount = 1, ResultByteCount = 0 },
-                // sense interrupt status
-                new Command { CommandDelegate = UPD_SenseInterruptStatus, CommandCode = 0x08,
-				Direction = CommandDirection.Out, ParameterByteCount = 0, ResultByteCount = 2 },
-                // sense drive status
-                new Command { CommandDelegate = UPD_SenseDriveStatus, CommandCode = 0x04,
-				Direction = CommandDirection.Out, ParameterByteCount = 1, ResultByteCount = 1 },
-                // version
-                new Command { CommandDelegate = UPD_Version, CommandCode = 0x10,
-				Direction = CommandDirection.Out, ParameterByteCount = 0, ResultByteCount = 1 },
-                // invalid
-                new Command { CommandDelegate = UPD_Invalid, CommandCode = 0x00,
-				Direction = CommandDirection.Out, ParameterByteCount = 0, ResultByteCount = 1 },
-		};
-	}
+    /// <summary>
+    /// Setup the command structure
+    /// Each command represents one of the internal UPD765 commands
+    /// </summary>
+    private void InitCommands()
+    {
+        Commands = new List<CommandConfiguration>
+        {
+			// invalid
+            new CommandConfiguration
+            {
+                CommandHandler = InvalidCommandHandler,
+                CommandCode = 0x00,
+                CommandFlow = CommandFlow.Out,
+                ParameterBytesCount = 0,
+                ResultBytesCount = 1
+            },
+            // read data
+            new CommandConfiguration
+            {
+                CommandHandler = ReadDataCommandHandler,
+                CommandCode = 0x06,
+                MT = true,
+                MF = true,
+                SK = true,
+                CommandOperation = CommandOperation.Read,
+                CommandFlow = CommandFlow.Out,
+                ParameterBytesCount = 8,
+                ResultBytesCount = 7
+            },
+            // read deleted data
+            new CommandConfiguration
+            {
+                CommandHandler = ReadDeletedDataCommandHandler,
+                CommandCode = 0x0c,
+                MT = true,
+                MF = true,
+                SK = true,
+                CommandOperation = CommandOperation.Read,
+                CommandFlow = CommandFlow.Out,
+                ParameterBytesCount = 8,
+                ResultBytesCount = 7
+            },
+			// read diagnostic
+            new CommandConfiguration
+            {
+                CommandHandler = ReadDiagnosticCommandHandler, 
+                CommandCode = 0x02, 
+                MF = true, 
+                SK = true, 
+                CommandOperation = CommandOperation.Read,
+                CommandFlow = CommandFlow.Out, 
+                ParameterBytesCount = 8, 
+                ResultBytesCount = 7
+            },
+            // read id
+            new CommandConfiguration 
+            { 
+                CommandHandler = ReadIdCommandHandler, 
+                CommandCode = 0x0a, 
+                MF = true, 
+                CommandOperation = CommandOperation.Read,
+                CommandFlow = CommandFlow.Out, 
+                ParameterBytesCount = 1, 
+                ResultBytesCount = 7 
+            },
+            // recalibrate (seek track00)
+            new CommandConfiguration 
+            { 
+                CommandHandler = RecalibrateCommandHandler, 
+                CommandCode = 0x07,
+                CommandFlow = CommandFlow.Out, 
+                ParameterBytesCount = 1, 
+                ResultBytesCount = 0 
+            },
+            // scan equal
+            new CommandConfiguration 
+            { 
+                CommandHandler = ScanEqualCommandHandler, 
+                CommandCode = 0x11, 
+                MT = true, 
+                MF = true, 
+                SK = true, 
+                CommandOperation =  CommandOperation.Read,
+                CommandFlow = CommandFlow.In, 
+                ParameterBytesCount = 8, 
+                ResultBytesCount = 7 
+            },
+            // scan high or equal
+            new CommandConfiguration 
+            { 
+                CommandHandler = ScanHighOrEqualCommandHandler, 
+                CommandCode = 0x1d, 
+                MT = true, 
+                MF = true, 
+                SK = true, 
+                CommandOperation = CommandOperation.Read,
+                CommandFlow = CommandFlow.In, 
+                ParameterBytesCount = 8, 
+                ResultBytesCount = 7 
+            },
+            // scan low or equal
+            new CommandConfiguration 
+            { 
+                CommandHandler = ScanLowOrEqualCommandHandler, 
+                CommandCode = 0x19, 
+                MT = true, 
+                MF = true, 
+                SK = true, 
+                CommandOperation = CommandOperation.Read,
+                CommandFlow = CommandFlow.In, 
+                ParameterBytesCount = 8, 
+                ResultBytesCount = 7 
+            },
+            // seek
+            new CommandConfiguration 
+            { 
+                CommandHandler = SeekCommandHandler, 
+                CommandCode = 0x0f,
+                CommandFlow = CommandFlow.Out, 
+                ParameterBytesCount = 2, 
+                ResultBytesCount = 0 
+            },
+            // sense drive status
+            new CommandConfiguration 
+            { 
+                CommandHandler = SenseDriveStatusCommandHandler, 
+                CommandCode = 0x04,
+                CommandFlow = CommandFlow.Out, 
+                ParameterBytesCount = 1, 
+                ResultBytesCount = 1 
+            },
+            // sense interrupt status
+            new CommandConfiguration 
+            { 
+                CommandHandler = SenseInterruptStatusCommandHandler, 
+                CommandCode = 0x08,
+                CommandFlow = CommandFlow.Out, 
+                ParameterBytesCount = 0, 
+                ResultBytesCount = 2 
+            },
+            // specify
+            new CommandConfiguration 
+            { 
+                CommandHandler = SpecifyCommandHandler, 
+                CommandCode = 0x03,
+                CommandFlow = CommandFlow.Out, 
+                ParameterBytesCount = 2, 
+                ResultBytesCount = 0 
+            },
+            // version
+            new CommandConfiguration 
+            { 
+                CommandHandler = VersionCommandHandler, 
+                CommandCode = 0x10,
+                CommandFlow = CommandFlow.Out, 
+                ParameterBytesCount = 0, 
+                ResultBytesCount = 1 
+            },
+            // write data
+            new CommandConfiguration 
+            { 
+                CommandHandler = WriteDataCommandHandler, 
+                CommandCode = 0x05, 
+                MT = true, 
+                MF = true, 
+                CommandOperation = CommandOperation.Write,
+                CommandFlow = CommandFlow.In, 
+                ParameterBytesCount = 8, 
+                ResultBytesCount = 7 
+            },
+            // write deleted data
+            new CommandConfiguration 
+            { 
+                CommandHandler = WriteDeletedDataCommandHandler, 
+                CommandCode = 0x09, 
+                MT = true, 
+                MF = true, 
+                CommandOperation = CommandOperation.Write,
+                CommandFlow = CommandFlow.In, 
+                ParameterBytesCount = 8, 
+                ResultBytesCount = 7 
+            },
+            // write id
+            new CommandConfiguration 
+            { 
+                CommandHandler = WriteIdCommandHandler, 
+                CommandCode = 0x0d, 
+                MF = true, 
+                CommandOperation = CommandOperation.Write,
+                CommandFlow = CommandFlow.In, 
+                ParameterBytesCount = 5, 
+                ResultBytesCount = 7 
+            },
+        };
+    }
 }

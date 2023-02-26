@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
@@ -28,12 +28,8 @@
 
 
 	<ItemGroup>
-		<Compile Update="Machines/Disk/NECUPD765.*.cs" DependentUpon="NECUPD765.cs" />
-		<Compile Update="Machines\Disk\Controllers\NecUpd765-Commands.cs" DependentUpon="NecUpd765.cs" />
-		<Compile Update="Machines\Disk\Controllers\NecUpd765-Controller.cs" DependentUpon="NecUpd765.cs" />
-		<Compile Update="Machines\Disk\Controllers\NecUpd765-Definitions.cs" DependentUpon="NecUpd765.cs" />
-		<Compile Update="Machines\Disk\Controllers\NecUpd765-PortIO.cs" DependentUpon="NecUpd765.cs" />
-		<Compile Update="Machines\Disk\Controllers\NecUpd765-Helpers.cs" DependentUpon="NecUpd765.cs" />
+		<Compile Update="Machines\Disk\Controllers\NecUpd765-*.cs" DependentUpon="NecUpd765.cs" />
+		<Compile Update="Machines\Disk\Controllers\NecUpd765-Controller-*.cs" DependentUpon="NecUpd765-Controller.cs" />
 	</ItemGroup>
 
 

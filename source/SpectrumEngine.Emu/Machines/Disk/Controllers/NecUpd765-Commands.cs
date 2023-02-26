@@ -1,9 +1,63 @@
 ﻿namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
 
+
 /// <summary>
-/// Class with NEC uPD765 Floppy disk drive controller command parameters.
+/// Class that holds configuration about a specific command
 /// </summary>
-public record NecUpd765Command
+public record CommandConfiguration
+{
+    /// <summary>
+    /// The command code after bitmask has been applied
+    /// </summary>
+    public int CommandCode { get; init; }
+
+    /// <summary>
+    /// Command handler
+    /// </summary>
+    public Action CommandHandler { get; init; } = default!;
+
+    /// <summary>
+    /// The number of bytes that make up the full command
+    /// </summary>
+    public int ParameterBytesCount { get; init; }
+
+    /// <summary>
+    /// The number of result bytes that will be generated from the command
+    /// </summary>
+    public int ResultBytesCount { get; init; }
+
+    /// <summary>
+    /// Command flow
+    /// IN - Z80 to UPD765A
+    /// OUT - UPD765A to Z80
+    /// </summary>
+    public NecUpd765.CommandFlow CommandFlow { get; init; }
+
+    /// <summary>
+    /// Command oeration Read/Write
+    /// </summary>
+    public NecUpd765.CommandOperation CommandOperation { get; init; }
+
+    /// <summary>
+    /// Use of the MT bit (Multitrack bit)
+    /// </summary>
+    public bool MT { get; init; }
+
+    /// <summary>
+    /// Use of the MF bit (Multi Format Single/double density)
+    /// </summary>
+    public bool MF { get; init; }
+
+    /// <summary>
+    /// Use of the SK bit (Skip bit)
+    /// </summary>
+    public bool SK { get; init; }
+}
+
+/// <summary>
+/// Floppy disk drive controller command.
+/// </summary>
+public record Command
 {
     /// <summary>
     /// Track
@@ -101,71 +155,10 @@ public record NecUpd765Command
     public int DataId { get; init; }
 }
 
-
 /// <summary>
-/// Class that holds information about a specific command
+/// Floppy disk drive controller command state
 /// </summary>
-public class Command
-{
-    /// <summary>
-    /// The command code after bitmask has been applied
-    /// </summary>
-    public int CommandCode { get; set; }
-
-    /// <summary>
-    /// The number of bytes that make up the full command
-    /// </summary>
-    public int ParameterByteCount { get; set; }
-
-    /// <summary>
-    /// The number of result bytes that will be generated from the command
-    /// </summary>
-    public int ResultByteCount { get; set; }
-
-    /// <summary>
-    /// The command direction
-    /// IN - Z80 to UPD765A
-    /// OUT - UPD765A to Z80
-    /// </summary>
-    public NecUpd765.CommandDirection Direction { get; set; }
-
-    /// <summary>
-    /// Command makes use of the MT bit
-    /// </summary>
-    public bool MT;
-
-    /// <summary>
-    /// Command makes use of the MF bit
-    /// </summary>
-    public bool MF;
-
-    /// <summary>
-    /// Command makes use of the SK bit
-    /// </summary>
-    public bool SK;
-
-    /// <summary>
-    /// Read/Write command that is READ
-    /// </summary>
-    public bool IsRead;
-
-    /// <summary>
-    /// Read/Write command that is WRITE
-    /// </summary>
-    public bool IsWrite;
-
-    /// <summary>
-    /// Delegate function that is called by this command
-    /// bool 1: EXECUTE - if TRUE the command will be executed. if FALSE the method will instead parse commmand parameter bytes
-    /// bool 2: RESULT - if TRUE
-    /// </summary>
-    public Action CommandDelegate { get; set; }
-}
-
-/// <summary>
-/// Storage for command parameters
-/// </summary>
-public class CommandParams
+public struct CommandState
 {
     /// <summary>
     /// The requested drive

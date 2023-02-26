@@ -24,14 +24,12 @@ public partial class NecUpd765 : IPortIODevice<byte>
         if (port == 0x3ffd)
         {
             data = ReadDataRegister();
-            WriteDebug("Read Data Register:", data);
             return true;
         }
         // reading the FDC main status register port
         else if (port == 0x2ffd)
         {
             data = (byte)ReadMainStatus();
-            WriteDebug("Read Main Status Register:", data);
             return true;
         }
 
@@ -50,7 +48,6 @@ public partial class NecUpd765 : IPortIODevice<byte>
         {
             // Z80 is attempting to write to the data register
             WriteDataRegister(data);
-            WriteDebug("Write Data Register:", data);
             return true;
         }
         
@@ -64,47 +61,5 @@ public partial class NecUpd765 : IPortIODevice<byte>
         }
 
         return false;
-    }
-
-    int fileDebugCounter = 1;
-    private void WriteDebug(string text, byte data)
-    {
-        string output = $"{text} {data} ({ListFlags(data)}), Command: {ActiveCommand.CommandCode}, Phase: {ActivePhase}{System.Environment.NewLine}";
-        System.IO.File.AppendAllText("C:/temp/spectrum.log", output);
-        if (fileDebugCounter == 51)
-        {
-            Debugger.Break();
-        }
-
-        fileDebugCounter++;
-    }
-
-    int fileDebugCounter2 = 1;
-    private void WriteDebug2(string text)
-    {
-        System.IO.File.AppendAllText("C:/temp/spectrum2.log", text + System.Environment.NewLine);
-        //if (fileDebugCounter == 51)
-        //{
-        //    Debugger.Break();
-        //}
-
-        fileDebugCounter2++;
-    }
-
-    public static string ListFlags(byte value)
-    {
-        var register = (MainStatusRegisters)value;
-
-        string result = string.Empty;
-        if (register.HasFlag(MainStatusRegisters.D0B)) result += "D0B ";
-        if (register.HasFlag(MainStatusRegisters.D1B)) result += "D1B ";
-        if (register.HasFlag(MainStatusRegisters.D2B)) result += "D2B ";
-        if (register.HasFlag(MainStatusRegisters.D3B)) result += "D3B ";
-        if (register.HasFlag(MainStatusRegisters.CB)) result += "CB ";
-        if (register.HasFlag(MainStatusRegisters.EXM)) result += "EXM ";
-        if (register.HasFlag(MainStatusRegisters.DIO)) result += "DIO ";
-        if (register.HasFlag(MainStatusRegisters.RQM)) result += "RQM ";
-
-        return result;
     }
 }

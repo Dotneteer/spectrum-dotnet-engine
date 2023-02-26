@@ -193,7 +193,7 @@ public abstract class FloppyDisk
             }
         }
 
-        public NecUpd765Command SectorIDInfo =>
+        public Command SectorIDInfo =>
             new()
             {
                 C = TrackNumber,

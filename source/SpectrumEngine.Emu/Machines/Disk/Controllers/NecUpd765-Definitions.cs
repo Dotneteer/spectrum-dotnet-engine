@@ -31,7 +31,7 @@ public partial class NecUpd765
     /// <summary>
     /// Command directions
     /// </summary>
-    public enum CommandDirection
+    public enum CommandFlow
     {
         /// <summary>
         /// Data flows from UPD765A to Z80
@@ -40,7 +40,22 @@ public partial class NecUpd765
         /// <summary>
         /// Data flows from Z80 to UPD765A
         /// </summary>
-        In
+        In,
+    }
+
+    /// <summary>
+    /// Command directions
+    /// </summary>
+    public enum CommandOperation
+    {
+        /// <summary>
+        /// Read data
+        /// </summary>
+        Read,
+        /// <summary>
+        /// Write data
+        /// </summary>
+        Write,
     }
 
     /// <summary>
