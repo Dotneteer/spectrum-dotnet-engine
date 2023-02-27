@@ -384,7 +384,7 @@ public partial class NecUpd765
         cmdByte = cByte;
 
         // lookup the command
-        var cmd = Commands.FirstOrDefault(a => a.CommandCode == cmdByte);
+        var cmd = Commands.FirstOrDefault(item => item.CommandCode == (CommandCode)cmdByte);
 
         if (cmd == null)
         {
@@ -394,7 +394,7 @@ public partial class NecUpd765
         else
         {
             // valid command found
-            CmdIndex = Commands.FindIndex(item => item.CommandCode == cmdByte);
+            CmdIndex = Commands.FindIndex(item => item.CommandCode == (CommandCode)cmdByte);
 
             // check validity of command byte flags
             // if a flag is set but not valid for this command then it is invalid
@@ -525,8 +525,8 @@ public partial class NecUpd765
     /// </summary>
     private void CommitResultStatus()
     {
-        // check for read diag
-        if (ActiveCommand.CommandCode == 0x02)
+        // check for read diagnostic
+        if (ActiveCommand.CommandCode == CommandCode.ReadDiagnostic)
         {
             // commit to result buffer
             ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
