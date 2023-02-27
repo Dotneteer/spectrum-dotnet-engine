@@ -1,10 +1,4 @@
-﻿using SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 {
     public partial class NecUpd765
@@ -19,30 +13,17 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
         {
             switch (ActivePhase)
             {
-                //----------------------------------------
-                //  FDC is waiting for a command byte
-                //----------------------------------------
-                case Phase.Idle:
+                case ControllerCommandPhase.Idle:
                     break;
-
-                //----------------------------------------
-                //  Receiving command parameter bytes
-                //----------------------------------------
-                case Phase.Command:
+                case ControllerCommandPhase.Command:
                     break;
-
-                //----------------------------------------
-                //  FDC in execution phase reading/writing bytes
-                //----------------------------------------
-                case Phase.Execution:
+                case ControllerCommandPhase.Execution:
                     break;
-
-                //----------------------------------------
-                //  Result bytes being sent to CPU
-                //----------------------------------------
-                case Phase.Result:
+                case ControllerCommandPhase.Result:
                     break;
             }
+
+            throw new NotImplementedException();
         }
 
     }

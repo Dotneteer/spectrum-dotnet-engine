@@ -19,11 +19,16 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
         {
             switch (ActivePhase)
             {
-                case Phase.Idle:
-                case Phase.Command:
-                case Phase.Execution:
-                case Phase.Result:
-                    InvalidCommandHandler();
+                case ControllerCommandPhase.Idle:
+                case ControllerCommandPhase.Command:
+                case ControllerCommandPhase.Execution:
+                    // no execution phase
+                    ActivePhase = ControllerCommandPhase.Result;
+                    VersionCommandHandler();
+                    break;
+                case ControllerCommandPhase.Result:
+                    // 90H indicates 7658, 80H indicates 765A/A-2 
+                    ResultBuffer[0] = 0x80;
                     break;
             }
         }

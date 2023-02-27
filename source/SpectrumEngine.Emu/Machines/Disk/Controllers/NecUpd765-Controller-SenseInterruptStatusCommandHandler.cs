@@ -25,22 +25,19 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
             switch (ActivePhase)
             {
-                //----------------------------------------
-                //  FDC is waiting for a command byte
-                //----------------------------------------
-                case Phase.Idle:
+                case ControllerCommandPhase.Idle:
                     break;
 
                 //----------------------------------------
                 //  Receiving command parameter bytes
                 //----------------------------------------
-                case Phase.Command:
+                case ControllerCommandPhase.Command:
                     break;
 
                 //----------------------------------------
                 //  FDC in execution phase reading/writing bytes
                 //----------------------------------------
-                case Phase.Execution:
+                case ControllerCommandPhase.Execution:
                     // SIS should return 2 bytes if sucessfully sensed an interrupt
                     // 1 byte otherwise
 
@@ -87,14 +84,14 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         ResultBuffer[0] = (byte)_statusRegisters0;
                     }
 
-                    ActivePhase = Phase.Result;
+                    ActivePhase = ControllerCommandPhase.Result;
 
                     break;
 
                 //----------------------------------------
                 //  Result bytes being sent to CPU
                 //----------------------------------------
-                case Phase.Result:
+                case ControllerCommandPhase.Result:
                     break;
             }
         }

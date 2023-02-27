@@ -1,4 +1,6 @@
-﻿namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
+﻿using static SpectrumEngine.Emu.Machines.Disk.Controllers.NecUpd765;
+
+namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
 
 
 /// <summary>
@@ -9,7 +11,7 @@ public record CommandConfiguration
     /// <summary>
     /// The command code after bitmask has been applied
     /// </summary>
-    public int CommandCode { get; init; }
+    public CommandCode CommandCode { get; init; } = default!;
 
     /// <summary>
     /// Command handler
@@ -156,9 +158,9 @@ public record Command
 }
 
 /// <summary>
-/// Floppy disk drive controller command state
+/// Floppy disk drive controller command data
 /// </summary>
-public struct CommandState
+public struct CommandData
 {
     /// <summary>
     /// The requested drive

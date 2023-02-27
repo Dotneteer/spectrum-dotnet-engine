@@ -7,6 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="Machines\Disk\Controllers\izvxb0fm.zkc~" />
 		<None Remove="Roms\ZxSpectrum48\ZxSpectrum48.rom" />
 	</ItemGroup>
 

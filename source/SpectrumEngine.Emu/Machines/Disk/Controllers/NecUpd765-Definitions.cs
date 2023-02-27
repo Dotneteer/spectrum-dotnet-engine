@@ -5,17 +5,38 @@
 /// </summary>
 public partial class NecUpd765
 {
+    public enum CommandCode
+    {
+        Invalid = 0x00,
+        ReadData = 0x06,
+        ReadDeletedData = 0x0c,
+        ReadDiagnostic = 0x02, 
+        ReadId = 0x0a,
+        Recalibrate = 0x07,
+        ScanEqual = 0x11,
+        ScanHighOrEqual = 0x1d,
+        ScanLowOrEqual = 0x19,
+        Seek = 0x0f,
+        SenseDriveStatus = 0x04,
+        SenseInterruptStatus = 0x08,
+        Specify = 0x03,
+        Version = 0x10,
+        WriteData = 0x05,
+        WriteDeletedData = 0x09,
+        WriteId = 0x0d,
+    }
+
     /// <summary>
-    /// Current phase of the controller
+    /// Current controller command phase
     /// </summary>
-    public enum Phase
+    public enum ControllerCommandPhase
     {
         /// <summary>
         /// FDC is in an idle state, awaiting the next initial command byte.
         /// </summary>
         Idle,
         /// <summary>
-        /// The FDC receives all information required to perform a particular operation from the processor.
+        /// The FDC receives all information required to perform a particular operation from the processor.
         /// </summary>
         Command,
         /// <summary>
@@ -23,7 +44,7 @@ public partial class NecUpd765
         /// </summary>
         Execution,
         /// <summary>
-        /// After completion of the operation, status and other housekeeping information are made available to the processor.
+        /// After completion of the operation, status and other housekeeping information are made available to the processor.
         /// </summary>
         Result
     }

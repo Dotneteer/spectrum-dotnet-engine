@@ -24,25 +24,22 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
             switch (ActivePhase)
             {
-                //----------------------------------------
-                //  FDC is waiting for a command byte
-                //----------------------------------------
-                case Phase.Idle:
+                case ControllerCommandPhase.Idle:
                     break;
 
                 //----------------------------------------
                 //  Receiving command parameter bytes
                 //----------------------------------------
-                case Phase.Command:
+                case ControllerCommandPhase.Command:
                     // store the parameter in the command buffer
-                    CommandBuffer[CommandBufferCounter] = LastByteReceived;
+                    CommandParameters[CommandParameterIndex] = LastByteReceived;
 
                     // process parameter byte
-                    byte currByte = CommandBuffer[CommandBufferCounter];
-                    switch (CommandBufferCounter)
+                    byte currByte = CommandParameters[CommandParameterIndex];
+                    switch (CommandParameterIndex)
                     {
                         case 0:
-                            ParseParamByteStandard((CommandParameter)CommandBufferCounter);
+                            ParseParameterByte((CommandParameter)CommandParameterIndex);
                             break;
                         case 1:
                             ActiveFloppyDiskDrive.SeekingTrack = currByte;
@@ -50,14 +47,14 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                     }
 
                     // increment command parameter counter
-                    CommandBufferCounter++;
+                    CommandParameterIndex++;
 
                     // was that the last parameter byte?
-                    if (CommandBufferCounter == ActiveCommand.ParameterBytesCount)
+                    if (CommandParameterIndex == ActiveCommand.ParameterBytesCount)
                     {
                         // all parameter bytes received
                         DriveLight = true;
-                        ActivePhase = Phase.Execution;
+                        ActivePhase = ControllerCommandPhase.Execution;
                         ActiveCommand.CommandHandler();
                     }
                     break;
@@ -65,11 +62,11 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 //----------------------------------------
                 //  FDC in execution phase reading/writing bytes
                 //----------------------------------------
-                case Phase.Execution:
+                case ControllerCommandPhase.Execution:
                     // set seek flag
                     ActiveFloppyDiskDrive.SeekStatus = (int)DriveSeekState.Seek;
 
-                    if (ActiveFloppyDiskDrive.CurrentTrackId == CommandBuffer[(int)CommandParameter.C])
+                    if (ActiveFloppyDiskDrive.CurrentTrackId == CommandParameters[(int)CommandParameter.C])
                     {
                         // we are already on the correct track
                         ActiveFloppyDiskDrive.SectorIndex = 0;
@@ -77,7 +74,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                     else
                     {
                         // immediate seek
-                        ActiveFloppyDiskDrive.CurrentTrackId = CommandBuffer[(int)CommandParameter.C];
+                        ActiveFloppyDiskDrive.CurrentTrackId = CommandParameters[(int)CommandParameter.C];
 
                         ActiveFloppyDiskDrive.SectorIndex = 0;
 
@@ -90,13 +87,13 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                     // skip execution mode and go directly to idle
                     // result is determined by SIS command
-                    ActivePhase = Phase.Idle;
+                    ActivePhase = ControllerCommandPhase.Idle;
                     break;
 
                 //----------------------------------------
                 //  Result bytes being sent to CPU
                 //----------------------------------------
-                case Phase.Result:
+                case ControllerCommandPhase.Result:
                     break;
             }
         }

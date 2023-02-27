@@ -23,25 +23,22 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
         {
             switch (ActivePhase)
             {
-                //----------------------------------------
-                //  FDC is waiting for a command byte
-                //----------------------------------------
-                case Phase.Idle:
+                case ControllerCommandPhase.Idle:
                     break;
 
                 //----------------------------------------
                 //  Receiving command parameter bytes
                 //----------------------------------------
-                case Phase.Command:
+                case ControllerCommandPhase.Command:
 
                     // store the parameter in the command buffer
-                    CommandBuffer[CommandBufferCounter] = LastByteReceived;
+                    CommandParameters[CommandParameterIndex] = LastByteReceived;
 
                     // process parameter byte
-                    byte currByte = CommandBuffer[CommandBufferCounter];
+                    byte currByte = CommandParameters[CommandParameterIndex];
                     BitArray bi = new BitArray(new byte[] { currByte });
 
-                    switch (CommandBufferCounter)
+                    switch (CommandParameterIndex)
                     {
                         // SRT & HUT
                         case 0:
@@ -68,13 +65,13 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                     }
 
                     // increment command parameter counter
-                    CommandBufferCounter++;
+                    CommandParameterIndex++;
 
                     // was that the last parameter byte?
-                    if (CommandBufferCounter == ActiveCommand.ParameterBytesCount)
+                    if (CommandParameterIndex == ActiveCommand.ParameterBytesCount)
                     {
                         // all parameter bytes received
-                        ActivePhase = Phase.Idle;
+                        ActivePhase = ControllerCommandPhase.Idle;
                     }
 
                     break;
@@ -82,13 +79,13 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 //----------------------------------------
                 //  FDC in execution phase reading/writing bytes
                 //----------------------------------------
-                case Phase.Execution:
+                case ControllerCommandPhase.Execution:
                     break;
 
                 //----------------------------------------
                 //  Result bytes being sent to CPU
                 //----------------------------------------
-                case Phase.Result:
+                case ControllerCommandPhase.Result:
                     break;
             }
         }

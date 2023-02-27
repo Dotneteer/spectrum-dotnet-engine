@@ -47,17 +47,13 @@ public partial class NecUpd765
 
         _mainStatusRegisters.SetBits(MainStatusRegisters.RQM);
 
-        SetPhase_Idle();
+        SetPhaseIdle();
 
         SRT = 6;
         HUT = 16;
         HLT = 2;
-        HLT_Counter = 0;
-        HUT_Counter = 0;
-        IndexPulseCounter = 0;
         CMD_FLAG_MF = false;
         ActiveCommand = Commands[_cmdIndex];
-
     }
 
     private FlopyDiskDriveDevice? ActiveFloppyDiskDrive => (FlopyDiskDriveDevice?)_flopyDiskDriveCluster.ActiveFloppyDiskDrive;
@@ -74,7 +70,7 @@ public partial class NecUpd765
             new CommandConfiguration
             {
                 CommandHandler = InvalidCommandHandler,
-                CommandCode = 0x00,
+                CommandCode = CommandCode.Invalid,
                 CommandFlow = CommandFlow.Out,
                 ParameterBytesCount = 0,
                 ResultBytesCount = 1
@@ -83,7 +79,7 @@ public partial class NecUpd765
             new CommandConfiguration
             {
                 CommandHandler = ReadDataCommandHandler,
-                CommandCode = 0x06,
+                CommandCode = CommandCode.ReadData,
                 MT = true,
                 MF = true,
                 SK = true,
@@ -96,7 +92,7 @@ public partial class NecUpd765
             new CommandConfiguration
             {
                 CommandHandler = ReadDeletedDataCommandHandler,
-                CommandCode = 0x0c,
+                CommandCode = CommandCode.ReadDeletedData,
                 MT = true,
                 MF = true,
                 SK = true,
@@ -109,7 +105,7 @@ public partial class NecUpd765
             new CommandConfiguration
             {
                 CommandHandler = ReadDiagnosticCommandHandler, 
-                CommandCode = 0x02, 
+                CommandCode = CommandCode.ReadDiagnostic, 
                 MF = true, 
                 SK = true, 
                 CommandOperation = CommandOperation.Read,
@@ -121,7 +117,7 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = ReadIdCommandHandler, 
-                CommandCode = 0x0a, 
+                CommandCode = CommandCode.ReadId, 
                 MF = true, 
                 CommandOperation = CommandOperation.Read,
                 CommandFlow = CommandFlow.Out, 
@@ -132,7 +128,7 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = RecalibrateCommandHandler, 
-                CommandCode = 0x07,
+                CommandCode = CommandCode.Recalibrate,
                 CommandFlow = CommandFlow.Out, 
                 ParameterBytesCount = 1, 
                 ResultBytesCount = 0 
@@ -141,7 +137,7 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = ScanEqualCommandHandler, 
-                CommandCode = 0x11, 
+                CommandCode = CommandCode.ScanEqual, 
                 MT = true, 
                 MF = true, 
                 SK = true, 
@@ -154,7 +150,7 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = ScanHighOrEqualCommandHandler, 
-                CommandCode = 0x1d, 
+                CommandCode = CommandCode.ScanHighOrEqual, 
                 MT = true, 
                 MF = true, 
                 SK = true, 
@@ -167,7 +163,7 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = ScanLowOrEqualCommandHandler, 
-                CommandCode = 0x19, 
+                CommandCode = CommandCode.ScanLowOrEqual, 
                 MT = true, 
                 MF = true, 
                 SK = true, 
@@ -180,7 +176,7 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = SeekCommandHandler, 
-                CommandCode = 0x0f,
+                CommandCode = CommandCode.Seek,
                 CommandFlow = CommandFlow.Out, 
                 ParameterBytesCount = 2, 
                 ResultBytesCount = 0 
@@ -189,7 +185,7 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = SenseDriveStatusCommandHandler, 
-                CommandCode = 0x04,
+                CommandCode = CommandCode.SenseDriveStatus,
                 CommandFlow = CommandFlow.Out, 
                 ParameterBytesCount = 1, 
                 ResultBytesCount = 1 
@@ -198,7 +194,7 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = SenseInterruptStatusCommandHandler, 
-                CommandCode = 0x08,
+                CommandCode = CommandCode.SenseInterruptStatus,
                 CommandFlow = CommandFlow.Out, 
                 ParameterBytesCount = 0, 
                 ResultBytesCount = 2 
@@ -207,7 +203,7 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = SpecifyCommandHandler, 
-                CommandCode = 0x03,
+                CommandCode = CommandCode.Specify,
                 CommandFlow = CommandFlow.Out, 
                 ParameterBytesCount = 2, 
                 ResultBytesCount = 0 
@@ -216,7 +212,7 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = VersionCommandHandler, 
-                CommandCode = 0x10,
+                CommandCode = CommandCode.Version,
                 CommandFlow = CommandFlow.Out, 
                 ParameterBytesCount = 0, 
                 ResultBytesCount = 1 
@@ -225,7 +221,7 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = WriteDataCommandHandler, 
-                CommandCode = 0x05, 
+                CommandCode = CommandCode.WriteData, 
                 MT = true, 
                 MF = true, 
                 CommandOperation = CommandOperation.Write,
@@ -237,7 +233,7 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = WriteDeletedDataCommandHandler, 
-                CommandCode = 0x09, 
+                CommandCode = CommandCode.WriteDeletedData, 
                 MT = true, 
                 MF = true, 
                 CommandOperation = CommandOperation.Write,
@@ -249,7 +245,7 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = WriteIdCommandHandler, 
-                CommandCode = 0x0d, 
+                CommandCode = CommandCode.WriteId, 
                 MF = true, 
                 CommandOperation = CommandOperation.Write,
                 CommandFlow = CommandFlow.In, 

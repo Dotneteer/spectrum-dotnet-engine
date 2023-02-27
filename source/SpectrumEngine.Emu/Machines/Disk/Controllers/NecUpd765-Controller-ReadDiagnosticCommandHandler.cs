@@ -24,28 +24,25 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
             switch (ActivePhase)
             {
-                //----------------------------------------
-                //  FDC is waiting for a command byte
-                //----------------------------------------
-                case Phase.Idle:
+                case ControllerCommandPhase.Idle:
                     break;
 
                 //----------------------------------------
                 //  Receiving command parameter bytes
                 //----------------------------------------
-                case Phase.Command:
+                case ControllerCommandPhase.Command:
 
                     // store the parameter in the command buffer
-                    CommandBuffer[CommandBufferCounter] = LastByteReceived;
+                    CommandParameters[CommandParameterIndex] = LastByteReceived;
 
                     // process parameter byte
-                    ParseParamByteStandard((CommandParameter)CommandBufferCounter);
+                    ParseParameterByte((CommandParameter)CommandParameterIndex);
 
                     // increment command parameter counter
-                    CommandBufferCounter++;
+                    CommandParameterIndex++;
 
                     // was that the last parameter byte?
-                    if (CommandBufferCounter == ActiveCommand.ParameterBytesCount)
+                    if (CommandParameterIndex == ActiveCommand.ParameterBytesCount)
                     {
                         // all parameter bytes received - setup for execution phase
 
@@ -57,7 +54,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         _statusRegisters3 = 0;
 
                         // temp sector index
-                        byte secIdx = ActiveCommandState.Sector;
+                        byte secIdx = ActiveCommandData.Sector;
 
                         // do we have a valid disk inserted?
                         if (!ActiveFloppyDiskDrive.IsReady)
@@ -70,7 +67,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             //ResBuffer[RS_ST0] = Status0;
 
                             // move to result phase
-                            ActivePhase = Phase.Result;
+                            ActivePhase = ControllerCommandPhase.Result;
                             break;
                         }
 
@@ -80,13 +77,13 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         if (maxTransferCap > 0) { }
 
                         // calculate requested size of data required
-                        if (ActiveCommandState.SectorSize == 0)
+                        if (ActiveCommandData.SectorSize == 0)
                         {
                             // When N=0, then DTL defines the data length which the FDC must treat as a sector. If DTL is smaller than the actual 
                             // data length in a sector, the data beyond DTL in the sector is not sent to the Data Bus. The FDC reads (internally) 
                             // the complete sector performing the CRC check and, depending upon the manner of command termination, may perform 
                             // a Multi-Sector Read Operation.
-                            sectorSize = ActiveCommandState.DTL;
+                            sectorSize = ActiveCommandData.DTL;
 
                             // calculate maximum transfer capacity
                             if (!CMD_FLAG_MF)
@@ -95,10 +92,10 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         else
                         {
                             // When N is non - zero, then DTL has no meaning and should be set to ffh
-                            ActiveCommandState.DTL = 0xFF;
+                            ActiveCommandData.DTL = 0xFF;
 
                             // calculate maximum transfer capacity
-                            switch (ActiveCommandState.SectorSize)
+                            switch (ActiveCommandData.SectorSize)
                             {
                                 case 1:
                                     if (CMD_FLAG_MF)
@@ -120,7 +117,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                                     break;
                             }
 
-                            sectorSize = 0x80 << ActiveCommandState.SectorSize;
+                            sectorSize = 0x80 << ActiveCommandData.SectorSize;
                         }
 
                         // get the current track
@@ -137,7 +134,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             //ResBuffer[RS_ST0] = Status0;
 
                             // move to result phase
-                            ActivePhase = Phase.Result;
+                            ActivePhase = ControllerCommandPhase.Result;
                             break;
                         }
 
@@ -149,7 +146,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         // read the whole track
                         for (int i = 0; i < track.Sectors.Length; i++)
                         {
-                            if (secCount >= ActiveCommandState.EOT)
+                            if (secCount >= ActiveCommandData.EOT)
                             {
                                 break;
                             }
@@ -164,10 +161,10 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             sec.SectorReadCompleted();
 
                             // end of sector - compare IDs
-                            if (sec.TrackNumber != ActiveCommandState.Cylinder ||
-                                sec.SideNumber != ActiveCommandState.Head ||
-                                sec.SectorID != ActiveCommandState.Sector ||
-                                sec.SectorSize != ActiveCommandState.SectorSize)
+                            if (sec.TrackNumber != ActiveCommandData.Cylinder ||
+                                sec.SideNumber != ActiveCommandData.Head ||
+                                sec.SectorID != ActiveCommandData.Sector ||
+                                sec.SectorSize != ActiveCommandData.SectorSize)
                             {
                                 _statusRegisters1.SetBits(StatusRegisters1.ND);
                             }
@@ -176,7 +173,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             ActiveFloppyDiskDrive.SectorIndex = i;
                         }
 
-                        if (secCount == ActiveCommandState.EOT)
+                        if (secCount == ActiveCommandData.EOT)
                         {
                             // this was the last sector to read
                             // or termination requested
@@ -197,10 +194,10 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                                 _statusRegisters1.SetBits(StatusRegisters1.EN);
 
                                 // increment cylinder
-                                ActiveCommandState.Cylinder++;
+                                ActiveCommandData.Cylinder++;
 
                                 // reset sector
-                                ActiveCommandState.Sector = 1;
+                                ActiveCommandData.Sector = 1;
                                 ActiveFloppyDiskDrive.SectorIndex = 0;
                             }
                             else
@@ -212,10 +209,10 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                             CommitResultCHRN();
                             CommitResultStatus();
-                            ActivePhase = Phase.Execution;
+                            ActivePhase = ControllerCommandPhase.Execution;
                         }
 
-                        if (ActivePhase == Phase.Execution)
+                        if (ActivePhase == ControllerCommandPhase.Execution)
                         {
                             ExecutionLength = buffPos;
                             ExecutionBufferCounter = buffPos;
@@ -229,7 +226,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 //----------------------------------------
                 //  FDC in execution phase reading/writing bytes
                 //----------------------------------------
-                case Phase.Execution:
+                case ControllerCommandPhase.Execution:
 
                     var index = ExecutionLength - ExecutionBufferCounter;
 
@@ -243,7 +240,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 //----------------------------------------
                 //  Result bytes being sent to CPU
                 //----------------------------------------
-                case Phase.Result:
+                case ControllerCommandPhase.Result:
                     break;
             }
         }
