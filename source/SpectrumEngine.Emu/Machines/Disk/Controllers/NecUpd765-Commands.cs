@@ -33,27 +33,17 @@ public record CommandConfiguration
     /// IN - Z80 to UPD765A
     /// OUT - UPD765A to Z80
     /// </summary>
-    public NecUpd765.CommandFlow CommandFlow { get; init; }
+    public CommandFlow CommandFlow { get; init; }
 
     /// <summary>
     /// Command oeration Read/Write
     /// </summary>
-    public NecUpd765.CommandOperation CommandOperation { get; init; }
+    public CommandOperation CommandOperation { get; init; }
 
     /// <summary>
-    /// Use of the MT bit (Multitrack bit)
+    /// Command flags
     /// </summary>
-    public bool MT { get; init; }
-
-    /// <summary>
-    /// Use of the MF bit (Multi Format Single/double density)
-    /// </summary>
-    public bool MF { get; init; }
-
-    /// <summary>
-    /// Use of the SK bit (Skip bit)
-    /// </summary>
-    public bool SK { get; init; }
+    public CommandFlags CommandFlags { get; init; }
 }
 
 /// <summary>
@@ -155,6 +145,27 @@ public record Command
     /// read/write data command ID
     /// </summary>
     public int DataId { get; init; }
+}
+
+/// <summary>
+/// Command common flags
+/// </summary>
+public struct CommandFlags
+{
+    /// <summary>
+    /// Use of the MT bit (Multitrack bit)
+    /// </summary>
+    public bool MT { get; init; }
+
+    /// <summary>
+    /// Use of the MF bit (Multi Format Single/double density)
+    /// </summary>
+    public bool MF { get; init; }
+
+    /// <summary>
+    /// Use of the SK bit (Skip bit)
+    /// </summary>
+    public bool SK { get; init; }
 }
 
 /// <summary>

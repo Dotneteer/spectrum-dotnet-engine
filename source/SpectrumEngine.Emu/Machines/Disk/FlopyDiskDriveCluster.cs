@@ -1,8 +1,6 @@
 ﻿using SpectrumEngine.Emu.Abstractions;
-using SpectrumEngine.Emu.Extensions;
 using SpectrumEngine.Emu.Machines.Disk.Controllers;
 using SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
-using System;
 
 namespace SpectrumEngine.Emu.Machines.Disk;
 
@@ -12,16 +10,16 @@ namespace SpectrumEngine.Emu.Machines.Disk;
 public class FlopyDiskDriveCluster
 {
     private const int _floppyDiskDrivesUsed = 2;
-    private readonly Z80MachineBase _machine;
     private readonly NecUpd765 _floppyDiskController;
     private readonly IFlopyDiskDriveDevice[] _floppyDiskDrives = new FlopyDiskDriveDevice[_floppyDiskDrivesUsed];
+    private readonly IZxSpectrumMachine _machine;
 
     private int _floppyDiskDriveSlot = 0;
 
-    public FlopyDiskDriveCluster(Z80MachineBase machine)
+    public FlopyDiskDriveCluster(IZxSpectrumMachine machine)
     {
         _machine = machine;
-        _floppyDiskController = new NecUpd765(machine, this);
+        _floppyDiskController = new NecUpd765(this);
 
         Reset();
     }

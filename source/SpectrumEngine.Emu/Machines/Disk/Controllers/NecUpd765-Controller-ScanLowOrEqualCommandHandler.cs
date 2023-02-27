@@ -10,7 +10,7 @@
         /// </summary>
         private void ScanLowOrEqualCommandHandler()
         {
-            switch (ActivePhase)
+            switch (_activePhase)
             {
                 case ControllerCommandPhase.Idle:
                     break;

@@ -11,7 +11,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
         /// </summary>
         private void ScanHighOrEqualCommandHandler()
         {
-            switch (ActivePhase)
+            switch (_activePhase)
             {
                 case ControllerCommandPhase.Idle:
                     break;

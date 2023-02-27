@@ -5,6 +5,8 @@
 /// </summary>
 public partial class NecUpd765
 {
+    private const int MaxParameterBytes = 9;
+
     public enum CommandCode
     {
         Invalid = 0x00,

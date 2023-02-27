@@ -22,27 +22,17 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 return;
             }
 
-            switch (ActivePhase)
+            switch (_activePhase)
             {
                 case ControllerCommandPhase.Idle:
                     break;
 
-                //----------------------------------------
-                //  Receiving command parameter bytes
-                //----------------------------------------
                 case ControllerCommandPhase.Command:
 
-                    // store the parameter in the command buffer
-                    CommandParameters[CommandParameterIndex] = LastByteReceived;
-
-                    // process parameter byte
-                    ParseParameterByte((CommandParameter)CommandParameterIndex);
-
-                    // increment command parameter counter
-                    CommandParameterIndex++;
+                    PushCommandByteInBuffer();
 
                     // was that the last parameter byte?
-                    if (CommandParameterIndex == ActiveCommand.ParameterBytesCount)
+                    if (_commandParameterIndex == _activeCommand.ParameterBytesCount)
                     {
                         // all parameter bytes received - setup for execution phase
                         DriveLight = true;
@@ -55,7 +45,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         _statusRegisters3 = 0;
 
                         // temp sector index
-                        byte secIdx = ActiveCommandData.Sector;
+                        byte secIdx = _activeCommandData.Sector;
 
                         // do we have a valid disk inserted?
                         if (!ActiveFloppyDiskDrive.IsReady)
@@ -68,7 +58,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             //ResBuffer[RS_ST0] = Status0;
 
                             // move to result phase
-                            ActivePhase = ControllerCommandPhase.Result;
+                            _activePhase = ControllerCommandPhase.Result;
                             break;
                         }
 
@@ -83,7 +73,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             //ResBuffer[RS_ST0] = Status0;
 
                             // move to result phase
-                            ActivePhase = ControllerCommandPhase.Result;
+                            _activePhase = ControllerCommandPhase.Result;
                             break;
                         }
                         else
@@ -97,22 +87,16 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             //ResBuffer[RS_ST0] = Status0;
 
                             // move to result phase
-                            ActivePhase = ControllerCommandPhase.Result;
+                            _activePhase = ControllerCommandPhase.Result;
                             break;
                         }
                     }
 
                     break;
 
-                //----------------------------------------
-                //  FDC in execution phase reading/writing bytes
-                //----------------------------------------
                 case ControllerCommandPhase.Execution:
                     break;
 
-                //----------------------------------------
-                //  Result bytes being sent to CPU
-                //----------------------------------------
                 case ControllerCommandPhase.Result:
                     break;
             }

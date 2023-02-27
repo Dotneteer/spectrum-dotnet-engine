@@ -22,24 +22,21 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 return;
             }
 
-            switch (ActivePhase)
+            switch (_activePhase)
             {
                 case ControllerCommandPhase.Idle:
                     break;
 
-                //----------------------------------------
-                //  Receiving command parameter bytes
-                //----------------------------------------
                 case ControllerCommandPhase.Command:
                     // store the parameter in the command buffer
-                    CommandParameters[CommandParameterIndex] = LastByteReceived;
+                    _commandParameters[_commandParameterIndex] = _lastByteReceived;
 
                     // process parameter byte
-                    byte currByte = CommandParameters[CommandParameterIndex];
-                    switch (CommandParameterIndex)
+                    byte currByte = _commandParameters[_commandParameterIndex];
+                    switch (_commandParameterIndex)
                     {
                         case 0:
-                            ParseParameterByte((CommandParameter)CommandParameterIndex);
+                            ParseParameterByte((CommandParameter)_commandParameterIndex);
                             break;
                         case 1:
                             ActiveFloppyDiskDrive.SeekingTrack = currByte;
@@ -47,15 +44,15 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                     }
 
                     // increment command parameter counter
-                    CommandParameterIndex++;
+                    _commandParameterIndex++;
 
                     // was that the last parameter byte?
-                    if (CommandParameterIndex == ActiveCommand.ParameterBytesCount)
+                    if (_commandParameterIndex == _activeCommand.ParameterBytesCount)
                     {
                         // all parameter bytes received
                         DriveLight = true;
-                        ActivePhase = ControllerCommandPhase.Execution;
-                        ActiveCommand.CommandHandler();
+                        _activePhase = ControllerCommandPhase.Execution;
+                        _activeCommand.CommandHandler();
                     }
                     break;
 
@@ -66,7 +63,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                     // set seek flag
                     ActiveFloppyDiskDrive.SeekStatus = (int)DriveSeekState.Seek;
 
-                    if (ActiveFloppyDiskDrive.CurrentTrackId == CommandParameters[(int)CommandParameter.C])
+                    if (ActiveFloppyDiskDrive.CurrentTrackId == _commandParameters[(int)CommandParameter.C])
                     {
                         // we are already on the correct track
                         ActiveFloppyDiskDrive.SectorIndex = 0;
@@ -74,7 +71,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                     else
                     {
                         // immediate seek
-                        ActiveFloppyDiskDrive.CurrentTrackId = CommandParameters[(int)CommandParameter.C];
+                        ActiveFloppyDiskDrive.CurrentTrackId = _commandParameters[(int)CommandParameter.C];
 
                         ActiveFloppyDiskDrive.SectorIndex = 0;
 
@@ -87,7 +84,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                     // skip execution mode and go directly to idle
                     // result is determined by SIS command
-                    ActivePhase = ControllerCommandPhase.Idle;
+                    _activePhase = ControllerCommandPhase.Idle;
                     break;
 
                 //----------------------------------------

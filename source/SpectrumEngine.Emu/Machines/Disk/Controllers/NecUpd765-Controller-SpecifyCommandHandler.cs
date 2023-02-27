@@ -21,70 +21,34 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
         /// </summary>
         private void SpecifyCommandHandler()
         {
-            switch (ActivePhase)
+            switch (_activePhase)
             {
                 case ControllerCommandPhase.Idle:
                     break;
 
-                //----------------------------------------
-                //  Receiving command parameter bytes
-                //----------------------------------------
                 case ControllerCommandPhase.Command:
 
                     // store the parameter in the command buffer
-                    CommandParameters[CommandParameterIndex] = LastByteReceived;
-
-                    // process parameter byte
-                    byte currByte = CommandParameters[CommandParameterIndex];
-                    BitArray bi = new BitArray(new byte[] { currByte });
-
-                    switch (CommandParameterIndex)
-                    {
-                        // SRT & HUT
-                        case 0:
-                            SRT = 16 - (currByte >> 4) & 0x0f;
-                            HUT = (currByte & 0x0f) << 4;
-                            if (HUT == 0)
-                            {
-                                HUT = 255;
-                            }
-                            break;
-                        // HLT & ND
-                        case 1:
-                            if (bi[0])
-                                ND = true;
-                            else
-                                ND = false;
-
-                            HLT = currByte & 0xfe;
-                            if (HLT == 0)
-                            {
-                                HLT = 255;
-                            }
-                            break;
-                    }
+                    _commandParameters[_commandParameterIndex] = _lastByteReceived;
 
                     // increment command parameter counter
-                    CommandParameterIndex++;
+                    _commandParameterIndex++;
 
                     // was that the last parameter byte?
-                    if (CommandParameterIndex == ActiveCommand.ParameterBytesCount)
+                    if (_commandParameterIndex == _activeCommand.ParameterBytesCount)
                     {
                         // all parameter bytes received
-                        ActivePhase = ControllerCommandPhase.Idle;
+
+                        // nothing useful to do in specify, this just configures some
+                        // timing and DMA-mode params that are not relevant for this emulation
+                        _activePhase = ControllerCommandPhase.Idle;
                     }
 
                     break;
 
-                //----------------------------------------
-                //  FDC in execution phase reading/writing bytes
-                //----------------------------------------
                 case ControllerCommandPhase.Execution:
                     break;
 
-                //----------------------------------------
-                //  Result bytes being sent to CPU
-                //----------------------------------------
                 case ControllerCommandPhase.Result:
                     break;
             }

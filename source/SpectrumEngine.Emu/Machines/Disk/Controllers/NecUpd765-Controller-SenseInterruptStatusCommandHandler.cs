@@ -23,20 +23,14 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 return;
             }
 
-            switch (ActivePhase)
+            switch (_activePhase)
             {
                 case ControllerCommandPhase.Idle:
                     break;
 
-                //----------------------------------------
-                //  Receiving command parameter bytes
-                //----------------------------------------
                 case ControllerCommandPhase.Command:
                     break;
 
-                //----------------------------------------
-                //  FDC in execution phase reading/writing bytes
-                //----------------------------------------
                 case ControllerCommandPhase.Execution:
                     // SIS should return 2 bytes if sucessfully sensed an interrupt
                     // 1 byte otherwise
@@ -57,13 +51,13 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         ActiveFloppyDiskDrive.SeekStatus = (int)DriveSeekState.Idle;
 
                         // result length 2
-                        ResultLength = 2;
+                        _resultLength = 2;
 
                         // first byte ST0 0x20
                         _statusRegisters0 = (StatusRegisters0)0x20;
-                        ResultBuffer[0] = (byte)_statusRegisters0;
+                        _resultBuffer[0] = (byte)_statusRegisters0;
                         // second byte is the current track id
-                        ResultBuffer[1] = ActiveFloppyDiskDrive.CurrentTrackId;
+                        _resultBuffer[1] = ActiveFloppyDiskDrive.CurrentTrackId;
                     }
                     /*
                         else if (ActiveFloppyDiskDrive.SeekStatus == SEEK_INTACKNOWLEDGED)
@@ -79,18 +73,15 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                     else if (ActiveFloppyDiskDrive.SeekStatus == (int)DriveSeekState.Idle)
                     {
                         // SIS with no interrupt
-                        ResultLength = 1;
+                        _resultLength = 1;
                         _statusRegisters0 = (StatusRegisters0)0x80;
-                        ResultBuffer[0] = (byte)_statusRegisters0;
+                        _resultBuffer[0] = (byte)_statusRegisters0;
                     }
 
-                    ActivePhase = ControllerCommandPhase.Result;
+                    _activePhase = ControllerCommandPhase.Result;
 
                     break;
 
-                //----------------------------------------
-                //  Result bytes being sent to CPU
-                //----------------------------------------
                 case ControllerCommandPhase.Result:
                     break;
             }

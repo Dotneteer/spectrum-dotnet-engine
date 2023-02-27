@@ -27,36 +27,24 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 return;
             }
 
-            switch (ActivePhase)
+            switch (_activePhase)
             {
                 case ControllerCommandPhase.Idle:
                     break;
 
-                //----------------------------------------
-                //  Receiving command parameter bytes
-                //----------------------------------------
                 case ControllerCommandPhase.Command:
-                    // store the parameter in the command buffer
-                    CommandParameters[CommandParameterIndex] = LastByteReceived;
 
-                    // process parameter byte
-                    ParseParameterByte((CommandParameter)CommandParameterIndex);
-
-                    // increment command parameter counter
-                    CommandParameterIndex++;
+                    PushCommandByteInBuffer();
 
                     // was that the last parameter byte?
-                    if (CommandParameterIndex == ActiveCommand.ParameterBytesCount)
+                    if (_commandParameterIndex == _activeCommand.ParameterBytesCount)
                     {
                         // all parameter bytes received
-                        ActivePhase = ControllerCommandPhase.Execution;
+                        _activePhase = ControllerCommandPhase.Execution;
                         SenseDriveStatusCommandHandler();
                     }
                     break;
 
-                //----------------------------------------
-                //  FDC in execution phase reading/writing bytes
-                //----------------------------------------
                 case ControllerCommandPhase.Execution:
                     // one ST3 byte required
 
@@ -92,14 +80,11 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         }
                     }
 
-                    ResultBuffer[0] = (byte)_statusRegisters3;
-                    ActivePhase = ControllerCommandPhase.Result;
+                    _resultBuffer[0] = (byte)_statusRegisters3;
+                    _activePhase = ControllerCommandPhase.Result;
 
                     break;
 
-                //----------------------------------------
-                //  Result bytes being sent to CPU
-                //----------------------------------------
                 case ControllerCommandPhase.Result:
                     break;
             }

@@ -1,7 +1,4 @@
-﻿using SpectrumEngine.Emu.Abstractions;
-using System.Collections.Generic;
-
-namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
+﻿namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
 
 /// <summary>
 /// The NEC floppy disk controller (and floppy drive) found in the +3
@@ -17,15 +14,13 @@ public partial class NecUpd765
     /// <summary>
     /// The emulated spectrum machine
     /// </summary>
-    private Z80MachineBase _machine;
     private FlopyDiskDriveCluster _flopyDiskDriveCluster;
 
     /// <summary>
     /// Main constructor
     /// </summary>
-    public NecUpd765(Z80MachineBase machine, FlopyDiskDriveCluster flopyDiskDriveCluster)
+    public NecUpd765(FlopyDiskDriveCluster flopyDiskDriveCluster)
     {
-        _machine = machine;
         _flopyDiskDriveCluster = flopyDiskDriveCluster;
 
         InitCommands();
@@ -49,11 +44,8 @@ public partial class NecUpd765
 
         SetPhaseIdle();
 
-        SRT = 6;
-        HUT = 16;
-        HLT = 2;
-        CMD_FLAG_MF = false;
-        ActiveCommand = Commands[_cmdIndex];
+        _cmdFlagMF = false;
+        _activeCommand = _commands[_cmdIndex];
     }
 
     private FlopyDiskDriveDevice? ActiveFloppyDiskDrive => (FlopyDiskDriveDevice?)_flopyDiskDriveCluster.ActiveFloppyDiskDrive;
@@ -64,7 +56,7 @@ public partial class NecUpd765
     /// </summary>
     private void InitCommands()
     {
-        Commands = new List<CommandConfiguration>
+        _commands = new List<CommandConfiguration>
         {
 			// invalid
             new CommandConfiguration
@@ -80,9 +72,7 @@ public partial class NecUpd765
             {
                 CommandHandler = ReadDataCommandHandler,
                 CommandCode = CommandCode.ReadData,
-                MT = true,
-                MF = true,
-                SK = true,
+                CommandFlags = new CommandFlags { MT = true, MF = true, SK = true },
                 CommandOperation = CommandOperation.Read,
                 CommandFlow = CommandFlow.Out,
                 ParameterBytesCount = 8,
@@ -93,9 +83,7 @@ public partial class NecUpd765
             {
                 CommandHandler = ReadDeletedDataCommandHandler,
                 CommandCode = CommandCode.ReadDeletedData,
-                MT = true,
-                MF = true,
-                SK = true,
+                CommandFlags = new CommandFlags { MT = true, MF = true, SK = true },
                 CommandOperation = CommandOperation.Read,
                 CommandFlow = CommandFlow.Out,
                 ParameterBytesCount = 8,
@@ -105,9 +93,8 @@ public partial class NecUpd765
             new CommandConfiguration
             {
                 CommandHandler = ReadDiagnosticCommandHandler, 
-                CommandCode = CommandCode.ReadDiagnostic, 
-                MF = true, 
-                SK = true, 
+                CommandCode = CommandCode.ReadDiagnostic,
+                CommandFlags = new CommandFlags { MF = true, SK = true },
                 CommandOperation = CommandOperation.Read,
                 CommandFlow = CommandFlow.Out, 
                 ParameterBytesCount = 8, 
@@ -117,8 +104,8 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = ReadIdCommandHandler, 
-                CommandCode = CommandCode.ReadId, 
-                MF = true, 
+                CommandCode = CommandCode.ReadId,
+                CommandFlags = new CommandFlags { MF = true},
                 CommandOperation = CommandOperation.Read,
                 CommandFlow = CommandFlow.Out, 
                 ParameterBytesCount = 1, 
@@ -137,10 +124,8 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = ScanEqualCommandHandler, 
-                CommandCode = CommandCode.ScanEqual, 
-                MT = true, 
-                MF = true, 
-                SK = true, 
+                CommandCode = CommandCode.ScanEqual,
+                CommandFlags = new CommandFlags { MT = true, MF = true, SK = true },
                 CommandOperation =  CommandOperation.Read,
                 CommandFlow = CommandFlow.In, 
                 ParameterBytesCount = 8, 
@@ -150,10 +135,8 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = ScanHighOrEqualCommandHandler, 
-                CommandCode = CommandCode.ScanHighOrEqual, 
-                MT = true, 
-                MF = true, 
-                SK = true, 
+                CommandCode = CommandCode.ScanHighOrEqual,
+                CommandFlags = new CommandFlags { MT = true, MF = true, SK = true },
                 CommandOperation = CommandOperation.Read,
                 CommandFlow = CommandFlow.In, 
                 ParameterBytesCount = 8, 
@@ -164,9 +147,7 @@ public partial class NecUpd765
             { 
                 CommandHandler = ScanLowOrEqualCommandHandler, 
                 CommandCode = CommandCode.ScanLowOrEqual, 
-                MT = true, 
-                MF = true, 
-                SK = true, 
+                CommandFlags = new CommandFlags { MT = true, MF = true, SK = true },
                 CommandOperation = CommandOperation.Read,
                 CommandFlow = CommandFlow.In, 
                 ParameterBytesCount = 8, 
@@ -221,9 +202,8 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = WriteDataCommandHandler, 
-                CommandCode = CommandCode.WriteData, 
-                MT = true, 
-                MF = true, 
+                CommandCode = CommandCode.WriteData,
+                CommandFlags = new CommandFlags { MT = true, MF = true },
                 CommandOperation = CommandOperation.Write,
                 CommandFlow = CommandFlow.In, 
                 ParameterBytesCount = 8, 
@@ -233,9 +213,8 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = WriteDeletedDataCommandHandler, 
-                CommandCode = CommandCode.WriteDeletedData, 
-                MT = true, 
-                MF = true, 
+                CommandCode = CommandCode.WriteDeletedData,
+                CommandFlags = new CommandFlags { MT = true, MF = true },
                 CommandOperation = CommandOperation.Write,
                 CommandFlow = CommandFlow.In, 
                 ParameterBytesCount = 8, 
@@ -245,8 +224,8 @@ public partial class NecUpd765
             new CommandConfiguration 
             { 
                 CommandHandler = WriteIdCommandHandler, 
-                CommandCode = CommandCode.WriteId, 
-                MF = true, 
+                CommandCode = CommandCode.WriteId,
+                CommandFlags = new CommandFlags { MF = true },
                 CommandOperation = CommandOperation.Write,
                 CommandFlow = CommandFlow.In, 
                 ParameterBytesCount = 5, 

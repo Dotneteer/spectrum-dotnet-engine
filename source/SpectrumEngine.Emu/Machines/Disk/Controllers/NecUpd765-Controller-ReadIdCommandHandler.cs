@@ -22,27 +22,17 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 return;
             }
 
-            switch (ActivePhase)
+            switch (_activePhase)
             {
                 case ControllerCommandPhase.Idle:
                     break;
 
-                //----------------------------------------
-                //  Receiving command parameter bytes
-                //----------------------------------------
                 case ControllerCommandPhase.Command:
 
-                    // store the parameter in the command buffer
-                    CommandParameters[CommandParameterIndex] = LastByteReceived;
-
-                    // process parameter byte
-                    ParseParameterByte((CommandParameter)CommandParameterIndex);
-
-                    // increment command parameter counter
-                    CommandParameterIndex++;
+                    PushCommandByteInBuffer();
 
                     // was that the last parameter byte?
-                    if (CommandParameterIndex == ActiveCommand.ParameterBytesCount)
+                    if (_commandParameterIndex == _activeCommand.ParameterBytesCount)
                     {
                         DriveLight = true;
 
@@ -67,14 +57,14 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             _statusRegisters0.SetBits(StatusRegisters0.IC_D6 | StatusRegisters0.NR);
 
                             // setup the result buffer
-                            ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
+                            _resultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
                             for (int i = 1; i < 7; i++)
                             {
-                                ResultBuffer[i] = 0;
+                                _resultBuffer[i] = 0;
                             }
 
                             // move to result phase
-                            ActivePhase = ControllerCommandPhase.Result;
+                            _activePhase = ControllerCommandPhase.Result;
                             break;
                         }
 
@@ -99,12 +89,12 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                             // read the sector data
                             var data = track.Sectors[ActiveFloppyDiskDrive.SectorIndex]; //.GetCHRN();
-                            ResultBuffer[(int)CommandResultParameter.C] = data.TrackNumber;
-                            ResultBuffer[(int)CommandResultParameter.H] = data.SideNumber;
-                            ResultBuffer[(int)CommandResultParameter.R] = data.SectorID;
-                            ResultBuffer[(int)CommandResultParameter.N] = data.SectorSize;
+                            _resultBuffer[(int)CommandResultParameter.C] = data.TrackNumber;
+                            _resultBuffer[(int)CommandResultParameter.H] = data.SideNumber;
+                            _resultBuffer[(int)CommandResultParameter.R] = data.SectorID;
+                            _resultBuffer[(int)CommandResultParameter.N] = data.SectorSize;
 
-                            ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
+                            _resultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
 
                             // check for DAM & CRC
                             //if (data.Status2.Bit(SR2_CM))
@@ -127,11 +117,11 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             CommitResultCHRN();
 
                             _statusRegisters0.SetBits(StatusRegisters0.IC_D6);
-                            ResultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
-                            ResultBuffer[(int)CommandResultParameter.ST1] = 0x01;
+                            _resultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
+                            _resultBuffer[(int)CommandResultParameter.ST1] = 0x01;
                         }
 
-                        ActivePhase = ControllerCommandPhase.Result;
+                        _activePhase = ControllerCommandPhase.Result;
                     }
 
                     break;

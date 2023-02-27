@@ -22,37 +22,25 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 return;
             }
 
-            switch (ActivePhase)
+            switch (_activePhase)
             {
                 case ControllerCommandPhase.Idle:
                     break;
 
-                //----------------------------------------
-                //  Receiving command parameter bytes
-                //----------------------------------------
                 case ControllerCommandPhase.Command:
-                    // store the parameter in the command buffer
-                    CommandParameters[CommandParameterIndex] = LastByteReceived;
 
-                    // process parameter byte
-                    ParseParameterByte((CommandParameter)CommandParameterIndex);
-
-                    // increment command parameter counter
-                    CommandParameterIndex++;
+                    PushCommandByteInBuffer();
 
                     // was that the last parameter byte?
-                    if (CommandParameterIndex == ActiveCommand.ParameterBytesCount)
+                    if (_commandParameterIndex == _activeCommand.ParameterBytesCount)
                     {
                         // all parameter bytes received
                         DriveLight = true;
-                        ActivePhase = ControllerCommandPhase.Execution;
-                        ActiveCommand.CommandHandler();
+                        _activePhase = ControllerCommandPhase.Execution;
+                        _activeCommand.CommandHandler();
                     }
                     break;
 
-                //----------------------------------------
-                //  FDC in execution phase reading/writing bytes
-                //----------------------------------------
                 case ControllerCommandPhase.Execution:
 
                     // immediate recalibration
@@ -68,12 +56,9 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                     // skip execution mode and go directly to idle
                     // result is determined by SIS command
-                    ActivePhase = ControllerCommandPhase.Idle;
+                    _activePhase = ControllerCommandPhase.Idle;
                     break;
 
-                //----------------------------------------
-                //  Result bytes being sent to CPU
-                //----------------------------------------
                 case ControllerCommandPhase.Result:
                     break;
             }

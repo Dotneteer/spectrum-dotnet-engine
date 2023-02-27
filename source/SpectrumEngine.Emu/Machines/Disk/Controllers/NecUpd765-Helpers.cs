@@ -1,7 +1,4 @@
-﻿using SpectrumEngine.Emu.Extensions;
-using System.Collections;
-using System.Runtime.CompilerServices;
-using static SpectrumEngine.Emu.Machines.Disk.Controllers.NecUpd765;
+﻿using static SpectrumEngine.Emu.Machines.Disk.Controllers.NecUpd765;
 
 namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
 
