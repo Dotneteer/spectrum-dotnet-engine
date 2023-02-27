@@ -55,7 +55,6 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                             CommitResultCHRN();
                             CommitResultStatus();
-                            //ResBuffer[RS_ST0] = Status0;
 
                             // move to result phase
                             _activePhase = ControllerCommandPhase.Result;
@@ -70,7 +69,6 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                             CommitResultCHRN();
                             CommitResultStatus();
-                            //ResBuffer[RS_ST0] = Status0;
 
                             // move to result phase
                             _activePhase = ControllerCommandPhase.Result;
@@ -84,7 +82,6 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                             CommitResultCHRN();
                             CommitResultStatus();
-                            //ResBuffer[RS_ST0] = Status0;
 
                             // move to result phase
                             _activePhase = ControllerCommandPhase.Result;

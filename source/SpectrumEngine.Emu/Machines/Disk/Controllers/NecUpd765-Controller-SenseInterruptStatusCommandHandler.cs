@@ -59,17 +59,6 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         // second byte is the current track id
                         _resultBuffer[1] = ActiveFloppyDiskDrive.CurrentTrackId;
                     }
-                    /*
-                        else if (ActiveFloppyDiskDrive.SeekStatus == SEEK_INTACKNOWLEDGED)
-                        {
-                            // DriveA interrupt has already been acknowledged
-                            ActiveFloppyDiskDrive.SeekStatus = SEEK_IDLE;
-
-                            ResLength = 1;
-                            Status0 = 192;
-                            ResBuffer[0] = Status0;
-                        }
-                        */
                     else if (ActiveFloppyDiskDrive.SeekStatus == (int)DriveSeekState.Idle)
                     {
                         // SIS with no interrupt

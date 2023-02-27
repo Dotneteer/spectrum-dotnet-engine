@@ -54,7 +54,6 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                             CommitResultCHRN();
                             CommitResultStatus();
-                            //ResBuffer[RS_ST0] = Status0;
 
                             // move to result phase
                             _activePhase = ControllerCommandPhase.Result;
@@ -69,7 +68,6 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                             CommitResultCHRN();
                             CommitResultStatus();
-                            //ResBuffer[RS_ST0] = Status0;
 
                             // move to result phase
                             _activePhase = ControllerCommandPhase.Result;
@@ -80,7 +78,6 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                             // calculate the number of bytes to write
                             int byteCounter = 0;
-                            byte startSecID = _activeCommandData.Sector;
                             byte endSecID = _activeCommandData.EOT;
                             bool lastSec = false;
 
@@ -130,11 +127,9 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         int cnt = 0;
 
                         // all data received
-                        byte startSecID = _activeCommandData.Sector;
                         byte endSecID = _activeCommandData.EOT;
                         bool lastSec = false;
                         var track = ActiveFloppyDiskDrive.Disk.DiskTracks[_activeCommandData.Cylinder];
-                        //int secIndex = 0;
 
                         for (int s = 0; s < track.Sectors.Length; s++)
                         {

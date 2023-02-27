@@ -48,7 +48,6 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                 case ControllerCommandPhase.Execution:
                     // one ST3 byte required
 
-                    // TODO: (Falta verificar que se esta añadiendo) set US
                     _statusRegisters3 = (StatusRegisters3)ActiveFloppyDiskDrive.Id;
 
                     if (_statusRegisters3 != 0)

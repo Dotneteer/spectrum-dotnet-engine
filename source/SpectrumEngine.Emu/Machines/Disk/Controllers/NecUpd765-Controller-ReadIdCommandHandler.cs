@@ -126,15 +126,9 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                     break;
 
-                //----------------------------------------
-                //  FDC in execution phase reading/writing bytes
-                //----------------------------------------
                 case ControllerCommandPhase.Execution:
                     break;
 
-                //----------------------------------------
-                //  Result bytes being sent to CPU
-                //----------------------------------------
                 case ControllerCommandPhase.Result:
                     break;
             }

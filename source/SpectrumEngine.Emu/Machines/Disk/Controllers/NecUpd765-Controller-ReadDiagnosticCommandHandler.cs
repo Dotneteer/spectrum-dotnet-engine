@@ -63,8 +63,6 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                         int buffPos = 0;
                         int sectorSize = 0;
-                        int maxTransferCap = 0;
-                        if (maxTransferCap > 0) { }
 
                         // calculate requested size of data required
                         if (_activeCommandData.SectorSize == 0)
@@ -74,39 +72,11 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             // the complete sector performing the CRC check and, depending upon the manner of command termination, may perform 
                             // a Multi-Sector Read Operation.
                             sectorSize = _activeCommandData.DTL;
-
-                            // calculate maximum transfer capacity
-                            if (!_commandFlags.MF)
-                                maxTransferCap = 3328;
                         }
                         else
                         {
                             // When N is non - zero, then DTL has no meaning and should be set to ffh
                             _activeCommandData.DTL = 0xFF;
-
-                            // calculate maximum transfer capacity
-                            switch (_activeCommandData.SectorSize)
-                            {
-                                case 1:
-                                    if (_commandFlags.MF)
-                                        maxTransferCap = 6656;
-                                    else
-                                        maxTransferCap = 3840;
-                                    break;
-                                case 2:
-                                    if (_commandFlags.MF)
-                                        maxTransferCap = 7680;
-                                    else
-                                        maxTransferCap = 4096;
-                                    break;
-                                case 3:
-                                    if (_commandFlags.MF)
-                                        maxTransferCap = 8192;
-                                    else
-                                        maxTransferCap = 4096;
-                                    break;
-                            }
-
                             sectorSize = 0x80 << _activeCommandData.SectorSize;
                         }
 

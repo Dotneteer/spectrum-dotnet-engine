@@ -47,15 +47,10 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                     ActiveFloppyDiskDrive.TrackIndex = 0;
                     ActiveFloppyDiskDrive.SectorIndex = 0;
 
-                    // recalibrate appears to always skip the first sector
-                    //if (ActiveFloppyDiskDrive.Disk.DiskTracks[ActiveFloppyDiskDrive.TrackIndex].Sectors.Length > 1)
-                    //ActiveFloppyDiskDrive.SectorIndex++;
-
                     // set seek flag
                     ActiveFloppyDiskDrive.SeekStatus = (int)DriveSeekState.Recalibrate;
 
-                    // skip execution mode and go directly to idle
-                    // result is determined by SIS command
+                    // skip execution mode and go directly to idle result is determined by SIS command
                     _activePhase = ControllerCommandPhase.Idle;
                     break;
 

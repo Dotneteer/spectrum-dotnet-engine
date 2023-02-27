@@ -56,9 +56,6 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                     }
                     break;
 
-                //----------------------------------------
-                //  FDC in execution phase reading/writing bytes
-                //----------------------------------------
                 case ControllerCommandPhase.Execution:
                     // set seek flag
                     ActiveFloppyDiskDrive.SeekStatus = (int)DriveSeekState.Seek;
@@ -74,22 +71,12 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         ActiveFloppyDiskDrive.CurrentTrackId = _commandParameters[(int)CommandParameter.C];
 
                         ActiveFloppyDiskDrive.SectorIndex = 0;
-
-                        if (ActiveFloppyDiskDrive.Disk.DiskTracks[ActiveFloppyDiskDrive.CurrentTrackId].Sectors.Length > 1)
-                        {
-                            // always read the first sector
-                            //ActiveFloppyDiskDrive.SectorIndex++;
-                        }
                     }
 
-                    // skip execution mode and go directly to idle
-                    // result is determined by SIS command
+                    // skip execution mode and go directly to idle result is determined by SIS command
                     _activePhase = ControllerCommandPhase.Idle;
                     break;
 
-                //----------------------------------------
-                //  Result bytes being sent to CPU
-                //----------------------------------------
                 case ControllerCommandPhase.Result:
                     break;
             }
