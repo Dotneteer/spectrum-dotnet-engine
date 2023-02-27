@@ -1,4 +1,5 @@
-﻿using static SpectrumEngine.Emu.Machines.Disk.Controllers.NecUpd765;
+﻿using SpectrumEngine.Emu.Extensions;
+using static SpectrumEngine.Emu.Machines.Disk.Controllers.NecUpd765;
 
 namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
 
@@ -152,6 +153,13 @@ public record Command
 /// </summary>
 public struct CommandFlags
 {
+    public CommandFlags(byte cmdByte)
+    {
+        MT = cmdByte.HasBit(7);
+        MF = cmdByte.HasBit(6);        
+        SK = cmdByte.HasBit(5);
+    }
+
     /// <summary>
     /// Use of the MT bit (Multitrack bit)
     /// </summary>

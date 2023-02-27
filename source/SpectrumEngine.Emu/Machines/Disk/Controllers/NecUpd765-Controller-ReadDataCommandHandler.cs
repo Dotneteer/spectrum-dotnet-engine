@@ -125,7 +125,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                             // If SK=1, the FDC skips the sector with the Deleted Data Address Mark and reads the next sector. 
                             // The CRC bits in the deleted data field are not checked when SK=1
-                            if (_cmdFlagSK && _statusRegisters2.HasFlag(StatusRegisters2.CM))
+                            if (_commandFlags.SK && _statusRegisters2.HasFlag(StatusRegisters2.CM))
                             {
                                 if (_activeCommandData.Sector != _activeCommandData.EOT)
                                 {
@@ -177,7 +177,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                                 terminate = true;
                             }
 
-                            if (!_cmdFlagSK && _statusRegisters2.HasFlag(StatusRegisters2.CM))
+                            if (!_commandFlags.SK && _statusRegisters2.HasFlag(StatusRegisters2.CM))
                             {
                                 // deleted address mark was detected with NO skip flag set
                                 _activeCommandData.EOT = _activeCommandData.Sector;

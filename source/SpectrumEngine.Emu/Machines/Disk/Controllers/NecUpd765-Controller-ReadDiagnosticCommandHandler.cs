@@ -76,7 +76,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             sectorSize = _activeCommandData.DTL;
 
                             // calculate maximum transfer capacity
-                            if (!_cmdFlagMF)
+                            if (!_commandFlags.MF)
                                 maxTransferCap = 3328;
                         }
                         else
@@ -88,19 +88,19 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             switch (_activeCommandData.SectorSize)
                             {
                                 case 1:
-                                    if (_cmdFlagMF)
+                                    if (_commandFlags.MF)
                                         maxTransferCap = 6656;
                                     else
                                         maxTransferCap = 3840;
                                     break;
                                 case 2:
-                                    if (_cmdFlagMF)
+                                    if (_commandFlags.MF)
                                         maxTransferCap = 7680;
                                     else
                                         maxTransferCap = 4096;
                                     break;
                                 case 3:
-                                    if (_cmdFlagMF)
+                                    if (_commandFlags.MF)
                                         maxTransferCap = 8192;
                                     else
                                         maxTransferCap = 4096;

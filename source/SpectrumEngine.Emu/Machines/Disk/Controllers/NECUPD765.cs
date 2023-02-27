@@ -44,7 +44,6 @@ public partial class NecUpd765
 
         SetPhaseIdle();
 
-        _cmdFlagMF = false;
         _activeCommand = _commands[_cmdIndex];
     }
 

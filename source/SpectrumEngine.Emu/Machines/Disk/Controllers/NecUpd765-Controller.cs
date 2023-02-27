@@ -36,22 +36,9 @@ public partial class NecUpd765
     private int _commandParameterIndex = 0;
 
     /// <summary>
-    /// Initial command byte flag
-    /// Bit7  Multi Track (continue multi-sector-function on other head)
+    /// Command flags
     /// </summary>
-    private bool _cmdFlagMT;
-
-    /// <summary>
-    /// Initial command byte flag
-    /// Bit6  MFM-Mode-Bit (Default 1=Double Density)
-    /// </summary>
-    private bool _cmdFlagMF;
-
-    /// <summary>
-    /// Initial command byte flag
-    /// Bit5  Skip-Bit (set if secs with deleted DAM shall be skipped)
-    /// </summary>
-    private bool _cmdFlagSK;
+    private CommandFlags _commandFlags;
 
     /// <summary>
     /// In lieu of actual timing, this will count status reads in execution phase
@@ -340,15 +327,11 @@ public partial class NecUpd765
         _commandParameterIndex = 0;
         _resultBufferCounter = 0;
 
+        // get MT, MD and SK flag states
+        _commandFlags = new CommandFlags(cmdByte);
+
         // get the first 4 bytes
-        byte cByte = (byte)(cmdByte & 0x0f);
-
-        // get MT, MD and SK states
-        _cmdFlagMT = cmdByte.HasBit(7);
-        _cmdFlagMF = cmdByte.HasBit(6);
-        _cmdFlagSK = cmdByte.HasBit(5);
-
-        cmdByte = cByte;
+        cmdByte = (byte)(cmdByte & 0x0f);
 
         // lookup the command
         var cmd = _commands.FirstOrDefault(item => item.CommandCode == (CommandCode)cmdByte);
@@ -368,13 +351,13 @@ public partial class NecUpd765
             bool invalid = false;
 
             if (!_activeCommand.CommandFlags.MT)
-                if (_cmdFlagMT)
+                if (_commandFlags.MT)
                     invalid = true;
             if (!_activeCommand.CommandFlags.MF)
-                if (_cmdFlagMF)
+                if (_commandFlags.MF)
                     invalid = true;
             if (!_activeCommand.CommandFlags.SK)
-                if (_cmdFlagSK)
+                if (_commandFlags.SK)
                     invalid = true;
 
             if (invalid)

@@ -144,7 +144,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             }
 
                             // skip flag is set and no DAM found
-                            if (_cmdFlagSK && _statusRegisters2.HasFlag(StatusRegisters2.CM))
+                            if (_commandFlags.SK && _statusRegisters2.HasFlag(StatusRegisters2.CM))
                             {
                                 if (_activeCommandData.Sector != _activeCommandData.EOT)
                                 {
