@@ -32,7 +32,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                     PushCommandByteInBuffer();
 
                     // was that the last parameter byte?
-                    if (_commandParameterIndex == _activeCommand.ParameterBytesCount)
+                    if (_commandParameterIndex == _activeCommandConfiguration.ParameterBytesCount)
                     {
                         DriveLight = true;
 
@@ -81,7 +81,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                                 ActiveFloppyDiskDrive.SectorIndex = 0;
                             }
 
-                            if (ActiveFloppyDiskDrive.SectorIndex == 0 && ActiveFloppyDiskDrive.Disk.DiskTracks[ActiveFloppyDiskDrive.CurrentTrackId].Sectors.Length > 1)
+                            if (ActiveFloppyDiskDrive.SectorIndex == 0 && ActiveFloppyDiskDrive.Disk.DiskTracks[ActiveFloppyDiskDrive.CurrentTrackId].Sectors?.Length > 1)
                             {
                                 // looks like readid always skips the first sector on a track
                                 ActiveFloppyDiskDrive.SectorIndex++;

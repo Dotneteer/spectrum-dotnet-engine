@@ -66,7 +66,7 @@ public class FlopyDiskDriveCluster
     public int FloppyDiskDriveSlot
     {
         get => _floppyDiskDriveSlot;
-        set
+        internal set
         {
             _floppyDiskDriveSlot = value;
             ActiveFloppyDiskDrive = _floppyDiskDrives[_floppyDiskDriveSlot];
@@ -77,18 +77,12 @@ public class FlopyDiskDriveCluster
     /// Load floppy disk data in active slot
     /// </summary>
     /// <exception cref="InvalidOperationException">Invalid disk data</exception>
-    public void LoadDisk(byte[] diskData)
-    {
-        ActiveFloppyDiskDrive?.LoadDisk(diskData);
-    }
+    public void LoadDisk(byte[] diskData) => ActiveFloppyDiskDrive?.LoadDisk(diskData);
 
     /// <summary>
     /// Ejects floppy disk from active slot
     /// </summary>
-    public void EjectDisk()
-    {
-        ActiveFloppyDiskDrive?.EjectDisk();
-    }
+    public void EjectDisk() => ActiveFloppyDiskDrive?.EjectDisk();
 
     /// <summary>
     /// Initialization / reset of the floppy drive subsystem

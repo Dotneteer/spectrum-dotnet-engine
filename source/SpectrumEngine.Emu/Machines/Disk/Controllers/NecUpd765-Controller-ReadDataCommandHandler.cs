@@ -27,7 +27,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                     PushCommandByteInBuffer();
 
                     // all parameter bytes received - setup for execution phase
-                    if (_commandParameterIndex == _activeCommand.ParameterBytesCount)
+                    if (_commandParameterIndex == _activeCommandConfiguration.ParameterBytesCount)
                     {
                         // clear exec buffer and status registers
                         ClearExecBuffer();

@@ -14,16 +14,28 @@ public partial class NecUpd765
     /// <summary>
     /// The emulated spectrum machine
     /// </summary>
-    private FlopyDiskDriveCluster _flopyDiskDriveCluster;
+    private readonly FlopyDiskDriveCluster _flopyDiskDriveCluster;
+
+    /// <summary>
+    /// Collection of possible commands
+    /// </summary>
+    private readonly List<CommandConfiguration> _commands;
+
+    /// <summary>
+    /// The currently active command
+    /// </summary>
+    private CommandConfiguration _activeCommandConfiguration;
 
     /// <summary>
     /// Main constructor
     /// </summary>
     public NecUpd765(FlopyDiskDriveCluster flopyDiskDriveCluster)
     {
-        _flopyDiskDriveCluster = flopyDiskDriveCluster;
+        _flopyDiskDriveCluster = flopyDiskDriveCluster;       
 
-        InitCommands();
+        _commands = CreateCommands();
+        _activeCommandConfiguration = _commands[_cmdIndex];
+
         Reset();
     }
 
@@ -44,7 +56,7 @@ public partial class NecUpd765
 
         SetPhaseIdle();
 
-        _activeCommand = _commands[_cmdIndex];
+        _activeCommandConfiguration = _commands[_cmdIndex];
     }
 
     private FlopyDiskDriveDevice? ActiveFloppyDiskDrive => (FlopyDiskDriveDevice?)_flopyDiskDriveCluster.ActiveFloppyDiskDrive;
@@ -53,9 +65,7 @@ public partial class NecUpd765
     /// Setup the command structure
     /// Each command represents one of the internal UPD765 commands
     /// </summary>
-    private void InitCommands()
-    {
-        _commands = new List<CommandConfiguration>
+    private List<CommandConfiguration> CreateCommands() => new()
         {
 			// invalid
             new CommandConfiguration
@@ -91,145 +101,145 @@ public partial class NecUpd765
 			// read diagnostic
             new CommandConfiguration
             {
-                CommandHandler = ReadDiagnosticCommandHandler, 
+                CommandHandler = ReadDiagnosticCommandHandler,
                 CommandCode = CommandCode.ReadDiagnostic,
                 CommandFlags = new CommandFlags { MF = true, SK = true },
                 CommandOperation = CommandOperation.Read,
-                CommandFlow = CommandFlow.Out, 
-                ParameterBytesCount = 8, 
+                CommandFlow = CommandFlow.Out,
+                ParameterBytesCount = 8,
                 ResultBytesCount = 7
             },
             // read id
-            new CommandConfiguration 
-            { 
-                CommandHandler = ReadIdCommandHandler, 
+            new CommandConfiguration
+            {
+                CommandHandler = ReadIdCommandHandler,
                 CommandCode = CommandCode.ReadId,
-                CommandFlags = new CommandFlags { MF = true},
+                CommandFlags = new CommandFlags { MF = true },
                 CommandOperation = CommandOperation.Read,
-                CommandFlow = CommandFlow.Out, 
-                ParameterBytesCount = 1, 
-                ResultBytesCount = 7 
+                CommandFlow = CommandFlow.Out,
+                ParameterBytesCount = 1,
+                ResultBytesCount = 7
             },
             // recalibrate (seek track00)
-            new CommandConfiguration 
-            { 
-                CommandHandler = RecalibrateCommandHandler, 
+            new CommandConfiguration
+            {
+                CommandHandler = RecalibrateCommandHandler,
                 CommandCode = CommandCode.Recalibrate,
-                CommandFlow = CommandFlow.Out, 
-                ParameterBytesCount = 1, 
-                ResultBytesCount = 0 
+                CommandFlow = CommandFlow.Out,
+                ParameterBytesCount = 1,
+                ResultBytesCount = 0
             },
             // scan equal
-            new CommandConfiguration 
-            { 
-                CommandHandler = ScanEqualCommandHandler, 
+            new CommandConfiguration
+            {
+                CommandHandler = ScanEqualCommandHandler,
                 CommandCode = CommandCode.ScanEqual,
                 CommandFlags = new CommandFlags { MT = true, MF = true, SK = true },
-                CommandOperation =  CommandOperation.Read,
-                CommandFlow = CommandFlow.In, 
-                ParameterBytesCount = 8, 
-                ResultBytesCount = 7 
+                CommandOperation = CommandOperation.Read,
+                CommandFlow = CommandFlow.In,
+                ParameterBytesCount = 8,
+                ResultBytesCount = 7
             },
             // scan high or equal
-            new CommandConfiguration 
-            { 
-                CommandHandler = ScanHighOrEqualCommandHandler, 
+            new CommandConfiguration
+            {
+                CommandHandler = ScanHighOrEqualCommandHandler,
                 CommandCode = CommandCode.ScanHighOrEqual,
                 CommandFlags = new CommandFlags { MT = true, MF = true, SK = true },
                 CommandOperation = CommandOperation.Read,
-                CommandFlow = CommandFlow.In, 
-                ParameterBytesCount = 8, 
-                ResultBytesCount = 7 
+                CommandFlow = CommandFlow.In,
+                ParameterBytesCount = 8,
+                ResultBytesCount = 7
             },
             // scan low or equal
-            new CommandConfiguration 
-            { 
-                CommandHandler = ScanLowOrEqualCommandHandler, 
-                CommandCode = CommandCode.ScanLowOrEqual, 
+            new CommandConfiguration
+            {
+                CommandHandler = ScanLowOrEqualCommandHandler,
+                CommandCode = CommandCode.ScanLowOrEqual,
                 CommandFlags = new CommandFlags { MT = true, MF = true, SK = true },
                 CommandOperation = CommandOperation.Read,
-                CommandFlow = CommandFlow.In, 
-                ParameterBytesCount = 8, 
-                ResultBytesCount = 7 
+                CommandFlow = CommandFlow.In,
+                ParameterBytesCount = 8,
+                ResultBytesCount = 7
             },
             // seek
-            new CommandConfiguration 
-            { 
-                CommandHandler = SeekCommandHandler, 
+            new CommandConfiguration
+            {
+                CommandHandler = SeekCommandHandler,
                 CommandCode = CommandCode.Seek,
-                CommandFlow = CommandFlow.Out, 
-                ParameterBytesCount = 2, 
-                ResultBytesCount = 0 
+                CommandFlow = CommandFlow.Out,
+                ParameterBytesCount = 2,
+                ResultBytesCount = 0
             },
             // sense drive status
-            new CommandConfiguration 
-            { 
-                CommandHandler = SenseDriveStatusCommandHandler, 
+            new CommandConfiguration
+            {
+                CommandHandler = SenseDriveStatusCommandHandler,
                 CommandCode = CommandCode.SenseDriveStatus,
-                CommandFlow = CommandFlow.Out, 
-                ParameterBytesCount = 1, 
-                ResultBytesCount = 1 
+                CommandFlow = CommandFlow.Out,
+                ParameterBytesCount = 1,
+                ResultBytesCount = 1
             },
             // sense interrupt status
-            new CommandConfiguration 
-            { 
-                CommandHandler = SenseInterruptStatusCommandHandler, 
+            new CommandConfiguration
+            {
+                CommandHandler = SenseInterruptStatusCommandHandler,
                 CommandCode = CommandCode.SenseInterruptStatus,
-                CommandFlow = CommandFlow.Out, 
-                ParameterBytesCount = 0, 
-                ResultBytesCount = 2 
+                CommandFlow = CommandFlow.Out,
+                ParameterBytesCount = 0,
+                ResultBytesCount = 2
             },
             // specify
-            new CommandConfiguration 
-            { 
-                CommandHandler = SpecifyCommandHandler, 
+            new CommandConfiguration
+            {
+                CommandHandler = SpecifyCommandHandler,
                 CommandCode = CommandCode.Specify,
-                CommandFlow = CommandFlow.Out, 
-                ParameterBytesCount = 2, 
-                ResultBytesCount = 0 
+                CommandFlow = CommandFlow.Out,
+                ParameterBytesCount = 2,
+                ResultBytesCount = 0
             },
             // version
-            new CommandConfiguration 
-            { 
-                CommandHandler = VersionCommandHandler, 
+            new CommandConfiguration
+            {
+                CommandHandler = VersionCommandHandler,
                 CommandCode = CommandCode.Version,
-                CommandFlow = CommandFlow.Out, 
-                ParameterBytesCount = 0, 
-                ResultBytesCount = 1 
+                CommandFlow = CommandFlow.Out,
+                ParameterBytesCount = 0,
+                ResultBytesCount = 1
             },
             // write data
-            new CommandConfiguration 
-            { 
-                CommandHandler = WriteDataCommandHandler, 
+            new CommandConfiguration
+            {
+                CommandHandler = WriteDataCommandHandler,
                 CommandCode = CommandCode.WriteData,
                 CommandFlags = new CommandFlags { MT = true, MF = true },
                 CommandOperation = CommandOperation.Write,
-                CommandFlow = CommandFlow.In, 
-                ParameterBytesCount = 8, 
-                ResultBytesCount = 7 
+                CommandFlow = CommandFlow.In,
+                ParameterBytesCount = 8,
+                ResultBytesCount = 7
             },
             // write deleted data
-            new CommandConfiguration 
-            { 
-                CommandHandler = WriteDeletedDataCommandHandler, 
+            new CommandConfiguration
+            {
+                CommandHandler = WriteDeletedDataCommandHandler,
                 CommandCode = CommandCode.WriteDeletedData,
                 CommandFlags = new CommandFlags { MT = true, MF = true },
                 CommandOperation = CommandOperation.Write,
-                CommandFlow = CommandFlow.In, 
-                ParameterBytesCount = 8, 
-                ResultBytesCount = 7 
+                CommandFlow = CommandFlow.In,
+                ParameterBytesCount = 8,
+                ResultBytesCount = 7
             },
             // write id
-            new CommandConfiguration 
-            { 
-                CommandHandler = WriteIdCommandHandler, 
+            new CommandConfiguration
+            {
+                CommandHandler = WriteIdCommandHandler,
                 CommandCode = CommandCode.WriteId,
                 CommandFlags = new CommandFlags { MF = true },
                 CommandOperation = CommandOperation.Write,
-                CommandFlow = CommandFlow.In, 
-                ParameterBytesCount = 5, 
-                ResultBytesCount = 7 
+                CommandFlow = CommandFlow.In,
+                ParameterBytesCount = 5,
+                ResultBytesCount = 7
             },
         };
-    }
+
 }

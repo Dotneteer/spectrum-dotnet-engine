@@ -11,11 +11,6 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
 public partial class NecUpd765
 {
     /// <summary>
-    /// Collection of possible commands
-    /// </summary>
-    private List<CommandConfiguration> _commands;
-
-    /// <summary>
     /// Active command state
     /// </summary>
     private CommandData _activeCommandData = new();
@@ -49,7 +44,7 @@ public partial class NecUpd765
     /// <summary>
     /// Contains result bytes in result phase
     /// </summary>
-    private byte[] _resultBuffer = new byte[7];
+    private readonly byte[] _resultBuffer = new byte[7];
 
     /// <summary>
     /// Current index in result buffer
@@ -60,7 +55,7 @@ public partial class NecUpd765
     /// <summary>
     /// Contains sector data to be written/read in execution phase
     /// </summary>
-    private byte[] _executionBuffer = new byte[0x8000];
+    private readonly byte[] _executionBuffer = new byte[0x8000];
 
     /// <summary>
     /// Index for sector data within the result buffer
@@ -92,11 +87,6 @@ public partial class NecUpd765
     /// The last parameter byte that was written to the FDC
     /// </summary>
     private byte _lastByteReceived = 0;
-
-    /// <summary>
-    /// The currently active command
-    /// </summary>
-    private CommandConfiguration _activeCommand;
 
     /// <summary>
     /// Main status register (accessed via reads to port 0x2ffd)
@@ -133,7 +123,7 @@ public partial class NecUpd765
         set
         {
             _cmdIndex = value;
-            _activeCommand = _commands[_cmdIndex];
+            _activeCommandConfiguration = _commands[_cmdIndex];
         }
     }
 
@@ -169,7 +159,7 @@ public partial class NecUpd765
                 break;
 
             case ControllerCommandPhase.Execution:
-                if (_activeCommand.CommandFlow == CommandFlow.Out)
+                if (_activeCommandConfiguration.CommandFlow == CommandFlow.Out)
                 {
                     _mainStatusRegisters.SetBits(MainStatusRegisters.DIO);
                 }
@@ -184,11 +174,8 @@ public partial class NecUpd765
                 _overrunCounter++;
                 if (_overrunCounter >= 64)
                 {
-                    // CPU has read the status register 64 times without reading the data register
-                    // switch the current command into result phase
+                    // CPU has read the status register 64 times without reading the data register, switch the current command into result phase
                     _activePhase = ControllerCommandPhase.Result;
-
-                    // reset the overun counter
                     _overrunCounter = 0;
                 }
 
@@ -211,10 +198,9 @@ public partial class NecUpd765
         // default return value
         byte res = 0xff;
 
-        // check RQM flag status
+        // FDC is not ready to return data
         if (!_mainStatusRegisters.HasFlag(MainStatusRegisters.RQM))
         {
-            // FDC is not ready to return data
             return res;
         }
 
@@ -232,7 +218,7 @@ public partial class NecUpd765
                 _overrunCounter = 0;
 
                 // execute read
-                _activeCommand.CommandHandler();
+                _activeCommandConfiguration.CommandHandler();
 
                 res = _lastSectorDataReadByte;
 
@@ -248,14 +234,10 @@ public partial class NecUpd765
 
                 DriveLight = false;
 
-                _activeCommand.CommandHandler();
+                _activeCommandConfiguration.CommandHandler();
 
                 // result byte reading
-                res = _resultBuffer[_resultBufferCounter];
-
-                // increment result counter
-                _resultBufferCounter++;
-
+                res = _resultBuffer[_resultBufferCounter++];
                 if (_resultBufferCounter >= _resultLength)
                 {
                     _activePhase = ControllerCommandPhase.Idle;
@@ -284,32 +266,31 @@ public partial class NecUpd765
         // process incoming bytes
         switch (_activePhase)
         {
-            //// controller is idle awaiting the first command byte of a new instruction
+            // controller is idle awaiting the first command byte of a new instruction
             case ControllerCommandPhase.Idle:
                 ParseCommandByte(data);
                 break;
-            //// we are in command phase
+
+            // we are in command phase
             case ControllerCommandPhase.Command:
                 // attempt to process this parameter byte
-                //ProcessCommand(data);      
-                _activeCommand.CommandHandler();
+                _activeCommandConfiguration.CommandHandler();
                 break;
-            //// we are in execution phase
-            case ControllerCommandPhase.Execution:
-                // CPU is going to be sending data bytes to the FDC to be written to disk
 
+            // we are in execution phase, CPU is going to be sending data bytes to the FDC to be written to disk
+            case ControllerCommandPhase.Execution:
                 // store the byte
                 _lastSectorDataWriteByte = data;
-                _activeCommand.CommandHandler();
+                _activeCommandConfiguration.CommandHandler();
 
                 if (_executionBufferCounter <= 0)
                 {
                     // end of execution phase
                     _activePhase = ControllerCommandPhase.Result;
                 }
-
                 break;
-            //// result phase
+
+            // result phase
             case ControllerCommandPhase.Result:
                 // data register will not receive bytes during result phase
                 break;
@@ -348,21 +329,11 @@ public partial class NecUpd765
 
             // check validity of command byte flags
             // if a flag is set but not valid for this command then it is invalid
-            bool invalid = false;
-
-            if (!_activeCommand.CommandFlags.MT)
-                if (_commandFlags.MT)
-                    invalid = true;
-            if (!_activeCommand.CommandFlags.MF)
-                if (_commandFlags.MF)
-                    invalid = true;
-            if (!_activeCommand.CommandFlags.SK)
-                if (_commandFlags.SK)
-                    invalid = true;
-
-            if (invalid)
+            if ((!_activeCommandConfiguration.CommandFlags.MT && _commandFlags.MT) ||
+                (!_activeCommandConfiguration.CommandFlags.MF && _commandFlags.MF) ||
+                (!_activeCommandConfiguration.CommandFlags.SK && _commandFlags.SK))
             {
-                // command byte included spurious bit 5,6 or 7 flags
+                // command byte included bit 5,6 or 7 flags
                 CmdIndex = _commands.Count - 1;
             }
         }
@@ -370,18 +341,17 @@ public partial class NecUpd765
         _commandParameterIndex = 0;
         _resultBufferCounter = 0;
 
-        // there will now be an active command set
-        // move to command phase
+        // there will now be an active command set move to command phase
         _activePhase = ControllerCommandPhase.Command;
 
         // set reslength
-        _resultLength = _activeCommand.ResultBytesCount;
+        _resultLength = _activeCommandConfiguration.ResultBytesCount;
 
         // if there are no expected param bytes to receive - go ahead and run the command
-        if (_activeCommand.ParameterBytesCount == 0)
+        if (_activeCommandConfiguration.ParameterBytesCount == 0)
         {
             _activePhase = ControllerCommandPhase.Execution;
-            _activeCommand.CommandHandler();
+            _activeCommandConfiguration.CommandHandler();
         }
 
         return true;
@@ -393,17 +363,12 @@ public partial class NecUpd765
     private void ParseParameterByte(CommandParameter index)
     {
         byte currByte = _commandParameters[(int)index];
-        BitArray bi = new BitArray(new byte[] { currByte });
 
         switch (index)
         {
             // HD & US
             case CommandParameter.HEAD:
-                if (bi[2])
-                    _activeCommandData.Side = 1;
-                else
-                    _activeCommandData.Side = 0;
-
+                _activeCommandData.Side = (byte)(currByte & 0x02);
                 _activeCommandData.UnitSelect = (byte)(currByte & 0x03);
                 _flopyDiskDriveCluster.FloppyDiskDriveSlot = _activeCommandData.UnitSelect;
                 break;
@@ -499,7 +464,7 @@ public partial class NecUpd765
     private void CommitResultStatus()
     {
         // check for read diagnostic
-        if (_activeCommand.CommandCode == CommandCode.ReadDiagnostic)
+        if (_activeCommandConfiguration.CommandCode == CommandCode.ReadDiagnostic)
         {
             // commit to result buffer
             _resultBuffer[(int)CommandResultParameter.ST0] = (byte)_statusRegisters0;
@@ -598,12 +563,10 @@ public partial class NecUpd765
         }
 
         // index hole count
-        int iHole = 0;
+        int indexHole = 0;
 
-        // loop through the sectors in a track
-        // the loop ends with either the sector being found
-        // or the index hole being passed twice
-        while (iHole <= 2)
+        // loop through the sectors in a track, the loop ends with either the sector being found or the index hole being passed twice
+        while (indexHole <= 2)
         {
             // does the requested sector match the current sector
             if (trk.Sectors[index].SectorIDInfo.C == _activeCommandData.Cylinder &&
@@ -637,10 +600,9 @@ public partial class NecUpd765
             {
                 // wrap around
                 index = 0;
-                iHole++;
+                indexHole++;
             }
         }
-
         // search loop has completed and the sector may or may not have been found
 
         // bad cylinder detected?

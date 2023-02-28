@@ -151,7 +151,7 @@ public record Command
 /// <summary>
 /// Command common flags
 /// </summary>
-public struct CommandFlags
+public readonly struct CommandFlags
 {
     public CommandFlags(byte cmdByte)
     {

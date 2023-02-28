@@ -31,7 +31,7 @@ public abstract class FloppyDisk
     /// <summary>
     /// Tracks
     /// </summary>
-    public Track[]? DiskTracks { get; protected set; }
+    public IList<Track>? DiskTracks { get; protected set; }
 
     /// <summary>
     /// Number of tracks per side

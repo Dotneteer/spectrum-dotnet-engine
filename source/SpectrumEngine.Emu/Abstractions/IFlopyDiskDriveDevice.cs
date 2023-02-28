@@ -33,11 +33,6 @@ namespace SpectrumEngine.Emu.Abstractions
         bool IsDiskLoaded { get; }
 
         /// <summary>
-        /// Current cylinder track ID
-        /// </summary>
-        byte CurrentTrackId { get; }
-
-        /// <summary>
         /// Load floppy disk data
         /// </summary>
         /// <exception cref="InvalidOperationException">Invalid disk data</exception>

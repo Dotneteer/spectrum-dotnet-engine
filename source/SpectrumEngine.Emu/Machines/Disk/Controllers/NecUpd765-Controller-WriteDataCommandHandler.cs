@@ -33,7 +33,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                     PushCommandByteInBuffer();
 
                     // was that the last parameter byte?
-                    if (_commandParameterIndex == _activeCommand.ParameterBytesCount)
+                    if (_commandParameterIndex == _activeCommandConfiguration.ParameterBytesCount)
                     {
                         // all parameter bytes received - setup for execution phase
 
