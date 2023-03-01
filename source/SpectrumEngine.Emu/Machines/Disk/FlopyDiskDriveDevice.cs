@@ -104,10 +104,10 @@ public class FlopyDiskDriveDevice : IFlopyDiskDriveDevice
                     fdd = new CpcExtendedFloppyDisk();
                     found = fdd.ParseDisk(diskData);
                     break;
-                //case FloppyDiskFormat.Cpc:
-                //    fdd = new CpcFloppyDisk();
-                //    found = fdd.TryParseDisk(diskData);
-                //    break;
+                case FloppyDiskFormat.Cpc:
+                    fdd = new CpcFloppyDisk();
+                    found = fdd.ParseDisk(diskData);
+                    break;
             }
 
             if (found)
