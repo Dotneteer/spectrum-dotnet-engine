@@ -45,25 +45,11 @@ public class CpcExtendedFloppyDisk : FloppyDisk
 
         if (DiskHeader.NumberOfSides > 1)
         {
-            StringBuilder sbm = new StringBuilder();
-            sbm.AppendLine();
-            sbm.AppendLine();
-            sbm.AppendLine("The detected disk image contains multiple sides.");
-            sbm.AppendLine("This is NOT currently supported.");
-            sbm.AppendLine("Please find an alternate image.");
-            throw new NotImplementedException(sbm.ToString());
+            throw new NotImplementedException(Properties.Resources.InvalidMultiSideImageFormatError);
         }
-
-        if (DiskHeader.NumberOfTracks > 42)
+        else if (DiskHeader.NumberOfTracks > 42)
         {
-            StringBuilder sbm = new StringBuilder();
-            sbm.AppendLine();
-            sbm.AppendLine();
-            sbm.AppendLine("The detected disk is an " + DiskHeader.NumberOfTracks + " track disk image.");
-            sbm.AppendLine("This is currently incompatible with the emulated +3 disk drive (42 tracks).");
-            sbm.AppendLine("Likely the disk image is an 80 track betadisk or opus image");
-            sbm.AppendLine("Please find an alternate image.");
-            throw new NotImplementedException(sbm.ToString());
+            throw new NotImplementedException(Properties.Resources.InvalidImageTracksFormatError);
         }
 
         for (int i = 0; i < DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides; i++)
@@ -235,30 +221,4 @@ public class CpcExtendedFloppyDisk : FloppyDisk
 
         return true;
     }
-
-    ///// <summary>
-    ///// State serlialization
-    ///// </summary>
-    //public override void SyncState(Serializer ser)
-    //{
-    //	ser.BeginSection("Plus3FloppyDisk");
-
-    //	ser.Sync(nameof(CylinderCount), ref CylinderCount);
-    //	ser.Sync(nameof(SideCount), ref SideCount);
-    //	ser.Sync(nameof(BytesPerTrack), ref BytesPerTrack);
-    //	ser.Sync(nameof(WriteProtected), ref WriteProtected);
-    //	ser.SyncEnum(nameof(Protection), ref Protection);
-
-    //	ser.Sync(nameof(DirtyData), ref DirtyData);
-    //	if (DirtyData)
-    //	{
-
-    //	}
-
-    //	// sync deterministic track and sector counters
-    //	ser.Sync(nameof(_randomCounter), ref _randomCounter);
-    //	RandomCounter = _randomCounter;
-
-    //	ser.EndSection();
-    //}
 }

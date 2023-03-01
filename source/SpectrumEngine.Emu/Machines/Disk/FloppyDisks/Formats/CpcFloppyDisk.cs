@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using SpectrumEngine.Emu.Extensions;
+using System.ComponentModel.DataAnnotations;
+using static SpectrumEngine.Emu.Machines.Disk.FloppyDisks.FloppyDisk;
 
 namespace SpectrumEngine.Emu.Machines.Disk.FloppyDisks.Formats;
 
@@ -41,39 +43,25 @@ public class CpcFloppyDisk : FloppyDisk
         DiskHeader.TrackSizes = new int[DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides];
         DiskTracks = new Track[DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides];
         DiskData = data;
-        int pos = 0x32;
+        int dataPointer = 0x32;
 
         if (DiskHeader.NumberOfSides > 1)
         {
-            StringBuilder sbm = new StringBuilder();
-            sbm.AppendLine();
-            sbm.AppendLine();
-            sbm.AppendLine("The detected disk image contains multiple sides.");
-            sbm.AppendLine("This is NOT currently supported.");
-            sbm.AppendLine("Please find an alternate image.");
-            throw new NotImplementedException(sbm.ToString());
+            throw new NotImplementedException(Properties.Resources.InvalidMultiSideImageFormatError);
         }
-
-        if (DiskHeader.NumberOfTracks > 42)
+        else if (DiskHeader.NumberOfTracks > 42)
         {
-            StringBuilder sbm = new StringBuilder();
-            sbm.AppendLine();
-            sbm.AppendLine();
-            sbm.AppendLine("The detected disk is an " + DiskHeader.NumberOfTracks + " track disk image.");
-            sbm.AppendLine("This is currently incompatible with the emulated +3 disk drive (42 tracks).");
-            sbm.AppendLine("Likely the disk image is an 80 track betadisk or opus image");
-            sbm.AppendLine("Please find an alternate image.");
-            throw new NotImplementedException(sbm.ToString());
+            throw new NotImplementedException(Properties.Resources.InvalidImageTracksFormatError);
         }
 
         // standard CPC format all track sizes are the same in the image
         for (int i = 0; i < DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides; i++)
         {
-            DiskHeader.TrackSizes[i] = data.GetWordValue(pos);
+            DiskHeader.TrackSizes[i] = data.GetWordValue(dataPointer);
         }
 
         // move to first track information block
-        pos = 0x100;
+        dataPointer = 0x100;
 
         // parse each track
         for (int i = 0; i < DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides; i++)
@@ -86,169 +74,77 @@ public class CpcFloppyDisk : FloppyDisk
                 continue;
             }
 
-            int p = pos;
+            int trakDataPointer = dataPointer;
             DiskTracks[i] = new Track();
 
             // track info block
-            DiskTracks[i].TrackIdent = Encoding.ASCII.GetString(data, p, 12);
-            p += 16;
-            DiskTracks[i].TrackNumber = data[p++];
-            DiskTracks[i].SideNumber = data[p++];
-            p += 2;
-            DiskTracks[i].SectorSize = data[p++];
-            DiskTracks[i].NumberOfSectors = data[p++];
-            DiskTracks[i].GAP3Length = data[p++];
-            DiskTracks[i].FillerByte = data[p++];
+            DiskTracks[i].TrackIdent = Encoding.ASCII.GetString(data, trakDataPointer, 12);
+            trakDataPointer += 16;
+            DiskTracks[i].TrackNumber = data[trakDataPointer++];
+            DiskTracks[i].SideNumber = data[trakDataPointer++];
+            trakDataPointer += 2;
+            DiskTracks[i].SectorSize = data[trakDataPointer++];
+            DiskTracks[i].NumberOfSectors = data[trakDataPointer++];
+            DiskTracks[i].GAP3Length = data[trakDataPointer++];
+            DiskTracks[i].FillerByte = data[trakDataPointer++];
 
-            int dpos = pos + 0x100;
+            int sectorDataPointer = dataPointer + 0x100;
 
             // sector info list
             DiskTracks[i].Sectors = new Sector[DiskTracks[i].NumberOfSectors];
             for (int s = 0; s < DiskTracks[i].NumberOfSectors; s++)
             {
-                DiskTracks[i].Sectors[s] = new Sector();
+                DiskTracks[i].Sectors[s] = GetSector(data, i, trakDataPointer, ref sectorDataPointer);
 
-                DiskTracks[i].Sectors[s].TrackNumber = data[p++];
-                DiskTracks[i].Sectors[s].SideNumber = data[p++];
-                DiskTracks[i].Sectors[s].SectorID = data[p++];
-                DiskTracks[i].Sectors[s].SectorSize = data[p++];
-                DiskTracks[i].Sectors[s].Status1 = data[p++];
-                DiskTracks[i].Sectors[s].Status2 = data[p++];
-                DiskTracks[i].Sectors[s].ActualDataByteLength = data.GetWordValue(p);
-                p += 2;
+                trakDataPointer += 8;
 
-                // actualdatabytelength value is calculated now
-                if (DiskTracks[i].Sectors[s].SectorSize == 0)
-                {
-                    // no sectorsize specified - DTL will be used at runtime
-                    DiskTracks[i].Sectors[s].ActualDataByteLength = DiskHeader.TrackSizes[i];
-                }
-                else if (DiskTracks[i].Sectors[s].SectorSize > 6)
-                {
-                    // invalid - wrap around to 0
-                    DiskTracks[i].Sectors[s].ActualDataByteLength = DiskHeader.TrackSizes[i];
-                }
-                else if (DiskTracks[i].Sectors[s].SectorSize == 6)
-                {
-                    // only 0x1800 bytes are stored
-                    DiskTracks[i].Sectors[s].ActualDataByteLength = 0x1800;
-                }
-                else
-                {
-                    // valid sector size for this format
-                    DiskTracks[i].Sectors[s].ActualDataByteLength = 0x80 << DiskTracks[i].Sectors[s].SectorSize;
-                }
-
-                // sector data - begins at 0x100 offset from the start of the track info block (in this case dpos)
-                DiskTracks[i].Sectors[s].SectorData = new byte[DiskTracks[i].Sectors[s].ActualDataByteLength];
-
-                // copy the data
-                for (int b = 0; b < DiskTracks[i].Sectors[s].ActualDataByteLength; b++)
-                {
-                    DiskTracks[i].Sectors[s].SectorData[b] = data[dpos + b];
-                }
-
-                // move dpos to the next sector data postion
-                dpos += DiskTracks[i].Sectors[s].ActualDataByteLength;
+                // move sectorDataPointer to the next sector data postion
+                sectorDataPointer += DiskTracks[i].Sectors[s].ActualDataByteLength;
             }
 
             // move to the next track info block
-            pos += DiskHeader.TrackSizes[i];
+            dataPointer += DiskHeader.TrackSizes[i];
         }
 
         // protection scheme detector
-        // TODO: dgzornoza to implement
+        // TODO: implement
 
         return true;
     }
 
-    /// <summary>
-    /// Takes a double-sided disk byte array and converts into 2 single-sided arrays
-    /// </summary>
-    public static bool SplitDoubleSided(byte[] data, List<byte[]> results)
+    private Sector GetSector(byte[] data, int trakIndex, int trakDataPointer, ref int sectorDataPointer)
     {
-        // look for standard magic string
-        string ident = Encoding.ASCII.GetString(data, 0, 16);
-        if (!ident.ToUpper().Contains("MV - CPC"))
+        int sectorSize = GetSectorSize(trakIndex, data[trakDataPointer + 3]);
+
+        var sector = new Sector
         {
-            // incorrect format
-            return false;
+            TrackNumber = data[trakDataPointer],
+            SideNumber = data[trakDataPointer + 1],
+            SectorID = data[trakDataPointer + 2],           
+            SectorSize = data[trakDataPointer + 3],
+            Status1 = data[trakDataPointer + 4],
+            Status2 = data[trakDataPointer + 5],
+            ActualDataByteLength = sectorSize,
+            // sector data - begins at 0x100 offset from the start of the track info block
+            SectorData = new byte[sectorSize],
+        };
+
+        // copy the data
+        for (int i = 0; i < sector.ActualDataByteLength; i++)
+        {
+            sector.SectorData[i] = data[sectorDataPointer + i];
         }
 
-        byte[] S0 = new byte[data.Length];
-        byte[] S1 = new byte[data.Length];
-
-        // disk info block
-        Array.Copy(data, 0, S0, 0, 0x100);
-        Array.Copy(data, 0, S1, 0, 0x100);
-        // change side number
-        S0[0x31] = 1;
-        S1[0x31] = 1;
-
-        var trkSize = data.GetWordValue(0x32);
-
-        // start at track info blocks
-        int mPos = 0x100;
-        int s0Pos = 0x100;
-        int s1Pos = 0x100;
-
-        var numTrks = data[0x30];
-        var numSides = data[0x31];
-
-        while (mPos < trkSize * data[0x30] * data[0x31])
-        {
-            // which side is this?
-            var side = data[mPos + 0x11];
-            if (side == 0)
-            {
-                // side 1
-                Array.Copy(data, mPos, S0, s0Pos, trkSize);
-                s0Pos += trkSize;
-            }
-            else if (side == 1)
-            {
-                // side 2
-                Array.Copy(data, mPos, S1, s1Pos, trkSize);
-                s1Pos += trkSize;
-            }
-            else
-            {
-
-            }
-
-            mPos += trkSize;
-        }
-
-        byte[] s0final = new byte[s0Pos];
-        byte[] s1final = new byte[s1Pos];
-        Array.Copy(S0, 0, s0final, 0, s0Pos);
-        Array.Copy(S1, 0, s1final, 0, s1Pos);
-
-        results.Add(s0final);
-        results.Add(s1final);
-
-        return true;
+        return sector;
     }
 
-    ///// <summary>
-    ///// State serlialization
-    ///// </summary>
-    //public override void SyncState(Serializer ser)
-    //{
-    //	ser.BeginSection("Plus3FloppyDisk");
-
-    //	ser.Sync(nameof(CylinderCount), ref CylinderCount);
-    //	ser.Sync(nameof(SideCount), ref SideCount);
-    //	ser.Sync(nameof(BytesPerTrack), ref BytesPerTrack);
-    //	ser.Sync(nameof(WriteProtected), ref WriteProtected);
-    //	ser.SyncEnum(nameof(Protection), ref Protection);
-
-    //	ser.Sync(nameof(DirtyData), ref DirtyData);
-    //	if (DirtyData)
-    //	{
-
-    //	}
-
-    //	ser.EndSection();
-    //}
+    private int GetSectorSize(int trakIndex, int sectorSize) => sectorSize switch
+    {
+        // no sectorsize specified - or invalid
+        0 or > 6 => DiskHeader.TrackSizes[trakIndex],
+        // only 0x1800 bytes are stored
+        6 => 0x1800,
+        // valid sector size for this format
+        _ => 0x80 << sectorSize,
+    };
 }
