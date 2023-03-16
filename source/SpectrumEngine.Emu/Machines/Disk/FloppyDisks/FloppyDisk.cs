@@ -21,7 +21,7 @@ public abstract class FloppyDisk
     /// Attempts to parse disk data
     /// </summary>
     /// <returns>true if is disk parsed, false otherwise</returns>
-    public abstract bool ParseDisk(byte[] diskData);
+    public abstract bool TryParseDisk(byte[] diskData);
 
     /// <summary>
     /// Disk information header

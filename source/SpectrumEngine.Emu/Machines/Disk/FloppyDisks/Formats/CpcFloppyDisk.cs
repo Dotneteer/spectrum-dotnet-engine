@@ -12,6 +12,9 @@ namespace SpectrumEngine.Emu.Machines.Disk.FloppyDisks.Formats;
 /// </summary>
 public class CpcFloppyDisk : FloppyDisk
 {
+    private int _sectorHeaderSize = 8;
+    private int _trackIndex;
+
     /// <summary>
     /// The format type
     /// </summary>
@@ -24,7 +27,7 @@ public class CpcFloppyDisk : FloppyDisk
     /// TRUE:   disk parsed
     /// FALSE:  unable to parse disk
     /// </returns>
-    public override bool ParseDisk(byte[] data)
+    public override bool TryParseDisk(byte[] data)
     {
         // look for standard magic string
         string ident = Encoding.ASCII.GetString(data, 0, 16);
@@ -54,7 +57,7 @@ public class CpcFloppyDisk : FloppyDisk
             throw new NotImplementedException(Properties.Resources.InvalidImageTracksFormatError);
         }
 
-        // standard CPC format all track sizes are the same in the image
+        // set track sizes, standard CPC format all track sizes are the same in the image
         for (int i = 0; i < DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides; i++)
         {
             DiskHeader.TrackSizes[i] = data.GetWordValue(dataPointer);
@@ -63,53 +66,67 @@ public class CpcFloppyDisk : FloppyDisk
         // move to first track information block
         dataPointer = 0x100;
 
-        // parse each track
-        for (int i = 0; i < DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides; i++)
-        {
-            // check for unformatted track
-            if (DiskHeader.TrackSizes[i] == 0)
-            {
-                DiskTracks[i] = new Track();
-                DiskTracks[i].Sectors = new Sector[0];
-                continue;
-            }
-
-            int trakDataPointer = dataPointer;
-            DiskTracks[i] = new Track();
-
-            // track info block
-            DiskTracks[i].TrackIdent = Encoding.ASCII.GetString(data, trakDataPointer, 12);
-            trakDataPointer += 16;
-            DiskTracks[i].TrackNumber = data[trakDataPointer++];
-            DiskTracks[i].SideNumber = data[trakDataPointer++];
-            trakDataPointer += 2;
-            DiskTracks[i].SectorSize = data[trakDataPointer++];
-            DiskTracks[i].NumberOfSectors = data[trakDataPointer++];
-            DiskTracks[i].GAP3Length = data[trakDataPointer++];
-            DiskTracks[i].FillerByte = data[trakDataPointer++];
-
-            int sectorDataPointer = dataPointer + 0x100;
-
-            // sector info list
-            DiskTracks[i].Sectors = new Sector[DiskTracks[i].NumberOfSectors];
-            for (int s = 0; s < DiskTracks[i].NumberOfSectors; s++)
-            {
-                DiskTracks[i].Sectors[s] = GetSector(data, i, trakDataPointer, ref sectorDataPointer);
-
-                trakDataPointer += 8;
-
-                // move sectorDataPointer to the next sector data postion
-                sectorDataPointer += DiskTracks[i].Sectors[s].ActualDataByteLength;
-            }
-
-            // move to the next track info block
-            dataPointer += DiskHeader.TrackSizes[i];
-        }
+        GetTracks(data, dataPointer);
 
         // protection scheme detector
         // TODO: implement
 
         return true;
+    }
+
+    private int GetTracks(byte[] data, int dataPointer)
+    {
+        // parse each track
+        for (int trackIndex = 0; trackIndex < DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides; trackIndex++)
+        {
+            // check for unformatted track
+            if (DiskHeader.TrackSizes[trackIndex] == 0)
+            {
+                DiskTracks[trackIndex] = new Track();
+                DiskTracks[trackIndex].Sectors = new Sector[0];
+                continue;
+            }
+
+            int trackDataPointer = dataPointer;
+            DiskTracks[trackIndex] = new Track();
+
+            // track info block
+            DiskTracks[trackIndex].TrackIdent = Encoding.ASCII.GetString(data, trackDataPointer, 12);
+            trackDataPointer += 16;
+            DiskTracks[trackIndex].TrackNumber = data[trackDataPointer++];
+            DiskTracks[trackIndex].SideNumber = data[trackDataPointer++];
+            trackDataPointer += 2;
+            DiskTracks[trackIndex].SectorSize = data[trackDataPointer++];
+            DiskTracks[trackIndex].NumberOfSectors = data[trackDataPointer++];
+            DiskTracks[trackIndex].GAP3Length = data[trackDataPointer++];
+            DiskTracks[trackIndex].FillerByte = data[trackDataPointer++];
+
+            int sectorDataPointer = dataPointer + 0x100;
+
+            DiskTracks[trackIndex].Sectors = GetSectors(data, trackIndex, DiskTracks[trackIndex].NumberOfSectors, trackDataPointer, ref sectorDataPointer);
+
+            trackDataPointer += _sectorHeaderSize * DiskTracks[trackIndex].NumberOfSectors;
+
+            // move to the next track info block
+            dataPointer += DiskHeader.TrackSizes[trackIndex];
+        }
+
+        return dataPointer;
+    }
+
+    private Sector[] GetSectors(byte[] data, int trackIndex, int numberSectors, int trakDataPointer, ref int sectorDataPointer)
+    {
+        // sector info list
+        var sectors = new Sector[numberSectors];
+        for (int sectorIndex = 0; sectorIndex < numberSectors; sectorIndex++)
+        {
+            sectors[sectorIndex] = GetSector(data, trackIndex, trakDataPointer + (sectorIndex * _sectorHeaderSize), ref sectorDataPointer);
+
+            // move sectorDataPointer to the next sector data postion
+            sectorDataPointer += sectors[sectorIndex].ActualDataByteLength;
+        }
+
+        return sectors;
     }
 
     private Sector GetSector(byte[] data, int trakIndex, int trakDataPointer, ref int sectorDataPointer)
