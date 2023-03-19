@@ -134,8 +134,8 @@ public class ZxSpectrumP3EMachine: ZxSpectrumBase
         TapeDevice.Reset();
 
         // TODO: DGzornoza
-        //var data = File.ReadAllBytes("E:\\OneDrive\\Spectrum\\Gauntlet (1985)(US Gold).dsk");
-        var data = File.ReadAllBytes("E:\\OneDrive\\Spectrum\\Sir Fred (Spanish).dsk");
+        var data = File.ReadAllBytes("E:\\OneDrive\\Spectrum\\Gauntlet (1985)(US Gold).dsk");
+        //var data = File.ReadAllBytes("E:\\OneDrive\\Spectrum\\Sir Fred (Spanish).dsk");
         flopyDiskDriveCluster.LoadDisk(data);        
 
         // --- Set default property values

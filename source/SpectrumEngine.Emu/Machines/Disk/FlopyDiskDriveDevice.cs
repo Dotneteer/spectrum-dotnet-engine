@@ -92,32 +92,11 @@ public class FlopyDiskDriveDevice : IFlopyDiskDriveDevice
     /// <exception cref="InvalidOperationException">Invalid disk data</exception>
     public void LoadDisk(byte[] diskData)
     {
-        // try dsk first
-        FloppyDisk? fdd = null;
-        bool found = false;
-
-        foreach (FloppyDiskFormat type in Enum.GetValues(typeof(FloppyDiskFormat)))
+        if (FloppyDisk.TryCreateDisk(diskData, out FloppyDisk? disk))
         {
-            switch (type)
-            {
-                case FloppyDiskFormat.CpcExtended:
-                    fdd = new CpcExtendedFloppyDisk();
-                    found = fdd.TryParseDisk(diskData);
-                    break;
-                case FloppyDiskFormat.Cpc:
-                    fdd = new CpcFloppyDisk();
-                    found = fdd.TryParseDisk(diskData);
-                    break;
-            }
-
-            if (found)
-            {
-                Disk = fdd;
-                break;
-            }
-        }
-
-        if (!found)
+            Disk = disk;
+        } 
+        else
         {
             throw new InvalidOperationException(Properties.Resources.UnknownImageFormatError);
         }
