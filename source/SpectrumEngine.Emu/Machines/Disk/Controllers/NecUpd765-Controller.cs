@@ -1,7 +1,4 @@
-﻿using SpectrumEngine.Emu.Extensions;
-using SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
-using System;
-using System.Collections;
+﻿using SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
 
 namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
 
@@ -557,7 +554,7 @@ public partial class NecUpd765
         int index = this.ActiveFloppyDiskDrive.SectorIndex;
 
         // make sure this index exists
-        if (index > trk.Sectors.Length)
+        if (index > trk.Sectors.Count)
         {
             index = 0;
         }
@@ -596,7 +593,7 @@ public partial class NecUpd765
             index++;
 
             // have we reached the index hole?
-            if (trk.Sectors.Length <= index)
+            if (trk.Sectors.Count <= index)
             {
                 // wrap around
                 index = 0;

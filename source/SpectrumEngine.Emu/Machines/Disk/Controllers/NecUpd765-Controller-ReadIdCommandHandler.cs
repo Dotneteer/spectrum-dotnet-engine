@@ -1,11 +1,4 @@
-﻿using SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SpectrumEngine.Emu.Machines.Disk.Controllers
+﻿namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 {
     public partial class NecUpd765
     {
@@ -81,7 +74,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                                 ActiveFloppyDiskDrive.SectorIndex = 0;
                             }
 
-                            if (ActiveFloppyDiskDrive.SectorIndex == 0 && ActiveFloppyDiskDrive.Disk.DiskTracks[ActiveFloppyDiskDrive.CurrentTrackId].Sectors?.Length > 1)
+                            if (ActiveFloppyDiskDrive.SectorIndex == 0 && ActiveFloppyDiskDrive.Disk.DiskTracks[ActiveFloppyDiskDrive.CurrentTrackId].Sectors?.Count > 1)
                             {
                                 // looks like readid always skips the first sector on a track
                                 ActiveFloppyDiskDrive.SectorIndex++;

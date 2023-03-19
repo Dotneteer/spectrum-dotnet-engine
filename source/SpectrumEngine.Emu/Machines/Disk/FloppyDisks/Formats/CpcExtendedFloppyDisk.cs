@@ -18,8 +18,8 @@ public class CpcExtendedFloppyDisk : FloppyDisk
 
     protected override int GetSectorSize(int trackIndex, int sectorIndex)
     {
-        var sectorDataPointer = GetSectorDataPointer(trackIndex, sectorIndex);
-        return DiskData.GetWordValue(sectorDataPointer + 6);
+        var sectorPointer = GetSectorPointer(trackIndex, sectorIndex);
+        return DiskData.GetWordValue(sectorPointer + 6);
     }
 
     protected override bool HasMultipleWeakSectors(Sector sector)

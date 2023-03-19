@@ -1,6 +1,5 @@
 ﻿using SpectrumEngine.Emu.Abstractions;
 using System.Collections;
-using System.Diagnostics;
 
 namespace SpectrumEngine.Emu.Machines.Disk.Controllers;
 

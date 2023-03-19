@@ -1,11 +1,4 @@
-﻿using SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SpectrumEngine.Emu.Machines.Disk.Controllers
+﻿namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 {
     public partial class NecUpd765
     {
@@ -84,7 +77,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 
                             // get the first sector
                             var track = ActiveFloppyDiskDrive.Disk.DiskTracks[_activeCommandData.Cylinder];
-                            for (int s = 0; s < track.Sectors.Length; s++)
+                            for (int s = 0; s < track.Sectors.Count; s++)
                             {
                                 if (track.Sectors[s].SectorID == endSecID)
                                     lastSec = true;
@@ -133,7 +126,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         var track = ActiveFloppyDiskDrive.Disk.DiskTracks[_activeCommandData.Cylinder];
                         //int secIndex = 0;
 
-                        for (int s = 0; s < track.Sectors.Length; s++)
+                        for (int s = 0; s < track.Sectors.Count; s++)
                         {
                             if (cnt == _executionLength)
                                 break;

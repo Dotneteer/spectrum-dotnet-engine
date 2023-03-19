@@ -1,11 +1,4 @@
-﻿using SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SpectrumEngine.Emu.Machines.Disk.Controllers
+﻿namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 {
     public partial class NecUpd765
     {

@@ -18,8 +18,8 @@ public class CpcFloppyDisk : FloppyDisk
 
     protected override int GetSectorSize(int trackIndex, int sectorIndex)
     {
-        var sectorDataPointer = GetSectorDataPointer(trackIndex, sectorIndex);
-        var sectorSize = DiskData[sectorDataPointer + 3];
+        var sectorPointer = GetSectorPointer(trackIndex, sectorIndex);
+        var sectorSize = DiskData[sectorPointer + 3];
 
         return sectorSize switch
         {

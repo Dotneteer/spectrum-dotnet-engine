@@ -1,11 +1,8 @@
 ﻿using SpectrumEngine.Emu.Machines.Disk.Controllers;
 using SpectrumEngine.Emu.Machines.Disk.FloppyDisks.Formats;
 using System.Buffers;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Xml.Linq;
 
 namespace SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
 
@@ -16,6 +13,8 @@ public abstract class FloppyDisk
 {
     protected const int SectorHeaderSize = 8;
     protected const int TrackHeaderSize = 24;
+    protected const int StartDiskTrackPointer = 0x100;
+    protected const int StartDiskSectorPointer = 0x100;
 
     private static IDictionary<FloppyDiskFormat, string> _formatHeaders = new Dictionary<FloppyDiskFormat, string>
     {
@@ -27,7 +26,8 @@ public abstract class FloppyDisk
     {
         DiskData = new ReadOnlyCollection<byte>(data);
 
-        ReadDiskHeader();
+        DiskHeader = ReadDiskHeader(data);        
+        DiskTracks = new List<Track>();
 
         ParseDisk();
     }
@@ -59,12 +59,12 @@ public abstract class FloppyDisk
     /// <summary>
     /// Disk information header
     /// </summary>
-    public Header DiskHeader { get; } = new Header();
+    public Header DiskHeader { get; private set; }
 
     /// <summary>
     /// Tracks
     /// </summary>
-    public IList<Track>? DiskTracks { get; protected set; }
+    public IList<Track> DiskTracks { get; protected set; }
 
     /// <summary>
     /// Number of tracks per side
@@ -97,6 +97,18 @@ public abstract class FloppyDisk
 
     protected abstract bool HasMultipleWeakSectors(Sector sector);
 
+    protected int GetTrackPointer(int trackIndex) => StartDiskTrackPointer + (trackIndex == 0 ? 0 : DiskHeader.TrackSizes.Take(trackIndex).Sum());
+    protected int GetEndTrackHeaderPointer(int trackIndex) => GetTrackPointer(trackIndex) + TrackHeaderSize;
+
+    protected int GetSectorPointer(int trackIndex, int sectorIndex) => GetEndTrackHeaderPointer(trackIndex) + (sectorIndex * SectorHeaderSize);
+    protected int GetSectorDataPointer(int trackIndex, int sectorIndex)
+    {
+        var startSectorPointer = StartDiskSectorPointer + (sectorIndex == 0 ? 0 : DiskTracks[trackIndex].Sectors.Take(sectorIndex).Sum(item => item.ActualDataByteLength));
+        var startTrackPointer = GetTrackPointer(trackIndex);
+
+        return startTrackPointer + startSectorPointer;
+    }
+
     /// <summary>
     /// Get the track count for the disk
     /// </summary>
@@ -105,17 +117,12 @@ public abstract class FloppyDisk
         return DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides;
     }
 
-    protected int GetTrackDataPointer(int trackIndex) => (trackIndex == 0 ? 0x100 : 0x100 + DiskHeader.TrackSizes[trackIndex]) + TrackHeaderSize;
-
-    protected int GetSectorDataPointer(int trackIndex, int sectorIndex) => GetTrackDataPointer(trackIndex) + (sectorIndex * SectorHeaderSize);
 
     /// <summary>
     /// parse disk data 
     /// </summary>
     protected void ParseDisk()
     {
-        ReadDiskHeader();
-
         if (DiskHeader.NumberOfSides > 1)
         {
             throw new NotImplementedException(Properties.Resources.InvalidMultiSideImageFormatError);
@@ -131,30 +138,40 @@ public abstract class FloppyDisk
         // TODO: implement
     }
 
-    protected virtual void ReadDiskHeader()
-    {        
-        byte[] data = DiskData.ToArray();
-        DiskHeader.DiskIdentifier = Encoding.ASCII.GetString(data, 0, 16).ToUpper();
-        DiskHeader.DiskCreatorString = Encoding.ASCII.GetString(data, 0x22, 14);
-        DiskHeader.NumberOfTracks = DiskData[0x30];
-        DiskHeader.NumberOfSides = DiskData[0x31];
-        DiskHeader.TrackSizes = new int[DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides];
-        DiskTracks = new Track[DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides];
-        
+    protected virtual Header ReadDiskHeader(byte[] data)
+    {
+        var numberOfTracks = data[0x30];
+        var numberOfSides = data[0x31];
+
+        return new Header
+        {
+            DiskIdentifier = Encoding.ASCII.GetString(data, 0, 16).ToUpper(),
+            DiskCreatorString = Encoding.ASCII.GetString(data, 0x22, 14),
+            NumberOfTracks = numberOfTracks,
+            NumberOfSides = numberOfSides,           
+        };
     }
+
+    protected virtual Track ReadTrackHeader(byte[] data, int trackPointer) => new()
+    {
+        TrackIdentifier = Encoding.ASCII.GetString(data, trackPointer, 12),
+        TrackNumber = data[trackPointer + 16],
+        SideNumber = data[trackPointer + 17],
+        DataRate = data[trackPointer + 18],
+        RecordingMode = data[trackPointer + 19],
+        SectorSize = data[trackPointer + 20],
+        NumberOfSectors = data[trackPointer + 21],
+        GAP3Length = data[trackPointer + 22],
+        FillerByte = data[trackPointer + 23],
+    };
 
     protected virtual void ReadTracks()
     {
-        int dataPointer = 0x34;
-
         // set track sizes
         for (int i = 0; i < DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides; i++)
         {
-            DiskHeader.TrackSizes[i] = GetTrackSize(i);
+            DiskHeader.TrackSizes.Add(GetTrackSize(i));
         }
-
-        // move to first track information block
-        dataPointer = 0x100;
 
         byte[] data = DiskData.ToArray();
         // parse each track
@@ -163,67 +180,35 @@ public abstract class FloppyDisk
             // check for unformatted track
             if (DiskHeader.TrackSizes[trackIndex] == 0)
             {
-                DiskTracks[trackIndex] = new Track();
-                DiskTracks[trackIndex].Sectors = new Sector[0];
+                DiskTracks.Add(new Track());
                 continue;
             }
 
-            int trackDataPointer = dataPointer;
-            DiskTracks[trackIndex] = new Track();
+            int trackPointer = GetTrackPointer(trackIndex);
 
-            // track info block
-            DiskTracks[trackIndex].TrackIdentifier = Encoding.ASCII.GetString(data, trackDataPointer, 12);
-            // trackDataPointer += 16;
-            DiskTracks[trackIndex].TrackNumber = data[trackDataPointer + 16];
-            DiskTracks[trackIndex].SideNumber = data[trackDataPointer + 17];
-            DiskTracks[trackIndex].DataRate = data[trackDataPointer + 18];
-            DiskTracks[trackIndex].RecordingMode = data[trackDataPointer + 19];
-            DiskTracks[trackIndex].SectorSize = data[trackDataPointer + 20];
-            DiskTracks[trackIndex].NumberOfSectors = data[trackDataPointer + 21];
-            DiskTracks[trackIndex].GAP3Length = data[trackDataPointer + 22];
-            DiskTracks[trackIndex].FillerByte = data[trackDataPointer + 23];
+            DiskTracks.Add(ReadTrackHeader(data, trackPointer));
 
-            int sectorDataPointer = dataPointer + 0x100;
-
-            DiskTracks[trackIndex].Sectors = ReadSectors(trackIndex, trackDataPointer + TrackHeaderSize, sectorDataPointer);
-
-            // move to the next track info block
-            dataPointer += DiskHeader.TrackSizes[trackIndex];
+            // add sectors
+            for (int sectorIndex = 0; sectorIndex < DiskTracks[trackIndex].NumberOfSectors; sectorIndex++)
+            {
+                DiskTracks[trackIndex].Sectors.Add(ReadSector(trackIndex, sectorIndex));
+            }
         }
     }
 
-    protected virtual Sector[] ReadSectors(int trackIndex, int trakDataPointer, int sectorDataPointer)
+    protected virtual Sector ReadSector(int trackIndex, int sectorIndex)
     {
-        int numberSectors = DiskTracks[trackIndex].NumberOfSectors;
-
-        // sector info list
-        var sectors = new Sector[numberSectors];
-        for (int sectorIndex = 0; sectorIndex < numberSectors; sectorIndex++)
-        {
-            sectors[sectorIndex] = ReadSector(trackIndex, trakDataPointer + (sectorIndex * SectorHeaderSize), sectorDataPointer, sectorIndex);
-
-            // move sectorDataPointer to the next sector data postion
-            sectorDataPointer += sectors[sectorIndex].ActualDataByteLength;
-        }
-
-        return sectors;
-    }
-
-    protected virtual Sector ReadSector(int trackIndex, int trakDataPointer, int sectorDataPointer0, int sectorIndex)
-    {
-        // var trackDataPointer = GetTrackDataPointer(trackIndex); // (trackIndex == 0 ? 0x100 : 0x100 + DiskHeader.TrackSizes[trackIndex]) + TrackHeaderSize;
-        // var sectorDataPointer = GetSectorDataPointer(trackIndex, sectorIndex);// trakDataPointer + (sectorIndex * SectorHeaderSize);
-
+        var sectorPointer = GetSectorPointer(trackIndex, sectorIndex);
         int sectorSize = GetSectorSize(trackIndex, sectorIndex);
 
         var sector = new Sector
         {
-            TrackNumber = DiskData[trakDataPointer],
-            SideNumber = DiskData[trakDataPointer + 1],
-            SectorID = DiskData[trakDataPointer + 2],
-            SectorSize = DiskData[trakDataPointer + 3],
-            Status1 = DiskData[trakDataPointer + 4],
-            Status2 = DiskData[trakDataPointer + 5],
+            TrackNumber = DiskData[sectorPointer],
+            SideNumber = DiskData[sectorPointer + 1],
+            SectorID = DiskData[sectorPointer + 2],
+            SectorSize = DiskData[sectorPointer + 3],
+            Status1 = DiskData[sectorPointer + 4],
+            Status2 = DiskData[sectorPointer + 5],
             ActualDataByteLength = sectorSize,
             // sector data - begins at 0x100 offset from the start of the track info block
             SectorData = new byte[sectorSize],
@@ -232,59 +217,36 @@ public abstract class FloppyDisk
         sector.ContainsMultipleWeakSectors = HasMultipleWeakSectors(sector);
 
         // copy the data
+        var sectorDataPointer = GetSectorDataPointer(trackIndex, sectorIndex);
         for (int i = 0; i < sector.ActualDataByteLength; i++)
         {
-            sector.SectorData[i] = DiskData[sectorDataPointer0 + i];
+            sector.SectorData[i] = DiskData[sectorDataPointer + i];
         }
 
         return sector;
     }
 
-    public class Header
+    public record Header
     {
-        public string DiskIdentifier { get; set; }
-        public string DiskCreatorString { get; set; }
-        public byte NumberOfTracks { get; set; }
-        public byte NumberOfSides { get; set; }
-        public int[] TrackSizes { get; set; }
+        public string DiskIdentifier { get; init; } = default!;
+        public string DiskCreatorString { get; init; } = default!;
+        public byte NumberOfTracks { get; init; } = default!;
+        public byte NumberOfSides { get; init; } = default!;
+        public IList<int> TrackSizes { get; init; } = new List<int>();
     }
 
     public class Track
     {
-        public string TrackIdentifier { get; set; }
-        public byte TrackNumber { get; set; }
-        public byte SideNumber { get; set; }
-        public byte DataRate { get; set; }
-        public byte RecordingMode { get; set; }
-        public byte SectorSize { get; set; }
-        public byte NumberOfSectors { get; set; }
-        public byte GAP3Length { get; set; }
-        public byte FillerByte { get; set; }
-        public virtual Sector[] Sectors { get; set; }
-
-        public virtual byte TrackType { get; set; }
-        public virtual int TLEN { get; set; }
-        public virtual int CLEN => TLEN / 8 + TLEN % 8 / 7 / 8;
-        public virtual byte[]? TrackData { get; set; }
-
-        /// <summary>
-        /// Presents a contiguous byte array of all sector data for this track
-        /// (including any multiple weak/random data)
-        /// </summary>
-        public virtual byte[] TrackSectorData
-        {
-            get
-            {
-                List<byte> list = new List<byte>();
-
-                foreach (var sec in Sectors)
-                {
-                    list.AddRange(sec.ActualData);
-                }
-
-                return list.ToArray();
-            }
-        }
+        public string TrackIdentifier { get; init; } = default!;
+        public byte TrackNumber { get; init; } = default!;
+        public byte SideNumber { get; init; } = default!;
+        public byte DataRate { get; init; } = default!;
+        public byte RecordingMode { get; init; } = default!;
+        public byte SectorSize { get; init; } = default!;
+        public byte NumberOfSectors { get; init; } = default!;
+        public byte GAP3Length { get; init; } = default!;
+        public byte FillerByte { get; init; } = default!;
+        public IList<Sector> Sectors { get; init; } = new List<Sector>();
     }
 
     public class Sector
@@ -296,7 +258,7 @@ public abstract class FloppyDisk
         public virtual byte Status1 { get; set; }
         public virtual byte Status2 { get; set; }
         public virtual int ActualDataByteLength { get; set; }
-        public virtual byte[]? SectorData { get; set; }
+        public virtual byte[] SectorData { get; set; }
         public virtual bool ContainsMultipleWeakSectors { get; set; }
 
         public int WeakReadIndex { get; private set; } = 0;
@@ -322,9 +284,6 @@ public abstract class FloppyDisk
             }
         }
 
-
-        public int RandSecCounter { get; private set; } = 0;
-
         public byte[] ActualData
         {
             get
@@ -335,15 +294,14 @@ public abstract class FloppyDisk
                     int size = 0x80 << SectorSize;
                     if (size > ActualDataByteLength)
                     {
-                        List<byte> l = new List<byte>();
-                        l.AddRange(SectorData);
+                        var result = new List<byte>(SectorData);
                         for (int i = 0; i < size - ActualDataByteLength; i++)
                         {
                             //l.Add(SectorData[i]);
-                            l.Add(SectorData.Last());
+                            result.Add(SectorData.Last());
                         }
 
-                        return l.ToArray();
+                        return result.ToArray();
                     }
 
                     return SectorData;
@@ -355,7 +313,9 @@ public abstract class FloppyDisk
 
                     // handle index wrap-around
                     if (WeakReadIndex > copies - 1)
+                    {
                         WeakReadIndex = copies - 1;
+                    }
 
                     // get the sector data based on the current weakreadindex
                     int step = WeakReadIndex * (0x80 << SectorSize);

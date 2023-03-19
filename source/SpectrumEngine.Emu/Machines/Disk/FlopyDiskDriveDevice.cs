@@ -1,7 +1,6 @@
 ﻿using SpectrumEngine.Emu.Abstractions;
 using SpectrumEngine.Emu.Machines.Disk.Controllers;
 using SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
-using SpectrumEngine.Emu.Machines.Disk.FloppyDisks.Formats;
 
 namespace SpectrumEngine.Emu.Machines.Disk;
 

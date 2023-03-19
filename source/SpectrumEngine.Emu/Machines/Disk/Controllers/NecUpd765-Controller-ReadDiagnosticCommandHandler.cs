@@ -1,11 +1,4 @@
-﻿using SpectrumEngine.Emu.Machines.Disk.FloppyDisks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SpectrumEngine.Emu.Machines.Disk.Controllers
+﻿namespace SpectrumEngine.Emu.Machines.Disk.Controllers
 {
     public partial class NecUpd765
     {
@@ -104,7 +97,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                         int secCount = 0;
 
                         // read the whole track
-                        for (int i = 0; i < track.Sectors.Length; i++)
+                        for (int i = 0; i < track.Sectors.Count; i++)
                         {
                             if (secCount >= _activeCommandData.EOT)
                             {
@@ -139,7 +132,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                             // or termination requested
 
                             int keyIndex = 0;
-                            for (int i = 0; i < track.Sectors.Length; i++)
+                            for (int i = 0; i < track.Sectors.Count; i++)
                             {
                                 if (track.Sectors[i].SectorID == track.Sectors[ActiveFloppyDiskDrive.SectorIndex].SectorID)
                                 {
@@ -148,7 +141,7 @@ namespace SpectrumEngine.Emu.Machines.Disk.Controllers
                                 }
                             }
 
-                            if (keyIndex == track.Sectors.Length - 1)
+                            if (keyIndex == track.Sectors.Count - 1)
                             {
                                 // last sector on the cylinder, set EN
                                 _statusRegisters1.SetBits(StatusRegisters1.EN);
