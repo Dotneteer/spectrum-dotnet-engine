@@ -67,21 +67,6 @@ public abstract class FloppyDisk
     public IList<Track> DiskTracks { get; protected set; }
 
     /// <summary>
-    /// Number of tracks per side
-    /// </summary>
-    public int SideTracksCount { get; protected set; }
-
-    /// <summary>
-    /// Number of bytes per track
-    /// </summary>
-    public int BytesPerTrack { get; protected set; }
-
-    /// <summary>
-    /// The number of physical sides
-    /// </summary>
-    public int SideCount { get; protected set; }
-
-    /// <summary>
     /// Signs whether is write-protect tab on the disk
     /// </summary>
     public bool IsWriteProtected { get; protected set; }
@@ -116,7 +101,6 @@ public abstract class FloppyDisk
     {
         return DiskHeader.NumberOfTracks * DiskHeader.NumberOfSides;
     }
-
 
     /// <summary>
     /// parse disk data 
@@ -251,15 +235,15 @@ public abstract class FloppyDisk
 
     public class Sector
     {
-        public virtual byte TrackNumber { get; set; }
-        public virtual byte SideNumber { get; set; }
-        public virtual byte SectorID { get; set; }
-        public virtual byte SectorSize { get; set; }
-        public virtual byte Status1 { get; set; }
-        public virtual byte Status2 { get; set; }
-        public virtual int ActualDataByteLength { get; set; }
-        public virtual byte[] SectorData { get; set; }
-        public virtual bool ContainsMultipleWeakSectors { get; set; }
+        public byte TrackNumber { get; set; }
+        public byte SideNumber { get; set; }
+        public byte SectorID { get; set; }
+        public byte SectorSize { get; set; }
+        public byte Status1 { get; set; }
+        public byte Status2 { get; set; }
+        public int ActualDataByteLength { get; set; }
+        public IList<byte> SectorData { get; set; }
+        public bool ContainsMultipleWeakSectors { get; set; }
 
         public int WeakReadIndex { get; private set; } = 0;
 
@@ -284,7 +268,7 @@ public abstract class FloppyDisk
             }
         }
 
-        public byte[] ActualData
+        public IList<byte> ActualData
         {
             get
             {
@@ -297,11 +281,10 @@ public abstract class FloppyDisk
                         var result = new List<byte>(SectorData);
                         for (int i = 0; i < size - ActualDataByteLength; i++)
                         {
-                            //l.Add(SectorData[i]);
                             result.Add(SectorData.Last());
                         }
 
-                        return result.ToArray();
+                        return result;
                     }
 
                     return SectorData;
@@ -319,9 +302,9 @@ public abstract class FloppyDisk
 
                     // get the sector data based on the current weakreadindex
                     int step = WeakReadIndex * (0x80 << SectorSize);
-                    byte[] res = new byte[(0x80 << SectorSize)];
-                    Array.Copy(SectorData, step, res, 0, 0x80 << SectorSize);
-                    return res;
+                    byte[] result = new byte[(0x80 << SectorSize)];
+                    Array.Copy(SectorData.ToArray(), step, result, 0, 0x80 << SectorSize);
+                    return result;
                 }
             }
         }

@@ -105,7 +105,7 @@
                             }
 
                             var sec = track.Sectors[i];
-                            for (int b = 0; b < sec.ActualData.Length; b++)
+                            for (int b = 0; b < sec.ActualData.Count; b++)
                             {
                                 _executionBuffer[buffPos++] = sec.ActualData[b];
                             }

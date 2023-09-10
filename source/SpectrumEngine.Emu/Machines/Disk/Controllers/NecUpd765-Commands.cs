@@ -136,16 +136,6 @@ public record Command
     /// b7      FT  Fault (if supported: 1=Drive failure)
     /// </remarks>
     public byte St3 { get; init; }
-
-    /// <summary>
-    /// Last transmitted/received data bytes
-    /// </summary>
-    public byte[]? DataBytes { get; init; }
-
-    /// <summary>
-    /// read/write data command ID
-    /// </summary>
-    public int DataId { get; init; }
 }
 
 /// <summary>
